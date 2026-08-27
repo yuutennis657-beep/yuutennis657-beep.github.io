@@ -430,7 +430,7 @@ footer{padding:56px 0 72px;font-size:var(--fs-1);color:var(--sub);line-height:va
    このサイトは「塗り分けと細い罫線で構造を作る」ので、それに合わせた形 */
 .tab{appearance:none;-webkit-appearance:none;cursor:pointer;font:inherit;
   display:flex;flex-direction:column;justify-content:center;gap:3px;
-  padding:12px 22px;min-height:64px;min-width:148px;white-space:nowrap;text-align:center;
+  padding:12px 18px;min-height:64px;min-width:126px;flex:1 1 auto;white-space:nowrap;text-align:center;
   font-size:var(--fs-4);font-weight:700;letter-spacing:var(--ls-2);line-height:var(--lh-1);
   color:var(--green);background:transparent;
   border:1.4px solid #bed3c4;border-radius:0;
@@ -459,14 +459,22 @@ section{scroll-margin-top:104px}
   section{scroll-margin-top:140px}
 }
 
+/* タブが5つ。左パネル（264px）がある画面ではこの帯だけ幅が足りなくなるので詰める */
+@media (min-width:901px) and (max-width:1150px){
+  .tab{min-width:0;padding:11px 10px;font-size:var(--fs-3)}
+}
+
 /* スマホは均等に並べて、横スクロールしなくても全部見えるようにする */
 @media (max-width:600px){
-  .tabbar .wrap{padding-left:12px;padding-right:12px;overflow:visible}
-  .tab{flex:1 1 0;min-width:0;padding:10px 3px;font-size:var(--fs-2);letter-spacing:var(--ls-0)}
+  .tabbar .wrap{flex-wrap:wrap;gap:6px;padding:11px 12px;overflow:visible}
+  /* 5つを1行に押しこむと字が読めなくなるので、3つ＋2つの2行にする */
+  .tab{flex:1 1 calc(33.333% - 4px);min-width:0;margin-left:0;border-radius:2px;
+    padding:9px 4px;min-height:48px;font-size:var(--fs-2);letter-spacing:var(--ls-0)}
+  .tab .en{display:none}                 /* 日本語だけにして高さを取り戻す */
+  section{scroll-margin-top:190px}       /* 2行になったぶん、見出しが隠れないように */
 }
-@media (max-width:430px){    /* 小さい画面では英字を落として日本語を優先する */
-  .tab{font-size:var(--fs-1);min-height:52px}
-  .tab .en{display:none}
+@media (max-width:359px){
+  .tab{font-size:var(--fs-1);padding:9px 2px}
 }
 /* ================================================================
    図解（解説ページ）── 文を減らしたぶんを図で持たせる。
