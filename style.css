@@ -192,6 +192,17 @@ section{padding:104px 0 0}
 .offer h3{font-size:19px;font-weight:500;letter-spacing:.11em;color:var(--green);margin-bottom:12px}
 .offer p{font-size:14.5px;color:var(--ink2)}
 .offer b{color:var(--ink);font-weight:700}
+.menu{list-style:none;margin-top:22px;border-top:1px solid var(--hair);counter-reset:m}
+.menu li{padding:15px 0;border-bottom:1px solid var(--hair2)}
+.menu .mt{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin-bottom:6px}
+.menu .mt::before{counter-increment:m;content:counter(m);width:23px;height:23px;border-radius:50%;
+  background:var(--green);color:#fff;font-size:11.5px;display:grid;place-items:center;flex:none;letter-spacing:0}
+.menu .mt span{font-size:16.5px;font-weight:500;color:var(--green);letter-spacing:.09em;line-height:1.5}
+.menu .mt em{font-style:normal;font-size:11px;letter-spacing:.12em;color:var(--gold);
+  background:var(--goldL);border-radius:999px;padding:4px 11px;white-space:nowrap}
+.menu p:not(.mt){font-size:14px;color:var(--ink2);line-height:1.95}
+.mnote{margin-top:18px;font-size:13px;color:var(--sub);line-height:1.95}
+.mnote b{color:var(--ink2);font-weight:700}
 .note{margin-top:46px;font-size:13.5px;color:var(--ink2);background:var(--greenL);
   border-radius:16px;padding:22px 26px;line-height:2}
 .note b{color:var(--greenD);font-weight:700}
