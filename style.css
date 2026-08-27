@@ -955,35 +955,9 @@ h1, h2, h3, h4,
   .mgroups .mgroup:first-child{grid-row:auto}
 }
 
-/* ================= 行の右端をそろえる =================
-   日本語の組版は、本や新聞と同じで両端そろえが基本。
-   文節で折り返す（nowrap.js）だけだと行の長さがバラつくので、
-   本文だけ両端そろえにして、右のはしを1本の線にする。
-   見出し・ラベル・ボタン・表にはかけない。 */
-html{hanging-punctuation:allow-end}   /* 句読点は行末にぶら下げてよい（対応ブラウザのみ） */
-
-p, blockquote, figcaption, dd,
-.lead, .note, .caveat, .cond, .crossnote,
-.plist li, .honest li, .now span, .career span.d, .facts dd{
-  text-align:justify;
-  text-justify:inter-ideograph;
-}
-
-/* 中央・右そろえにしてある所は、そのまま */
-.tab, .dia .clist li, .dumb .dlt, .byclass td, .byclass th,
-.thumb .ph, .work .meta, .backrow a{
-  text-align:revert;
-}
-
-/* ラベル・肩書き・キャッチなど「短くて字を伸ばすと不格好になる所」は左そろえのまま */
-.side .nm, .side .ttl, .side nav a, .side .cta,
-.hero .eb, .hero .role, .head .eb, .head .en, .head .jp,
-.tag, .meta, .sub, .legend span, .stat span, .stat .lb,
-.fig .lb, .fig .d, .dfig .lb, .now em, .career .yr, .career .tg,
-.spec th, .spec td, .shots figcaption .cap, .honest h3, .crumb a{
-  text-align:left;
-  text-justify:auto;
-}
+/* 本文は左そろえ（両端そろえは字間が間延びするのでやめた）。
+   折り返しの位置は nowrap.js が文節で決めるので、語の途中では切れない。 */
+html{hanging-punctuation:allow-end}   /* 句読点は行末にぶら下げてよい＝右のギザギザが少し減る（対応ブラウザのみ） */
 
 /* ================================================================
    プロフィール（作り直し）
@@ -995,11 +969,18 @@ p, blockquote, figcaption, dd,
 .prof2{display:flex;flex-direction:column;gap:clamp(30px,4vw,44px)}
 
 /* --- ① 名前と肩書 --- */
-.pcard{display:grid;grid-template-columns:180px 1fr;gap:clamp(20px,3vw,32px);align-items:center;
+/* grid だと、写真が無いとき（onerror で消えたとき）に本文が180pxの列に
+   押しこまれてしまう。flex なら残った方が幅いっぱいに広がる */
+.pcard{display:flex;flex-wrap:wrap;gap:clamp(20px,3vw,32px);align-items:center;
   background:var(--cream2);border-radius:20px;padding:clamp(20px,2.6vw,28px)}
-.pph{margin:0;border-radius:16px;overflow:hidden;background:var(--cream);border:1px solid var(--hair)}
+.pcard .pmeta{flex:1 1 300px;min-width:0}
+.pph{flex:0 0 180px;margin:0;border-radius:16px;overflow:hidden;background:var(--cream);border:1px solid var(--hair)}
 .pph img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block}
-.pmeta .nmbig{margin:0}
+/* 旧 .prof に付けていた名前まわりの指定を、新しい .pcard にも効かせる */
+.pmeta .nmbig{margin:0;font-size:var(--fs-7);font-weight:500;letter-spacing:var(--ls-4);
+  color:var(--green);line-height:var(--lh-1)}
+.pmeta .nmbig small{display:block;margin-top:8px;font-family:var(--serif);font-size:var(--fs-2);
+  letter-spacing:var(--ls-5);color:var(--sub);font-weight:400}
 .prole{margin-top:12px;font-size:var(--fs-3);color:var(--ink2);line-height:var(--lh-3);letter-spacing:var(--ls-2)}
 .prole b{color:var(--greenD);font-weight:700}
 .pcap{margin-top:14px;padding-top:12px;border-top:1px solid #e2d9c0;
@@ -1031,6 +1012,7 @@ p, blockquote, figcaption, dd,
 .axn b{color:var(--ink);font-weight:700}
 
 /* --- ③ 自己紹介 --- */
+.pbio .bio{font-size:var(--fs-4);color:var(--ink2)}
 .pbio .bio+.bio{margin-top:16px}
 
 /* --- ④ 基本情報のカード --- */
@@ -1066,3 +1048,7 @@ p, blockquote, figcaption, dd,
   .venn .vl{font-size:var(--fs-1)}
   .venn .mid b{font-size:19px}
 }
+
+/* 短いラベルや、幅の狭いカードの中は両端そろえにしない（字間が開いて読みにくい） */
+.prole,.pcap,.pfacts .ft,.pfacts .fd,.axl span,.axl b,.axb .ax-t,.venn .vl,.hobby li{
+  text-align:left;text-justify:auto}
