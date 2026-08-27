@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
 <title>伊藤 優 ｜ 教材を、自分で作る小学校教員</title>
 <meta name="description" content="小学校教員6年目。子どもの「できた」と、先生の「こうしたい」を形にするために、7教科で14本の教育アプリを自作しています。監修・共同開発／講演・研修／執筆のご相談を受けています。">
 <meta property="og:title" content="伊藤 優 ｜ 教材を、自分で作る小学校教員">
@@ -81,7 +82,14 @@
   </div>
 </div>
 
-<!-- ================= わたしの強み ================= -->
+<!-- ================= タブ ================= -->
+<div class="tabbar"><div class="wrap" role="tablist" aria-label="サイトの内容">
+  <button class="tab" type="button" role="tab" id="tab-about" aria-controls="panel-about" aria-selected="true" tabindex="0"><span class="en">About</span>わたしのこと</button>
+  <button class="tab" type="button" role="tab" id="tab-works" aria-controls="panel-works" aria-selected="false" tabindex="-1"><span class="en">Works</span>作ったもの</button>
+  <button class="tab" type="button" role="tab" id="tab-offer" aria-controls="panel-offer" aria-selected="false" tabindex="-1"><span class="en">Offer</span>お仕事</button>
+</div></div>
+
+<div class="panel" id="panel-about" role="tabpanel" aria-labelledby="tab-about">
 <section id="strength"><div class="wrap">
   <div class="head">
     <p class="eb">What I bring</p>
@@ -171,8 +179,9 @@
     </article>
   </div>
 </div></section>
+</div>
 
-<!-- ================= 作品 ================= -->
+<div class="panel" id="panel-works" role="tabpanel" aria-labelledby="tab-works" hidden>
 <section id="works"><div class="wrap">
   <div class="head">
     <p class="eb">What I made</p>
@@ -315,8 +324,6 @@
     先生用の道具は、動詞から名前をつけて統一しています ── 見取り→ミトリ、見比べ→ミクラベ、紡ぐ→ツムグ。
   </p>
 </div></section>
-
-<!-- ================= 実践 ================= -->
 <section id="evidence"><div class="wrap">
   <div class="head">
     <p class="eb">Evidence</p>
@@ -385,27 +392,9 @@
     </p>
   </div>
 </div></section>
+</div>
 
-<!-- ================= いま ================= -->
-<section id="now"><div class="wrap">
-  <div class="head">
-    <p class="eb">In progress</p>
-    <p class="en">Now</p>
-    <p class="jp"><span class="ul">いま取り組んでいること</span></p>
-    <p class="lead">結果が出たものだけでなく、走っている途中のものも書いておきます。</p>
-  </div>
-
-  <div class="now">
-    <div><em>論文</em><b>学事出版教育文化賞</b><span>上の漢字実践。9月提出予定</span></div>
-    <div><em>論文</em><b>ICT夢コンテスト2026</b><span>小6国語「やまなし」の実践。9月実施</span></div>
-    <div><em>論文</em><b>東書教育賞（第42回）</b><span>算数「拡大図と縮図」＋自作アプリ『測量ギルド』</span></div>
-    <div><em>論文</em><b>道徳と特別活動の教育研究賞</b><span>学級会アプリ『ツムグ』の実践。2学期に実施</span></div>
-    <div><em>執筆</em><b>教員のためのAI教材開発の本</b><span>「先生が自分で教材アプリを作る」日本語書籍はまだ0冊</span></div>
-    <div><em>開発</em><b>国語の教材をシリーズにまとめる</b><span>語彙・漢字／書く／調べる の3系統に整理中</span></div>
-  </div>
-</div></section>
-
-<!-- ================= できること ================= -->
+<div class="panel" id="panel-offer" role="tabpanel" aria-labelledby="tab-offer" hidden>
 <section id="offer"><div class="wrap">
   <div class="head">
     <p class="eb">What I can do</p>
@@ -455,8 +444,23 @@
     お引き受けできる形・時期が案件によって変わりますので、まずはご相談ください。手続きの見通しも含めてご返答します。
   </p>
 </div></section>
+<section id="now"><div class="wrap">
+  <div class="head">
+    <p class="eb">In progress</p>
+    <p class="en">Now</p>
+    <p class="jp"><span class="ul">いま取り組んでいること</span></p>
+    <p class="lead">結果が出たものだけでなく、走っている途中のものも書いておきます。</p>
+  </div>
 
-<!-- ================= 連絡 ================= -->
+  <div class="now">
+    <div><em>論文</em><b>学事出版教育文化賞</b><span>上の漢字実践。9月提出予定</span></div>
+    <div><em>論文</em><b>ICT夢コンテスト2026</b><span>小6国語「やまなし」の実践。9月実施</span></div>
+    <div><em>論文</em><b>東書教育賞（第42回）</b><span>算数「拡大図と縮図」＋自作アプリ『測量ギルド』</span></div>
+    <div><em>論文</em><b>道徳と特別活動の教育研究賞</b><span>学級会アプリ『ツムグ』の実践。2学期に実施</span></div>
+    <div><em>執筆</em><b>教員のためのAI教材開発の本</b><span>「先生が自分で教材アプリを作る」日本語書籍はまだ0冊</span></div>
+    <div><em>開発</em><b>国語の教材をシリーズにまとめる</b><span>語彙・漢字／書く／調べる の3系統に整理中</span></div>
+  </div>
+</div></section>
 <section id="contact"><div class="wrap">
   <div class="contact">
     <svg class="art" viewBox="0 0 400 400" aria-hidden="true">
@@ -470,6 +474,12 @@
     </a>
   </div>
 </div></section>
+</div>
+
+
+
+
+
 
 <footer><div class="wrap">
   伊藤 優 ／ 東京都 江東区立第四砂町小学校 教諭 ／ 全国道徳特別活動研究会 幹事<br>
@@ -478,5 +488,79 @@
 </div></footer>
 
 </main>
+
+<script>
+(function(){
+  var tabs   = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+  var panels = Array.prototype.slice.call(document.querySelectorAll('.panel'));
+  var bar    = document.querySelector('.tabbar');
+  var side   = document.querySelector('.side');
+  if(!tabs.length || !bar) return;
+
+  function show(i, moveFocus){
+    tabs.forEach(function(t, n){
+      var on = (n === i);
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      if(on && t.scrollIntoView) t.scrollIntoView({block:'nearest', inline:'nearest'});
+    });
+    panels.forEach(function(p, n){ p.hidden = (n !== i); });
+    if(moveFocus) tabs[i].focus();
+  }
+  function headH(){   // スマホでは緑のヘッダーが上に貼りつく
+    return (side && getComputedStyle(side).position === 'sticky') ? side.offsetHeight : 0;
+  }
+  function toBar(){   // offsetTop は sticky で貼りつく前の「本来の位置」を返す
+    var y = bar.offsetTop - headH();
+    if(y < 0) y = 0;
+    if(Math.abs(window.pageYOffset - y) > 2) window.scrollTo(0, y);
+  }
+
+  tabs.forEach(function(t, i){
+    t.addEventListener('click', function(){ show(i); toBar(); });
+    t.addEventListener('keydown', function(e){
+      var n = -1, k = e.key;
+      if(k === 'ArrowRight') n = (i + 1) % tabs.length;
+      else if(k === 'ArrowLeft') n = (i - 1 + tabs.length) % tabs.length;
+      else if(k === 'Home') n = 0;
+      else if(k === 'End') n = tabs.length - 1;
+      if(n >= 0){ e.preventDefault(); show(n, true); toBar(); }
+    });
+  });
+
+  function panelOf(el){
+    while(el && el !== document.body){
+      if(el.classList && el.classList.contains('panel')) return el;
+      el = el.parentNode;
+    }
+    return null;
+  }
+  // 左パネルの目次・CONTACT → そのタブを開いてから、その節へ
+  Array.prototype.forEach.call(document.querySelectorAll('a[href^="#"]'), function(a){
+    a.addEventListener('click', function(e){
+      var id = a.getAttribute('href').slice(1);
+      if(!id) return;
+      var el = document.getElementById(id);
+      if(!el) return;
+      var p = panelOf(el);
+      if(!p) return;
+      e.preventDefault();
+      show(panels.indexOf(p));
+      setTimeout(function(){ el.scrollIntoView({behavior:'smooth', block:'start'}); }, 0);
+    });
+  });
+
+  // index.html#contact のように開かれたとき（アプリの詳細ページからの戻りなど）
+  var h = location.hash.slice(1);
+  if(h){
+    var el0 = document.getElementById(h), p0 = el0 && panelOf(el0);
+    if(p0){
+      show(panels.indexOf(p0));
+      setTimeout(function(){ el0.scrollIntoView({block:'start'}); }, 0);
+    }
+  }
+})();
+</script>
+
 </body>
 </html>

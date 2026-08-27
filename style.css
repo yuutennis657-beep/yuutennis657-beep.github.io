@@ -67,7 +67,7 @@ section{padding:104px 0 0}
   -webkit-box-decoration-break:clone;box-decoration-break:clone}
 
 /* ================= ヒーロー ================= */
-.hero{padding:clamp(70px,11vh,120px) 0 0}
+.hero{padding-top:clamp(70px,11vh,120px)}
 .hero .eb{font-family:var(--serif);font-size:14px;letter-spacing:.44em;color:var(--gold)}
 .hero h1{font-family:var(--serif);font-size:clamp(58px,10vw,104px);line-height:1;font-weight:300;
   color:var(--green);letter-spacing:.04em;margin:10px 0 22px}
@@ -331,3 +331,31 @@ footer{padding:56px 0 72px;font-size:11.5px;color:var(--sub);line-height:2}
   display:grid;place-items:center;position:relative}
 .shots .ph.empty::after{content:"この画面のスクリーンショットは準備中です";
   font-size:13px;color:var(--sub);letter-spacing:.1em}
+
+/* ================= タブ ================= */
+.tabbar{position:sticky;top:0;z-index:30;margin-top:clamp(56px,8vh,92px);
+  background:rgba(250,248,240,.94);backdrop-filter:blur(8px);
+  border-top:1px solid var(--hair2);border-bottom:1px solid var(--hair)}
+.tabbar .wrap{display:flex;gap:clamp(4px,2.4vw,34px);overflow-x:auto;scrollbar-width:none}
+.tabbar .wrap::-webkit-scrollbar{display:none}
+.tab{appearance:none;-webkit-appearance:none;background:none;border:0;cursor:pointer;font:inherit;
+  color:var(--sub);padding:15px 4px 13px;min-height:56px;white-space:nowrap;position:relative;
+  text-align:left;font-size:15px;font-weight:500;letter-spacing:.13em;line-height:1.5;transition:color .22s}
+.tab .en{display:block;font-family:var(--serif);font-size:11px;letter-spacing:.34em;
+  color:var(--gold);opacity:.8;text-transform:uppercase;line-height:1.4;font-weight:400}
+.tab::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2.4px;background:var(--green);
+  transform:scaleX(0);transform-origin:left;transition:transform .28s cubic-bezier(.2,.75,.25,1)}
+.tab:hover{color:var(--ink2)}
+.tab[aria-selected="true"]{color:var(--green)}
+.tab[aria-selected="true"]::after{transform:scaleX(1)}
+.tab:focus-visible{outline:2px solid var(--green);outline-offset:3px;border-radius:4px}
+.panel[hidden]{display:none}
+.panel>section:first-child{padding-top:clamp(52px,7vh,80px)}
+section{scroll-margin-top:84px}
+@media (max-width:900px){
+  .side nav{display:none}                 /* タブがあるので上の目次は出さない */
+  .tabbar{margin-top:44px;top:66px}       /* 上に貼りつく緑のヘッダー（66px）の下 */
+  .tab{font-size:13.5px;letter-spacing:.08em;padding:13px 4px 11px;min-height:52px}
+  .tab .en{font-size:10px;letter-spacing:.26em}
+  section{scroll-margin-top:126px}
+}
