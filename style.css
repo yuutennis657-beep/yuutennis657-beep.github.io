@@ -189,8 +189,10 @@ section{padding:104px 0 0}
 /* 表の見出しの補足（受けた人数の「前回 → 今回」） */
 .byclass thead small{display:block;margin-top:3px;font-weight:400;font-size:.88em;
   color:#cfe0d5;letter-spacing:var(--ls-1)}
-.caveat{margin-top:28px;font-size:var(--fs-2);color:var(--sub);border-top:1px solid var(--hair);
-  padding-top:18px;line-height:var(--lh-4)}
+.caveat{margin-top:28px;font-size:var(--fs-1);color:var(--sub);border-top:1px solid var(--hair);
+  padding-top:18px;line-height:var(--lh-3)}
+/* ※注記は本文より一段小さく。`.result p`（＝本文17px）に負けないよう、同じ強さで指定する */
+.result p.caveat{font-size:var(--fs-1);line-height:var(--lh-3);color:var(--sub)}
 
 /* ================= いま ================= */
 .now{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;background:var(--hair);
