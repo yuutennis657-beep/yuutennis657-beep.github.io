@@ -208,53 +208,6 @@ section{padding:104px 0 0}
 .mail:hover{transform:translateY(-2px)}
 footer{padding:56px 0 72px;font-size:11.5px;color:var(--sub);line-height:2}
 
-/* ================= プロフィール ================= */
-.prof{display:grid;grid-template-columns:300px 1fr;gap:36px;align-items:start}
-.prof-ph{margin:0}
-.prof-ph .ph{aspect-ratio:4/5;border-radius:20px;overflow:hidden;background:var(--cream2);border:1px solid var(--hair)}
-.prof-ph img{width:100%;height:100%;object-fit:cover}
-.prof-ph figcaption{margin-top:9px;font-size:11.5px;color:var(--sub);line-height:1.7;letter-spacing:.06em}
-.prof .nmbig{font-size:30px;font-weight:500;letter-spacing:.22em;color:var(--green);line-height:1.4}
-.prof .nmbig small{display:block;font-family:var(--serif);font-size:13px;letter-spacing:.32em;
-  color:var(--sub);margin-top:9px;font-weight:400}
-.prof .bio{font-size:15px;color:var(--ink2);margin-top:22px}
-.prof .bio+.bio{margin-top:14px}
-.prof .bio b{color:var(--ink);font-weight:700}
-.facts{margin-top:26px;border-top:1px solid var(--hair)}
-.facts div{display:grid;grid-template-columns:92px 1fr;gap:14px;padding:11px 2px;border-bottom:1px solid var(--hair2)}
-.facts dt{font-size:11.5px;color:var(--gold);letter-spacing:.14em;font-weight:500;padding-top:5px}
-.facts dd{font-size:14px;color:var(--ink2);line-height:1.9}
-.facts dd a{text-decoration:none;border-bottom:1px solid #b7cfbe}
-.sub-h{margin:66px 0 8px;font-size:20px;font-weight:500;letter-spacing:.12em;color:var(--green)}
-.sub-note{font-size:13.5px;color:var(--ink2);margin-bottom:26px;max-width:44em}
-.career{list-style:none;border:1px solid var(--hair);border-radius:16px;overflow:hidden;background:var(--paper)}
-.career li{display:grid;grid-template-columns:152px 1fr;gap:20px;padding:19px 24px;
-  border-bottom:1px solid var(--hair2);align-items:start}
-.career li:last-child{border-bottom:none}
-.career .yr{font-size:12.5px;color:var(--green);font-weight:500;line-height:1.75;letter-spacing:.05em;padding-top:2px}
-.career .yr small{display:block;font-size:11px;color:var(--sub);font-weight:400;letter-spacing:.03em;margin-top:2px}
-.career .tg{display:inline-flex;align-items:center;gap:7px;font-size:10.5px;letter-spacing:.2em;
-  color:var(--gold);font-weight:500;margin-bottom:7px}
-.career .tg::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--goldBright);flex:none}
-.career b{display:block;font-size:15.5px;font-weight:500;letter-spacing:.08em;color:var(--ink);line-height:1.8}
-.career span.d{display:block;font-size:12.5px;color:var(--sub);line-height:1.9;margin-top:6px}
-.prof-figs{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:24px}
-.prof-figs figure{margin:0}
-.prof-figs .ph{aspect-ratio:16/10;border-radius:14px;overflow:hidden;background:var(--cream2);border:1px solid var(--hair)}
-.prof-figs img{width:100%;height:100%;object-fit:cover}
-.prof-figs figcaption{margin-top:9px;font-size:11.5px;color:var(--sub);line-height:1.75}
-.prof-figs figcaption b{color:var(--ink2);font-weight:700}
-.prof-figs.off .ph{aspect-ratio:4/3}
-
-.axis{margin-top:22px;border-top:1px solid var(--hair);padding-top:16px}
-.axis .ax-t{font-size:10.5px;letter-spacing:.24em;color:var(--gold);font-weight:500;margin-bottom:10px}
-.axis ul{list-style:none}
-.axis li{position:relative;padding:8px 0 8px 16px}
-.axis li::before{content:"";position:absolute;left:0;top:15px;width:7px;height:7px;
-  border-radius:50%;background:var(--leaf)}
-.axis li b{display:block;font-size:14px;font-weight:500;letter-spacing:.12em;color:var(--green);line-height:1.6}
-.axis li span{display:block;font-size:11.5px;color:var(--sub);line-height:1.75;margin-top:2px}
-
 /* ================= モーション ================= */
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 .st{opacity:0;animation:rise .5s cubic-bezier(.2,.75,.25,1) forwards;animation-delay:calc(var(--i,0)*58ms)}
@@ -283,13 +236,6 @@ footer{padding:56px 0 72px;font-size:11.5px;color:var(--sub);line-height:2}
   .stat+.stat,.fig+.fig{border-left:none;padding-left:16px}
   .stat:nth-child(even),.fig:nth-child(even){border-left:1px solid #e2d9c0;padding-left:20px}
   .works,.now{grid-template-columns:1fr}
-  .prof{grid-template-columns:1fr;gap:24px}
-  .prof-ph{max-width:340px}
-  .prof-ph .ph{aspect-ratio:4/5}
-  .facts div{grid-template-columns:76px 1fr;gap:10px}
-  .career li{grid-template-columns:1fr;gap:8px;padding:18px 20px}
-  .career .yr small{display:inline;margin-left:8px}
-  .prof-figs{grid-template-columns:1fr}
   .kata article,.offer article{grid-template-columns:1fr;gap:10px}
   .kata .no{font-size:52px}
   .contact{padding:36px 26px}
@@ -379,3 +325,9 @@ footer{padding:56px 0 72px;font-size:11.5px;color:var(--sub);line-height:2}
   .spec th{width:40%}
   .spec th,.spec td{padding:11px 13px;font-size:12.5px}
 }
+
+/* ===== 準備中のスクリーンショット枠 ===== */
+.shots .ph.empty{aspect-ratio:16/9;border:1.5px dashed #cfc7b2;background:var(--cream2);
+  display:grid;place-items:center;position:relative}
+.shots .ph.empty::after{content:"この画面のスクリーンショットは準備中です";
+  font-size:13px;color:var(--sub);letter-spacing:.1em}
