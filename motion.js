@@ -87,6 +87,14 @@
 
   setTimeout(function () { rescue(document); }, 1200);
 
+  /* 背面のタブで開かれたときの保険。
+     Chrome は見えていないタブで IntersectionObserver も rAF も止めるので、
+     そのままだと「戻ってきたら何も出ていない」ことが起きる。表に出たら拾い直す。 */
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) return;
+    setTimeout(function () { rescue(document); }, 60);
+  });
+
   /* ④ ヒーローの数字を 0 から数え上げる（単位の小さい字はそのまま） */
   each(document.querySelectorAll('.hero .stat b.num'), function (b) {
     var tn = b.firstChild;
