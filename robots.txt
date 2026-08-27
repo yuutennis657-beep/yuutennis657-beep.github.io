@@ -1,2 +1,4 @@
+# 検索よけは各ページの <meta name="robots" content="noindex,nofollow"> で行う。
+# ここで Disallow すると、LINE や X のリンクプレビューまで止まるので空にしている。
 User-agent: *
-Disallow: /
+Disallow:
