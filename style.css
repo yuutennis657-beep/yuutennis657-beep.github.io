@@ -307,6 +307,43 @@ footer{padding:56px 0 72px;font-size:var(--fs-1);color:var(--sub);line-height:va
 .axis li span{display:block;font-size:var(--fs-1);color:var(--sub);line-height:var(--lh-3);margin-top:2px}
 
 
+
+/* ================= 経歴の道（バイクが走る）2026/8/27 ================= */
+.careerwrap{position:relative;padding-left:58px}
+.road{position:absolute;left:16px;top:10px;bottom:10px;width:14px;border-radius:7px;
+  background:#e7e0cd;box-shadow:inset 0 0 0 1px #ded5bd}
+.road::before{content:"";position:absolute;left:50%;top:8px;bottom:8px;width:2px;margin-left:-1px;
+  background:repeating-linear-gradient(to bottom,#fffdf6 0 9px,transparent 9px 20px);opacity:.85}
+.road-trail{position:absolute;left:0;right:0;top:0;height:0;border-radius:7px;background:var(--green);
+  transition:height .12s linear;overflow:hidden}
+.road-trail::before{content:"";position:absolute;left:50%;top:8px;bottom:0;width:2px;margin-left:-1px;
+  background:repeating-linear-gradient(to bottom,rgba(255,255,255,.9) 0 9px,transparent 9px 20px)}
+.rider{position:absolute;left:50%;top:0;width:56px;height:34px;color:var(--greenD);
+  transform:translate(-50%,-50%) rotate(6deg);transition:top .12s linear;z-index:2}
+.rider svg{width:100%;height:100%;display:block;overflow:visible;
+  filter:drop-shadow(0 3px 6px rgba(35,42,37,.2))}
+.career > li{position:relative}
+/* 節目のランプ。道の上に置く（カードは overflow:hidden なので外には出せない） */
+.road .stop{position:absolute;left:50%;width:14px;height:14px;border-radius:50%;box-sizing:border-box;
+  background:var(--cream);border:3px solid #d9cfb5;transform:translate(-50%,-50%);z-index:3;
+  transition:background .35s,border-color .35s,transform .35s}
+.road .stop.passed{background:var(--goldBright);border-color:#fffdf6;transform:translate(-50%,-50%) scale(1.2)}
+.career > li.passed b{color:var(--greenD)}
+@keyframes ride{
+  0%,100%{transform:translate(-50%,-50%) rotate(4deg)}
+  50%    {transform:translate(-50%,-54%) rotate(9deg)}
+}
+.careerwrap.running .rider{animation:ride 1s ease-in-out infinite}
+@media (max-width:900px){
+  .careerwrap{padding-left:42px}
+  .road{left:10px;width:12px}
+  .rider{width:44px;height:28px}
+}
+@media (prefers-reduced-motion:reduce){
+  .careerwrap.running .rider{animation:none}
+  .rider,.road-trail{transition:none}
+}
+
 /* ================= モーション ================= */
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 .st{opacity:0;animation:rise .5s cubic-bezier(.2,.75,.25,1) forwards;animation-delay:calc(var(--i,0)*58ms)}
@@ -1049,6 +1086,7 @@ html{hanging-punctuation:allow-end}   /* 句読点は行末にぶら下げてよ
   .venn .mid b{font-size:19px}
 }
 
-/* 短いラベルや、幅の狭いカードの中は両端そろえにしない（字間が開いて読みにくい） */
+/* 本文もふくめて全体が左そろえなので、ここは「中央そろえに巻きこまれない」ための念のための指定。
+   （両端そろえを試した名残り。両端そろえは字間が間延びするので 2026/8/27 にやめた） */
 .prole,.pcap,.pfacts .ft,.pfacts .fd,.axl span,.axl b,.axb .ax-t,.venn .vl,.hobby li{
-  text-align:left;text-justify:auto}
+  text-align:left}
