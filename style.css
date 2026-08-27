@@ -336,28 +336,51 @@ footer{padding:56px 0 72px;font-size:11.5px;color:var(--sub);line-height:2}
 .tabbar{position:sticky;top:0;z-index:30;margin-top:clamp(56px,8vh,92px);
   background:rgba(250,248,240,.94);backdrop-filter:blur(8px);
   border-top:1px solid var(--hair2);border-bottom:1px solid var(--hair)}
-.tabbar .wrap{display:flex;gap:clamp(4px,2.4vw,34px);overflow-x:auto;scrollbar-width:none}
+.tabbar .wrap{display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;padding-top:14px;padding-bottom:14px}
 .tabbar .wrap::-webkit-scrollbar{display:none}
-.tab{appearance:none;-webkit-appearance:none;background:none;border:0;cursor:pointer;font:inherit;
-  color:var(--sub);padding:15px 4px 13px;min-height:56px;white-space:nowrap;position:relative;
-  text-align:left;font-size:15px;font-weight:500;letter-spacing:.13em;line-height:1.5;transition:color .22s}
-.tab .en{display:block;font-family:var(--serif);font-size:11px;letter-spacing:.34em;
-  color:var(--gold);opacity:.8;text-transform:uppercase;line-height:1.4;font-weight:400}
-.tab::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2.4px;background:var(--green);
-  transform:scaleX(0);transform-origin:left;transition:transform .28s cubic-bezier(.2,.75,.25,1)}
-.tab:hover{color:var(--ink2)}
-.tab[aria-selected="true"]{color:var(--green)}
-.tab[aria-selected="true"]::after{transform:scaleX(1)}
-.tab:focus-visible{outline:2px solid var(--green);outline-offset:3px;border-radius:4px}
+
+/* 緑の丸ボタン。押せる面をボタンの形そのものにして、指でも当てやすくする */
+.tab{appearance:none;-webkit-appearance:none;cursor:pointer;font:inherit;
+  display:flex;flex-direction:column;justify-content:center;gap:2px;
+  padding:11px 30px;min-height:62px;white-space:nowrap;text-align:center;
+  font-size:16px;font-weight:700;letter-spacing:.1em;line-height:1.45;
+  color:var(--green);background:var(--paper);
+  border:1.6px solid #c2d8c9;border-radius:999px;
+  box-shadow:0 1px 0 rgba(35,42,37,.04);
+  transition:background .2s,color .2s,border-color .2s,box-shadow .2s,transform .12s}
+.tab .en{display:block;font-family:var(--serif);font-size:11px;letter-spacing:.3em;
+  color:var(--gold);text-transform:uppercase;line-height:1.3;font-weight:400}
+.tab:hover{background:var(--greenL);border-color:var(--leaf);
+  box-shadow:0 2px 8px rgba(35,105,74,.14)}
+.tab:active{transform:translateY(1px);box-shadow:none}
+.tab:focus-visible{outline:3px solid var(--goldBright);outline-offset:3px}
+
+/* 選んでいるタブは緑ベタ。色だけでなく、文字の濃さと影でも分かるようにする */
+.tab[aria-selected="true"]{background:var(--green);border-color:var(--green);color:#fff;
+  box-shadow:0 3px 12px rgba(35,105,74,.28)}
+.tab[aria-selected="true"] .en{color:#cfe6d6}
+.tab[aria-selected="true"]:hover{background:var(--greenD);border-color:var(--greenD)}
+
 .panel[hidden]{display:none}
 .panel>section:first-child{padding-top:clamp(52px,7vh,80px)}
-section{scroll-margin-top:84px}
+section{scroll-margin-top:104px}
 @media (max-width:900px){
   .side nav{display:none}                 /* タブがあるので上の目次は出さない */
   .tabbar{margin-top:44px;top:66px}       /* 上に貼りつく緑のヘッダー（66px）の下 */
-  .tab{font-size:13.5px;letter-spacing:.08em;padding:13px 4px 11px;min-height:52px}
-  .tab .en{font-size:10px;letter-spacing:.26em}
-  section{scroll-margin-top:126px}
+  .tabbar .wrap{gap:9px;padding-top:11px;padding-bottom:11px}
+  .tab{font-size:14.5px;letter-spacing:.05em;padding:9px 22px;min-height:56px}
+  .tab .en{font-size:10px;letter-spacing:.22em}
+  section{scroll-margin-top:140px}
+}
+
+/* スマホは3つを均等に並べて、横スクロールしなくても全部見えるようにする */
+@media (max-width:600px){
+  .tabbar .wrap{gap:8px;padding-left:16px;padding-right:16px;overflow:visible}
+  .tab{flex:1 1 0;min-width:0;padding:9px 6px;letter-spacing:.03em}
+}
+@media (max-width:359px){    /* いちばん小さい画面では英字を落として日本語を優先する */
+  .tab{font-size:12.5px}
+  .tab .en{display:none}
 }
 
 /* 画像が読みこまれる前に高さ0になり、遅延読みこみが動かない／読みこむたびに
