@@ -32,6 +32,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <script src="nowrap.js" defer></script>
+<script src="motion.js" defer></script>
 </head>
 <body>
 
@@ -354,8 +355,8 @@
         <b class="num">86<span class="to">→</span>90<small>点</small></b><div class="d">↑ +4.0点</div></div>
       <div class="fig"><span class="lb">90点以上の子</span>
         <b class="num">41<span class="to">→</span>52<small>名</small></b><div class="d">↑ +11名</div></div>
-      <div class="fig"><span class="lb">前回より上がった子</span>
-        <b class="num">60<small>／99名</small></b><div class="d">両方受けた子の約6割</div></div>
+      <div class="fig"><span class="lb">点が上がった子</span>
+        <b class="num">60<small>／99名</small></b><div class="d">両方受けた子の6割</div></div>
     </div>
 
     <div class="byclass">
@@ -668,36 +669,77 @@
   var panels = Array.prototype.slice.call(document.querySelectorAll('.panel'));
   var bar    = document.querySelector('.tabbar');
   var side   = document.querySelector('.side');
+  var list   = (bar && bar.querySelector('.wrap')) || bar;
   if(!tabs.length || !bar) return;
+
+  // 文書の先頭からの本当の位置（sticky の影響を受けない要素で測る）
+  function docTop(el){ var y = 0; while(el){ y += el.offsetTop; el = el.offsetParent; } return y; }
+  // スマホでは緑のヘッダーが上に貼りつく
+  function headH(){
+    if(!side) return 0;
+    var pos = getComputedStyle(side).position;
+    if(pos !== 'sticky' && pos !== 'fixed') return 0;
+    var r = side.getBoundingClientRect();
+    // PCの「画面いっぱいの左パネル」は上を覆わないので数えない
+    if(r.height > window.innerHeight * 0.6) return 0;
+    return r.height;
+  }
+  function barH(){ return bar.getBoundingClientRect().height; }
+  function openPanel(){
+    for(var n = 0; n < panels.length; n++){ if(!panels[n].hidden) return panels[n]; }
+    return panels[0];
+  }
+  // タブの帯が画面の上（ヘッダーの直下）に来る位置へ。※ 表示中パネルの位置から逆算する
+  //   （タブの帯は sticky なので、貼りついている間 offsetTop が当てにならない）
+  function toBar(){
+    var p = openPanel(); if(!p) return;
+    var y = docTop(p) - headH() - barH();
+    if(y < 0) y = 0;
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    if(y > max) y = max < 0 ? 0 : max;
+    try { window.scrollTo({top:y, left:0, behavior:'auto'}); }   // 途中で止まらないよう瞬間移動
+    catch(e){ window.scrollTo(0, y); }
+  }
+  function toBarSettled(){          // 高さが確定してからもう一度当て直す
+    toBar();
+    if(window.requestAnimationFrame){
+      requestAnimationFrame(function(){ toBar(); requestAnimationFrame(toBar); });
+    } else { setTimeout(toBar, 60); }
+  }
+  // 節の頭を、ヘッダーとタブの帯の下ぴったりに出す
+  function toSection(el){
+    var y = docTop(el) - headH() - barH();
+    if(y < 0) y = 0;
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    if(y > max) y = max < 0 ? 0 : max;
+    try { window.scrollTo({top:y, left:0, behavior:'auto'}); }
+    catch(e){ window.scrollTo(0, y); }
+  }
 
   function show(i, moveFocus){
     tabs.forEach(function(t, n){
       var on = (n === i);
       t.setAttribute('aria-selected', on ? 'true' : 'false');
       t.tabIndex = on ? 0 : -1;
-      if(on && t.scrollIntoView) t.scrollIntoView({block:'nearest', inline:'nearest'});
+      // 帯が横にはみ出すときだけ、横方向にだけ寄せる（縦は動かさない）
+      if(on && list && list.scrollWidth > list.clientWidth + 2){
+        var l = t.offsetLeft - (list.clientWidth - t.offsetWidth) / 2;
+        list.scrollLeft = l < 0 ? 0 : l;
+      }
     });
     panels.forEach(function(p, n){ p.hidden = (n !== i); });
     if(moveFocus) tabs[i].focus();
   }
-  function headH(){   // スマホでは緑のヘッダーが上に貼りつく
-    return (side && getComputedStyle(side).position === 'sticky') ? side.offsetHeight : 0;
-  }
-  function toBar(){   // offsetTop は sticky で貼りつく前の「本来の位置」を返す
-    var y = bar.offsetTop - headH();
-    if(y < 0) y = 0;
-    if(Math.abs(window.pageYOffset - y) > 2) window.scrollTo(0, y);
-  }
 
   tabs.forEach(function(t, i){
-    t.addEventListener('click', function(){ show(i); toBar(); });
+    t.addEventListener('click', function(){ show(i); toBarSettled(); });
     t.addEventListener('keydown', function(e){
       var n = -1, k = e.key;
       if(k === 'ArrowRight') n = (i + 1) % tabs.length;
       else if(k === 'ArrowLeft') n = (i - 1 + tabs.length) % tabs.length;
       else if(k === 'Home') n = 0;
       else if(k === 'End') n = tabs.length - 1;
-      if(n >= 0){ e.preventDefault(); show(n, true); toBar(); }
+      if(n >= 0){ e.preventDefault(); show(n, true); toBarSettled(); }
     });
   });
 
@@ -708,7 +750,7 @@
     }
     return null;
   }
-  // 左パネルの目次・CONTACT → そのタブを開いてから、その節へ
+  // 左パネルの目次・CONTACT → そのタブを開いてから、その節の頭へ
   Array.prototype.forEach.call(document.querySelectorAll('a[href^="#"]'), function(a){
     a.addEventListener('click', function(e){
       var id = a.getAttribute('href').slice(1);
@@ -719,7 +761,10 @@
       if(!p) return;
       e.preventDefault();
       show(panels.indexOf(p));
-      setTimeout(function(){ el.scrollIntoView({behavior:'smooth', block:'start'}); }, 0);
+      toSection(el);
+      if(window.requestAnimationFrame){
+        requestAnimationFrame(function(){ toSection(el); requestAnimationFrame(function(){ toSection(el); }); });
+      } else { setTimeout(function(){ toSection(el); }, 60); }
     });
   });
 
@@ -729,7 +774,9 @@
     var el0 = document.getElementById(h), p0 = el0 && panelOf(el0);
     if(p0){
       show(panels.indexOf(p0));
-      setTimeout(function(){ el0.scrollIntoView({block:'start'}); }, 0);
+      var go = function(){ toSection(el0); };
+      go(); setTimeout(go, 0); setTimeout(go, 120);
+      window.addEventListener('load', go);
     }
   }
 })();

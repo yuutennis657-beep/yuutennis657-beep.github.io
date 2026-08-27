@@ -642,3 +642,52 @@ h1, h2, h3, h4,
 
 /* 数字と単位（14本・7教科・101名）は、あいだで切れないようにする */
 .stat b, .fig b, .dfig b, .num{white-space:nowrap}
+
+/* ================= モーション 追記（2026-08-27） =================
+   ・motion.js が .rv を付けた要素だけに効く。JSが動かないときは何も起きない＝そのまま見える
+   ・「動きを減らす」設定のときは、上の @media (prefers-reduced-motion) が全部止める */
+.rv{opacity:0;transform:translateY(18px);
+  transition:opacity .62s cubic-bezier(.2,.75,.25,1),transform .62s cubic-bezier(.2,.75,.25,1);
+  transition-delay:calc(var(--d,0)*70ms)}
+.rv.in{opacity:1;transform:none}
+.rv.rv-x{transform:translateX(-14px)}
+.rv.rv-x.in{transform:none}
+.rv.rv-ph{transform:translateY(14px)}
+.rv-ph .ph img,.rv-ph .thumb img{transform:scale(1.05);
+  transition:transform 1.05s cubic-bezier(.2,.75,.25,1);transition-delay:calc(var(--d,0)*70ms)}
+.rv-ph.in .ph img,.rv-ph.in .thumb img{transform:none}
+/* 見出しの下線が、出るときに左から伸びる */
+.rv .ul{background-size:0 1.4px;transition:background-size .85s cubic-bezier(.2,.75,.25,1) .2s}
+.rv.in .ul{background-size:100% 1.4px}
+@media (prefers-reduced-motion:reduce){
+  .rv,.rv.rv-x,.rv.rv-ph{opacity:1!important;transform:none!important}
+  .rv .ul{background-size:100% 1.4px}
+  .rv-ph .ph img,.rv-ph .thumb img{transform:none!important}
+}
+
+/* --- タブを切りかえたときのフェード --- */
+@keyframes panelIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.panel.pin{animation:panelIn .42s cubic-bezier(.2,.75,.25,1) both}
+
+/* --- 触れたときの、ひかえめな反応 --- */
+.work .thumb{transition:box-shadow .3s,border-color .3s,transform .3s}
+.work .thumb img{transition:transform .55s cubic-bezier(.2,.75,.25,1)}
+.work:hover .thumb{box-shadow:0 10px 26px rgba(35,42,37,.10);border-color:var(--leaf)}
+.work:hover .thumb img{transform:scale(1.035)}
+.work h3{transition:color .25s}
+.work:hover h3{color:var(--green)}
+.prof-figs .ph,.proof .ph,.prof-ph .ph{overflow:hidden}
+.prof-figs .ph img,.proof .ph img,.prof-ph .ph img{transition:transform .55s cubic-bezier(.2,.75,.25,1)}
+.prof-figs figure:hover .ph img,.prof-ph:hover .ph img{transform:scale(1.035)}
+.career li{transition:background .25s}
+.career li:hover{background:var(--cream2)}
+.facts div{transition:background .2s}
+.facts div:hover{background:var(--cream2)}
+.menu li{transition:background .2s}
+.menu li:hover{background:var(--cream2)}
+.kata .ill{transition:transform .5s cubic-bezier(.2,.75,.25,1)}
+.kata article:hover .ill{transform:translateY(-4px)}
+.side-photo img{transition:transform .6s cubic-bezier(.2,.75,.25,1)}
+.side-photo:hover img{transform:scale(1.04)}
+.tab{transition:background .18s,color .18s,border-color .18s,transform .18s}
+.tab:hover{transform:translateY(-1px)}
