@@ -106,6 +106,12 @@ body{
 .link2 .tap{display:block;margin-top:auto;padding-top:0;min-height:38px;line-height:38px;font-size:12px;
   color:#fff;background:var(--green);border-radius:999px;letter-spacing:.08em}
 @media (max-width:400px){ .qrwrap{flex-direction:column;text-align:center} .qrwrap img{width:150px;height:150px} }
+
+/* 日本語の改行：禁則を厳しく＋文節で折り返す（Chrome/Edge対応、他は従来どおり） */
+html{line-break:strict}
+body{word-break:auto-phrase}
+p,li,dd,figcaption,span,em,b,small{text-wrap:pretty}
+h1,h2,h3{text-wrap:balance}
 </style>
 </head>
 <body>

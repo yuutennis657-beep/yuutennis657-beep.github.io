@@ -596,3 +596,33 @@ section{scroll-margin-top:104px}
   .contact .clines{flex-direction:column}
   .contact .clines a{justify-content:space-between}
 }
+
+/* ================= 日本語の改行 =================
+   ① line-break:strict … 禁則処理。行頭に 、。」』ー っ ゃ などが来ないようにする
+   ② word-break:auto-phrase … 文節（意味のかたまり）で折り返す。
+      「地理クエス／ト」「1,708／枚」のような、語の途中での改行が消える。
+      Chrome・Edge が対応。未対応のブラウザ（Safari等）では今までどおりの折り返しに戻るだけ
+   ③ text-wrap:pretty … 最後の行に1文字だけ残るのを防ぐ
+   ④ 見出しは text-wrap:balance で、行の長さをそろえる
+   ================================================= */
+html{line-break:strict}
+body{word-break:auto-phrase}
+
+p, li, dd, dt, figcaption, blockquote, td, th, span, em, b, small,
+.lead, .sub, .role, .crossnote, .tag, .meta, .note, .caveat, .cond, .quote{
+  text-wrap:pretty;
+}
+
+h1, h2, h3, h4,
+.head .jp, .head .en, .head .eb, .hero .role, .dhero h1, .dhero .lead,
+.work h3, .result h3, .offer h3, .sub-h, .contact .en, .career b, .now b{
+  text-wrap:balance;
+}
+
+/* メールアドレスやURLなど、切れ目のない英字だけは、はみ出すより折る */
+.facts dd, .spec td, .mail, .backrow a, .crumb a{
+  overflow-wrap:anywhere;
+}
+
+/* 数字と単位（14本・7教科・101名）は、あいだで切れないようにする */
+.stat b, .fig b, .dfig b, .num{white-space:nowrap}
