@@ -184,6 +184,9 @@ section{padding:104px 0 0}
 .byclass thead th{background:var(--green);color:#fff;font-weight:500;font-size:var(--fs-1);letter-spacing:var(--ls-2);border:none}
 .byclass tbody tr:last-child td{border-bottom:none;background:var(--greenL);font-weight:700}
 .byclass .up{color:var(--green);font-weight:700}
+/* 表の見出しの補足（受けた人数の「前回 → 今回」） */
+.byclass thead small{display:block;margin-top:3px;font-weight:400;font-size:.88em;
+  color:#cfe0d5;letter-spacing:var(--ls-1)}
 .caveat{margin-top:28px;font-size:var(--fs-2);color:var(--sub);border-top:1px solid var(--hair);
   padding-top:18px;line-height:var(--lh-4)}
 
