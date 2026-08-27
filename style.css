@@ -893,3 +893,11 @@ h1, h2, h3, h4,
   .wlink{transition:background-size .4s var(--ez),color .3s}
   .work:hover .wlink{background-size:100% 2px}
 }
+
+/* ===== 「Claude を使って作りました」の1行 ===== */
+.madewith{display:flex;align-items:center;gap:13px;margin:24px 0 0;padding:14px 18px;
+  background:var(--cream2);border:1px solid var(--hair);border-radius:2px;
+  font-size:var(--fs-3);line-height:var(--lh-3);color:var(--ink2)}
+.madewith .mw-logo{width:26px;height:26px;flex:none;object-fit:contain;display:block}
+.madewith b{color:var(--ink);font-weight:700}
+@media (max-width:600px){ .madewith{align-items:flex-start;padding:13px 15px} }
