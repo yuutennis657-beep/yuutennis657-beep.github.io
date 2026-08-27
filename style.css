@@ -930,3 +930,27 @@ h1, h2, h3, h4,
 .madewith .mw-logo{width:26px;height:26px;flex:none;object-fit:contain;display:block}
 .madewith b{color:var(--ink);font-weight:700}
 @media (max-width:600px){ .madewith{align-items:flex-start;padding:13px 15px} }
+
+/* ===== 作品「このほかに」＝3つのグループに分けて出す（2026/8/27 追記）=====
+   色の軸は上と同じ：若草＝子ども用／深緑＝先生用／山吹＝土台。
+   点だけ明るい色にして、文字は必ずコントラストの取れる濃い色を使う。 */
+.more .more-lead{margin-bottom:22px}
+.mgroups{display:grid;grid-template-columns:1.12fr 1fr;gap:26px 38px;align-items:start}
+.mgroups .mgroup:first-child{grid-row:1 / span 2}
+.mghead{display:flex;align-items:center;gap:9px;margin-bottom:13px;padding-bottom:10px;
+  border-bottom:1px solid var(--hair);color:var(--mtext,var(--green));
+  font-size:var(--fs-2);font-weight:700;letter-spacing:var(--ls-2)}
+.mghead i{width:9px;height:9px;border-radius:50%;background:var(--mtint,var(--leaf));flex:none}
+.mghead em{margin-left:auto;font-style:normal;font-weight:400;letter-spacing:var(--ls-1);
+  font-size:var(--fs-1);color:var(--sub)}
+.mgroup ul{list-style:none;margin:0;padding:0;display:grid;gap:11px}
+.mgroup li{font-size:var(--fs-3);line-height:var(--lh-3)}
+.mgroup li b{color:var(--ink);font-weight:700}
+.mgroup li span{display:block;margin-top:1px;font-size:var(--fs-2);color:var(--sub);line-height:var(--lh-3)}
+.mname{margin-top:26px;padding-top:18px;border-top:1px solid var(--hair);
+  font-size:var(--fs-2);color:var(--sub);line-height:var(--lh-3)}
+.mname b{color:var(--ink2);font-weight:700}
+@media(max-width:760px){
+  .mgroups{grid-template-columns:1fr;gap:22px}
+  .mgroups .mgroup:first-child{grid-row:auto}
+}
