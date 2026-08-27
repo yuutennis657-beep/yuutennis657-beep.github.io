@@ -954,3 +954,33 @@ h1, h2, h3, h4,
   .mgroups{grid-template-columns:1fr;gap:22px}
   .mgroups .mgroup:first-child{grid-row:auto}
 }
+
+/* ================= 行の右端をそろえる =================
+   日本語の組版は、本や新聞と同じで両端そろえが基本。
+   文節で折り返す（nowrap.js）だけだと行の長さがバラつくので、
+   本文だけ両端そろえにして、右のはしを1本の線にする。
+   見出し・ラベル・ボタン・表にはかけない。 */
+html{hanging-punctuation:allow-end}   /* 句読点は行末にぶら下げてよい（対応ブラウザのみ） */
+
+p, blockquote, figcaption, dd,
+.lead, .note, .caveat, .cond, .crossnote,
+.plist li, .honest li, .now span, .career span.d, .facts dd{
+  text-align:justify;
+  text-justify:inter-ideograph;
+}
+
+/* 中央・右そろえにしてある所は、そのまま */
+.tab, .dia .clist li, .dumb .dlt, .byclass td, .byclass th,
+.thumb .ph, .work .meta, .backrow a{
+  text-align:revert;
+}
+
+/* ラベル・肩書き・キャッチなど「短くて字を伸ばすと不格好になる所」は左そろえのまま */
+.side .nm, .side .ttl, .side nav a, .side .cta,
+.hero .eb, .hero .role, .head .eb, .head .en, .head .jp,
+.tag, .meta, .sub, .legend span, .stat span, .stat .lb,
+.fig .lb, .fig .d, .dfig .lb, .now em, .career .yr, .career .tg,
+.spec th, .spec td, .shots figcaption .cap, .honest h3, .crumb a{
+  text-align:left;
+  text-justify:auto;
+}
