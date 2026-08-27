@@ -208,6 +208,54 @@ section{padding:104px 0 0}
 .mail:hover{transform:translateY(-2px)}
 footer{padding:56px 0 72px;font-size:11.5px;color:var(--sub);line-height:2}
 
+/* ================= プロフィール ================= */
+.prof{display:grid;grid-template-columns:300px 1fr;gap:36px;align-items:start}
+.prof-ph{margin:0}
+.prof-ph .ph{aspect-ratio:4/5;border-radius:20px;overflow:hidden;background:var(--cream2);border:1px solid var(--hair)}
+.prof-ph img{width:100%;height:100%;object-fit:cover}
+.prof-ph figcaption{margin-top:9px;font-size:11.5px;color:var(--sub);line-height:1.7;letter-spacing:.06em}
+.prof .nmbig{font-size:30px;font-weight:500;letter-spacing:.22em;color:var(--green);line-height:1.4}
+.prof .nmbig small{display:block;font-family:var(--serif);font-size:13px;letter-spacing:.32em;
+  color:var(--sub);margin-top:9px;font-weight:400}
+.prof .bio{font-size:15px;color:var(--ink2);margin-top:22px}
+.prof .bio+.bio{margin-top:14px}
+.prof .bio b{color:var(--ink);font-weight:700}
+.facts{margin-top:26px;border-top:1px solid var(--hair)}
+.facts div{display:grid;grid-template-columns:92px 1fr;gap:14px;padding:11px 2px;border-bottom:1px solid var(--hair2)}
+.facts dt{font-size:11.5px;color:var(--gold);letter-spacing:.14em;font-weight:500;padding-top:5px}
+.facts dd{font-size:14px;color:var(--ink2);line-height:1.9}
+.facts dd a{text-decoration:none;border-bottom:1px solid #b7cfbe}
+.sub-h{margin:66px 0 8px;font-size:20px;font-weight:500;letter-spacing:.12em;color:var(--green)}
+.sub-note{font-size:13.5px;color:var(--ink2);margin-bottom:26px;max-width:44em}
+.career{list-style:none;border:1px solid var(--hair);border-radius:16px;overflow:hidden;background:var(--paper)}
+.career li{display:grid;grid-template-columns:152px 1fr;gap:20px;padding:19px 24px;
+  border-bottom:1px solid var(--hair2);align-items:start}
+.career li:last-child{border-bottom:none}
+.career .yr{font-size:12.5px;color:var(--green);font-weight:500;line-height:1.75;letter-spacing:.05em;padding-top:2px}
+.career .yr small{display:block;font-size:11px;color:var(--sub);font-weight:400;letter-spacing:.03em;margin-top:2px}
+.career .tg{display:inline-flex;align-items:center;gap:7px;font-size:10.5px;letter-spacing:.2em;
+  color:var(--gold);font-weight:500;margin-bottom:7px}
+.career .tg::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--goldBright);flex:none}
+.career b{display:block;font-size:15.5px;font-weight:500;letter-spacing:.08em;color:var(--ink);line-height:1.8}
+.career span.d{display:block;font-size:12.5px;color:var(--sub);line-height:1.9;margin-top:6px}
+.prof-figs{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:24px}
+.prof-figs figure{margin:0}
+.prof-figs .ph{aspect-ratio:16/10;border-radius:14px;overflow:hidden;background:var(--cream2);border:1px solid var(--hair)}
+.prof-figs img{width:100%;height:100%;object-fit:cover}
+.prof-figs figcaption{margin-top:9px;font-size:11.5px;color:var(--sub);line-height:1.75}
+.prof-figs figcaption b{color:var(--ink2);font-weight:700}
+.prof-figs.off .ph{aspect-ratio:4/3}
+
+.axis{margin-top:22px;border-top:1px solid var(--hair);padding-top:16px}
+.axis .ax-t{font-size:10.5px;letter-spacing:.24em;color:var(--gold);font-weight:500;margin-bottom:10px}
+.axis ul{list-style:none}
+.axis li{position:relative;padding:8px 0 8px 16px}
+.axis li::before{content:"";position:absolute;left:0;top:15px;width:7px;height:7px;
+  border-radius:50%;background:var(--leaf)}
+.axis li b{display:block;font-size:14px;font-weight:500;letter-spacing:.12em;color:var(--green);line-height:1.6}
+.axis li span{display:block;font-size:11.5px;color:var(--sub);line-height:1.75;margin-top:2px}
+
+
 /* ================= モーション ================= */
 @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 .st{opacity:0;animation:rise .5s cubic-bezier(.2,.75,.25,1) forwards;animation-delay:calc(var(--i,0)*58ms)}
@@ -241,6 +289,13 @@ footer{padding:56px 0 72px;font-size:11.5px;color:var(--sub);line-height:2}
   .contact{padding:36px 26px}
   .contact .en{font-size:40px}
   .mail{width:100%;font-size:14.5px;padding:16px 22px}
+  .prof{grid-template-columns:1fr;gap:24px}
+  .prof-ph{max-width:340px}
+  .prof-ph .ph{aspect-ratio:4/5}
+  .facts div{grid-template-columns:76px 1fr;gap:10px}
+  .career li{grid-template-columns:1fr;gap:8px;padding:18px 20px}
+  .career .yr small{display:inline;margin-left:8px}
+  .prof-figs{grid-template-columns:1fr}
 }
 
 /* ===== 詳細ページへのリンク ===== */
@@ -373,13 +428,13 @@ section{scroll-margin-top:104px}
   section{scroll-margin-top:140px}
 }
 
-/* スマホは3つを均等に並べて、横スクロールしなくても全部見えるようにする */
+/* スマホは4つを均等に並べて、横スクロールしなくても全部見えるようにする */
 @media (max-width:600px){
-  .tabbar .wrap{gap:8px;padding-left:16px;padding-right:16px;overflow:visible}
-  .tab{flex:1 1 0;min-width:0;padding:9px 6px;letter-spacing:.03em}
+  .tabbar .wrap{gap:6px;padding-left:12px;padding-right:12px;overflow:visible}
+  .tab{flex:1 1 0;min-width:0;padding:9px 4px;font-size:13px;letter-spacing:0}
 }
-@media (max-width:359px){    /* いちばん小さい画面では英字を落として日本語を優先する */
-  .tab{font-size:12.5px}
+@media (max-width:430px){    /* 小さい画面では英字を落として日本語を優先する */
+  .tab{font-size:12.5px;min-height:48px}
   .tab .en{display:none}
 }
 
@@ -387,3 +442,100 @@ section{scroll-margin-top:104px}
    ページが飛ぶ問題があったので、先に16:9の枠を確保しておく */
 .shots .ph{aspect-ratio:16/9}
 .shots .ph img{width:100%;height:100%;object-fit:cover}
+
+/* ================================================================
+   図解（解説ページ）── 文を減らしたぶんを図で持たせる。
+   SVGで文字ごと描くとスマホで読めなくなるので、HTML+CSSで組んで
+   狭い画面では自動で縦に折り返す。絵だけは小さなSVG。
+   ================================================================ */
+.dia{margin:16px 0 6px;background:var(--paper);border:1px solid var(--hair);
+  border-radius:14px;padding:20px 22px}
+.plist li .dia{margin-left:-22px}
+.shots .dia{margin-top:14px}
+.dia .dcap{margin-top:14px;font-size:12px;color:var(--sub);letter-spacing:.06em;line-height:1.8;
+  padding-top:12px;border-top:1px solid var(--hair2)}
+.dia .dcap b,.dia b{font-weight:700;color:var(--ink)}
+.dia .ftail{margin-top:14px;font-size:12.5px;color:var(--ink2);line-height:1.85;letter-spacing:.05em}
+.dart{width:34px;height:34px;fill:none;stroke:var(--green);stroke-width:2.4;
+  stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* --- flow：手順を矢印でつなぐ --- */
+.dia .steps{display:flex;flex-wrap:wrap;gap:10px;list-style:none;counter-reset:none}
+.dia .steps li{flex:1 1 150px;min-width:0;position:relative;background:var(--greenL);
+  border-radius:11px;padding:13px 15px;line-height:1.6}
+.dia .steps li b{display:block;font-size:14px;color:var(--greenD);font-weight:700;letter-spacing:.04em}
+.dia .steps li span{display:block;margin-top:4px;font-size:11.5px;color:var(--sub);letter-spacing:.03em}
+.dia .steps li+li::before{content:"";position:absolute;left:-9px;top:50%;width:7px;height:7px;
+  border-right:1.6px solid var(--leaf);border-top:1.6px solid var(--leaf);
+  transform:translateY(-50%) rotate(45deg)}
+
+/* --- fan：1つの決定 → 理由 --- */
+.dia.fan{display:grid;grid-template-columns:minmax(180px,1fr) 1.5fr;gap:22px;align-items:start}
+.dia.fan .dcap,.dia.fan .ftail{grid-column:1/-1}
+.dia .fhead{background:var(--goldL);border-radius:11px;padding:16px 17px}
+.dia .fhead .pill{display:inline-block;font-size:10.5px;letter-spacing:.16em;color:#fff;
+  background:var(--gold);border-radius:999px;padding:3px 11px;margin-bottom:8px}
+.dia .fhead b{display:block;font-size:15px;line-height:1.65;color:#5c3a0c;font-weight:700}
+.dia .freasons{list-style:none;display:flex;flex-direction:column;gap:9px}
+.dia .freasons li{position:relative;padding-left:20px;font-size:13px;color:var(--ink2);line-height:1.8}
+.dia .freasons li::before{content:"";position:absolute;left:0;top:.72em;width:9px;height:1.4px;
+  background:var(--goldBright)}
+
+/* --- pair：前 → いま --- */
+.dia.pair{display:grid;grid-template-columns:1fr 34px 1fr;gap:12px;align-items:stretch}
+.dia.pair .dcap{grid-column:1/-1}
+.dia .pbox{border-radius:11px;padding:15px 16px;border:1px solid var(--hair);background:var(--cream2)}
+.dia .pbox b{display:block;font-size:14.5px;font-weight:700;line-height:1.6}
+.dia .pbox span{display:block;margin-top:5px;font-size:12px;color:var(--sub);line-height:1.75}
+.dia .pbox.bad b{color:var(--sub);text-decoration:line-through;text-decoration-thickness:1.5px}
+.dia .pbox.good{background:var(--greenL);border-color:#cfe0cd}
+.dia .pbox.good b{color:var(--greenD)}
+.dia .pbox .dart{margin-bottom:8px}
+.dia .parrow{display:grid;place-items:center;color:var(--leaf);font-size:19px}
+
+/* --- cols：3つ並べる --- */
+.dia .clist{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.dia .clist li{background:var(--cream2);border-radius:11px;padding:16px 15px;text-align:center}
+.dia .clist li .dart{margin:0 auto 8px}
+.dia .clist li b{display:block;font-size:14px;color:var(--greenD);font-weight:700}
+.dia .clist li span{display:block;margin-top:4px;font-size:12px;color:var(--sub)}
+
+/* --- rows：左 → 右 の対応表 --- */
+.dia .rlist{list-style:none;display:flex;flex-direction:column;gap:8px}
+.dia .rlist li{display:grid;grid-template-columns:minmax(120px,1fr) 24px 1.35fr;gap:8px;
+  align-items:center;background:var(--cream2);border-radius:10px;padding:11px 14px}
+.dia .rlist .rl{font-size:13.5px;font-weight:700;color:var(--greenD);letter-spacing:.03em}
+.dia .rlist .ra{text-align:center;color:var(--leaf)}
+.dia .rlist .rr{font-size:13px;color:var(--ink2);line-height:1.7}
+
+/* --- bars：長さで比べる --- */
+.dia .blist{list-style:none;display:flex;flex-direction:column;gap:10px}
+.dia .blist li{display:grid;grid-template-columns:minmax(96px,.85fr) 1.6fr auto;gap:12px;align-items:center}
+.dia .blist .bl{font-size:13px;color:var(--ink);font-weight:500;letter-spacing:.03em}
+.dia .blist .bt{display:block;height:11px;border-radius:999px;background:var(--cream2);overflow:hidden}
+.dia .blist .bt i{display:block;height:100%;border-radius:999px;background:var(--leaf)}
+.dia .blist li:first-child .bt i{background:var(--green)}
+.dia .blist .br{font-size:11.5px;color:var(--sub);letter-spacing:.02em;white-space:nowrap}
+
+/* --- chips --- */
+.dia .chlist{list-style:none;display:flex;flex-wrap:wrap;gap:8px}
+.dia .chlist li{font-size:13px;border:1px solid var(--hair);border-radius:999px;padding:7px 15px;color:var(--ink2)}
+.dia .chlist li.on{background:var(--green);border-color:var(--green);color:#fff;font-weight:500}
+
+@media (max-width:760px){
+  .dia{padding:16px 15px;border-radius:12px}
+  .plist li .dia{margin-left:-22px;margin-right:0}
+  .dia.fan{grid-template-columns:1fr;gap:14px}
+  .dia.pair{grid-template-columns:1fr;gap:8px}
+  .dia .parrow{transform:rotate(90deg);height:22px}
+  .dia .clist{grid-template-columns:1fr;gap:8px}
+  .dia .clist li{display:flex;align-items:center;gap:12px;text-align:left}
+  .dia .clist li .dart{margin:0}
+  .dia .steps li{flex:1 1 100%}
+  .dia .steps li+li::before{left:50%;top:-9px;transform:translateX(-50%) rotate(135deg)}
+  .dia .rlist li{grid-template-columns:1fr;gap:2px;padding:11px 13px}
+  .dia .rlist .ra{display:none}
+  .dia .rlist .rr::before{content:"→ ";color:var(--leaf)}
+  .dia .blist li{grid-template-columns:1fr;gap:5px}
+  .dia .blist .br{white-space:normal}
+}
