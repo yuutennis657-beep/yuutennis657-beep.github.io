@@ -795,3 +795,101 @@ h1, h2, h3, h4,
   .dumb-rows li .d1,.dumb-rows li .v1{left:var(--x1)!important;opacity:1!important}
   .dumb-rows li .dlt{opacity:1!important}
 }
+
+/* ================================================================
+   大胆モーション v2（2026-08-27・「上品に大胆」）
+   ・中身は全部 @media (prefers-reduced-motion:no-preference) の中。
+     「動きを減らす」設定の人には1行も効かない＝止めるための特別な指定が要らない
+   ・開いた瞬間（オープニング）はCSSだけで完結する。JSが動かなくても再生される
+   ・.rv / .in が付くものだけが motion.js 前提
+   ================================================================ */
+@media (prefers-reduced-motion:no-preference){
+
+  :root{--ez:cubic-bezier(.16,1,.3,1)}
+
+  @keyframes sideIn {from{transform:translateX(-101%)}}
+  @keyframes sideInY{from{transform:translateY(-101%)}}
+  @keyframes draw   {from{stroke-dashoffset:600}}
+  @keyframes riseBig{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+  @keyframes letterIn{from{opacity:0;letter-spacing:.6em}to{opacity:1}}
+  /* 下から「めくれ上がる」出かた。文字を切り抜いて出すので、行が立ち上がって見える */
+  @keyframes maskUp {from{opacity:0;clip-path:inset(0 0 110% 0);transform:translateY(26px)}
+                       to{opacity:1;clip-path:inset(-35% -35% -35% -35%);transform:none}}
+
+  /* ---------- ① 開いた瞬間 ---------- */
+  .side{animation:sideIn .9s var(--ez) both}
+  .side-photo svg circle{stroke-dasharray:600;animation:draw 1.7s var(--ez) both}
+  .side-photo svg circle:nth-child(1){animation-delay:.26s}
+  .side-photo svg circle:nth-child(2){animation-delay:.40s}
+  .side-photo svg circle:nth-child(3){animation-delay:.54s}
+  .side-body>*{animation:riseBig .85s var(--ez) both}
+  .side-body .nm {animation-delay:.34s}
+  .side-body .ttl{animation-delay:.42s}
+  .side-body nav {animation-delay:.50s}
+  .side-body .cta{animation-delay:.60s}
+
+  /* ヒーロー：既存の .st を、大きく・ゆっくり・順番だてて */
+  .hero .st{animation:riseBig .95s var(--ez) both}
+  .hero .eb.st       {animation-name:letterIn;animation-duration:1.1s;animation-delay:.04s}
+  .hero h1.st        {animation-name:maskUp;animation-duration:1.2s;animation-delay:.14s}
+  .hero .role.st     {animation-name:maskUp;animation-duration:1.1s;animation-delay:.34s}
+  .hero .cross.st    {animation:none;opacity:1}
+  .hero .cross.st>*  {animation:maskUp .95s var(--ez) both}
+  .hero .cross.st>*:nth-child(1){animation-delay:.50s}
+  .hero .cross.st>*:nth-child(2){animation-delay:.57s}
+  .hero .cross.st>*:nth-child(3){animation-delay:.64s}
+  .hero .cross.st>*:nth-child(4){animation-delay:.71s}
+  .hero .cross.st>*:nth-child(5){animation-delay:.78s}
+  .hero .crossnote.st{animation-delay:.86s}
+  .hero .lead.st     {animation-delay:.94s}
+  .hero .stats.st    {animation-duration:1.05s;animation-delay:1.00s}
+  .hero .stat        {animation:riseBig .8s var(--ez) both}
+  .hero .stat:nth-child(1){animation-delay:1.10s}
+  .hero .stat:nth-child(2){animation-delay:1.16s}
+  .hero .stat:nth-child(3){animation-delay:1.22s}
+  .hero .stat:nth-child(4){animation-delay:1.28s}
+  @media (max-width:900px){
+    .side{animation-name:sideInY;animation-duration:.7s}
+    .side-body>*{animation-duration:.6s}
+  }
+
+  /* ---------- ② スクロールに連れて ---------- */
+  /* 読み進みバー（motion.js が作る。中身のはじまりに合わせて左を空ける） */
+  .prog{position:fixed;top:0;left:var(--side);width:calc(100% - var(--side));height:3px;z-index:60;
+    background:linear-gradient(90deg,var(--green),var(--leaf) 55%,var(--goldBright));
+    transform:scaleX(0);transform-origin:0 50%;pointer-events:none;opacity:.92;will-change:transform}
+
+  /* 出かたを一段大きく（.rv の土台を上書き） */
+  .rv{transform:translateY(30px);transition-duration:.9s;
+    transition-timing-function:var(--ez)}
+  .rv.rv-x {transform:translateX(-26px)}
+  .rv.rv-ph{transform:translateY(26px)}
+  .rv.in,.rv.rv-x.in,.rv.rv-ph.in{transform:none}
+
+  /* 節の英字（Works / Results / Profile…）は、下からめくれ上がる */
+  .rv .en{clip-path:inset(0 0 110% 0);transform:translateY(20px);
+    transition:clip-path .95s var(--ez) .08s,transform .95s var(--ez) .08s}
+  .rv.in .en{clip-path:inset(-35% -35% -35% -35%);transform:none}
+
+  /* 連絡の大きな緑箱は、少し奥から */
+  .contact.rv{transform:translateY(34px) scale(.985)}
+  .contact.rv.in{transform:none}
+
+  /* ---------- ③ 作品カード ---------- */
+  .works{perspective:1200px}
+  .work.rv{transform:translateY(42px) rotateX(8deg);transform-origin:50% 100%;
+    transition-duration:1s;transition-delay:calc(var(--d,0)*90ms)}
+  .work.rv.in{transform:none}
+  .work .thumb{transition:transform .55s var(--ez),box-shadow .45s var(--ez),border-color .3s}
+  .work:hover .thumb{transform:translateY(-7px);border-color:var(--leaf);
+    box-shadow:0 3px 6px rgba(16,24,40,.05),0 26px 48px -16px rgba(16,24,40,.24)}
+  /* 見出しの下線が、左から走る。
+     くわしい紹介ページがある2本（.wlink）は、もともと下線があるので二重にしない。
+     そちらは線を少し太くして応える */
+  .work h3:not(:has(.wlink)){background-image:linear-gradient(var(--green),var(--green));
+    background-size:0 1.5px;background-repeat:no-repeat;background-position:0 100%;
+    transition:background-size .55s var(--ez),color .3s}
+  .work:hover h3:not(:has(.wlink)){background-size:100% 1.5px}
+  .wlink{transition:background-size .4s var(--ez),color .3s}
+  .work:hover .wlink{background-size:100% 2px}
+}
