@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>伊藤 優 ｜ 名刺</title>
+<meta name="description" content="伊藤優のデジタル名刺。QRを読み取るとプロフィールと自作教材の一覧が見られます。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2335694a'/%3E%3Cg fill='none' stroke='%23faf8f0' stroke-opacity='.92' stroke-width='3'%3E%3Ccircle cx='32' cy='32' r='8'/%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Ccircle cx='32' cy='32' r='26'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#faf8f0; --cream2:#f5efe0; --paper:#fffefa;
+  --ink:#232a25;   --ink2:#414b43;  --sub:#5c665e;
+  --hair:#e3ddca;  --hair2:#eee8d8;
+  --green:#35694a; --greenD:#25503a; --greenL:#eaf2e7; --leaf:#5f9b6d;
+  --gold:#8f5314;  --goldL:#f7e9cf; --goldBright:#e0a03a;
+  --serif:"Cormorant Garamond",serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:22px 16px;
+  color:var(--ink);background:var(--cream);
+  font-family:"Zen Kaku Gothic New","BIZ UDPGothic","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+  line-height:1.95;letter-spacing:.055em;-webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1;
+}
+.sheet{width:100%;max-width:420px;background:var(--paper);border:1px solid var(--hair);
+  border-radius:22px;overflow:hidden;box-shadow:0 20px 50px -26px rgba(46,40,24,.35)}
+
+/* 見出しの帯 */
+.top{background:var(--green);color:#fff;padding:26px 26px 22px;position:relative;overflow:hidden}
+.top svg.art{position:absolute;right:-52px;top:-58px;width:190px;height:190px;opacity:.16}
+.top .eb{font-family:var(--serif);font-size:11px;letter-spacing:.42em;color:#d3e5d8}
+.top h1{font-size:30px;font-weight:500;letter-spacing:.24em;line-height:1.25;margin:6px 0 10px}
+.top .org{font-size:12px;color:#d3e5d8;line-height:1.75;letter-spacing:.06em}
+
+.body{padding:24px 26px 22px}
+.catch{background:var(--goldL);border-radius:12px;padding:14px 16px;font-size:14.5px;
+  font-weight:500;color:#5c3a0c;line-height:1.8;letter-spacing:.07em}
+.cross{margin-top:16px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.cross span{font-size:15px;font-weight:500;letter-spacing:.1em;color:var(--green);border-bottom:1.4px solid var(--leaf);padding-bottom:3px}
+.cross em{font-family:var(--serif);font-style:normal;font-size:19px;color:#8f5314;line-height:1}
+
+.qrwrap{margin-top:20px;display:flex;gap:16px;align-items:center;
+  border:1px solid var(--hair);border-radius:14px;padding:14px;background:var(--cream)}
+.qrwrap img{width:112px;height:112px;flex:none;display:block;border-radius:6px}
+.qrwrap .tx b{display:block;font-size:14px;font-weight:500;line-height:1.6;margin-bottom:4px;color:var(--green)}
+.qrwrap .tx span{font-size:11.5px;color:var(--sub);line-height:1.7;display:block}
+
+.acts{margin-top:16px;display:grid;gap:9px}
+.btn{display:flex;align-items:center;gap:13px;min-height:58px;padding:14px 18px;
+  border:1px solid var(--hair);border-radius:14px;background:var(--paper);
+  font-size:14.5px;font-weight:500;letter-spacing:.06em;color:var(--ink);text-decoration:none;
+  cursor:pointer;font-family:inherit;text-align:left;width:100%;transition:transform .2s,background .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn .ic{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:15px}
+.btn .tx{flex:1;min-width:0}
+.btn .tx small{display:block;font-size:11px;font-weight:400;color:var(--sub);line-height:1.5;
+  letter-spacing:.03em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn .go{flex:none;color:var(--green);font-weight:500}
+.btn.primary{background:var(--green);color:#fff;border-color:var(--green)}
+.btn.primary .tx small{color:#d3e5d8}
+.btn.primary .ic{background:rgba(0,0,0,.18)}
+.btn.primary .go{color:#fff}
+.btn.mail .ic{background:var(--greenL);color:var(--green)}
+.btn.vcf  .ic{background:var(--goldL);color:var(--gold)}
+
+.foot{margin-top:18px;padding-top:15px;border-top:1px solid var(--hair2);
+  font-size:11px;color:var(--sub);line-height:1.85}
+
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.st{opacity:0;animation:rise .46s cubic-bezier(.2,.75,.25,1) forwards;animation-delay:calc(var(--i,0)*56ms)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.st{opacity:1}}
+@media (max-width:400px){ .qrwrap{flex-direction:column;text-align:center} .qrwrap img{width:150px;height:150px} }
+</style>
+</head>
+<body>
+
+<main class="sheet">
+  <div class="top st" style="--i:0">
+    <svg class="art" viewBox="0 0 200 200" aria-hidden="true">
+      <g fill="none" stroke="#ffffff" stroke-width="2.4">
+        <circle cx="100" cy="100" r="34"/><circle cx="100" cy="100" r="62"/><circle cx="100" cy="100" r="90"/>
+      </g></svg>
+    <p class="eb">ITO YU</p>
+    <h1>伊藤 優</h1>
+    <p class="org">東京都 江東区立第四砂町小学校 教諭<br>小学校教員6年目・6年生担任／国語専科<br>全国道徳特別活動研究会 幹事</p>
+  </div>
+
+  <div class="body">
+    <p class="catch st" style="--i:1">願いや想いを、形にする。<br>子どもの「できた」と、先生の「こうしたい」を。</p>
+
+    <div class="cross st" style="--i:2">
+      <span>ICT活用</span><em>×</em><span>特別活動</span><em>×</em><span>国語</span>
+    </div>
+
+    <div class="qrwrap st" style="--i:3">
+      <img src="qr.png" alt="サイトのQRコード">
+      <span class="tx">
+        <b>読み取ってください</b>
+        <span>自作した教育アプリ14本、教室で確かめた実践、お受けできるお仕事までまとめてあります。</span>
+      </span>
+    </div>
+
+    <div class="acts">
+      <a class="btn primary st" style="--i:4" href="./">
+        <span class="ic" aria-hidden="true">◎</span>
+        <span class="tx">サイトを見る<small>作った教材と、教室で確かめたこと</small></span>
+        <span class="go">→</span>
+      </a>
+      <a class="btn mail st" style="--i:5" href="mailto:yuutennis657@gmail.com?subject=%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B%EF%BC%88%E4%BC%8A%E8%97%A4%E5%84%AA%20%E5%90%8D%E5%88%BA%E3%82%88%E3%82%8A%EF%BC%89">
+        <span class="ic" aria-hidden="true">✉</span>
+        <span class="tx">メールを書く<small>yuutennis657@gmail.com</small></span>
+        <span class="go">→</span>
+      </a>
+      <button class="btn vcf st" style="--i:6" id="vcf">
+        <span class="ic" aria-hidden="true">▤</span>
+        <span class="tx">連絡先に登録<small>vCard（.vcf）をダウンロード</small></span>
+        <span class="go">↓</span>
+      </button>
+    </div>
+
+    <p class="foot">
+      お仕事のご相談は、監修・共同開発／講演・研修／執筆・寄稿のいずれでも。<br>
+      公立学校の教員のため、報酬をともなう場合は兼業許可の手続きが必要です。まずご相談ください。
+    </p>
+  </div>
+</main>
+
+<script>
+document.getElementById('vcf').addEventListener('click', function(){
+  var vcf = [
+    'BEGIN:VCARD','VERSION:3.0',
+    'N:伊藤;優;;;','FN:伊藤 優',
+    'ORG:江東区立第四砂町小学校','TITLE:教諭／全国道徳特別活動研究会 幹事',
+    'EMAIL;TYPE=INTERNET:yuutennis657@gmail.com',
+    'URL:' + location.origin + location.pathname.replace(/card\.html$/,''),
+    'NOTE:小学校教員6年目。7教科で教育アプリを14本自作。監修・共同開発／講演・研修／執筆。',
+    'END:VCARD'
+  ].join('\r\n');
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([vcf], {type:'text/vcard;charset=utf-8'}));
+  a.download = 'ito-yu.vcf';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1500);
+});
+</script>
+</body>
+</html>

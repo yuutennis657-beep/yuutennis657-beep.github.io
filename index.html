@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>伊藤 優 ｜ 教材を、自分で作る小学校教員</title>
+<meta name="description" content="小学校教員6年目。子どもの「できた」と、先生の「こうしたい」を形にするために、7教科で14本の教育アプリを自作しています。監修・共同開発／講演・研修／執筆のご相談を受けています。">
+<meta property="og:title" content="伊藤 優 ｜ 教材を、自分で作る小学校教員">
+<meta property="og:description" content="願いや想いを、形にする。14本の自作教育アプリと、教室で確かめた実践の記録。">
+<meta property="og:type" content="profile">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2335694a'/%3E%3Cg fill='none' stroke='%23faf8f0' stroke-opacity='.92' stroke-width='3'%3E%3Ccircle cx='32' cy='32' r='8'/%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Ccircle cx='32' cy='32' r='26'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   伊藤 優 ── 個人サイト
+   地＝クリーム／図＝若草。色相の軸は1本だけ：
+     若草  = 子どもが使う教材
+     深緑  = 先生が使う道具
+     山吹  = アクセント（ラベルの点・番号）。1色だけ
+   ================================================================ */
+:root{
+  --cream:#faf8f0; --cream2:#f5efe0; --paper:#fffefa;
+  --ink:#232a25;   --ink2:#414b43;  --sub:#5c665e;
+  --hair:#e3ddca;  --hair2:#eee8d8;
+  --green:#35694a; --greenD:#25503a; --greenL:#eaf2e7; --leaf:#5f9b6d;
+  --gold:#8f5314;  --goldL:#f7e9cf; --goldBright:#e0a03a;
+  --side:264px;
+  --serif:"Cormorant Garamond",serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:clip}
+body{
+  overflow-x:clip;color:var(--ink);background:var(--cream);
+  font-family:"Zen Kaku Gothic New","BIZ UDPGothic","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+  font-size:15.5px;line-height:2.05;letter-spacing:.055em;
+  -webkit-font-smoothing:antialiased;font-feature-settings:"palt" 1;
+}
+img{max-width:100%;display:block}
+a{color:var(--green)}
+.num{font-variant-numeric:tabular-nums;letter-spacing:0}
+
+/* ================= 左の固定パネル ================= */
+.side{position:fixed;left:0;top:0;width:var(--side);height:100dvh;z-index:40;
+  display:flex;flex-direction:column;background:var(--green);color:#fff}
+.side-photo{position:relative;aspect-ratio:1/1;overflow:hidden;flex:none;
+  background:#e0e9dc;display:grid;place-items:center}
+.side-photo svg{position:absolute;inset:0;width:100%;height:100%}
+.side-photo .mono{font-size:74px;color:#4a7a5c;line-height:1;letter-spacing:.05em}
+.side-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2}
+.side-body{flex:1;display:flex;flex-direction:column;padding:26px 24px 24px;min-height:0}
+.side .nm{font-size:19px;font-weight:500;letter-spacing:.3em;line-height:1.3}
+.side .nm small{display:block;font-size:9.5px;letter-spacing:.36em;color:#d3e5d8;margin-top:7px;font-weight:400}
+.side .ttl{font-size:11px;line-height:1.75;color:#d3e5d8;margin-top:14px;letter-spacing:.06em}
+.side nav{margin-top:26px;display:flex;flex-direction:column}
+.side nav a{display:flex;align-items:center;gap:9px;color:#fff;text-decoration:none;
+  font-size:13px;letter-spacing:.13em;padding:9px 0;min-height:44px;opacity:.92;transition:opacity .2s,gap .2s}
+.side nav a::before{content:"";width:7px;height:7px;border-right:1.2px solid #a9cbb4;
+  border-bottom:1.2px solid #a9cbb4;transform:rotate(45deg) translateY(-2px);flex:none}
+.side nav a:hover{opacity:1;gap:13px}
+.side .cta{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  border:1px solid rgba(255,255,255,.6);border-radius:999px;padding:14px 20px;min-height:52px;
+  color:#fff;text-decoration:none;font-size:13px;letter-spacing:.2em;transition:background .22s,color .22s}
+.side .cta:hover{background:#fff;color:var(--green)}
+
+/* ================= 本体 ================= */
+main{margin-left:var(--side)}
+.wrap{max-width:880px;margin:0 auto;padding:0 clamp(24px,5vw,64px)}
+
+/* --- セクション見出し --- */
+section{padding:104px 0 0}
+.head{margin-bottom:44px}
+.head .eb{font-family:var(--serif);font-size:14px;letter-spacing:.44em;color:var(--gold);
+  font-weight:400;text-transform:uppercase}
+.head .en{font-family:var(--serif);font-size:clamp(46px,7vw,74px);line-height:1.05;font-weight:300;
+  color:var(--green);letter-spacing:.04em;margin:6px 0 14px}
+.head .jp{font-size:19px;font-weight:500;letter-spacing:.13em;line-height:1.7}
+.head .lead{margin-top:16px;font-size:15px;color:var(--ink2);max-width:46em}
+.ul{display:inline;background-image:linear-gradient(currentColor,currentColor);
+  background-size:100% 1.4px;background-repeat:no-repeat;background-position:0 1.5em;
+  -webkit-box-decoration-break:clone;box-decoration-break:clone}
+
+/* ================= ヒーロー ================= */
+.hero{padding:clamp(70px,11vh,120px) 0 0}
+.hero .eb{font-family:var(--serif);font-size:14px;letter-spacing:.44em;color:var(--gold)}
+.hero h1{font-family:var(--serif);font-size:clamp(58px,10vw,104px);line-height:1;font-weight:300;
+  color:var(--green);letter-spacing:.04em;margin:10px 0 22px}
+.hero .role{font-size:clamp(20px,2.9vw,27px);font-weight:500;line-height:2;letter-spacing:.1em}
+.hero .role b{font-weight:500;color:var(--green)}
+.cross{display:flex;align-items:center;gap:clamp(10px,2vw,20px);flex-wrap:wrap;margin-top:26px}
+.cross span{font-size:clamp(19px,2.7vw,25px);font-weight:500;letter-spacing:.14em;color:var(--green);
+  border-bottom:1.4px solid var(--leaf);padding-bottom:4px}
+.cross em{font-family:var(--serif);font-style:normal;font-size:clamp(22px,3vw,30px);color:#b3771f;line-height:1}
+.crossnote{margin-top:14px;font-size:13.5px;color:var(--sub);letter-spacing:.08em}
+.hero .lead+.lead{margin-top:14px}
+.band{margin-bottom:44px}
+.band .ph{border-radius:20px;overflow:hidden;background:var(--cream2);aspect-ratio:16/9}
+.band img{width:100%;height:100%;object-fit:cover}
+.band figcaption{margin-top:10px;font-size:11.5px;color:var(--sub);letter-spacing:.08em}
+.hero .lead{margin-top:26px;font-size:15px;color:var(--ink2);max-width:44em;line-height:2.2}
+.hero .lead b{color:var(--ink);font-weight:700}
+
+/* --- 数字パネル --- */
+.stats{margin-top:46px;background:var(--cream2);border-radius:20px;padding:30px 34px;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.stat{position:relative;padding-left:16px}
+.stat+.stat{border-left:1px solid #e2d9c0;padding-left:26px}
+.stat .lb{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--gold);
+  letter-spacing:.14em;font-weight:500;margin-bottom:4px}
+.stat .lb::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--goldBright);flex:none}
+.stat b{display:block;font-size:44px;line-height:1.05;color:var(--green);font-weight:400;letter-spacing:0}
+.stat b small{font-size:15px;font-weight:500;margin-left:3px;color:var(--ink2);letter-spacing:.06em}
+.stat span{display:block;font-size:11.5px;color:var(--sub);margin-top:8px;line-height:1.7}
+
+/* ================= 仕事の型 ================= */
+.kata{display:flex;flex-direction:column;gap:56px}
+.kata article{display:grid;grid-template-columns:132px 1fr;gap:20px;align-items:start}
+.kata .illwrap{display:flex;flex-direction:column;align-items:center;gap:4px}
+.kata .no{font-family:var(--serif);font-size:30px;line-height:1;font-weight:300;
+  color:#b3771f;letter-spacing:.06em}
+.kata .ill{width:116px;height:116px;display:block}
+.kata h3{font-size:21px;font-weight:500;line-height:1.85;letter-spacing:.1em;
+  color:var(--green);margin-bottom:16px}
+.kata p{font-size:15px;color:var(--ink2)}
+.kata p+p{margin-top:14px}
+.kata b{color:var(--ink);font-weight:700}
+
+/* ================= 作品 ================= */
+.legend{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:26px;font-size:12.5px;color:var(--sub)}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:-1px}
+.works{display:grid;grid-template-columns:repeat(2,1fr);gap:34px 26px}
+.work{display:flex;flex-direction:column}
+.thumb{position:relative;aspect-ratio:16/9;overflow:hidden;border-radius:14px;
+  background:var(--tintL);border:1px solid var(--hair)}
+.thumb svg{position:absolute;inset:0;width:100%;height:100%}
+.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2}
+.thumb .ph{position:absolute;right:14px;bottom:10px;z-index:1;font-family:var(--serif);
+  font-size:12px;letter-spacing:.3em;color:var(--sub);opacity:.55}
+.work .tag{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;letter-spacing:.13em;
+  color:var(--tintT,var(--green));margin:16px 0 7px}
+.work .tag::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--tint);flex:none}
+.work h3{font-size:20px;font-weight:500;letter-spacing:.1em;line-height:1.6;margin-bottom:3px}
+.work h3 span{color:var(--tint)}
+.work .sub{font-size:11.5px;color:var(--sub);margin-bottom:10px;letter-spacing:.06em}
+.work p{font-size:14px;color:var(--ink2);line-height:1.95;flex:1}
+.work p b{color:var(--ink);font-weight:700}
+.work .meta{margin-top:14px;padding-top:10px;border-top:1px solid var(--hair);
+  font-size:11.5px;color:var(--sub);display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.work .meta b{color:var(--ink2);font-weight:700}
+.inlink{display:inline-block;padding:10px 3px;margin:-10px 0}
+.more{margin-top:40px;font-size:14px;color:var(--ink2);background:var(--cream2);
+  border-radius:16px;padding:24px 28px;line-height:2.1}
+.more b{color:var(--ink);font-weight:700}
+
+/* ================= 実践 ================= */
+.result{margin-top:4px}
+.result h3{font-size:23px;font-weight:500;line-height:1.85;letter-spacing:.09em;color:var(--green);margin-bottom:10px}
+.result .cond{font-size:12.5px;color:var(--sub);margin-bottom:34px;line-height:1.9}
+.figs{background:var(--cream2);border-radius:20px;padding:30px 34px;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-bottom:34px}
+.fig+.fig{border-left:1px solid #e2d9c0;padding-left:24px}
+.fig .lb{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--gold);
+  letter-spacing:.14em;font-weight:500;margin-bottom:6px}
+.fig .lb::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--goldBright);flex:none}
+.fig b{display:block;font-size:29px;line-height:1.2;color:var(--green);font-weight:400;letter-spacing:0}
+.fig b .to{color:var(--sub);font-size:18px;margin:0 5px}
+.fig b small{font-size:14px;color:var(--ink2);margin-left:2px}
+.fig .d{font-size:12px;color:var(--green);font-weight:700;margin-top:6px;letter-spacing:.04em}
+.result p{font-size:15px;color:var(--ink2)}
+.result p+p{margin-top:16px}
+.result b{color:var(--ink);font-weight:700}
+.quote{margin:28px 0 6px;padding:22px 26px;background:var(--goldL);border-radius:16px;
+  font-size:18px;font-weight:500;color:#5c3a0c;line-height:1.9;letter-spacing:.09em}
+.proof{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin:30px 0 6px}
+.proof figure{margin:0}
+.proof .ph{aspect-ratio:4/3;border-radius:14px;overflow:hidden;background:var(--cream2);border:1px solid var(--hair)}
+.proof img{width:100%;height:100%;object-fit:contain;background:#fff}
+.proof figcaption{margin-top:9px;font-size:11.5px;color:var(--sub);line-height:1.7}
+.proof figcaption b{color:var(--ink2);font-weight:700}
+.byclass{margin:26px 0 6px;border:1px solid var(--hair);border-radius:16px;overflow:hidden}
+.byclass table{width:100%;border-collapse:collapse;font-size:13px}
+.byclass th,.byclass td{padding:11px 14px;text-align:right;border-bottom:1px solid var(--hair2)}
+.byclass th:first-child,.byclass td:first-child{text-align:left}
+.byclass thead th{background:var(--green);color:#fff;font-weight:500;font-size:12px;letter-spacing:.08em;border:none}
+.byclass tbody tr:last-child td{border-bottom:none;background:var(--greenL);font-weight:700}
+.byclass .up{color:var(--green);font-weight:700}
+.caveat{margin-top:28px;font-size:12.5px;color:var(--sub);border-top:1px solid var(--hair);
+  padding-top:18px;line-height:1.95}
+
+/* ================= いま ================= */
+.now{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;background:var(--hair);
+  border:1px solid var(--hair);border-radius:16px;overflow:hidden}
+.now div{background:var(--cream);padding:20px 24px;transition:background .2s}
+.now div:hover{background:var(--paper)}
+.now em{font-style:normal;font-size:10.5px;font-weight:500;letter-spacing:.24em;color:var(--gold)}
+.now b{display:block;font-size:15.5px;margin:4px 0 3px;font-weight:500;letter-spacing:.08em}
+.now span{font-size:12.5px;color:var(--sub);line-height:1.8}
+
+/* ================= できること ================= */
+.offer{display:flex;flex-direction:column;gap:44px}
+.offer article{display:grid;grid-template-columns:78px 1fr;gap:6px}
+.offer .ic{width:46px;height:46px;border-radius:50%;background:var(--greenL);color:var(--green);
+  display:grid;place-items:center}
+.offer .ic svg{width:23px;height:23px}
+.offer h3{font-size:19px;font-weight:500;letter-spacing:.11em;color:var(--green);margin-bottom:12px}
+.offer p{font-size:14.5px;color:var(--ink2)}
+.offer b{color:var(--ink);font-weight:700}
+.note{margin-top:46px;font-size:13.5px;color:var(--ink2);background:var(--greenL);
+  border-radius:16px;padding:22px 26px;line-height:2}
+.note b{color:var(--greenD);font-weight:700}
+
+/* ================= 連絡 ================= */
+.contact{margin-top:6px;background:var(--green);color:#fff;border-radius:24px;
+  padding:52px 46px;position:relative;overflow:hidden}
+.contact svg.art{position:absolute;right:-60px;top:-70px;width:340px;height:340px;opacity:.13}
+.contact .en{font-family:var(--serif);font-size:52px;font-weight:300;letter-spacing:.05em;line-height:1}
+.contact p{margin-top:16px;font-size:14px;color:#d3e5d8;max-width:40em;line-height:2}
+.mail{display:inline-flex;align-items:center;justify-content:space-between;gap:22px;margin-top:28px;
+  background:var(--cream);color:var(--greenD);font-size:16px;font-weight:500;letter-spacing:.06em;
+  text-decoration:none;border-radius:999px;padding:18px 28px;min-height:58px;transition:transform .2s}
+.mail:hover{transform:translateY(-2px)}
+footer{padding:56px 0 72px;font-size:11.5px;color:var(--sub);line-height:2}
+
+/* ================= プロフィール ================= */
+.prof{display:grid;grid-template-columns:300px 1fr;gap:36px;align-items:start}
+.prof-ph{margin:0}
+.prof-ph .ph{aspect-ratio:4/5;border-radius:20px;overflow:hidden;background:var(--cream2);border:1px solid var(--hair)}
+.prof-ph img{width:100%;height:100%;object-fit:cover}
+.prof-ph figcaption{margin-top:9px;font-size:11.5px;color:var(--sub);line-height:1.7;letter-spacing:.06em}
+.prof .nmbig{font-size:30px;font-weight:500;letter-spacing:.22em;color:var(--green);line-height:1.4}
+.prof .nmbig small{display:block;font-family:var(--serif);font-size:13px;letter-spacing:.32em;
+  color:var(--sub);margin-top:9px;font-weight:400}
+.prof .bio{font-size:15px;color:var(--ink2);margin-top:22px}
+.prof .bio+.bio{margin-top:14px}
+.prof .bio b{color:var(--ink);font-weight:700}
+.facts{margin-top:26px;border-top:1px solid var(--hair)}
+.facts div{display:grid;grid-template-columns:92px 1fr;gap:14px;padding:11px 2px;border-bottom:1px solid var(--hair2)}
+.facts dt{font-size:11.5px;color:var(--gold);letter-spacing:.14em;font-weight:500;padding-top:5px}
+.facts dd{font-size:14px;color:var(--ink2);line-height:1.9}
+.facts dd a{text-decoration:none;border-bottom:1px solid #b7cfbe}
+.sub-h{margin:66px 0 8px;font-size:20px;font-weight:500;letter-spacing:.12em;color:var(--green)}
+.sub-note{font-size:13.5px;color:var(--ink2);margin-bottom:26px;max-width:44em}
+.career{list-style:none;border:1px solid var(--hair);border-radius:16px;overflow:hidden;background:var(--paper)}
+.career li{display:grid;grid-template-columns:152px 1fr;gap:20px;padding:19px 24px;
+  border-bottom:1px solid var(--hair2);align-items:start}
+.career li:last-child{border-bottom:none}
+.career .yr{font-size:12.5px;color:var(--green);font-weight:500;line-height:1.75;letter-spacing:.05em;padding-top:2px}
+.career .yr small{display:block;font-size:11px;color:var(--sub);font-weight:400;letter-spacing:.03em;margin-top:2px}
+.career .tg{display:inline-flex;align-items:center;gap:7px;font-size:10.5px;letter-spacing:.2em;
+  color:var(--gold);font-weight:500;margin-bottom:7px}
+.career .tg::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--goldBright);flex:none}
+.career b{display:block;font-size:15.5px;font-weight:500;letter-spacing:.08em;color:var(--ink);line-height:1.8}
+.career span.d{display:block;font-size:12.5px;color:var(--sub);line-height:1.9;margin-top:6px}
+.prof-figs{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:24px}
+.prof-figs figure{margin:0}
+.prof-figs .ph{aspect-ratio:16/10;border-radius:14px;overflow:hidden;background:var(--cream2);border:1px solid var(--hair)}
+.prof-figs img{width:100%;height:100%;object-fit:cover}
+.prof-figs figcaption{margin-top:9px;font-size:11.5px;color:var(--sub);line-height:1.75}
+.prof-figs figcaption b{color:var(--ink2);font-weight:700}
+
+/* ================= モーション ================= */
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.st{opacity:0;animation:rise .5s cubic-bezier(.2,.75,.25,1) forwards;animation-delay:calc(var(--i,0)*58ms)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.st{opacity:1}}
+
+/* ================= 狭い画面 ================= */
+@media (max-width:1080px){ :root{--side:224px} .wrap{max-width:100%} }
+@media (max-width:900px){
+  :root{--side:0px}
+  .side{position:sticky;width:100%;height:auto;flex-direction:row;align-items:center;
+    gap:14px;padding:10px 16px;flex-wrap:wrap}
+  .side-photo{width:46px;aspect-ratio:1/1;border-radius:50%;flex:none}
+  .side-photo .mono{font-size:24px}
+  .side-body{padding:0;flex-direction:row;align-items:center;gap:16px;overflow:hidden}
+  .side .nm{font-size:15px;letter-spacing:.2em;white-space:nowrap}
+  .side .nm small,.side .ttl{display:none}
+  .side nav{margin:0;flex-direction:row;gap:2px;overflow-x:auto;scrollbar-width:none}
+  .side nav::-webkit-scrollbar{display:none}
+  .side nav a{font-size:12px;white-space:nowrap;padding:8px 8px}
+  .side nav a::before{display:none}
+  .side .cta{display:none}
+  main{margin-left:0}
+  section{padding:76px 0 0}
+  .head{margin-bottom:32px}
+  .stats,.figs{grid-template-columns:repeat(2,1fr);gap:24px 20px;padding:24px 22px}
+  .stat+.stat,.fig+.fig{border-left:none;padding-left:16px}
+  .stat:nth-child(even),.fig:nth-child(even){border-left:1px solid #e2d9c0;padding-left:20px}
+  .works,.now{grid-template-columns:1fr}
+  .prof{grid-template-columns:1fr;gap:24px}
+  .prof-ph{max-width:340px}
+  .prof-ph .ph{aspect-ratio:4/5}
+  .facts div{grid-template-columns:76px 1fr;gap:10px}
+  .career li{grid-template-columns:1fr;gap:8px;padding:18px 20px}
+  .career .yr small{display:inline;margin-left:8px}
+  .prof-figs{grid-template-columns:1fr}
+  .kata article,.offer article{grid-template-columns:1fr;gap:10px}
+  .kata .no{font-size:52px}
+  .contact{padding:36px 26px}
+  .contact .en{font-size:40px}
+  .mail{width:100%;font-size:14.5px;padding:16px 22px}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= 左の固定パネル ================= -->
+<aside class="side">
+  <div class="side-photo">
+    <svg viewBox="0 0 200 200" aria-hidden="true">
+      <g fill="none" stroke="#35694a" stroke-opacity=".2" stroke-width="1.2">
+        <circle cx="100" cy="100" r="42"/><circle cx="100" cy="100" r="64"/><circle cx="100" cy="100" r="86"/>
+      </g></svg>
+    <span class="mono">優</span>
+    <img src="img/portrait.jpg" alt="伊藤優" onerror="this.remove()">
+  </div>
+  <div class="side-body">
+    <p class="nm">伊藤 優<small>ITO YU</small></p>
+    <p class="ttl">江東区立第四砂町小学校 教諭<br>小学校教員6年目・6年生担任／国語専科<br>全国道徳特別活動研究会 幹事<br><span style="color:#f5d69a">ICT活用 × 特別活動 × 国語</span></p>
+    <nav>
+      <a href="#profile">わたしのこと</a>
+      <a href="#strength">わたしの強み</a>
+      <a href="#works">作った教材</a>
+      <a href="#evidence">教室で確かめたこと</a>
+      <a href="#now">いま取り組んでいること</a>
+      <a href="#offer">できること</a>
+    </nav>
+    <a class="cta" href="#contact">CONTACT <span aria-hidden="true">→</span></a>
+  </div>
+</aside>
+
+<main>
+
+<!-- ================= ヒーロー ================= -->
+<div class="wrap hero">
+  <p class="eb st" style="--i:0">Portfolio 2026</p>
+  <h1 class="st" style="--i:1">Ito Yu</h1>
+  <p class="role st" style="--i:2">願いや想いを、形にする。<br><b>子どもの「できた」と、先生の「こうしたい」を。</b></p>
+  <div class="cross st" style="--i:3">
+    <span>ICT活用</span><em>×</em><span>特別活動</span><em>×</em><span>国語</span>
+  </div>
+  <p class="crossnote st" style="--i:3">この3つが重なるところに、自作した14本の教材があります。</p>
+
+  <p class="lead st" style="--i:4">
+    小学校教員6年目。国語・社会・理科・算数・体育・特別活動の7教科で、<b>14本</b>の教育アプリを自作しています。
+    子どもが使う教材と、先生が使う道具の両方です。
+  </p>
+
+  <div class="stats st" style="--i:5">
+    <div class="stat">
+      <span class="lb">自作した教材</span>
+      <b class="num">14<small>本</small></b>
+      <span>国語6・社会3・特活2<br>算数2・理科1</span>
+    </div>
+    <div class="stat">
+      <span class="lb">扱う教科</span>
+      <b class="num">7<small>教科</small></b>
+      <span>国語・社会・理科・算数<br>体育・道徳・特別活動</span>
+    </div>
+    <div class="stat">
+      <span class="lb">効果を測った児童</span>
+      <b class="num">101<small>名</small></b>
+      <span>6年3学級・のべ<br>前後のテストで比較</span>
+    </div>
+    <div class="stat">
+      <span class="lb">教員歴</span>
+      <b class="num">6<small>年目</small></b>
+      <span>小学校教員として<br>教室に立った年数</span>
+    </div>
+  </div>
+</div>
+
+<!-- ================= プロフィール ================= -->
+<section id="profile"><div class="wrap">
+  <div class="head">
+    <p class="eb">Who I am</p>
+    <p class="en">Profile</p>
+    <p class="jp"><span class="ul">わたしのこと</span></p>
+    <p class="lead">はじめまして。どんな人間が、どんな場所で、何をしてきたのかを先に書いておきます。</p>
+  </div>
+
+  <div class="prof">
+    <figure class="prof-ph">
+      <div class="ph"><img src="img/profile.jpg" alt="伊藤優" onerror="this.closest('.prof-ph').remove()"></div>
+      <figcaption>研究会で話しているところ。特別活動の提案は、この5年でいちばん時間をかけてきた仕事です。</figcaption>
+    </figure>
+
+    <div>
+      <p class="nmbig">伊藤 優<small>ITO YU ／ いとう ゆう</small></p>
+
+      <p class="bio">1998年生まれ。東京都の公立小学校で教員6年目、いまは6年生の担任と国語専科をしています。</p>
+
+      <p class="bio">教材は、<b>自分で作ります</b>。国語・社会・理科・算数・体育・特別活動の7教科で14本。
+      作って終わりにせず、教室で使って、<b>効いたかどうかを数字と文章で残す</b>ところまでを一続きの仕事だと思っています。</p>
+
+      <p class="bio">もうひとつの軸が<b>特別活動</b>です。全国道徳特別活動研究会の幹事と、江東区小学校教育研究会 特別活動部の副部長を務めています。
+      学級会や児童会活動の話合いを、どうやって子どもの手に返すか ── ここ数年、いちばん考えてきたテーマです。</p>
+
+      <p class="bio">ICTと特別活動は、まだほとんど重なっていません。<b>その空いている場所に、自分で作った道具を持って立っています。</b></p>
+
+      <dl class="facts">
+        <div><dt>現職</dt><dd>江東区立第四砂町小学校 教諭（6年生担任・国語専科）／教員6年目</dd></div>
+        <div><dt>専門</dt><dd>特別活動（学級会・児童会活動）／国語／ICT活用・教材開発</dd></div>
+        <div><dt>役職</dt><dd>全国道徳特別活動研究会 幹事<br>江東区小学校教育研究会 特別活動部 副部長</dd></div>
+        <div><dt>作ったもの</dt><dd>7教科14本の教育アプリ（Chromebookで動き、ネットが切れても止まりません）</dd></div>
+        <div><dt>連絡先</dt><dd><a href="mailto:yuutennis657@gmail.com">yuutennis657@gmail.com</a></dd></div>
+      </dl>
+    </div>
+  </div>
+
+  <h3 class="sub-h"><span class="ul">これまでの役職と実績</span></h3>
+  <p class="sub-note">校外での役職と、外に出した実践です。所属や肩書よりも、そこで何を提案したかのほうを見ていただければと思います。</p>
+
+  <ol class="career">
+    <li>
+      <p class="yr">令和5年度〜7年度<small>2023 – 2026</small></p>
+      <div>
+        <p class="tg">役職</p>
+        <b>全国道徳特別活動研究会「語る会」　特別活動 幹事</b>
+        <span class="d">全国の特別活動の実践者が集まる研究会で、特活の幹事を務めています。実践している先生とのつながりが、ここにあります。</span>
+      </div>
+    </li>
+    <li>
+      <p class="yr">令和7年度<small>2025 – 2026</small></p>
+      <div>
+        <p class="tg">提案</p>
+        <b>同研究会 全国大会にて、児童会活動の提案</b>
+        <span class="d">第47回 全国研究大会。自分の学校の児童会活動の実践を、全国の場で提案しました。</span>
+      </div>
+    </li>
+    <li>
+      <p class="yr">令和5年度〜7年度<small>2023 – 2026</small></p>
+      <div>
+        <p class="tg">役職</p>
+        <b>江東区小学校教育研究会　特別活動部 副部長</b>
+        <span class="d">区内の小学校の特別活動部の副部長として、研究会の運営と提案に関わっています。</span>
+      </div>
+    </li>
+    <li>
+      <p class="yr">　</p>
+      <div>
+        <p class="tg">役職</p>
+        <b>教育セミナー授業技術文化会　委員</b>
+        <span class="d">授業の技術を持ち寄って学び合う会の委員を務めています。</span>
+      </div>
+    </li>
+    <li>
+      <p class="yr">2026年7月</p>
+      <div>
+        <p class="tg">実践</p>
+        <b>漢字の実践で、のべ101名の前後比較</b>
+        <span class="d">6年生3学級・のべ101名。学年平均 75.4 → 82.4（＋7.0）。集計は勤務校の管理職へ提出ずみです。→ <a class="inlink" href="#evidence">教室で確かめたこと</a></span>
+      </div>
+    </li>
+    <li>
+      <p class="yr">2026年度</p>
+      <div>
+        <p class="tg">執筆</p>
+        <b>教育論文4本に応募（執筆中）</b>
+        <span class="d">学事出版教育文化賞／ICT夢コンテスト／東書教育賞／道徳と特別活動の教育研究賞。→ <a class="inlink" href="#now">いま取り組んでいること</a></span>
+      </div>
+    </li>
+  </ol>
+
+  <div class="prof-figs">
+    <figure>
+      <div class="ph"><img src="img/tokkatsu_teian.jpg" alt="学級会の話合いの実践を提案しているところ" onerror="this.closest('figure').remove()"></div>
+      <figcaption><b>特別活動の提案</b>／「話合いで決まったこと・決まらなかったこと」を掲示に残す学級会の実践。研究会での提案の一場面です。</figcaption>
+    </figure>
+    <figure>
+      <div class="ph"><img src="img/zenkoku_taikai.jpg" alt="全国道徳特別活動研究会 全国研究大会の会場" onerror="this.closest('figure').remove()"></div>
+      <figcaption><b>第47回 全国研究大会</b>／全国道徳特別活動研究会の全国大会。ここで児童会活動の提案をしました。</figcaption>
+    </figure>
+  </div>
+</div></section>
+
+<!-- ================= わたしの強み ================= -->
+<section id="strength"><div class="wrap">
+  <div class="head">
+    <p class="eb">What I bring</p>
+    <p class="en">Strength</p>
+    <p class="jp"><span class="ul">わたしの強み</span></p>
+    <p class="lead">「アプリを作れます」だけでは、お仕事にはならないと思っています。
+    教材会社の方・研修をお考えの方に、わたしが持ち込めるものを4つ書きます。</p>
+  </div>
+
+  <div class="kata">
+
+    <article>
+      <div class="illwrap">
+        <p class="no">1</p>
+        <svg class="ill" viewBox="0 0 120 120" aria-hidden="true">
+  <circle cx="60" cy="26" r="11" fill="#eaf2e7" stroke="#35694a" stroke-width="2.4"/>
+  <path d="M41 52c2-12 36-12 38 0" fill="#eaf2e7" stroke="#35694a" stroke-width="2.4" stroke-linecap="round"/>
+  <rect x="8" y="66" width="42" height="36" rx="4" fill="#fff" stroke="#35694a" stroke-width="2.4"/>
+  <path d="M29 66v36M16 76h8M16 84h8M35 76h8M35 84h8" stroke="#35694a" stroke-width="2" stroke-linecap="round" opacity=".55"/>
+  <rect x="70" y="66" width="42" height="36" rx="5" fill="#eaf2e7" stroke="#35694a" stroke-width="2.4"/>
+  <path d="M86 78l12 6-12 6z" fill="#e0a03a"/>
+  <path d="M54 84h12" stroke="#e0a03a" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M50 80l-4 4 4 4M70 80l4 4-4 4" fill="none" stroke="#e0a03a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+      </div>
+      <div>
+        <h3><span class="ul">教科の中身と、動くものを、一人で</span></h3>
+        <p>単元を組む人と、教材を作る人が分かれません。だから<b>試作を見てから、中身を決め直せます</b>。企画から教室で試すまで、1週間で回ります。</p>
+      </div>
+    </article>
+
+    <article>
+      <div class="illwrap">
+        <p class="no">2</p>
+        <svg class="ill" viewBox="0 0 120 120" aria-hidden="true">
+  <rect x="22" y="30" width="76" height="50" rx="4" fill="#eaf2e7" stroke="#35694a" stroke-width="2.4"/>
+  <path d="M12 88h96l-8-8H20z" fill="#fff" stroke="#35694a" stroke-width="2.4" stroke-linejoin="round"/>
+  <path d="M46 60l9 9 19-22" fill="none" stroke="#e0a03a" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="22" cy="18" r="11" fill="#fff" stroke="#35694a" stroke-width="2.2"/>
+  <path d="M17 20c3-3 7-3 10 0M19.5 23c1.5-1.5 3.5-1.5 5 0" fill="none" stroke="#35694a" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M15 25L29 11" stroke="#e0a03a" stroke-width="2.2" stroke-linecap="round"/>
+  <circle cx="60" cy="14" r="11" fill="#fff" stroke="#35694a" stroke-width="2.2"/>
+  <rect x="55" y="13" width="10" height="8" rx="1.6" fill="none" stroke="#35694a" stroke-width="1.8"/>
+  <path d="M57 13v-2.4a3 3 0 016 0V13" fill="none" stroke="#35694a" stroke-width="1.8"/>
+  <circle cx="98" cy="18" r="11" fill="#fff" stroke="#35694a" stroke-width="2.2"/>
+  <path d="M98 12v6l4 3" fill="none" stroke="#35694a" stroke-width="1.9" stroke-linecap="round"/>
+  <circle cx="98" cy="18" r="11" fill="none" stroke="#e0a03a" stroke-width="2.2" stroke-dasharray="3 4"/>
+</svg>
+      </div>
+      <div>
+        <h3><span class="ul">「学校で配れる形」から逆算します</span></h3>
+        <p>Chromebookで開く／ネットが切れても止まらない／個人情報が校外に出ない／45分のどこに入るか。この4つを満たす形でしか作りません。<b>あとから「現場では使えない」と言われることがありません。</b></p>
+      </div>
+    </article>
+
+    <article>
+      <div class="illwrap">
+        <p class="no">3</p>
+        <svg class="ill" viewBox="0 0 120 120" aria-hidden="true">
+  <circle cx="60" cy="62" r="34" fill="none" stroke="#35694a" stroke-width="2" stroke-opacity=".3" stroke-dasharray="4 6"/>
+  <circle cx="60.0" cy="23.0" r="7.4" fill="#eaf2e7" stroke="#35694a" stroke-width="2.3"/><path d="M51.0 37.0c1-7 17-7 18 0" fill="#eaf2e7" stroke="#35694a" stroke-width="2.3" stroke-linecap="round"/><circle cx="90.6" cy="42.1" r="7.4" fill="#eaf2e7" stroke="#35694a" stroke-width="2.3"/><path d="M81.6 56.1c1-7 17-7 18 0" fill="#eaf2e7" stroke="#35694a" stroke-width="2.3" stroke-linecap="round"/><circle cx="86.8" cy="77.9" r="7.4" fill="#eaf2e7" stroke="#35694a" stroke-width="2.3"/><path d="M77.8 91.9c1-7 17-7 18 0" fill="#eaf2e7" stroke="#35694a" stroke-width="2.3" stroke-linecap="round"/><circle cx="52.9" cy="90.3" r="7.4" fill="#eaf2e7" stroke="#35694a" stroke-width="2.3"/><path d="M43.9 104.3c1-7 17-7 18 0" fill="#eaf2e7" stroke="#35694a" stroke-width="2.3" stroke-linecap="round"/><circle cx="27.0" cy="65.2" r="7.4" fill="#eaf2e7" stroke="#35694a" stroke-width="2.3"/><path d="M18.0 79.2c1-7 17-7 18 0" fill="#eaf2e7" stroke="#35694a" stroke-width="2.3" stroke-linecap="round"/>
+  <circle cx="29.4" cy="47.1" r="10.5" fill="#f7e9cf" stroke="#e0a03a" stroke-width="2.6" stroke-dasharray="4 4"/>
+  <path d="M25.4 47.1h8M29.4 43.1v8" stroke="#e0a03a" stroke-width="2.6" stroke-linecap="round"/>
+</svg>
+      </div>
+      <div>
+        <h3><span class="ul">特別活動という、まだ空いている場所</span></h3>
+        <p>ICT×各教科の実践者は増えました。<b>ICT×特別活動は、ほとんどいません。</b>わたしは全国道徳特別活動研究会の幹事です。<b>実践してくれる先生のつながりごと、お渡しできます。</b></p>
+      </div>
+    </article>
+
+    <article>
+      <div class="illwrap">
+        <p class="no">4</p>
+        <svg class="ill" viewBox="0 0 120 120" aria-hidden="true">
+  <path d="M22 14h54l22 22v70H22z" fill="#fff" stroke="#35694a" stroke-width="2.4" stroke-linejoin="round"/>
+  <path d="M76 14v22h22" fill="#eaf2e7" stroke="#35694a" stroke-width="2.4" stroke-linejoin="round"/>
+  <path d="M34 76l14-16 12 7 20-25" fill="none" stroke="#e0a03a" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="80" cy="42" r="4.6" fill="#e0a03a"/>
+  <path d="M34 90h52M34 98h34" stroke="#35694a" stroke-width="2.4" stroke-linecap="round" opacity=".5"/>
+</svg>
+      </div>
+      <div>
+        <h3><span class="ul">効いたかどうかを、数字でお返しします</span></h3>
+        <p>のべ101名の前後比較（学年平均75.4→82.4）。今年度は論文4本。設計書も自己批判レビューも文書で残しているので、<b>そのまま企画書に使えます。</b></p>
+      </div>
+    </article>
+  </div>
+</div></section>
+
+<!-- ================= 作品 ================= -->
+<section id="works"><div class="wrap">
+  <div class="head">
+    <p class="eb">What I made</p>
+    <p class="en">Works</p>
+    <p class="jp"><span class="ul">作った教材</span></p>
+    <p class="lead">自作した14本のうち、いま人に見ていただきたい9本を載せます。
+    子どもが使う教材が7本、先生が使う道具が2本です。</p>
+  </div>
+
+  <div class="legend">
+    <span><i style="background:var(--leaf)"></i>子どもが使う教材（7本）</span>
+    <span><i style="background:var(--greenD)"></i>先生が使う道具（2本）</span>
+  </div>
+
+  <div class="works">
+
+    <article class="work" style="--tint:var(--leaf);--tintL:var(--greenL);--tintT:var(--green)">
+      <figure class="thumb">
+        <svg viewBox="0 0 400 225" aria-hidden="true"><g fill="none" stroke="#5f9b6d" stroke-opacity=".3" stroke-width="1.2"><rect x="52" y="48" width="150" height="130" rx="3"/><path d="M52 91h150M52 134h150M102 48v130M152 48v130"/><path d="M244 112c22-28 22-56 0-84"/><path d="M272 112c34-40 34-88 0-128"/><path d="M300 112c46-52 46-116 0-168"/></g><circle cx="228" cy="112" r="7" fill="#e0a03a"/></svg>
+        <figcaption class="ph">KAKKUN</figcaption>
+        <img src="img/works/kakkun.jpg" alt="カッくんの画面" onerror="this.remove()">
+      </figure>
+      <span class="tag">国語（作文）／ 小6</span>
+      <h3>カッくん</h3>
+      <p class="sub">単一HTML・お題104件・辞書23,860語</p>
+      <p>書くことが苦手な子のための作文アプリ。書く画面の横に、五十音順の前後が出る辞書と、五七五を入れ替えて試すマス。<b>音声入力は合理的配慮として入れました。</b>学校でマイクが使えなくてもOS標準で成立します。</p>
+      <span class="meta"><span>旧称『書君』／読書感想文と振り返りで使う</span><span>▲ 開発中</span></span>
+    </article>
+
+    <article class="work" style="--tint:var(--leaf);--tintL:var(--greenL);--tintT:var(--green)">
+      <figure class="thumb">
+        <svg viewBox="0 0 400 225" aria-hidden="true"><g fill="none" stroke="#5f9b6d" stroke-opacity=".3" stroke-width="1.2"><rect x="130" y="42" width="140" height="140" rx="3"/><path d="M130 112h140M200 42v140"/><path d="M60 78h48M60 112h48M60 146h34"/><path d="M292 78h48M292 112h48M292 146h34"/></g><path d="M164 78 L200 112 L236 146" fill="none" stroke="#e0a03a" stroke-width="3" stroke-linecap="round"/><circle cx="164" cy="78" r="6" fill="#e0a03a"/></svg>
+        <figcaption class="ph">CHO-II-KANJI</figcaption>
+        <img src="img/works/choiikanji.jpg" alt="超いい感じの画面" onerror="this.remove()">
+      </figure>
+      <span class="tag">国語（漢字）／ 小6・全学年へ拡張中</span>
+      <h3>超いい感じ</h3>
+      <p class="sub">単一HTML 995KB・配当漢字1026字</p>
+      <p>授業の冒頭5分で回す漢字アプリ。今日の8問・手書き入力・書き順ナビ・まちがえた字の登録。熟語1,546語は自作辞書23,860語から機械で作りました。<b>2タップ・5秒で始まることが仕様です。</b></p>
+      <span class="meta"><span>ライトナーの箱で間隔をあけて出し直す</span><span>▲ 実装中</span></span>
+    </article>
+
+    <article class="work" style="--tint:var(--leaf);--tintL:var(--greenL);--tintT:var(--green)">
+      <figure class="thumb">
+        <svg viewBox="0 0 400 225" aria-hidden="true"><g fill="none" stroke="#5f9b6d" stroke-opacity=".3" stroke-width="1.2"><path d="M0 60 L120 150 L200 108 L290 168 L400 96"/><path d="M0 96 L120 186 L200 144 L290 204 L400 132"/></g><g fill="none" stroke="#5f9b6d" stroke-opacity=".3" stroke-width="1.2"><circle cx="150" cy="70" r="9"/><circle cx="182" cy="48" r="6"/><circle cx="208" cy="66" r="4"/></g><circle cx="290" cy="168" r="6" fill="#e0a03a"/></svg>
+        <figcaption class="ph">IHATOV</figcaption>
+        <img src="img/works/ihatov.jpg" alt="イーハトーヴの谷の画面" onerror="this.remove()">
+      </figure>
+      <span class="tag">国語（読むこと）／ 小6</span>
+      <h3>イーハトーヴの谷</h3>
+      <p class="sub">小6「やまなし」1単元・全15画面</p>
+      <p>「やまなし」1単元まるごとを1つのHTMLに。学習用語カード41語から200字の記述までを通ります。<b>他の子の「問い」が、全員の画面に黙って出ています。</b>交流の時間をとらなくても、隣の子の考えが視界にあります。</p>
+      <span class="meta"><span>先生用の集計HTMLとフォーム一括作成つき</span><span>▲ 2026年9月に実施</span></span>
+    </article>
+
+    <article class="work" style="--tint:var(--leaf);--tintL:var(--greenL);--tintT:var(--green)">
+      <figure class="thumb">
+        <svg viewBox="0 0 400 225" aria-hidden="true"><g fill="none" stroke="#5f9b6d" stroke-opacity=".3" stroke-width="1.2"><circle cx="296" cy="86" r="32"/><circle cx="296" cy="86" r="56"/><circle cx="296" cy="86" r="80"/><path d="M28 196 C 100 172, 180 146, 244 96"/><path d="M28 196 C 108 194, 210 184, 306 166"/></g><circle cx="28" cy="196" r="5" fill="#e0a03a"/></svg>
+        <figcaption class="ph">CHIRI QUEST</figcaption>
+        <img src="img/works/chiri.jpg" alt="地理クエストの画面" onerror="this.remove()">
+      </figure>
+      <span class="tag">社会（地理）／ 小4〜中2</span>
+      <h3>地理クエスト</h3>
+      <p class="sub">単一HTML 66.3MB・写真1,440枚</p>
+      <p>日本と世界を「旅行」して覚える地理教材。<b>白い地図は、うばわれたからではなく、まだ行っていないから白い。</b>日本47県で932問、うち47県×6問はその県にしかない問題です。おみやげ188品を3Dの「わが家」に飾れます。</p>
+      <span class="meta"><span><b>現在の主力</b>／配布版を閉じる直前</span><span>▲ 2027年度から運用</span></span>
+    </article>
+
+    <article class="work" style="--tint:var(--leaf);--tintL:var(--greenL);--tintT:var(--green)">
+      <figure class="thumb">
+        <svg viewBox="0 0 400 225" aria-hidden="true"><g fill="none" stroke="#5f9b6d" stroke-opacity=".3" stroke-width="1.2"><rect x="42" y="52" width="146" height="120" rx="5"/><rect x="212" y="52" width="146" height="120" rx="5"/><path d="M188 112 H212"/></g><path d="M104 94 L136 112 L104 130 Z" fill="#5f9b6d" fill-opacity=".45"/><path d="M274 94 L306 112 L274 130 Z" fill="#e0a03a"/></svg>
+        <figcaption class="ph">MIKURABE</figcaption>
+        <img src="img/works/mikurabe.jpg" alt="ミクラベの画面" onerror="this.remove()">
+      </figure>
+      <span class="tag">体育（器械運動）／ 小学校</span>
+      <h3>ミクラベ</h3>
+      <p class="sub">配信用パッケージ 184MB・マット22技</p>
+      <p>見本と自分の動画を2画面で見比べる体育の教材。その場で撮って、その場で比べます。<b>先生が作った紙の段階表（Word）から図166枚を取り出し、27技に対応づけました。</b>紙の資産は、捨てずに移せます。</p>
+      <span class="meta"><span>動画の実体は端末内に閉じる設計</span><span>▲ 実践準備中</span></span>
+    </article>
+
+    <article class="work" style="--tint:var(--leaf);--tintL:var(--greenL);--tintT:var(--green)">
+      <figure class="thumb">
+        <svg viewBox="0 0 400 225" aria-hidden="true"><g fill="none" stroke="#5f9b6d" stroke-opacity=".3" stroke-width="1.2"><circle cx="120" cy="112" r="52"/><path d="M120 60 V112 L164 138"/><path d="M236 96h108M236 128h108"/><path d="M290 60v24M290 152v24"/></g><path d="M120 112 L120 60 A52 52 0 0 1 164 138 Z" fill="#e0a03a" fill-opacity=".55" stroke="none"/></svg>
+        <figcaption class="ph">BUNSU BATTLE</figcaption>
+        <img src="img/works/bunsu.jpg" alt="分数バトルの画面" onerror="this.remove()">
+      </figure>
+      <span class="tag">算数（分数）／ 小5〜小6</span>
+      <h3>分数バトル</h3>
+      <p class="sub">単一HTML 586KB・2バージョン</p>
+      <p>分数の計算をくり返す教材。<b>同じ問題で「約分しないと丸にならない」版を別に用意しました。</b>難しくするためではなく、その時間のねらいで先生がルールを選べるように。</p>
+      <span class="meta"><span>同じ問題で、ねらいに合わせてルールを変える</span><span>▲ 実践準備中</span></span>
+    </article>
+
+    <article class="work" style="--tint:var(--leaf);--tintL:var(--greenL);--tintT:var(--green)">
+      <figure class="thumb">
+        <svg viewBox="0 0 400 225" aria-hidden="true"><g fill="none" stroke="#5f9b6d" stroke-opacity=".3" stroke-width="1.2"><path d="M44 188 L114 122 L184 152 L254 70 L336 42"/><path d="M44 188 H358"/><path d="M44 188 V32"/></g><circle cx="336" cy="42" r="7" fill="#e0a03a"/><circle cx="114" cy="122" r="4" fill="#5f9b6d" fill-opacity=".5"/><circle cx="254" cy="70" r="4" fill="#5f9b6d" fill-opacity=".5"/></svg>
+        <figcaption class="ph">TOREHAN</figcaption>
+        <img src="img/works/torehan.jpg" alt="トレハんの画面" onerror="this.remove()">
+      </figure>
+      <span class="tag">国語（漢字）／ 小4〜小6</span>
+      <h3>トレハん</h3>
+      <p class="sub">単一HTML 4.0MB・開発は約4時間</p>
+      <p>漢字が苦手な子のための4択・ステージ制。「まず楽しく苦手を見つける」ことだけに絞りました。<b>9本のうち、効果を数字で測った唯一の教材です</b>（→ <a class="inlink" href="#evidence">教室で確かめたこと</a>）。</p>
+      <span class="meta"><span><b>6年3学級・のべ101名で前後比較ずみ</b></span><span>● 実践データあり</span></span>
+    </article>
+
+    <article class="work" style="--tint:var(--greenD);--tintL:#e9eeea;--tintT:var(--greenD)">
+      <figure class="thumb">
+        <svg viewBox="0 0 400 225" aria-hidden="true"><g fill="none" stroke="#25503a" stroke-opacity=".3" stroke-width="1.2"><rect x="66" y="46" width="268" height="134" rx="5"/><path d="M66 88 H334"/><path d="M155 88 V180"/><path d="M245 88 V180"/></g><rect x="86" y="60" width="46" height="10" rx="5" fill="#e0a03a"/></svg>
+        <figcaption class="ph">MITORI</figcaption>
+        <img src="img/works/mitori.jpg" alt="ミトリの画面" onerror="this.remove()">
+      </figure>
+      <span class="tag">教員用 ／ 指導と評価の一体化</span>
+      <h3>ミトリ</h3>
+      <p class="sub">Google Apps Script ＋ スプレッドシート</p>
+      <p><b>評価を、授業を止めずに。</b>45分×35人の中で後回しになる評価を、ワンタップで授業に取り戻す道具。入力は1人<b>2タップ以内</b>が目標値。個人情報は校内のスプレッドシートの中で完結します。</p>
+      <span class="meta"><span>所見・面談の負担軽減に直接効く</span><span>▲ 運用中</span></span>
+    </article>
+
+    <article class="work" style="--tint:var(--greenD);--tintL:#e9eeea;--tintT:var(--greenD)">
+      <figure class="thumb">
+        <svg viewBox="0 0 400 225" aria-hidden="true"><g fill="none" stroke="#25503a" stroke-opacity=".3" stroke-width="1.2"><rect x="52" y="56" width="196" height="118" rx="4"/><path d="M52 88h196M91 88v86M130 88v86M169 88v86M209 88v86"/><path d="M292 115c22-26 22-52 0-78"/><path d="M320 115c34-38 34-84 0-122"/></g><circle cx="276" cy="115" r="7" fill="#e0a03a"/></svg>
+        <figcaption class="ph">SHABERU</figcaption>
+        <img src="img/works/shaberu.jpg" alt="シャベルの画面" onerror="this.remove()">
+      </figure>
+      <span class="tag">教員用 ／ 週案・学級経営</span>
+      <h3>シャベル</h3>
+      <p class="sub">スプレッドシート台帳 ＋ GAS</p>
+      <p>しゃべった予定の変更が、そのまま台帳に入ります。<b>ねらいは音声ではなく、1つの台帳から4つ出ること</b> ── 週案の印刷／時数の集計／児童用の配布／Classroomへの自動投稿。</p>
+      <span class="meta"><span>費用ゼロが制約。LLMは使わずGASのルールで</span><span>▲ 第1弾を実装中</span></span>
+    </article>
+
+  </div>
+
+  <p class="more">
+    このほかに <b>かんクエ</b>（3Dの学校を探検して漢字を学ぶ・筆順221字）、<b>天体クエスト</b>（4択を廃止し、答えを体の動きで示す）、
+    <b>南砂町探検隊</b>（PLATEAU 3,673棟の地域学習）、<b>ツムグ</b>（学級会の意見集約）、<b>じてん</b>（23,860語の自作辞書）、
+    <b>測量ギルド</b>（算数・縮図と比）、<b>歴史クエスト</b>（制作中）など。
+    先生用の道具は、動詞から名前をつけて統一しています ── 見取り→ミトリ、見比べ→ミクラベ、紡ぐ→ツムグ。
+  </p>
+</div></section>
+
+<!-- ================= 実践 ================= -->
+<section id="evidence"><div class="wrap">
+  <div class="head">
+    <p class="eb">Evidence</p>
+    <p class="en">Results</p>
+    <p class="jp"><span class="ul">教室で確かめたこと</span></p>
+    <p class="lead">作った本数より、教室で何が起きたかのほうが大事だと思っています。いま数字で語れるのは、この1本です。</p>
+  </div>
+
+  <div class="result">
+    <h3>漢字ドリルを開かなかった子は、<br>なぜ自分から学び始めたか</h3>
+    <p class="cond">6年生3学級・のべ101名／実施2週間・授業内で確保した時間は週40分（朝学習1回＋国語の冒頭10分×3回）／2026年7月</p>
+
+    <div class="figs">
+      <div class="fig"><span class="lb">学年平均</span>
+        <b class="num">75.4<span class="to">→</span>82.4</b><div class="d">▲ +7.0</div></div>
+      <div class="fig"><span class="lb">中央値</span>
+        <b class="num">86<span class="to">→</span>90</b><div class="d">▲ +4.0</div></div>
+      <div class="fig"><span class="lb">90点以上</span>
+        <b class="num">41<span class="to">→</span>52<small>名</small></b><div class="d">▲ +11名</div></div>
+      <div class="fig"><span class="lb">前回より上昇</span>
+        <b class="num">60<small>名</small></b><div class="d">両方受けた99名の約6割</div></div>
+    </div>
+
+    <div class="byclass">
+      <table>
+        <thead><tr><th>クラス</th><th>前回 平均</th><th>今回 平均</th><th>伸び</th><th>受験者</th></tr></thead>
+        <tbody>
+          <tr><td>1組</td><td class="num">72.7</td><td class="num">83.5</td><td class="num up">▲ +10.8</td><td class="num">34 / 34</td></tr>
+          <tr><td>2組</td><td class="num">73.2</td><td class="num">81.9</td><td class="num up">▲ +8.7</td><td class="num">32 / 33</td></tr>
+          <tr><td>3組</td><td class="num">79.9</td><td class="num">81.8</td><td class="num up">▲ +1.9</td><td class="num">35 / 34</td></tr>
+          <tr><td>学年</td><td class="num">75.4</td><td class="num">82.4</td><td class="num up">▲ +7.0</td><td class="num">101 / 101</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>手立ては2つです。①漢字が苦手な子のためのアプリ『トレハん』で、まず楽しく苦手を見つける。
+    ②生成AIで熟語を差し替えた書き取り問題を作り、多様なプリントとして配る。
+    AIが作った問題をそのまま使うことはせず、差し替えたのは1割程度でした。</p>
+
+    <div class="proof">
+      <figure>
+        <div class="ph"><img src="img/evidence/print.jpg" alt="生成AIで作った漢字の書き取りプリント" onerror="this.closest('figure').remove()"></div>
+        <figcaption><b>手立て②</b>／テスト範囲の漢字を、生成AIでいろいろな熟語に差し替えて出題。Canvaでプリントにして、同じ字を別の熟語でくり返しました。</figcaption>
+      </figure>
+      <figure>
+        <div class="ph"><img src="img/evidence/shoujou.jpg" alt="前回からの伸びを示す変容表彰状" onerror="this.closest('figure').remove()"></div>
+        <figcaption><b>事後の手立て</b>／クラスの平均ではなく<b>「前回の自分」との差</b>を認める表彰状を、一人1枚。Canvaの一括作成で、大人数でも短時間で用意できます。</figcaption>
+      </figure>
+    </div>
+
+    <p>教材づくりに使っていた時間が圧縮できたぶんを、<b>下位層への個別指導</b>に回しました。
+    テストのあとも、79点以下の29名には学習プリントでもう一度挑戦してもらっています。
+    限られた時間の中で成果が出た理由は、アプリでも生成AIでもなく、この時間の付け替えだと考えています。</p>
+
+    <div class="quote">「結局、書くことが大事だね」<br>── 実践の終わりに、ある児童が言った言葉</div>
+
+    <p style="margin-top:26px">同じくらい大事なのは、<b>伸びなかった子がいた</b>ことです。
+    3組はもともと高い水準にあり、今回の伸びは+1.9にとどまりました。
+    アプリはやったけれど「間違いを整理して苦手を確認する」ところまで進まなかった児童も、伸びていません。
+    <b>楽しむだけでは足りない</b> ── そこが、次に手を入れるところです。</p>
+
+    <p class="caveat">
+      ※ 上の数値は学年・学級の集計値で、個人が特定される情報は含みません。表彰状の画像は氏名を伏せてあります。<br>
+      ※ データは光文書院の漢字カラーテスト（100点満点・50問×2点）の結果を集計したもので、2026年7月8日に勤務校の管理職へ提出ずみです。<br>
+      ※ この実践は「学事出版教育文化賞」に応募し、論文を執筆中です（2026年9月提出予定）。
+    </p>
+  </div>
+</div></section>
+
+<!-- ================= いま ================= -->
+<section id="now"><div class="wrap">
+  <div class="head">
+    <p class="eb">In progress</p>
+    <p class="en">Now</p>
+    <p class="jp"><span class="ul">いま取り組んでいること</span></p>
+    <p class="lead">結果が出たものだけでなく、走っている途中のものも書いておきます。</p>
+  </div>
+
+  <div class="now">
+    <div><em>論文</em><b>学事出版教育文化賞</b><span>上の漢字実践。9月提出予定</span></div>
+    <div><em>論文</em><b>ICT夢コンテスト2026</b><span>小6国語「やまなし」の実践。9月実施</span></div>
+    <div><em>論文</em><b>東書教育賞（第42回）</b><span>算数「拡大図と縮図」＋自作アプリ『測量ギルド』</span></div>
+    <div><em>論文</em><b>道徳と特別活動の教育研究賞</b><span>学級会アプリ『ツムグ』の実践。2学期に実施</span></div>
+    <div><em>執筆</em><b>教員のためのAI教材開発の本</b><span>「先生が自分で教材アプリを作る」日本語書籍はまだ0冊</span></div>
+    <div><em>開発</em><b>国語の教材をシリーズにまとめる</b><span>語彙・漢字／書く／調べる の3系統に整理中</span></div>
+  </div>
+</div></section>
+
+<!-- ================= できること ================= -->
+<section id="offer"><div class="wrap">
+  <div class="head">
+    <p class="eb">What I can do</p>
+    <p class="en">Offer</p>
+    <p class="jp"><span class="ul">できること</span></p>
+    <p class="lead">教材会社の方、研修や研究会をお考えの方、同じ学校現場の方 ── どの入口でも歓迎です。</p>
+  </div>
+
+  <figure class="band">
+    <div class="ph"><img src="img/talk.jpg" alt="校内研修で話す伊藤優" onerror="this.closest('.band').remove()"></div>
+    <figcaption>校内で話しているところ。研修・研究会でお話しする機会をさがしています。</figcaption>
+  </figure>
+
+  <div class="offer">
+    <article>
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M9 18v2M15 18v2M7 20h10"/></svg></span>
+      <div>
+        <h3><span class="ul">監修・共同開発</span></h3>
+        <p>教材やデジタルコンテンツの監修、学校現場の制約に合わせた設計のレビュー、教材アプリの共同開発。
+        「Chromebookで動くか」「個人情報はどこに置くか」「45分のどこに入るか」を、現場の言葉と数字で詰められます。</p>
+      </div>
+    </article>
+    <article>
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <path d="M4 5h11l5 4v10H4z"/><path d="M8 10h7M8 14h5"/></svg></span>
+      <div>
+        <h3><span class="ul">講演・研修</span></h3>
+        <p>校内研修、区市の研修会、研究会など。得意なのは「生成AIで教材を作る手順」ではなく
+        <b>「AIが作った教材をそのまま使わないための、確かめ方」</b>のほうです。
+        作り方を配る人は増えましたが、確かめ方を配る人はまだいません。</p>
+      </div>
+    </article>
+    <article>
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <path d="M4 4h8a3 3 0 013 3v13a2.5 2.5 0 00-2.5-2.5H4z"/><path d="M20 4h-2a3 3 0 00-3 3v13a2.5 2.5 0 012.5-2.5H20z"/></svg></span>
+      <div>
+        <h3><span class="ul">執筆・寄稿</span></h3>
+        <p>教育雑誌への寄稿、書籍の分担執筆。自作教材の設計書・客観評価・自己批判レビューを文書として残す習慣があるので、
+        実践を文章にする作業には慣れています。</p>
+      </div>
+    </article>
+  </div>
+
+  <p class="note">
+    <b>お願い</b>：公立学校の教員のため、報酬をともなうお仕事は任命権者への兼業許可の手続きが必要になります。
+    お引き受けできる形・時期が案件によって変わりますので、まずはご相談ください。手続きの見通しも含めてご返答します。
+  </p>
+</div></section>
+
+<!-- ================= 連絡 ================= -->
+<section id="contact"><div class="wrap">
+  <div class="contact">
+    <svg class="art" viewBox="0 0 400 400" aria-hidden="true">
+      <g fill="none" stroke="#ffffff" stroke-width="2">
+        <circle cx="200" cy="200" r="70"/><circle cx="200" cy="200" r="128"/><circle cx="200" cy="200" r="186"/>
+      </g></svg>
+    <p class="en">Contact</p>
+    <p>お仕事のご相談、教材を見てみたいというご依頼、同じ現場の先生からのご質問、どれでもお気軽にどうぞ。数日以内にお返事します。</p>
+    <a class="mail" href="mailto:yuutennis657@gmail.com?subject=%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B%EF%BC%88%E4%BC%8A%E8%97%A4%E5%84%AA%20%E3%82%B5%E3%82%A4%E3%83%88%E3%82%88%E3%82%8A%EF%BC%89">
+      yuutennis657@gmail.com <span aria-hidden="true">→</span>
+    </a>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  伊藤 優 ／ 東京都 江東区立第四砂町小学校 教諭 ／ 全国道徳特別活動研究会 幹事<br>
+  このサイトの記述は個人の活動によるものであり、勤務校・江東区教育委員会の見解を示すものではありません。<br>
+  掲載した数値は 2026年8月時点のものです。
+</div></footer>
+
+</main>
+</body>
+</html>
