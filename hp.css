@@ -336,6 +336,40 @@ b,strong{font-weight:500}
   .js .stat span.d{transition:none}
 }
 
+/* ── 数字パネル：小さな図（2026-08-30 追加）────────────────────
+   数字の下に高さ12pxの図を1本ずつ置く。札は 114px → 126px（+12px）だけ高くなる。
+   ・色は 緑＝すでにあるもの／山吹＝いま・伸びた分 の2つだけ。5系統から出ない
+   ・図は数字と内訳の言いかえなので aria-hidden。読み上げ・JSオフでも情報は減らない
+   ・16マス＝教科ごとに間をあけて 6・3・2・2・1 が数えられる
+   ・目もり＝7教科／6年目。最後の1本だけ山吹＝「いま」
+   ・帯＝0〜100点の実寸。緑がもとの75.4点、その先の山吹が伸びた7.0点  */
+.fig{display:flex;align-items:flex-end;gap:8px;height:12px;margin:4px 0 0}
+
+/* ① マスの列（自作した教材16本） */
+.fig-mass .g{display:flex;gap:2px;flex:0 1 auto;min-width:0}
+.fig-mass i{flex:0 1 6px;min-width:3px;height:12px;border-radius:1px;
+  background:var(--green);opacity:.9}
+.fig-mass .g:nth-child(2) i{opacity:.78}
+.fig-mass .g:nth-child(3) i{opacity:.66}
+.fig-mass .g:nth-child(4) i{opacity:.56}
+.fig-mass .g:nth-child(5) i{opacity:.48}
+
+/* ② 目もりの列（扱う教科7／教員歴6年目） */
+.fig-tick{gap:4px}
+.fig-tick i{flex:1 1 0;max-width:22px;height:12px;border-radius:1px;
+  background:var(--green);opacity:.55}
+.fig-tick i.on{opacity:1}
+.fig-tick i.now{background:var(--gold);opacity:1}
+
+/* ③ 0〜100点の帯（学年平均の伸び） */
+.fig-gain{display:block;margin:6px 0 0}
+.fig-gain .tr{position:relative;display:block;height:8px;border-radius:4px;
+  background:var(--greenL);border:1px solid var(--hair2)}
+.fig-gain .fill{position:absolute;top:0;bottom:0;background:var(--green)}
+.fig-gain .fill.base{left:0;border-radius:4px 0 0 4px}
+.fig-gain .fill.up{background:var(--gold);border-radius:0 4px 4px 0;
+  box-shadow:-2px 0 0 var(--paper)}   /* 2pxのすき間＝色に頼らず境目が見える */
+
 /* ── 白カード（お知らせ／Now）─────────────── */
 .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
 .card{background:var(--paper);border-radius:var(--r-card);box-shadow:var(--sh-2);overflow:hidden;
@@ -495,18 +529,46 @@ b,strong{font-weight:500}
 .str .fnote{margin-top:16px;font-size:var(--fs-2);color:var(--ink2);line-height:var(--lh-3)}
 /* 偶数は図が右。左右half-halfなので order の入れかえだけでよい */
 .str:nth-child(even) .fig{order:2;border-right:0;border-left:1px solid var(--hair)}
-/* スマホ：ここで縮めると図の中の字が8pxを切って読めなくなるので、
-   図だけ横スクロールにして、字の大きさ（実寸11.5px）を保つ */
+/* 図はPC用（横）とスマホ用（縦）の2本を持ち、幅で入れかえる。
+   横のまま縮めると字が8pxを切り、横スクロールにすると全体が見えないため。
+   入れかえの境目 560px ＝ 横の図（viewBox 440〜458）が
+   実寸12pxを保てなくなる幅 */
+.fig-sp{display:none}
 @media (max-width:760px){
   .str .fig{padding:18px 14px}
-  .str .figbox svg{min-width:436px}
   .str .fig .mate{width:52px;height:52px;right:6px;bottom:2px}
+}
+@media (max-width:560px){
+  .fig-pc{display:none}
+  .fig-sp{display:block}
+  .figbox{overflow-x:visible}
+  /* 幅がないと、右下のキャラが図の下の一言に重なる。文の下に回して右そろえ */
+  .str .fig .mate{position:static;width:56px;height:56px;margin:4px 0 0 auto}
+}
+@media (max-width:400px){
+  .str .fig{padding:16px 10px}
 }
 @media (max-width:1000px){
   .str{grid-template-columns:1fr}
   .str:nth-child(even) .fig{order:0;border-left:0}
   .str .fig{border-right:0;border-bottom:1px solid var(--hair)}
 }
+
+/* ホームの強み＝図だけ（2026-08-30。本人の指示で、文をやめて図に置きかえ）
+   1080px を切ったら1列。2列のままだと図の字が実寸12pxを割るため */
+.kfigs{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.kfig{background:var(--paper);border-radius:var(--r-card);box-shadow:var(--sh-2);
+  position:relative;padding:26px 28px 24px;display:flex;flex-direction:column}
+.kfig .kno{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.kfig .kno img{width:64px;height:64px;object-fit:contain;margin-left:auto}
+.kfig h3{font-family:var(--round);font-weight:700;font-size:var(--fs-5);line-height:var(--lh-2)}
+.kfig .figbox{margin-top:18px}
+.kfig .figbox svg{width:100%;height:auto;display:block}
+.kfig .fnote{margin-top:16px;font-size:var(--fs-2);color:var(--ink2);line-height:var(--lh-3)}
+/* 1140px：2列のままだと図の字が実寸12pxを割る（実測 1081pxで11.9px） */
+@media (max-width:1140px){ .kfigs{grid-template-columns:1fr} }
+@media (max-width:560px){ .kfig{padding:22px 16px 20px} }
+@media (max-width:400px){ .kfig{padding:20px 12px 18px} }
 
 /* 強み4つ */
 .kata{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
