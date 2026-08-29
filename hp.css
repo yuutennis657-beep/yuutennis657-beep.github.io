@@ -84,8 +84,21 @@ b,strong{font-weight:500}
 .h-jp{font-family:var(--round);font-weight:700;line-height:var(--lh-1);
   font-size:var(--fs-c3);letter-spacing:var(--ls-1);margin-top:10px}
 .h-lead{margin-top:18px;max-width:36em;color:var(--ink2);font-size:var(--fs-4);line-height:var(--lh-3)}
-.head{margin-bottom:clamp(28px,4vw,44px)}
+.head{margin-bottom:clamp(28px,4vw,44px);position:relative}
 .head .h-jp{font-size:var(--fs-c4)}
+
+/* ── キャラの置き場（ホーム以外にも立たせる）2026-08-29 追加 ──────
+   これまで大きいキャラはホームだけ（.hero .tayosu と .band）だった。
+   下の3つを足して、下層ページにも1体ずつ立たせる。
+   ・.head .peek … ページ大見出しの右下に立つ。1ページ1体
+   ・.sub-h .pin … 小見出しの頭にちょこんと座る
+   ・.wsec .pin  … 紹介ページ（chiri/kakkun）の節見出し用は style.css 側
+   文字にかぶらない根拠：.h-lead は max-width:36em（＝約612px）。
+   wrap は 1080px なので右に約460px あく。キャラは最大148px。 */
+.head .peek{position:absolute;right:0;bottom:-6px;z-index:1;
+  width:clamp(96px,10.5vw,148px);height:auto;object-fit:contain;pointer-events:none}
+.sub-h .pin{width:46px;height:46px;object-fit:contain;display:inline-block;
+  vertical-align:-11px;margin-right:12px}
 
 /* ── 山吹の丸ピル ───────────────────────── */
 .pill{display:inline-flex;align-items:center;gap:10px;min-height:56px;padding:0 34px;
@@ -157,6 +170,21 @@ b,strong{font-weight:500}
 .hero .in{display:grid;grid-template-columns:minmax(0,.90fr) minmax(0,1.10fr);
   gap:clamp(20px,3.4vw,44px);align-items:center;color:var(--ink)}
 .hero .txt{position:relative;min-width:0}
+/* 顔写真＝名札。文字のいちばん上に置く（2026-08-29 追加）
+   ・写真は 1000×1000 の正方形。丸く切って、顔の位置に寄せている
+   ・大きさを書いてあるので、読みこむ前でも場所がずれない */
+.hero .me{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.hero .me .pic{flex:none;position:relative;overflow:hidden;border-radius:50%;
+  width:clamp(76px,8.2vw,102px);height:clamp(76px,8.2vw,102px);
+  background:var(--beige2);border:3px solid var(--paper);box-shadow:var(--sh-2)}
+/* 元の写真は正方形なので、丸に入れるとそのまま全身が入って顔が小さい。
+   顔のまわりだけを切り出して 1.75倍に寄せている（数字＝顔の中心 x55%／y37%） */
+.hero .me .pic img{position:absolute;width:175%;height:175%;max-width:none;left:-34%;top:-11%;
+  object-fit:cover}
+.hero .me b{display:block;font-family:var(--round);font-weight:700;
+  font-size:var(--fs-5);line-height:var(--lh-1)}
+.hero .me span{display:block;margin-top:5px;font-size:var(--fs-2);color:var(--ink2);
+  line-height:var(--lh-2)}
 .hero .eb{color:var(--sub)}
 .hero h1{font-family:var(--round);font-weight:700;font-size:var(--fs-c4);line-height:var(--lh-1);
   margin-top:14px;letter-spacing:var(--ls-1)}
@@ -193,7 +221,9 @@ b,strong{font-weight:500}
 
 /* ── 数字パネル ────────────────────────── */
 .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;
-  position:relative;z-index:3;margin-top:6px}   /* ヒーローが明るくなったので食いこませない（2026-08-29） */
+  position:relative;z-index:3;margin-top:6px;
+  /* 下の「入口4つ」との あき。上にあった1節を外したぶんを、ここで取る（2026-08-29） */
+  margin-bottom:clamp(46px,6vw,74px)}   /* ヒーローが明るくなったので食いこませない（2026-08-29） */
 .stat{min-width:0;background:var(--beige2);border:1px solid var(--hair);border-radius:var(--r-card);
   box-shadow:var(--sh-2);padding:18px 18px 20px}
 .stat .lb{display:block;font-size:var(--fs-1);color:var(--sub);letter-spacing:var(--ls-2);line-height:1.4}
@@ -306,6 +336,23 @@ b,strong{font-weight:500}
 /* ============================================================
    下層ページの部品
    ============================================================ */
+/* 強み2つ（ホーム）2026-08-29 追加
+   下層の .kata（4つ・about.html）と同じ役。ホームは2枚なので1枚あたりを大きく取る。
+   絵は SVG ではなく自作アプリのキャラ。ホームだけに寄っていたキャラを
+   ここでも使う（見出しの .mark と重ならない2体をあてる） */
+.kata2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.kata2 article{background:var(--paper);border-radius:var(--r-card);box-shadow:var(--sh-2);
+  padding:28px 30px 30px}
+.kata2 .kno{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.kata2 .kno b{flex:none;width:38px;height:38px;border-radius:50%;
+  background:var(--gold);color:var(--ink);font-family:var(--en);font-weight:700;font-size:var(--fs-5);
+  display:flex;align-items:center;justify-content:center}
+.kata2 .kno img{width:76px;height:76px;object-fit:contain;margin-left:auto}
+.kata2 h3{font-family:var(--round);font-weight:700;font-size:var(--fs-6);line-height:var(--lh-2)}
+.kata2 p{margin-top:12px;font-size:var(--fs-3);color:var(--ink2);line-height:var(--lh-3)}
+.kata2 .kfoot{margin-top:16px;padding-top:14px;border-top:1px solid var(--hair2);
+  font-size:var(--fs-2);color:var(--sub);line-height:var(--lh-2)}
+
 /* 強み4つ */
 .kata{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
 .kata article{background:var(--paper);border-radius:var(--r-card);box-shadow:var(--sh-2);
@@ -414,18 +461,43 @@ b,strong{font-weight:500}
 .prole{margin-top:16px;font-size:var(--fs-4);line-height:var(--lh-3)}
 .pcap{margin-top:14px;font-size:var(--fs-2);color:var(--sub);line-height:var(--lh-2)}
 .axis3{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center;margin-top:28px}
-.venn{position:relative;margin:0}
-.venn svg{width:100%;height:auto}
-.venn .vc circle{fill:var(--green);fill-opacity:.14;stroke:var(--green);stroke-opacity:.5}
-.venn .vl{position:absolute;font-family:var(--round);font-weight:700;font-size:var(--fs-3);color:var(--greenD)}
-.venn .vl.a{left:14%;top:22%}.venn .vl.b{right:14%;top:22%}.venn .vl.c{left:50%;bottom:8%;transform:translateX(-50%)}
-.venn .vl.mid{left:50%;top:52%;transform:translate(-50%,-50%);text-align:center}
-.venn .vl.mid b{display:block;font-family:var(--en);font-size:var(--fs-7);line-height:1}
-.venn .vl.mid small{font-size:var(--fs-1);color:var(--sub)}
+/* ベン図（2026-08-29 直し）
+   ・前は円が 400x330・半径95・中心バラバラで、見出しの % 指定（14%/22% など）が
+     円の中心と対応していなかった＝ずれの原因。
+   ・図は viewBox 400x360、半径100、中心を重心(200,175)から 55px・120度おきの
+     正三角形に置き直した。見出しの % は、その座標をそのまま割り算した値。
+       ICT (105,120)→26.2%,33.3% ／ 特活 (295,120)→73.8%,33.3%
+       国語 (200,285)→50%,79.2% ／ まん中 (200,175)→50%,48.6%
+   ・.venn に aspect-ratio を持たせて、箱の縦横比＝viewBox の比に固定。
+     これをやらないと画面幅で % のさす位置が動く。
+   ・色は3軸で塗り分け（緑＝ICT／山吹＝特活／こげ茶＝国語）。重なりは multiply。 */
+.venn{position:relative;margin:0 auto;width:100%;max-width:420px;aspect-ratio:400/360}
+.venn svg{position:absolute;inset:0;width:100%;height:100%;isolation:isolate}
+.venn .vc circle{fill-opacity:.18;stroke-width:1.6;stroke-opacity:.7;mix-blend-mode:multiply}
+.venn .v1{fill:var(--green);stroke:var(--green)}
+.venn .v2{fill:var(--gold);stroke:var(--goldD)}
+.venn .v3{fill:var(--brown);stroke:var(--brown)}
+.venn .vl{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;
+  font-family:var(--round);font-weight:700;font-size:var(--fs-3);line-height:1.3;
+  border-radius:var(--r-pill);padding:5px 13px}
+.venn .vl.a{left:26.2%;top:33.3%;background:var(--greenL);color:var(--greenD)}
+.venn .vl.b{left:73.8%;top:33.3%;background:var(--goldL);color:#7a4b00}
+.venn .vl.c{left:50%;top:79.2%;background:#f0e2d6;color:var(--brownD)}
+.venn .vl.mid{left:50%;top:48.6%;text-align:center;padding:7px 15px;
+  background:var(--paper);box-shadow:var(--sh-2)}
+.venn .vl.mid b{display:block;font-family:var(--en);font-size:var(--fs-6);line-height:1;color:var(--ink)}
+.venn .vl.mid small{display:block;margin-top:3px;font-family:var(--jp);font-weight:400;
+  font-size:var(--fs-1);color:var(--sub)}
 .ax-t{font-family:var(--round);font-weight:700;font-size:var(--fs-6)}
 .axl{margin-top:14px;display:grid;gap:12px}
-.axl li{font-size:var(--fs-3);line-height:var(--lh-2)}
+/* 図の3色と同じ色を左の線で持たせて、どの円の話かを目で追えるようにした */
+.axl li{font-size:var(--fs-3);line-height:var(--lh-2);border-left:3px solid var(--hair);padding-left:12px}
+.axl li.a{border-left-color:var(--green)}
+.axl li.b{border-left-color:var(--gold)}
+.axl li.c{border-left-color:var(--brown)}
 .axl b{font-family:var(--round);font-weight:700;color:var(--greenD)}
+.axl li.b b{color:#7a4b00}
+.axl li.c b{color:var(--brownD)}
 .axl span{display:block;color:var(--ink2)}
 .axn{margin-top:16px;font-size:var(--fs-3);color:var(--ink2);line-height:var(--lh-3)}
 .pbio{margin-top:28px;display:grid;gap:16px}
@@ -496,7 +568,7 @@ b,strong{font-weight:500}
     object-fit:cover;background:var(--greenL)}
   .split .txt{order:2}
   .split .mate{display:none}
-  .kata{grid-template-columns:1fr}
+  .kata,.kata2{grid-template-columns:1fr}
   .duo{grid-template-columns:1fr}
   .proof,.prof-figs,.prof-figs.off,.axis3,.mgroups{grid-template-columns:1fr}
   .pcard{grid-template-columns:1fr}
@@ -504,6 +576,8 @@ b,strong{font-weight:500}
   .figs{grid-template-columns:repeat(2,1fr)}
   .career li{grid-template-columns:1fr;gap:6px}
   .eb .mark{width:32px;height:32px;margin:-6px 8px 0 0}
+  .head .peek{position:static;width:86px;margin:14px 0 0 auto}  /* 文字とぶつかるので、下に回して右寄せ */
+  .sub-h .pin{width:38px;height:38px;vertical-align:-9px;margin-right:9px}
   .band{height:170px}
   .band .row img{width:104px;height:104px}
 }
