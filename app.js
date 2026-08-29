@@ -39,6 +39,72 @@
     document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && !dw.hidden) shut(); });
   }
 
+  /* ── ヒーローのアプリ画面を入れ替える ─────── */
+  /* 1枚のマスに画像を2枚重ね、上の1枚を薄く出して下と入れかえる＝画面が暗く光らない。
+     ・動きを減らす設定の人には何も起きない
+     ・画面から外れたら止める（電池と発熱のため）
+     ・このブロックが落ちても、元の1枚だけがそのまま出る */
+  (function(){
+    var mo = document.querySelector('.hero .mosaic');
+    if(!mo || reduce || !('IntersectionObserver' in window)) return;
+    var base = [].slice.call(mo.children).filter(function(n){ return n.tagName === 'IMG'; });
+    if(base.length < 2) return;
+    var pool = [];
+    base.forEach(function(t){ var v = t.getAttribute('src'); if(pool.indexOf(v) < 0) pool.push(v); });
+    if(pool.length < 2) return;
+    pool.forEach(function(v){ var i = new Image(); i.src = v; });     // 先読み
+
+    var cells = base.map(function(t){                                  // 2枚重ねに組みかえる
+      var w = document.createElement('span');
+      w.className = 'cell';
+      mo.insertBefore(w, t); w.appendChild(t);
+      var top = document.createElement('img');
+      top.className = 'b'; top.alt = ''; top.decoding = 'async';
+      w.appendChild(top);
+      return {lo:t, hi:top, busy:false};
+    });
+
+    var timer = null;
+    function step(){
+      var c = cells[(Math.random() * cells.length) | 0];
+      if(c.busy) return;
+      var cur = c.lo.getAttribute('src');
+      var cnt = {};                                                   // いま何回出ているかを数えて
+      pool.forEach(function(v){ cnt[v] = 0; });
+      cells.forEach(function(x){ var v = x.lo.getAttribute('src'); cnt[v] = (cnt[v] || 0) + 1; });
+      var cand = pool.filter(function(v){ return v !== cur; });        // いちばん少ないものから選ぶ
+      var min = Math.min.apply(null, cand.map(function(v){ return cnt[v]; }));
+      cand = cand.filter(function(v){ return cnt[v] === min; });       // ＝同じ画面が固まらない
+      var next = cand[(Math.random() * cand.length) | 0];
+      c.busy = true;
+      c.hi.src = next;
+      var show = function(){
+        c.hi.classList.add('on');
+        setTimeout(function(){                                          // 出しきってから下を差しかえる
+          c.lo.src = next;
+          c.hi.style.transition = 'none';
+          c.hi.classList.remove('on');
+          void c.hi.offsetWidth;
+          c.hi.style.transition = '';
+          c.busy = false;
+        }, 760);
+      };
+      if(c.hi.complete) show(); else c.hi.onload = show;
+    }
+    function start(){ if(!timer) timer = setInterval(step, 2600); }
+    function stop(){ if(timer){ clearInterval(timer); timer = null; } }
+    /* 見えているかの判定は自前で持つ（IntersectionObserver が返らない環境でも動くように） */
+    function seen(){ var r = mo.getBoundingClientRect(); return r.bottom > 0 && r.top < (window.innerHeight || 0); }
+    var inView = seen();
+    function sync(){ (inView && !document.hidden) ? start() : stop(); }
+    new IntersectionObserver(function(es){
+      inView = es[es.length - 1].isIntersecting; sync();
+    }, {threshold:0}).observe(mo);
+    window.addEventListener('scroll', function(){ inView = seen(); sync(); }, {passive:true});
+    document.addEventListener('visibilitychange', sync);   // 別タブから戻ってきたら動かす
+    sync();
+  })();
+
   /* ── 出現（1要素1回だけ）──────────────── */
   var rise = [].slice.call(document.querySelectorAll('.rise'));
   if(!rise.length) return;

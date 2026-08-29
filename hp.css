@@ -145,6 +145,11 @@ b,strong{font-weight:500}
 .hero .mosaic{position:absolute;inset:0;overflow:hidden;display:grid;grid-template-columns:repeat(4,1fr);
   gap:6px;transform:rotate(-4deg) scale(1.22);transform-origin:50% 50%}
 .hero .mosaic img{width:100%;height:100%;object-fit:cover;aspect-ratio:16/9}
+/* 入れ替わり立ち替わり（app.js が .cell を作る。JSが無ければ上の1枚だけ） */
+.hero .mosaic .cell{position:relative;overflow:hidden;aspect-ratio:16/9}
+.hero .mosaic .cell img{position:absolute;inset:0}
+.hero .mosaic .cell img.b{opacity:0;transition:opacity .7s ease}
+.hero .mosaic .cell img.b.on{opacity:1}
 .hero .veil{position:absolute;inset:0;
   background:
     linear-gradient(90deg,rgba(35,24,21,.88) 0%,rgba(35,24,21,.66) 54%,rgba(35,24,21,.16) 100%),
@@ -451,12 +456,13 @@ b,strong{font-weight:500}
   .hero{min-height:0;display:block;background:var(--beige);padding-top:216px}
   .hero .mosaic,.hero .veil{position:absolute;left:0;right:0;top:0;bottom:auto;height:216px}
   .hero .mosaic{grid-template-columns:repeat(3,1fr);transform:rotate(-3deg) scale(1.28)}
-  .hero .veil{background:linear-gradient(90deg,rgba(35,24,21,.34) 0%,rgba(35,24,21,.12) 100%)}
+  /* スマホは文字が帯の下にあるので、かぶせは要らない＝ゲーム画面をそのまま見せる */
+  .hero .veil{display:none}
   .hero .in{max-width:none;color:var(--ink);padding:26px 0 30px}
   .hero .eb{color:var(--sub)}
   .hero .sub2{color:var(--ink2)}
   .hero .pill.ghost{color:var(--ink);border-color:var(--ink)}
-  .hero .tayosu{display:none}
+  .hero .tayosu{display:block;width:96px;height:96px;right:10px;top:150px;bottom:auto;z-index:3}
   .stats{margin-top:0;grid-template-columns:repeat(2,minmax(0,1fr))}
   .split{grid-template-columns:1fr}
   .split .ph{min-height:0;aspect-ratio:16/9;order:1}
@@ -469,7 +475,7 @@ b,strong{font-weight:500}
   .pcard .pph{max-width:280px}
   .figs{grid-template-columns:repeat(2,1fr)}
   .career li{grid-template-columns:1fr;gap:6px}
-  .band{height:150px}
+  .band{height:170px}
   .band .row img{width:104px;height:104px}
 }
 @media (max-width:600px){
@@ -487,8 +493,12 @@ b,strong{font-weight:500}
   .duo a{grid-template-columns:1fr}
   .duo .ph{aspect-ratio:16/9}
   .offer article,.kata article{grid-template-columns:1fr}
-    .band{height:120px}
-  .band .row img{width:84px;height:84px}
+  /* スマホ：8体を2段に折り返して全部見せる */
+  .band{height:206px}
+  .band .row{flex-wrap:wrap;justify-content:center;gap:2px}
+  .band .row img{width:76px;height:76px;flex:0 0 auto}
+  .band .row img:first-child{margin-left:0}
+  .band .row img:last-child{margin-right:0}
   .figs{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion:reduce){
