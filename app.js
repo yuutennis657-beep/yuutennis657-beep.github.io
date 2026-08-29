@@ -226,6 +226,88 @@
     sync();
   })();
 
+  /* ── 数字パネル（2026-08-29）──────────────────────────
+     ・数字を押すと内訳が浮かび上がる。開くのは1枚だけ。外を押す／Escで閉じる
+     ・<b class="num"> をJSでボタンに格上げする＝JSが落ちている端末では
+       「押せないボタン」を見せずに、内訳をそのまま出したままにできる
+     ・画面に入ったら 0 から数え上げる（動きを減らす設定の人には出さない） */
+  (function(){
+    var box = document.querySelector('.stats');
+    if(!box) return;
+    var stats = [].slice.call(box.querySelectorAll('.stat'));
+    if(!stats.length) return;
+
+    /* ---- 押して開く ---- */
+    function shutAll(except){
+      stats.forEach(function(st){
+        if(st === except) return;
+        if(!st.classList.contains('open')) return;
+        st.classList.remove('open');
+        var b = st.querySelector('.num');
+        if(b) b.setAttribute('aria-expanded','false');
+      });
+    }
+    stats.forEach(function(st, i){
+      var num = st.querySelector('.num'), d = st.querySelector('.d');
+      if(!num || !d) return;
+      if(!d.id) d.id = 'statd' + (i + 1);
+      num.setAttribute('role','button');
+      num.setAttribute('tabindex','0');
+      num.setAttribute('aria-expanded','false');
+      num.setAttribute('aria-controls', d.id);
+      var lb = st.querySelector('.lb');
+      num.setAttribute('aria-label', (lb ? lb.textContent + '　' : '') +
+        num.textContent.trim() + '　くわしい内訳を開く');
+      function toggle(e){
+        e.preventDefault(); e.stopPropagation();
+        var on = !st.classList.contains('open');
+        shutAll(st);
+        st.classList.toggle('open', on);
+        num.setAttribute('aria-expanded', on ? 'true' : 'false');
+      }
+      num.addEventListener('click', toggle);
+      num.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') toggle(e);
+      });
+    });
+    document.addEventListener('click', function(e){
+      if(!e.target.closest || !e.target.closest('.stat')) shutAll(null);
+    });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') shutAll(null); });
+
+    /* ---- 0から数え上げる ---- */
+    function count(st){
+      var v = st.querySelector('.num .v');
+      var to = parseFloat(st.getAttribute('data-num'));
+      var dec = parseInt(st.getAttribute('data-dec') || '0', 10);
+      if(!v || isNaN(to)) return;
+      if(reduce || !window.requestAnimationFrame){ v.textContent = to.toFixed(dec); return; }
+      st.classList.add('count');
+      var DUR = 1150, t0 = null;
+      var delay = parseFloat(st.style.getPropertyValue('--sd')) * 1000 || 0;
+      v.textContent = (0).toFixed(dec);
+      setTimeout(function(){
+        (function step(t){
+          if(t0 === null) t0 = t;
+          var k = Math.min(1, (t - t0) / DUR);
+          var e = 1 - Math.pow(1 - k, 3);              /* 最後にゆっくり止まる */
+          v.textContent = (to * e).toFixed(dec);
+          if(k < 1) requestAnimationFrame(step);
+          else { v.textContent = to.toFixed(dec); st.classList.remove('count'); }
+        })(performance && performance.now ? performance.now() : new Date().getTime());
+      }, delay);
+    }
+
+    stats.forEach(function(st, i){ st.style.setProperty('--sd', (i * 0.11) + 's'); });
+    function run(){ stats.forEach(function(st){ st.classList.add('seen'); count(st); }); }
+    if(!('IntersectionObserver' in window)){ run(); return; }
+    var sio = new IntersectionObserver(function(es){
+      if(!es.some(function(e){ return e.isIntersecting; })) return;
+      sio.disconnect(); run();
+    }, {threshold:.3});
+    sio.observe(box);
+  })();
+
   /* ── 出現（1要素1回だけ）──────────────── */
   var rise = [].slice.call(document.querySelectorAll('.rise'));
   if(!rise.length) return;

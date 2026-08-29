@@ -137,6 +137,7 @@ b,strong{font-weight:500}
 .hd .grp a[aria-current=page]::after{content:"";position:absolute;left:12px;right:12px;bottom:0;
   height:3px;background:var(--gold);border-radius:2px}
 .hd .bar{display:none}
+.nv-s{display:none}
 .hd.min .in{height:66px}
 .hd.min{box-shadow:var(--sh-2)}
 .hd.min .grp img{width:26px;height:26px}
@@ -270,8 +271,8 @@ b,strong{font-weight:500}
   position:relative;z-index:3;margin-top:6px;
   /* 下の「入口4つ」との あき。上にあった1節を外したぶんを、ここで取る（2026-08-29） */
   margin-bottom:clamp(46px,6vw,74px)}   /* ヒーローが明るくなったので食いこませない（2026-08-29） */
-.stat{min-width:0;background:var(--beige2);border:1px solid var(--hair);border-radius:var(--r-card);
-  box-shadow:var(--sh-2);padding:18px 18px 20px}
+.stat{position:relative;min-width:0;background:var(--beige2);border:1px solid var(--hair);
+  border-radius:var(--r-card);box-shadow:var(--sh-2);padding:18px 18px 20px}
 .stat .lb{display:block;font-size:var(--fs-1);color:var(--sub);letter-spacing:var(--ls-2);line-height:1.4}
 .stat .num{display:block;font-family:var(--en);font-weight:700;font-variant-numeric:tabular-nums;
   font-size:clamp(34px,3.35vw,52px);line-height:1.05;margin:6px 0 6px;letter-spacing:var(--ls-0)}
@@ -280,6 +281,60 @@ b,strong{font-weight:500}
 .stat.hi{background:var(--paper)}
 .stat.hi .num{color:var(--greenD)}
 .stat.hi .ar{color:var(--gold);font-style:normal;margin-right:2px}
+
+/* ── 数字パネル：内訳は「しまっておく」（2026-08-29）────────────────
+   名刺として最初に見せるのは 見出し＋数字 だけ。内訳の小さい字は数字を
+   押したときだけ浮かび上がる。JS が動いたとき（html.js）だけ隠す＝
+   JS が落ちている端末では、いままで通り内訳がそのまま読める。 */
+.js .stat span.d{position:absolute;left:10px;right:10px;top:calc(100% - 6px);z-index:1;
+  background:var(--paper);border:1px solid var(--hair);border-radius:14px;
+  box-shadow:0 14px 30px -12px rgba(40,26,10,.42),0 2px 6px rgba(40,26,10,.10);
+  padding:12px 14px;font-size:var(--fs-2);line-height:var(--lh-2);color:var(--ink2);
+  opacity:0;visibility:hidden;transform:translateY(10px) scale(.97);transform-origin:50% 0;
+  transition:opacity .2s ease,transform .26s cubic-bezier(.2,.9,.3,1.25),visibility 0s .26s}
+.js .stat span.d::before{content:"";position:absolute;left:24px;top:-6px;width:11px;height:11px;
+  background:var(--paper);border-left:1px solid var(--hair);border-top:1px solid var(--hair);
+  transform:rotate(45deg);border-radius:2px}
+.js .stat.open{z-index:9}
+.js .stat.open span.d{opacity:1;visibility:visible;transform:translateY(0) scale(1);
+  transition:opacity .18s ease,transform .3s cubic-bezier(.2,.9,.3,1.25),visibility 0s}
+
+/* 押せる数字。＋の丸が「まだ続きがある」しるし。開くと × に変わる */
+.js .stat .num{cursor:pointer;width:max-content;max-width:100%;border-radius:10px;
+  transition:transform .18s}
+.js .stat .num::after{content:"＋";display:inline-flex;align-items:center;justify-content:center;
+  width:1.55em;height:1.55em;margin-left:.3em;vertical-align:.28em;
+  font-family:var(--jp);font-size:.27em;font-weight:700;line-height:1;
+  color:var(--greenD);background:var(--greenL);border-radius:50%;
+  transition:transform .24s cubic-bezier(.2,.9,.3,1.25),background .18s,color .18s}
+.js .stat .num:hover{transform:translateY(-2px)}
+.js .stat .num:hover::after{background:var(--gold);color:var(--ink)}
+.js .stat .num:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
+.js .stat.open .num::after{content:"×";transform:rotate(180deg);background:var(--gold);color:var(--ink)}
+
+/* 数字のモーション。画面に入ったら 0 から数え上げ、札ごと少し遅らせて出す。
+   数字そのものも、ぐっと立ち上がってから落ちつく（.35s → 1回だけ） */
+.js .stats .stat{opacity:0;transform:translateY(14px)}
+.js .stats .stat.seen{opacity:1;transform:none;
+  transition:opacity .5s ease var(--sd,0s),transform .6s cubic-bezier(.2,.75,.25,1) var(--sd,0s)}
+.js .stats .stat.seen .num{animation:numPop .62s cubic-bezier(.2,.8,.28,1.2) var(--sd,0s) both}
+@keyframes numPop{
+  from{transform:translateY(10px) scale(.86);opacity:.25}
+  60% {transform:translateY(0) scale(1.06);opacity:1}
+   to {transform:translateY(0) scale(1);opacity:1}}
+/* 数え上げの間だけ、下に金の線が伸びる＝「いま動いている」ことが伝わる */
+.js .stats .stat .num .v{position:relative}
+.js .stats .stat.count .num .v::after{content:"";position:absolute;left:0;right:0;bottom:-.1em;
+  height:3px;border-radius:2px;background:var(--gold);transform-origin:0 50%;
+  animation:numBar 1.15s cubic-bezier(.25,.9,.3,1) var(--sd,0s) both}
+@keyframes numBar{from{transform:scaleX(0);opacity:1}80%{opacity:1}to{transform:scaleX(1);opacity:0}}
+
+@media (prefers-reduced-motion:reduce){
+  .js .stats .stat{opacity:1;transform:none}
+  .js .stats .stat.seen .num{animation:none}
+  .js .stats .stat.count .num .v::after{animation:none;display:none}
+  .js .stat span.d{transition:none}
+}
 
 /* ── 白カード（お知らせ／Now）─────────────── */
 .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
@@ -421,6 +476,20 @@ b,strong{font-weight:500}
 .str .kno img{width:64px;height:64px;object-fit:contain;margin-left:auto}
 .str h3{font-family:var(--round);font-weight:700;font-size:var(--fs-6);line-height:var(--lh-2)}
 .str p{margin-top:12px;font-size:var(--fs-3);color:var(--ink2);line-height:var(--lh-3)}
+/* 図の横は「読む」ではなく「見る」。長い段落をやめ、
+   一行の結論（.klead）＋ 箇条（.kpts）＋ 道具カード（.tools）で組む */
+.str .klead{margin-top:12px;font-family:var(--round);font-weight:700;
+  font-size:var(--fs-4);line-height:var(--lh-2);color:var(--ink)}
+.str .kcap{margin-top:18px;font-size:var(--fs-2);color:var(--sub);letter-spacing:var(--ls-2)}
+.str .kpts{display:grid;gap:7px;margin-top:11px}
+.str .kpts li{display:flex;gap:10px;align-items:flex-start;
+  font-size:var(--fs-3);line-height:var(--lh-2);color:var(--ink2)}
+.str .kpts li::before{content:"";flex:none;width:9px;height:9px;margin-top:8px;
+  border-radius:2px;background:var(--gold)}
+.str .tools{display:grid;gap:10px;margin-top:12px}
+.str .tools div{background:var(--beige2);border-radius:var(--r-card);padding:13px 15px}
+.str .tools b{font-family:var(--round);font-weight:700;font-size:var(--fs-4);color:var(--greenD)}
+.str .tools span{display:block;margin-top:3px;font-size:var(--fs-2);color:var(--ink2);line-height:var(--lh-2)}
 .str .kfoot{margin-top:16px;padding-top:14px;border-top:1px solid var(--hair2);
   font-size:var(--fs-2);color:var(--sub);line-height:var(--lh-2)}
 .str .fnote{margin-top:16px;font-size:var(--fs-2);color:var(--ink2);line-height:var(--lh-3)}
@@ -639,10 +708,29 @@ b,strong{font-weight:500}
   .hero .in{grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr)}
 }
 @media (max-width:800px){
-  :root{--head-h:var(--head-h-sp)}
-  .hd .in{justify-content:space-between}
-  .hd nav{display:none}
-  .hb{display:flex}
+  /* スマホ：ハンバーガーをやめ、5つのメニューを上に出しっぱなしにする（2026-08-29）。
+     名刺として渡す以上、1タップで各ページへ行けることを最優先にした。
+     ・ロゴは消す（すぐ下のヒーローに大きく名前が出るので、二重になる）
+     ・.grp を display:contents にして、2つの組を1本の横並びに溶かす
+     ・入りきらない端末では横スクロール（バーは消す） */
+  :root{--head-h:52px}
+  .hd .in{width:100%;max-width:none;height:auto;padding:0;gap:0;justify-content:stretch}
+  .hd .logo{display:none}
+  .hb{display:none}
+  .hd nav{display:flex;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none;-ms-overflow-style:none}
+  .hd nav::-webkit-scrollbar{display:none}
+  .hd .grp{display:contents}
+  .hd .grp a{flex:1 1 0;min-width:max-content;flex-direction:row;justify-content:center;
+    align-items:center;gap:0;min-height:52px;padding:0 5px;font-size:12px;
+    letter-spacing:0;white-space:nowrap}
+  .hd .grp a+a{border-left:1px solid var(--hair2)}
+  .hd .grp a[aria-current=page]{background:var(--greenL);color:var(--greenD)}
+  .hd .grp a[aria-current=page]::after{left:0;right:0;height:3px;border-radius:0}
+  .hd .grp a:active{background:var(--beige2)}
+  .hd.min .in{height:auto}
+  .nv-l{display:none}
+  .nv-s{display:inline}
   /* スマホ：画面が上、文字が下（パソコンの左右を、上下に折りたたむだけ） */
   .hero{padding:0 0 30px}
   .hero .in{grid-template-columns:1fr;gap:0}
@@ -677,7 +765,8 @@ b,strong{font-weight:500}
 @media (max-width:600px){
   .stats{gap:10px}
   .stat{padding:14px 12px 16px}
-  .stat span.d{font-size:11px;line-height:1.45}   /* 3行になるのを防ぐ */
+  .stat span.d{font-size:12px;line-height:1.5}
+  .js .stat span.d{left:4px;right:4px;padding:10px 12px}
   .stat .num{font-size:30px;margin:2px 0 4px}
   .cards,.now,.pfacts,.works{grid-template-columns:1fr}
   .work.feature{grid-column:span 1}
@@ -735,7 +824,16 @@ b,strong{font-weight:500}
   --mo-ph:.5s;                            /* 写真の寄りだけ、ゆっくり */
   --ez:cubic-bezier(.2,.8,.25,1);         /* 出だし速く、止まりやわらかく */
   --sh-up:4px 6px 2px 1px rgba(0,0,0,.14);/* 浮いたときの影（--sh-1 の一段上） */
+  /* 音符の形。文字（♪）ではなく SVG を mask で置く。
+     ・読み上げソフトに「おんぷ」と読まれない（content は空のまま）
+     ・フォントに ♬ が無い端末でも豆腐（□）にならない
+     ・色は background:currentColor で決まるので、置く場所ごとに変えられる */
+  --onpu1:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cellipse cx='7.5' cy='17.8' rx='4.6' ry='3.6' transform='rotate(-20 7.5 17.8)'/%3E%3Crect x='10.7' y='3' width='1.9' height='14.8'/%3E%3Cpath d='M12.6 3C17.6 4.7 20.2 7.2 20.2 11 20.2 8.2 17.2 6.7 12.6 6.2Z'/%3E%3C/svg%3E");
+  --onpu2:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 24'%3E%3Cellipse cx='5.2' cy='18.2' rx='4.4' ry='3.5' transform='rotate(-20 5.2 18.2)'/%3E%3Cellipse cx='19.2' cy='15.8' rx='4.4' ry='3.5' transform='rotate(-20 19.2 15.8)'/%3E%3Crect x='8.3' y='4.6' width='1.8' height='13.6'/%3E%3Crect x='22.3' y='2.2' width='1.8' height='13.6'/%3E%3Cpath d='M8.3 4.6L24.1 2.2 24.1 6 8.3 8.4Z'/%3E%3C/svg%3E");
 }
+
+/* 音符を出す箱には、位置の基準が要る（.head .band .contact は元から relative） */
+.eb{position:relative}
 
 /* ── ① ホバー：浮く・寄る・色が変わる ────────────────── */
 @media (hover:hover) and (pointer:fine){
