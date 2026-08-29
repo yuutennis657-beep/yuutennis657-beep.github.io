@@ -151,6 +151,34 @@
 #curtain .val::after{content:"";position:absolute;left:0;right:0;top:100%;height:22px;
   background:radial-gradient(circle 11px at 11px 0,#22492f 10.4px,transparent 11px) 0 0/22px 22px repeat-x}
 @keyframes cvVal{to{transform:translateY(-125%)}}
+
+/* ── ウーパールーパーが幕を開ける（2026-08-30 追加）──────────────
+   合わせ目の左右に1匹ずつ。下から跳ねて出て、幕をつかんで ためて、引く。
+   ・右の子は入れもの側に scaleX(-1) を掛けて鏡にしてある。
+     おかげで動きの指定は左右で同じものが1つで済み、向きだけ反転する。
+   ・引きはじめは 幕より 50ms 早い。うぱが引く → 幕が動く の順に見せるため。
+     （同時だと「たまたま横に居るキャラ」に見えてしまう）
+   ・絵が間に合わなくても、動くのは空の箱なので幕の動作には影響しない。 */
+#curtain{--uw:clamp(84px,19vw,146px)}
+#curtain .upa{position:absolute;top:64%;z-index:5;width:var(--uw);pointer-events:none}
+#curtain .upa.l{left:calc(50% - var(--uw) + 10px)}
+#curtain .upa.r{left:calc(50% - 10px);transform:scaleX(-1)}
+#curtain .upa img{width:100%;height:auto;display:block;
+  filter:drop-shadow(0 7px 12px rgba(0,0,0,.5));
+  animation:upaIn .65s cubic-bezier(.2,1.25,.4,1) .3s both,
+            upaPull 1.1s cubic-bezier(.62,0,.2,1) .95s forwards}
+#curtain .upa.r img{animation-delay:.37s,1.02s}
+@keyframes upaIn{
+  0%  {opacity:0;transform:translateY(170%) scale(.82)}   /* 幕の下から */
+  55% {opacity:1;transform:translateY(-12%) scale(1.06)}  /* 跳ねて出る */
+  78% {opacity:1;transform:translateY(0) scale(1)}
+  100%{opacity:1;transform:translateY(0) rotate(8deg)}    /* 幕をつかんで ためる */
+}
+@keyframes upaPull{
+  0%  {transform:translateX(0) rotate(8deg)}
+  12% {transform:translateX(-2.2vw) rotate(-14deg)}       /* のけぞって ぐっと引く */
+  100%{transform:translateX(-56vw) rotate(-16deg)}        /* 幕ごと外へ */
+}
 </style>
 </head>
 <body>
@@ -160,6 +188,8 @@
   <div class="seam"></div>
   <div class="glow"></div>
   <div class="val"></div>
+  <div class="upa l"><img src="img/chara/m/upa_green.png" alt="" width="384" height="384" fetchpriority="high" decoding="async"></div>
+  <div class="upa r"><img src="img/chara/m/upa_gold.png" alt="" width="384" height="384" fetchpriority="high" decoding="async"></div>
 </div>
 <script>
 /* 保険。ここは見た目ではない。
@@ -283,33 +313,39 @@
        ・出しっぱなしは「見出し＋数字」だけ。内訳の小さい字はしまってある。
        ・数字をタップすると、内訳がふわっと浮かび上がる（app.js が付ける .open）。
        ・JSが動かないときは内訳がそのまま出る＝情報は消えない（.js が付いたときだけ隠れる）。
-       ・data-num / data-dec は、画面に入ったときに0から数え上げるための行き先。 -->
+       ・data-num / data-dec は、画面に入ったときに0から数え上げるための行き先。
+       ・2026-08-30 追加：数字の下に高さ12pxの小さな図（.fig）。札は +12px だけ高くなる。
+         図は数字の言いかえなので aria-hidden。CSSは hp.css「数字パネル：小さな図」。 -->
   <div class="stats">
     <div class="stat" data-num="16" data-dec="0">
       <span class="lb">自作した教材</span>
       <b class="num"><span class="v">16</span><small>本</small></b>
+      <span class="figbar fig-mass" aria-hidden="true"><span class="g"><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="g"><i></i><i></i><i></i></span><span class="g"><i></i><i></i></span><span class="g"><i></i><i></i></span><span class="g"><i></i></span></span>
       <span class="d">国語6・社会3・特活2・算数2・理科1</span>
     </div>
     <div class="stat" data-num="7" data-dec="0">
       <span class="lb">扱う教科</span>
       <b class="num"><span class="v">7</span><small>教科</small></b>
+      <span class="figbar fig-tick" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span>
       <span class="d">国語・社会・理科・算数・体育・道徳・特別活動</span>
     </div>
     <div class="stat hi" data-num="7" data-dec="1">
       <span class="lb">学年平均の伸び</span>
       <b class="num"><i class="ar" aria-hidden="true">↑</i><span class="v">7.0</span><small>点</small></b>
+      <span class="fig-gain" aria-hidden="true"><span class="tr"><span class="fill base" style="width:75.4%"></span><span class="fill up" style="left:75.4%;right:17.6%"></span></span></span>
       <span class="d"><b>75.4 → 82.4点</b>／6年3学級・2026年7月</span>
     </div>
     <div class="stat" data-num="6" data-dec="0">
       <span class="lb">教員歴</span>
       <b class="num"><span class="v">6</span><small>年目</small></b>
+      <span class="figbar fig-tick" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="now"></i></span>
       <span class="d">小学校教員として教室に立った年数</span>
     </div>
   </div>
 </div>
 
 <!-- ③ 強み2つ（2026-08-29 追加。4つあったものを本人が2つに絞ったので、ホームにも載せる） -->
-<section class="sec" id="strength" style="background:var(--beige2);border-block:1px solid var(--hair)"><div class="wrap">
+<section class="sec g" id="strength"><div class="wrap">
   <div class="head">
     <p class="eb"><img class="mark" src="img/chara/s/kocho_45.png" alt="" width="96" height="96" loading="lazy" decoding="async">My strengths</p>
     <h2 class="h-jp">わたしの強み</h2>
@@ -450,7 +486,7 @@
     <div class="txt">
       <p class="eb"><img class="mark" src="img/chara/s/zuko_45.png" alt="" width="96" height="96" loading="lazy" decoding="async">What I made</p>
       <h2>作った教材</h2>
-      <p>小学校教員6年目。国語・社会・理科・算数・体育・特別活動の7教科で、<b>16本</b>の教育アプリを自作しています。子どもが使う教材と、先生が使う道具の両方です。</p>
+      <p>国語・社会・理科・算数・体育・特別活動の7教科で、<b>16本</b>の教育アプリを自作しています。子どもが使う教材と、先生が使う道具の両方です。</p>
       <a class="pill" href="works.html">くわしく見る <span aria-hidden="true">→</span></a>
       <img class="mate" src="img/chara/m/upa_alien.png" alt="" width="120" height="120" loading="lazy" decoding="async">
     </div>
@@ -484,7 +520,7 @@
     <div class="txt">
       <p class="eb"><img class="mark" src="img/chara/s/ongaku_45.png" alt="" width="96" height="96" loading="lazy" decoding="async">What I can do</p>
       <h2>できること</h2>
-      <p>教材会社の方、研修や研究会をお考えの方、同じ学校現場の方 ── どの入口でも歓迎です。<b>お渡しするのは「作り方」ではなく「確かめ方」</b>です。研修メニューは4本あります。</p>
+      <p><b>ものすごく簡単に、誰でもできるICT活用</b>をお伝えできます。特別なソフトも、特別な技術もいりません。校内研修や研究会でお話しできることを、4本にまとめました。</p>
       <a class="pill" href="offer.html">くわしく見る <span aria-hidden="true">→</span></a>
       <img class="mate" src="img/chara/m/upa_comet.png" alt="" width="120" height="120" loading="lazy" decoding="async">
     </div>
@@ -546,7 +582,7 @@
 </div>
 
 <!-- ⑩ 連絡先 -->
-<section class="sec" id="contact"><div class="wrap">
+<section class="sec g" id="contact"><div class="wrap">
   <div class="contact">
     <img class="mate" src="img/chara/m/tayosu_45.png" alt="" width="140" height="140" loading="lazy" decoding="async">
     <svg class="art" viewBox="0 0 400 400" aria-hidden="true">

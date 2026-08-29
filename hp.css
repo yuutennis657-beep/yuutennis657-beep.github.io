@@ -14,6 +14,9 @@
   --ink:#231815; --ink2:#4a3f3a; --sub:#6c554f;
   /* 緑＝色の軸 */
   --green:#35694a; --greenD:#25503a; --greenL:#e7efe4;
+  /* 淡い緑の地。クリームの節と交互に置いて、上から下までリズムを作る（2026-08-30）
+     ベージュ(#efeee2)との差は 明るさで 1.06倍だけ。差は「緑みがあるか」で付けている */
+  --greenBG:#dfebdc;
   /* 山吹＝行動 */
   --gold:#fbbf19; --goldD:#d99e00; --goldL:#fdf0c9;
   /* こげ茶＝足元 */
@@ -65,6 +68,10 @@ b,strong{font-weight:500}
 .wrap{width:min(100% - var(--pad)*2,var(--wrap));margin-inline:auto}
 .sec{padding:clamp(52px,7vw,80px) 0}
 .sec.tight{padding:clamp(36px,5vw,56px) 0}
+/* 淡い緑の節。クリームの節と交互に置く（2026-08-30）
+   前は inline で background:var(--beige2) を書いていたが、地(#efeee2)との差が
+   明るさで 1.02倍しかなく、実機では「同じ色」に見えていた。緑みで差を付ける。 */
+.sec.g{background:var(--greenBG);border-block:1px solid rgba(37,80,58,.18)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .skip{position:absolute;left:-9999px;top:0;z-index:99;background:var(--gold);color:var(--ink);
   padding:12px 20px;border-radius:0 0 var(--r-card) 0}
@@ -271,14 +278,16 @@ b,strong{font-weight:500}
   position:relative;z-index:3;margin-top:6px;
   /* 下の「入口4つ」との あき。上にあった1節を外したぶんを、ここで取る（2026-08-29） */
   margin-bottom:clamp(46px,6vw,74px)}   /* ヒーローが明るくなったので食いこませない（2026-08-29） */
-.stat{position:relative;min-width:0;background:var(--beige2);border:1px solid var(--hair);
+/* 数字パネル：地(ベージュ)との差が 1.02倍しかなく、箱に見えていなかった。
+   ふつうのパネルは紙の白、いちばん見せたい1枚だけ 淡い緑にする（2026-08-30） */
+.stat{position:relative;min-width:0;background:var(--paper);border:1px solid var(--hair);
   border-radius:var(--r-card);box-shadow:var(--sh-2);padding:18px 18px 20px}
 .stat .lb{display:block;font-size:var(--fs-1);color:var(--sub);letter-spacing:var(--ls-2);line-height:1.4}
 .stat .num{display:block;font-family:var(--en);font-weight:700;font-variant-numeric:tabular-nums;
   font-size:clamp(34px,3.35vw,52px);line-height:1.05;margin:6px 0 6px;letter-spacing:var(--ls-0)}
 .stat .num small{font-size:.42em;margin-left:3px;font-family:var(--jp);font-weight:500}
 .stat span.d{display:block;font-size:var(--fs-2);color:var(--ink2);line-height:var(--lh-2)}
-.stat.hi{background:var(--paper)}
+.stat.hi{background:var(--greenBG);border-color:rgba(37,80,58,.28)}
 .stat.hi .num{color:var(--greenD)}
 .stat.hi .ar{color:var(--gold);font-style:normal;margin-right:2px}
 
@@ -343,11 +352,14 @@ b,strong{font-weight:500}
    ・16マス＝教科ごとに間をあけて 6・3・2・2・1 が数えられる
    ・目もり＝7教科／6年目。最後の1本だけ山吹＝「いま」
    ・帯＝0〜100点の実寸。緑がもとの75.4点、その先の山吹が伸びた7.0点  */
-.fig{display:flex;align-items:flex-end;gap:8px;height:12px;margin:4px 0 0}
+/* ⚠ クラス名は .figbar。ここを .fig にすると、about の「強みカードの図の欄」
+   (.str .fig) と results の「数字パネル4枚」(.figs .fig) にも当たってしまい、
+   どちらも高さ12pxのflexに潰れて中身が飛び出す（2026-08-30に実際に壊れた） */
+.figbar{display:flex;align-items:flex-end;gap:8px;height:12px;margin:4px 0 0}
 
 /* ① マスの列（自作した教材16本） */
-.fig-mass .g{display:flex;gap:2px;flex:0 1 auto;min-width:0}
-.fig-mass i{flex:0 1 6px;min-width:3px;height:12px;border-radius:1px;
+.fig-mass .g{display:flex;gap:2px;flex:0 0 auto}
+.fig-mass i{flex:0 0 auto;width:6px;height:12px;border-radius:1px;
   background:var(--green);opacity:.9}
 .fig-mass .g:nth-child(2) i{opacity:.78}
 .fig-mass .g:nth-child(3) i{opacity:.66}
@@ -399,7 +411,10 @@ b,strong{font-weight:500}
 .split .pill{margin-top:26px;align-self:flex-start}
 .split .mate{position:absolute;right:24px;bottom:0;width:120px;height:120px;object-fit:contain;pointer-events:none}
 .splits{border-block:1px solid var(--hair)}
-.splits .split+.split{border-top:1px solid var(--hair)}
+.splits .split+.split{border-top:1px solid rgba(37,80,58,.16)}
+/* 交互に地色を変える。ホームは split→rev→split→rev なので
+   クリーム・緑・クリーム・緑 になる（上のメニューと同じリズム） */
+.splits .split.rev{background:var(--greenBG)}
 
 /* ── 代表2本の横長カード ────────────────── */
 .duo{display:grid;grid-template-columns:1fr 1fr;gap:20px}
@@ -417,7 +432,8 @@ b,strong{font-weight:500}
 
 /* ── キャラ帯 ──────────────────────────── */
 .band{position:relative;height:200px;overflow:hidden;
-  background:linear-gradient(180deg,#eef5ec 0%,var(--beige) 100%)}
+  background:var(--greenBG);border-top:1px solid rgba(37,80,58,.18)}
+/* 帯から下（キャラ帯＋連絡先）は ひとつづきの緑。ページの締めをここで作る */
 .band .line{position:absolute;left:0;bottom:26px;width:100%;height:14px}
 .band .row{position:absolute;left:0;right:0;bottom:26px;display:flex;align-items:flex-end;
   justify-content:space-between;padding:0 clamp(0px,2vw,24px)}
@@ -460,7 +476,8 @@ b,strong{font-weight:500}
 
 /* ── 出現（JSが落ちても読める：既定は見える）───── */
 @media (prefers-reduced-motion:no-preference){
-  .js .rise{opacity:0;transform:translateY(16px);
+  /* --ry ＝ 動く距離。既定16px。節の単位のものは app.js が 30px を渡す */
+  .js .rise{opacity:0;transform:translateY(var(--ry,16px));
     transition:opacity .42s cubic-bezier(.2,.7,.3,1),transform .42s cubic-bezier(.2,.7,.3,1);
     transition-delay:calc(var(--i,0)*60ms)}
   .js .rise.in{opacity:1;transform:none}
@@ -786,10 +803,46 @@ b,strong{font-weight:500}
   .hd .grp a{flex:1 1 0;min-width:max-content;flex-direction:row;justify-content:center;
     align-items:center;gap:0;min-height:52px;padding:0 5px;font-size:12px;
     letter-spacing:0;white-space:nowrap}
-  .hd .grp a+a{border-left:1px solid var(--hair2)}
-  .hd .grp a[aria-current=page]{background:var(--greenL);color:var(--greenD)}
-  .hd .grp a[aria-current=page]::after{left:0;right:0;height:3px;border-radius:0}
-  .hd .grp a:active{background:var(--beige2)}
+  /* ── 5つのボタンを クリーム／緑 の交互にする（2026-08-30）──────────
+     前は 5つとも同じベージュで、あいだの点線だけが仕切りだった。
+     指で押すとき「どこからどこまでが1つのボタンか」が見えず、
+     真ん中の3つを押しまちがえる。色で塗り分けると、境目を探さなくてよい。
+       1 ホーム         クリーム
+       2 わたしのこと   緑
+       3 作った教材     クリーム
+       4 確かめたこと   緑
+       5 できること     クリーム
+     ※HTMLは .grp a（2つ）と .grp b（3つ）に分かれているので、
+       通しの1〜5ではなく、それぞれの中の順番で指定している。 */
+  /* 仕切りの細線。色でも分かれるが、いまいるページ（山吹）と
+     クリームが となりあうときだけ 明るさが近い（1.65:1）。
+     そこだけのために、5つとも同じ細線で区切っておく。
+     ※ .grp a と .grp b にまたがるので、b の1つ目にも線を引く */
+  .hd .grp.a a+a,.hd .grp.b a+a,.hd .grp.b a:first-child{
+    border-left:1px solid rgba(37,80,58,.22)}
+  .hd .grp.a a:first-child{border-left:0}
+  .hd .grp.a a:nth-child(1),
+  .hd .grp.b a:nth-child(1),
+  .hd .grp.b a:nth-child(3){background:var(--paper);color:var(--ink)}
+  .hd .grp.a a:nth-child(2),
+  .hd .grp.b a:nth-child(2){background:var(--green);color:#fff}
+  /* 緑と白の明暗比 6.4:1。クリームと墨は 17:1。どちらも AA を超えている */
+
+  /* いまいるページ＝山吹。5つの中で1つだけ色が違うので、探さずに分かる。
+     山吹とクリームは明るさが近いので、下に こげ緑の帯を足して
+     明るさでも差が出るようにしている（帯と山吹で 5.9:1）。 */
+  .hd .grp a[aria-current=page],
+  .hd .grp.a a[aria-current=page]:nth-child(1),
+  .hd .grp.a a[aria-current=page]:nth-child(2),
+  .hd .grp.b a[aria-current=page]:nth-child(1),
+  .hd .grp.b a[aria-current=page]:nth-child(2),
+  .hd .grp.b a[aria-current=page]:nth-child(3){background:var(--gold);color:var(--ink)}
+  .hd .grp a[aria-current=page]::after{left:0;right:0;height:5px;border-radius:0;
+    background:var(--greenD)}
+  /* 押している間だけ へこませる */
+  .hd .grp a:active{filter:brightness(.93)}
+  /* バーの足元。クリームのボタンが 本文の地に溶けないように */
+  .hd{border-bottom:3px solid var(--greenD)}
   .hd.min .in{height:auto}
   .nv-l{display:none}
   .nv-s{display:inline}
@@ -832,6 +885,9 @@ b,strong{font-weight:500}
 @media (max-width:600px){
   .stats{gap:10px}
   .stat{padding:14px 12px 16px}
+  /* 札がせまいので、マスを1px小さく、群の間もつめる（2026-08-30） */
+  .figbar{gap:5px}
+  .fig-mass i{width:5px}
   .stat span.d{font-size:12px;line-height:1.5}
   .js .stat span.d{left:4px;right:4px;padding:10px 12px}
   .stat .num{font-size:30px;margin:2px 0 4px}
@@ -1292,4 +1348,96 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:
 @media (hover:hover) and (pointer:fine){
   .backrow a{transition:transform var(--mo) var(--ez),box-shadow var(--mo) var(--ez),background var(--mo)}
   .backrow a:hover{transform:translateY(-3px);box-shadow:var(--sh-up)}
+}
+
+/* ============================================================
+   詳細ページの図（2026-08-30 追加）
+   ・作った教材＝教科別の横棒／確かめたこと＝前後比較／できること＝研修の長さ
+   ・SVGではなくHTML+CSSで組む。字が実サイズのまま折り返せるので、
+     スマホでも 13px を下回らない（mobile-fit の線）
+   ============================================================ */
+.sfig{
+  max-width:min(100%,600px);margin-block:24px;padding:18px 18px 16px;
+  background:var(--paper);border:1px solid var(--hair);
+  border-radius:var(--r-card);box-shadow:var(--sh-2)}
+.sfig p{margin:0;line-height:var(--lh-2);letter-spacing:var(--ls-1)}
+.sfig-t{display:block;font-family:var(--round);font-weight:700;font-size:var(--fs-3);
+  line-height:var(--lh-2);color:var(--ink);letter-spacing:var(--ls-1)}
+.sfig-t span{display:block;margin-top:2px;font-family:var(--jp);font-weight:400;
+  font-size:var(--fs-1);color:var(--sub);letter-spacing:0;line-height:1.5}
+.sfig-t2{margin-top:16px!important}
+.sfig .sfig-n{margin-top:12px;font-size:var(--fs-2);color:var(--ink2);letter-spacing:0}
+.sfig-n b{font-weight:700;color:var(--ink)}
+/* 凡例 */
+.sfig-lg{margin-top:10px!important;display:flex;flex-wrap:wrap;gap:6px 14px;
+  font-size:var(--fs-1);color:var(--sub);letter-spacing:0}
+.sfig-lg span{display:inline-flex;align-items:center;gap:5px}
+.sfig-lg i{width:10px;height:10px;border-radius:3px;flex:none}
+.sfig-lg i.g{background:var(--green)}
+.sfig-lg i.y{background:var(--gold)}
+.sfig-lg i.d{background:#d7d0c1}
+
+/* ① ベン図（about.html の .venn をそのまま使う。箱だけ詰める） */
+.sfig .venn{max-width:340px;margin:6px auto 0}
+
+/* ② 横棒グラフ */
+.hbar{margin-top:12px;display:grid;gap:7px}
+.hbar li{display:grid;grid-template-columns:5.4em minmax(0,1fr) 2.6em;align-items:center;gap:9px}
+.hbar .hb-l{font-size:var(--fs-2);color:var(--ink2);letter-spacing:0;line-height:1.3}
+.hbar .hb-b{height:13px;border-radius:7px;background:rgba(35,24,21,.07)}
+.hbar .hb-b i{display:block;height:100%;border-radius:7px;background:var(--green);
+  width:calc(var(--v) / 6 * 100%);min-width:6px}
+.hbar li.f .hb-b i{background:var(--gold)}
+.hbar .hb-n{font-family:var(--en);font-weight:700;font-size:var(--fs-4);
+  color:var(--ink);text-align:right;line-height:1}
+.hbar .hb-n small{font-family:var(--jp);font-weight:400;font-size:var(--fs-1);color:var(--sub)}
+
+/* ③ 前後比較 */
+.ba{margin-top:12px;display:grid;gap:8px}
+.ba .ba-r{display:grid;grid-template-columns:4.2em minmax(0,1fr) 3.2em;align-items:center;gap:9px}
+.ba .ba-l{font-size:var(--fs-2);color:var(--ink2);letter-spacing:0;line-height:1.2}
+.ba .ba-l small{display:block;font-size:var(--fs-1);color:var(--sub)}
+.ba .ba-b{height:24px;border-radius:4px;background:rgba(35,24,21,.06)}
+.ba .ba-b i{display:block;height:100%;border-radius:4px;background:#c2bbac;
+  width:calc(var(--v) / 100 * 100%)}
+.ba .ba-b.b2 i{background:var(--green)}
+.ba .ba-v{font-family:var(--en);font-weight:700;font-size:var(--fs-5);color:var(--ink);
+  text-align:right;line-height:1}
+.ba .ba-r.b2 .ba-v{color:var(--greenD)}
+.ba-d{margin-top:10px!important;display:inline-flex;align-items:center;gap:6px;
+  background:var(--goldL);border-radius:var(--r-pill);padding:5px 14px;
+  font-size:var(--fs-2);color:var(--brownD);letter-spacing:0}
+.ba-d b{font-family:var(--en);font-weight:700;font-size:var(--fs-4);color:var(--ink)}
+/* 小さい数字カード2枚 */
+.mstat{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mstat li{background:var(--beige2);border-radius:var(--r-card);padding:8px 10px;min-width:0}
+.mstat b{display:block;font-weight:400;font-size:var(--fs-1);color:var(--sub);letter-spacing:0}
+.mstat span{font-family:var(--en);font-weight:700;font-size:var(--fs-4);color:var(--ink);line-height:1.2}
+.mstat i{font-style:normal;font-family:var(--en);font-weight:700;font-size:var(--fs-2);
+  color:var(--greenD);margin-left:5px}
+/* 割合の帯 */
+.prop{margin-top:10px;display:flex;height:26px;border-radius:4px;overflow:hidden}
+.prop span{display:flex;align-items:center;justify-content:center;min-width:0;overflow:hidden;
+  font-family:var(--en);font-weight:700;font-size:var(--fs-2);letter-spacing:0;white-space:nowrap}
+.prop .p1{background:var(--green);color:#fffdf7}
+.prop .p2{flex:1;background:#d7d0c1;color:var(--ink)}
+
+/* ④ 研修メニューの時間帯 */
+.gan{margin-top:12px;display:grid;gap:11px}
+.gan .g-l{display:flex;justify-content:space-between;align-items:baseline;gap:8px;
+  font-size:var(--fs-2);color:var(--ink2);letter-spacing:0;line-height:1.35}
+.gan .g-l b{flex:none;font-family:var(--en);font-weight:700;font-size:var(--fs-2);color:var(--ink)}
+.gan .g-t{display:block;margin-top:5px;height:12px;border-radius:6px;
+  background:rgba(35,24,21,.07);position:relative}
+.gan .g-t i{position:absolute;top:0;bottom:0;border-radius:6px;background:var(--gold);
+  left:calc((var(--a) - 45) / 45 * 100%);width:calc((var(--b) - var(--a)) / 45 * 100%)}
+.g-ax{margin-top:7px;padding-top:6px;border-top:1px solid var(--hair2);
+  display:flex;justify-content:space-between;
+  font-family:var(--en);font-size:var(--fs-1);color:var(--sub)}
+
+@media (max-width:520px){
+  .sfig{padding:14px 12px 12px}
+  .hbar li{grid-template-columns:4.8em minmax(0,1fr) 2.2em;gap:7px}
+  .ba .ba-r{grid-template-columns:3.8em minmax(0,1fr) 2.8em;gap:7px}
+  .mstat{grid-template-columns:1fr}
 }
