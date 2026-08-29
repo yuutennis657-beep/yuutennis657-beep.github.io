@@ -283,29 +283,56 @@
       if(!v || isNaN(to)) return;
       if(reduce || !window.requestAnimationFrame){ v.textContent = to.toFixed(dec); return; }
       st.classList.add('count');
-      var DUR = 1150, t0 = null;
+      var DUR = 1150, t0 = null, fin = false;
       var delay = parseFloat(st.style.getPropertyValue('--sd')) * 1000 || 0;
+      function end(){                                  /* どの道すじで来ても、行き先は同じ */
+        if(fin) return; fin = true;
+        v.textContent = to.toFixed(dec);
+        st.classList.remove('count');
+      }
       v.textContent = (0).toFixed(dec);
       setTimeout(function(){
         (function step(t){
+          if(fin) return;
           if(t0 === null) t0 = t;
           var k = Math.min(1, (t - t0) / DUR);
           var e = 1 - Math.pow(1 - k, 3);              /* 最後にゆっくり止まる */
           v.textContent = (to * e).toFixed(dec);
-          if(k < 1) requestAnimationFrame(step);
-          else { v.textContent = to.toFixed(dec); st.classList.remove('count'); }
+          if(k < 1) requestAnimationFrame(step); else end();
         })(performance && performance.now ? performance.now() : new Date().getTime());
       }, delay);
+      /* 保険：裏のタブ・省電力では requestAnimationFrame が止まる。
+         そのまま「0本」で固まると嘘の数字になるので、時間で必ず着地させる。 */
+      setTimeout(end, delay + DUR + 700);
     }
 
     stats.forEach(function(st, i){ st.style.setProperty('--sd', (i * 0.11) + 's'); });
-    function run(){ stats.forEach(function(st){ st.classList.add('seen'); count(st); }); }
-    if(!('IntersectionObserver' in window)){ run(); return; }
-    var sio = new IntersectionObserver(function(es){
-      if(!es.some(function(e){ return e.isIntersecting; })) return;
-      sio.disconnect(); run();
-    }, {threshold:.3});
-    sio.observe(box);
+
+    /* 画面に入ったら1回だけ動かす。
+       IntersectionObserver だけに任せない（裏のタブ・古い端末では返ってこないことがあり、
+       そのままだと数字が opacity:0 のまま＝いちばん見せたい札が消える）。
+       スクロールのたびに自分でも位置を見て、どちらか先に気づいたほうで動かす。 */
+    var done = false;
+    function run(){
+      if(done) return; done = true;
+      window.removeEventListener('scroll', check);
+      window.removeEventListener('resize', check);
+      stats.forEach(function(st){ st.classList.add('seen'); count(st); });
+    }
+    function check(){
+      var r = box.getBoundingClientRect(), h = window.innerHeight || 0;
+      if(r.top < h * 0.92 && r.bottom > 0) run();
+    }
+    if('IntersectionObserver' in window){
+      var sio = new IntersectionObserver(function(es){
+        if(!es.some(function(e){ return e.isIntersecting; })) return;
+        sio.disconnect(); run();
+      }, {threshold:.3});
+      sio.observe(box);
+    }
+    window.addEventListener('scroll', check, {passive:true});
+    window.addEventListener('resize', check);
+    check();
   })();
 
   /* ── 出現（1要素1回だけ）──────────────── */

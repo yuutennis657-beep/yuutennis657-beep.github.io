@@ -762,6 +762,11 @@ b,strong{font-weight:500}
   .band{height:170px}
   .band .row img{width:104px;height:104px}
 }
+/* 360px より狭い端末（iPhone SE 第1世代など）だけ、上のメニューを一段つめる。
+   ここを縮めないと「できること」が画面の外に出て、横に払わないと押せなくなる。 */
+@media (max-width:360px){
+  .hd .grp a{font-size:11px;padding:0 3px}
+}
 @media (max-width:600px){
   .stats{gap:10px}
   .stat{padding:14px 12px 16px}
@@ -902,20 +907,113 @@ b,strong{font-weight:500}
   /* 主役ボタンだけの、ごくゆっくりの呼吸（1.2%） */
   @keyframes iki{from{scale:1} to{scale:1.012}}
 
-  /* 章見出しの小さいキャラ・角のキャラ・大見出しの横のキャラ */
-  .eb .mark   {animation:uka 4.2s ease-in-out infinite alternate}
-  .mate       {animation:uka 3.8s ease-in-out infinite alternate}
-  .head .peek {animation:uka 4.6s ease-in-out infinite alternate}
+  /* ── 回転 ────────────────────────────────────
+     ・平たいPNGなので、Y軸で回すと 90度のところで【紙のように消える】。
+       それが「くるっと振り向いた」に見えるので、そこは狙って使う。
+     ・回りっぱなしにはしない。9〜14秒に1回、1秒だけ回る。
+       ずっと回っていると目が休まらず、乗りもの酔いに近い不快感が出る人がいる。
+     ・odori は transform を使う。ゆれ（uka）の translate/rotate とは別プロパティなので、
+       「ふわふわしながら、ときどき回る」が同時に成立する。 */
+  @keyframes odori{
+    0%,88%{transform:perspective(700px) rotateY(0deg);
+           animation-timing-function:cubic-bezier(.45,0,.25,1)}
+    100%  {transform:perspective(700px) rotateY(360deg)}
+  }
+  /* さわったとき用：その場で1回くるん（Z軸＋ひと跳ね） */
+  @keyframes kurun{
+    0%  {transform:rotate(0deg)   translateY(0)}
+    35% {transform:rotate(150deg) translateY(-16px)}
+    65% {transform:rotate(275deg) translateY(-16px)}
+    100%{transform:rotate(360deg) translateY(0)}
+  }
 
-  /* キャラ帯の8体。同じ拍で動くと行進に見えるので、1体ずつずらす */
-  .band .row img{animation:uka 3.4s ease-in-out infinite alternate}
-  .band .row img:nth-child(2){animation-duration:3.9s;animation-delay:-.7s}
-  .band .row img:nth-child(3){animation-duration:3.2s;animation-delay:-1.5s}
-  .band .row img:nth-child(4){animation-duration:4.3s;animation-delay:-.3s}
-  .band .row img:nth-child(5){animation-duration:3.6s;animation-delay:-2.1s}
-  .band .row img:nth-child(6){animation-duration:4.0s;animation-delay:-1.1s}
-  .band .row img:nth-child(7){animation-duration:3.3s;animation-delay:-2.6s}
-  .band .row img:nth-child(8){animation-duration:4.5s;animation-delay:-1.9s}
+  /* ── 音符 ────────────────────────────────────
+     ★ここが今回いちばんの制約：
+       キャラは <img>。<img> は置換要素なので ::before / ::after が付かない。
+       だから音符は【キャラが入っている箱】の側から出す。
+       1体ごとに音符を出したい場合は、img を <span> で包む必要がある（HTMLを触ることになる）。 */
+  @keyframes onpu{
+    /* ease-out だと出た瞬間に上まで飛んでしまうので、上がるのは等速（linear）。
+       左右に一度ふらせて、まっすぐ飛ばない＝「ただよっている」ように見せる */
+    0%  {opacity:0;   translate:0 0;         scale:.55; rotate:-20deg}
+    15% {opacity:.85}
+    45% {                translate:-7px -32px;scale:.9;  rotate:9deg}
+    70% {opacity:.85}
+    100%{opacity:0;   translate:14px -72px;  scale:1;   rotate:-6deg}
+  }
+  .band::before,.band::after,.band .row::before,.band .row::after,
+  .eb::before,.eb::after,.head::before,.contact::before{
+    content:"";position:absolute;pointer-events:none;z-index:3;
+    width:22px;height:22px;opacity:0;background:currentColor;
+    -webkit-mask:var(--onpu1) no-repeat center/contain;
+            mask:var(--onpu1) no-repeat center/contain}
+
+  /* ① キャラ帯：常時。4つの音符が、ちがう速さで上がっては消える */
+  .band::before{color:var(--brown);left:15%;bottom:116px;
+    animation:onpu 6.2s linear -1.0s infinite}
+  .band::after{color:var(--brown);left:40%;bottom:124px;width:26px;
+    -webkit-mask-image:var(--onpu2);mask-image:var(--onpu2);
+    animation:onpu 7.1s linear -3.4s infinite}
+  .band .row::before{color:var(--green);left:63%;bottom:96px;width:26px;
+    -webkit-mask-image:var(--onpu2);mask-image:var(--onpu2);
+    animation:onpu 5.6s linear -2.2s infinite}
+  .band .row::after{color:var(--green);left:86%;bottom:104px;
+    animation:onpu 6.8s linear -4.6s infinite}
+
+  /* ② それ以外のキャラ：さわったときだけ、2つ出る。
+     :has() で「中のキャラにさわられている箱」を選ぶ（Chrome105／Safari15.4 以降） */
+  .eb::before{color:var(--goldD);left:2px;bottom:24px;width:18px;height:18px}
+  .eb::after {color:var(--green);left:21px;bottom:31px;width:20px;height:16px;
+    -webkit-mask-image:var(--onpu2);mask-image:var(--onpu2)}
+  .eb:has(.mark:hover)::before{animation:onpu 1.5s linear}
+  .eb:has(.mark:hover)::after {animation:onpu 1.7s linear .18s}
+
+  .head::before{color:var(--goldD);right:58px;bottom:118px;width:26px;height:26px}
+  .head:has(.peek:hover)::before{animation:onpu 1.6s linear}
+
+  .contact::before{color:#fff;right:62px;bottom:112px;width:26px;height:26px}
+  .contact:has(.mate:hover)::before{animation:onpu 1.6s linear}
+
+  /* さわると、その場でくるん（PCはマウス、スマホは指）。
+     kurun は odori より【後ろ】に置く。同じ transform なので、後ろが勝つ */
+  .eb .mark:hover,.eb .mark:active,
+  .mate:hover,.mate:active,
+  .head .peek:hover,.head .peek:active{
+    animation:uka   var(--d) ease-in-out var(--dl) infinite alternate,
+              kurun .9s cubic-bezier(.34,.9,.35,1) both}
+  .band .row img:hover,.band .row img:active{
+    animation:uka   var(--d)  ease-in-out var(--dl) infinite alternate,
+              odori var(--sd) linear      var(--sl) infinite,
+              kurun .9s cubic-bezier(.34,.9,.35,1) both}
+
+  /* 狭い画面では帯が2段に折り返す。音符の位置がずれるので出さない */
+  @media (max-width:800px){
+    .band::before,.band::after,.band .row::before,.band .row::after{display:none}
+  }
+
+  /* ゆれの周期は【変数】で持つ。
+     あとで回転を足すとき、animation を書きなおしても周期を引き継げる。
+     引き継がないと、さわった瞬間にゆれが最初へ戻ってガクッとする。
+     --d ゆれの周期／--dl ゆれの位相／--sd 回る周期／--sl 回る位相 */
+  .eb .mark   {--d:4.2s;--dl:0s}
+  .mate       {--d:3.8s;--dl:0s}
+  .head .peek {--d:4.6s;--dl:0s}
+  .eb .mark,.mate,.head .peek{
+    animation:uka var(--d) ease-in-out var(--dl) infinite alternate}
+
+  /* キャラ帯の8体。同じ拍で動くと行進に見えるので、ゆれも回転も1体ずつずらす */
+  .band .row img{--d:3.4s;--dl:0s;    --sd:9.0s; --sl:0s}
+  .band .row img:nth-child(2){--d:3.9s;--dl:-.7s; --sd:11.5s;--sl:-2.6s}
+  .band .row img:nth-child(3){--d:3.2s;--dl:-1.5s;--sd:8.2s; --sl:-5.1s}
+  .band .row img:nth-child(4){--d:4.3s;--dl:-.3s; --sd:13.0s;--sl:-1.4s}
+  .band .row img:nth-child(5){--d:3.6s;--dl:-2.1s;--sd:9.6s; --sl:-7.3s}
+  .band .row img:nth-child(6){--d:4.0s;--dl:-1.1s;--sd:12.2s;--sl:-3.9s}
+  .band .row img:nth-child(7){--d:3.3s;--dl:-2.6s;--sd:10.4s;--sl:-6.2s}
+  .band .row img:nth-child(8){--d:4.5s;--dl:-1.9s;--sd:14.0s;--sl:-9.5s}
+  /* ゆれ（translate/rotate）と 回転（transform）は別プロパティなので、同時にかかる */
+  .band .row img{
+    animation:uka   var(--d)  ease-in-out var(--dl) infinite alternate,
+              odori var(--sd) linear      var(--sl) infinite}
 
   /* 連絡先の同心円。3本を時間差で広げて、波紋にする */
   .contact .art circle{animation:hamon 9s ease-out infinite;
