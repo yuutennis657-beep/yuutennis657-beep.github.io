@@ -39,54 +39,190 @@
     document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && !dw.hidden) shut(); });
   }
 
-  /* ── ヒーローのスライドショー ─────────────── */
-  /* アプリ画面を1枚ずつ。次の1枚がゆっくり寄りながら上に溶け出す＝画面が暗く落ちない。
-     ・動きを減らす設定の人には何も起きない（先頭の1枚のまま）
-     ・画面から外れたら止める（電池と発熱のため）
-     ・このブロックが落ちても、HTMLに .on がある先頭の1枚がそのまま出る */
+  /* ── ヒーローのスライド（右から左へ流れる）────────────
+     ・横一列に並べた rail を translate でずらす。次の1枚は右から入る
+     ・自動で5秒ごとに1枚。手で動かしたあとは7秒たってから自動に戻る
+     ・カードをタップ＝次へ／指で横に払う＝その向きへ／矢印・下の点でも動く
+     ・キャラ（.chars）も同じ番号のものに入れかわる＝画面と一緒に動く
+     ・画面の外／別タブ／マウスを乗せている間は止める
+     ・動きを減らす設定の人には、自動では動かさない（手で動かすことはできる）
+     ・このブロックが落ちても、rail は 0 のまま＝先頭の1枚がそのまま出る */
   (function(){
-    var box = document.querySelector('.hero .shots');
-    if(!box || reduce) return;
-    var sl = [].slice.call(box.children).filter(function(n){ return n.tagName === 'IMG'; });
-    if(sl.length < 2) return;
+    var frame = document.querySelector('.hero .frame');
+    if(!frame) return;
+    var deck = frame.querySelector('.deck'), rail = frame.querySelector('.rail');
+    var charbox = frame.querySelector('.chars');
+    if(!deck || !rail) return;
+    var sl = [].slice.call(rail.children);
+    var chars = charbox ? [].slice.call(charbox.querySelectorAll('img')) : [];
+    var N = sl.length;
+    if(N < 2) return;
 
-    var HOLD = 5200, FADE = 1100;
-    var cur = Math.max(0, sl.indexOf(box.querySelector('img.on')));
-    var timer = null, moving = false;
+    var HOLD = 5000, WAIT = 7000, MOVE = 600;   /* 自動の間かく／自動に戻るまで／CSSの .6s */
+    var pos = 0;                                /* 0〜N。N は末尾に足した「先頭の複製」 */
+    var timer = null, back = null, unlock = null;
+    var locked = false, paused = false, inView = true;
 
-    /* 2枚目からは data-src。出す直前に src を入れる＝最初に9枚まとめて落とさない */
-    function preload(i){
-      var n = sl[i % sl.length];
-      if(n.getAttribute('src')) return;
-      var v = n.getAttribute('data-src');
-      if(v) n.setAttribute('src', v);
+    /* 末尾に先頭の複製を1枚。これで「最後→最初」も右から左のまま流れる（逆走しない） */
+    var clone = sl[0].cloneNode(true);
+    clone.setAttribute('aria-hidden', 'true');
+    rail.appendChild(clone);
+
+    /* 出す直前に src を入れる＝最初に9枚＋9体をまとめて落とさない */
+    function load(i){
+      var k = ((i % N) + N) % N;
+      [sl[k].querySelector('img'), chars[k]].forEach(function(n){
+        if(!n || n.getAttribute('src')) return;
+        var v = n.getAttribute('data-src');
+        if(v) n.setAttribute('src', v);
+      });
     }
-    preload(cur + 1);                                      // 次の1枚だけ先に読んでおく
 
-    function step(){
-      if(moving) return;
-      var old = sl[cur], nx = sl[(cur + 1) % sl.length];
-      preload(cur + 2);                 // 次の次を読んでおく＝切りかわりで白く待たない
-      moving = true;
-      old.classList.add('prev');        // 下に残す（＝すきまが黒くならない）
-      old.classList.remove('on');
-      nx.classList.add('on');           // 上に薄く出しながら寄る
-      cur = (cur + 1) % sl.length;
-      setTimeout(function(){ old.classList.remove('prev'); moving = false; }, FADE + 60);
+    function at(px){                            /* 指で持っている間＝アニメ無しでその場に置く */
+      rail.style.transform = 'translate3d(calc(' + (-100 * pos) + '% + ' + px + 'px),0,0)';
     }
-    function start(){ if(!timer) timer = setInterval(step, HOLD); }
+    function paint(anim){
+      if(anim && !reduce) rail.classList.add('mv'); else rail.classList.remove('mv');
+      rail.style.transform = 'translate3d(' + (-100 * pos) + '%,0,0)';
+      var k = pos % N;
+      chars.forEach(function(n, j){ n.classList.toggle('on', j === k); });
+      dots.forEach(function(b, j){ b.setAttribute('aria-current', j === k ? 'true' : 'false'); });
+      load(k); load(k + 1); load(k - 1);
+    }
+    function release(){                         /* 複製に着いていたら、見た目そのままで先頭へ戻す */
+      if(unlock){ clearTimeout(unlock); unlock = null; }
+      if(pos === N){
+        rail.classList.remove('mv');
+        pos = 0;
+        rail.style.transform = 'translate3d(0,0,0)';
+      }
+      locked = false;
+    }
+    rail.addEventListener('transitionend', function(e){
+      if(e.propertyName === 'transform') release();
+    });
+
+    function go(d){
+      if(locked) return;
+      if(charbox) charbox.classList.toggle('bk', d < 0);
+      if(d < 0 && pos === 0){                   /* 先頭で「前へ」＝複製へ飛んでから左へ戻す */
+        rail.classList.remove('mv');
+        pos = N;
+        rail.style.transform = 'translate3d(' + (-100 * N) + '%,0,0)';
+        void rail.offsetWidth;                  /* ここで一度描かせないと、1回の動きにまとめられる */
+      }
+      pos += d;
+      if(reduce){ if(pos === N) pos = 0; if(pos < 0) pos = N - 1; paint(false); return; }
+      paint(true);
+      locked = true;
+      unlock = setTimeout(release, MOVE + 160); /* transitionend が来ない時の保険 */
+    }
+    function jump(j){
+      if(locked || j === pos % N) return;
+      if(charbox) charbox.classList.toggle('bk', j < (pos % N));
+      pos = j;
+      if(reduce){ paint(false); return; }
+      paint(true);
+      locked = true;
+      unlock = setTimeout(release, MOVE + 160);
+    }
+
+    /* ── 自動でめくる ── */
+    function play(){
+      if(timer || reduce || paused || !inView || document.hidden) return;
+      timer = setInterval(function(){ go(1); }, HOLD);
+    }
     function stop(){ if(timer){ clearInterval(timer); timer = null; } }
-    /* 見えているかの判定は自前で持つ（IntersectionObserver が返らない環境でも動くように） */
-    function seen(){ var r = box.getBoundingClientRect(); return r.bottom > 0 && r.top < (window.innerHeight || 0); }
-    var inView = seen();
-    function sync(){ (inView && !document.hidden) ? start() : stop(); }
+    function hold(){ paused = true; stop(); if(back){ clearTimeout(back); back = null; } }
+    function later(){ if(back) clearTimeout(back);
+      back = setTimeout(function(){ paused = false; play(); }, WAIT); }
+
+    /* ── 矢印と点（JSが動いたときだけ作る＝押せないボタンを見せない）── */
+    function arrow(cls, label, d){
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'arw ' + cls;
+      b.innerHTML = '<span class="sr">' + label + '</span>';
+      b.addEventListener('click', function(e){ e.stopPropagation(); hold(); go(d); later(); });
+      deck.appendChild(b);
+    }
+    arrow('p', '前の画面へ', -1);
+    arrow('n', '次の画面へ', 1);
+
+    var dbox = document.createElement('div');
+    dbox.className = 'dots';
+    var dots = sl.map(function(s, j){
+      var nm = s.querySelector('.cap b');
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.setAttribute('aria-label', (j + 1) + '枚目' + (nm ? '　' + nm.textContent : ''));
+      b.addEventListener('click', function(){ hold(); jump(j); later(); });
+      dbox.appendChild(b);
+      return b;
+    });
+    frame.parentNode.appendChild(dbox);
+
+    /* ── 指とマウス（タップ＝次へ／横に払う＝その向きへ）── */
+    var x0 = 0, y0 = 0, dx = 0, t0 = 0, dragging = false, dir = 0;
+    deck.addEventListener('pointerdown', function(e){
+      if(e.button || locked) return;
+      if(e.target.closest && e.target.closest('.arw')) return;
+      dragging = true; dir = 0; dx = 0;
+      x0 = e.clientX; y0 = e.clientY; t0 = new Date().getTime();
+      rail.classList.remove('mv');
+      if(deck.setPointerCapture) try{ deck.setPointerCapture(e.pointerId); }catch(err){}
+      hold();
+    });
+    deck.addEventListener('pointermove', function(e){
+      if(!dragging) return;
+      var mx = e.clientX - x0, my = e.clientY - y0;
+      if(!dir){
+        if(Math.abs(mx) < 6 && Math.abs(my) < 6) return;
+        dir = Math.abs(mx) > Math.abs(my) ? 1 : -1;
+        if(dir < 0){ dragging = false; paint(true); later(); return; }  /* たて＝ページのスクロール */
+        deck.classList.add('drag');
+      }
+      dx = mx;
+      at(dx);
+    });
+    function up(){
+      if(!dragging) return;
+      dragging = false;
+      deck.classList.remove('drag');
+      var w = deck.clientWidth || 1, quick = (new Date().getTime() - t0) < 300;
+      if(dir > 0 && Math.abs(dx) > (quick ? 34 : w * 0.16)) go(dx < 0 ? 1 : -1);
+      else if(!dir && Math.abs(dx) < 6) go(1);            /* ＝タップ */
+      else paint(true);                                    /* 半端に払ったら元に戻す */
+      dx = 0; dir = 0;
+      later();
+    }
+    deck.addEventListener('pointerup', up);
+    deck.addEventListener('pointercancel', up);
+    deck.addEventListener('dragstart', function(e){ e.preventDefault(); });
+
+    /* マウスを乗せている間・中のボタンを選んでいる間は止める（読ませたいので） */
+    deck.addEventListener('mouseenter', hold);
+    deck.addEventListener('mouseleave', later);
+    dbox.addEventListener('mouseenter', hold);
+    dbox.addEventListener('mouseleave', later);
+    frame.addEventListener('focusin', hold);
+    frame.addEventListener('focusout', later);
+
+    /* 見えているか（IntersectionObserver が返らない環境でも動くように自前でも見る） */
+    function seen(){
+      var r = deck.getBoundingClientRect();
+      return r.bottom > 0 && r.top < (window.innerHeight || 0);
+    }
+    inView = seen();
+    function sync(){ (inView && !document.hidden && !paused) ? play() : stop(); }
     if('IntersectionObserver' in window){
       new IntersectionObserver(function(es){
         inView = es[es.length - 1].isIntersecting; sync();
-      }, {threshold:0}).observe(box);
+      }, {threshold:0}).observe(deck);
     }
     window.addEventListener('scroll', function(){ inView = seen(); sync(); }, {passive:true});
-    document.addEventListener('visibilitychange', sync);   // 別タブから戻ってきたら動かす
+    document.addEventListener('visibilitychange', sync);
+
+    paint(false);
     sync();
   })();
 

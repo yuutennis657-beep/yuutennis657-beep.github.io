@@ -22,88 +22,87 @@
 <meta name="twitter:title" content="カッくん ｜ 伊藤 優">
 <meta name="twitter:description" content="書くことが苦手な子が、書き出しで止まらないための作文アプリ。お題145件と29,506語の辞書を同梱。文章の自動採点は作らないと決めました。">
 <meta name="twitter:image" content="https://yuutennis657-beep.github.io/img/ogp.jpg">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2335694a'/%3E%3Cg fill='none' stroke='%23faf8f0' stroke-opacity='.92' stroke-width='3'%3E%3Ccircle cx='32' cy='32' r='8'/%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Ccircle cx='32' cy='32' r='26'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23e9e8da'/%3E%3Ccircle cx='32' cy='32' r='16' fill='%23fbbf19'/%3E%3Cg fill='none' stroke='%235b3016' stroke-width='3'%3E%3Ccircle cx='32' cy='32' r='24'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700&family=Roboto+Condensed:wght@700&display=swap">
+<link rel="stylesheet" href="hp.css">
+<script src="app.js" defer></script>
 <script src="nowrap.js" defer></script>
-<script src="motion.js" defer></script>
 </head>
 <body>
 
-<aside class="side">
-  <div class="side-photo">
-    <svg viewBox="0 0 200 200" aria-hidden="true">
-      <g fill="none" stroke="#35694a" stroke-opacity=".2" stroke-width="1.2">
-        <circle cx="100" cy="100" r="42"/><circle cx="100" cy="100" r="64"/><circle cx="100" cy="100" r="86"/>
-      </g></svg>
-    <span class="mono">優</span>
-    <img src="img/portrait.jpg" alt="伊藤優" onerror="this.remove()">
-  </div>
-  <div class="side-body">
-    <p class="nm">伊藤 優<small>ITO YU</small></p>
-    <p class="ttl">江東区立第四砂町小学校 教諭<br>小学校教員6年目・6年生担任／国語専科<br>全国道徳特別活動研究会 幹事<br><span style="color:#f5d69a">ICT活用 × 特別活動 × 国語</span></p>
-    <nav>
-      <a href="#shots">画面</a>
-      <a href="#effect">見込める効果</a>
-      <a href="#design">工夫</a>
-      <a href="#fun">楽しさ</a>
-      <a href="#use">授業での使い方</a>
-      <a href="index.html">サイトにもどる</a>
+<a class="skip" href="#main">本文へ移動</a>
+<header class="hd">
+  <div class="wrap in">
+    <nav aria-label="サイト内">
+      <div class="grp a"><a href="index.html"><img src="img/chara/s/upa_green.png" alt="" width="36" height="36" loading="lazy" decoding="async">ホーム</a><a href="about.html"><img src="img/chara/s/tayosu_front.png" alt="" width="36" height="36" loading="lazy" decoding="async">わたしのこと</a></div>
+      <div class="grp b"><a href="works.html" aria-current="page"><img src="img/chara/s/upa_alien.png" alt="" width="36" height="36" loading="lazy" decoding="async">作った教材</a><a href="results.html"><img src="img/chara/s/upa_gold.png" alt="" width="36" height="36" loading="lazy" decoding="async">教室で確かめたこと</a><a href="offer.html"><img src="img/chara/s/upa_comet.png" alt="" width="36" height="36" loading="lazy" decoding="async">できること</a></div>
     </nav>
-    <a class="cta" href="index.html#contact">CONTACT <span aria-hidden="true">→</span></a>
+    <a class="logo" href="index.html"><b>伊藤 優</b><small>ITO YU</small></a>
+    <button class="hb" type="button" aria-expanded="false" aria-controls="drawer">
+      <i></i><span class="sr">メニューを開く</span>
+    </button>
   </div>
-</aside>
-
-<main>
-
-<div class="wrap crumb"><a href="works.html"><span aria-hidden="true">←</span> 作った教材にもどる</a></div>
-
-<div class="wrap dhero">
-  <img class="peek" src="img/chara/m/upa_green.png" alt="" width="184" height="184" decoding="async">
-  <p class="eb st" style="--i:0">国語（作文）／ 小6</p>
-  <h1 class="st" style="--i:1">カッくん</h1>
-  <p class="sub st" style="--i:1">単一HTML 5.8MB・お題145件・じてん29,506語・全18画面／旧称『書君』</p>
-  <p class="lead st" style="--i:2">書くことが苦手な子が、<b>書き出しで止まらない</b>ための道具です。長く書かせるための道具ではありません。</p>
-
-  <div class="dfigs st" style="--i:3">
-    <div class="dfig"><span class="lb">お題</span><b class="num">145<small>件</small></b></div>
-    <div class="dfig"><span class="lb">じてん</span><b class="num">29,506<small>語</small></b></div>
-    <div class="dfig"><span class="lb">画面</span><b class="num">18</b></div>
-    <div class="dfig"><span class="lb">配布サイズ</span><b class="num">5.8<small>MB</small></b></div>
+</header>
+<div class="dw" id="drawer" hidden>
+  <div class="top">
+    <span class="logo"><b>伊藤 優</b></span>
+    <button class="hb dw-close" type="button" style="display:flex">
+      <i></i><span class="sr">メニューを閉じる</span>
+    </button>
   </div>
+  <a class="it" href="index.html"><img src="img/chara/s/upa_green.png" alt="" width="24" height="24" loading="lazy" decoding="async">ホーム</a><a class="it" href="about.html"><img src="img/chara/s/tayosu_front.png" alt="" width="24" height="24" loading="lazy" decoding="async">わたしのこと</a><a class="it" href="works.html" aria-current="page"><img src="img/chara/s/upa_alien.png" alt="" width="24" height="24" loading="lazy" decoding="async">作った教材</a><a class="it" href="results.html"><img src="img/chara/s/upa_gold.png" alt="" width="24" height="24" loading="lazy" decoding="async">教室で確かめたこと</a><a class="it" href="offer.html"><img src="img/chara/s/upa_comet.png" alt="" width="24" height="24" loading="lazy" decoding="async">できること</a>
 </div>
 
-<section id="shots"><div class="wrap dsec">
+<main id="main">
+
+<section class="sec dtop"><div class="wrap">
+  <p class="crumb"><a href="works.html"><span aria-hidden="true">←</span> 作った教材にもどる</a></p>
+  <div class="head dhero">
+  <img class="peek" src="img/chara/m/upa_green.png" alt="" width="184" height="184" decoding="async">
+  <p class="eb">国語（作文）／ 小6</p>
+  <h1 class="h-jp">カッくん</h1>
+  <p class="sub">単一HTML 5.8MB・お題145件・じてん29,506語・全18画面／旧称『書君』</p>
+  <p class="h-lead">書くことが苦手な子が、<b>書き出しで止まらない</b>ための道具です。長く書かせるための道具ではありません。</p>
+  </div>
+
+  <div class="dfigs">
+    <div class="dfig rise"><span class="lb">お題</span><b class="num">145<small>件</small></b></div>
+    <div class="dfig rise"><span class="lb">じてん</span><b class="num">29,506<small>語</small></b></div>
+    <div class="dfig rise"><span class="lb">画面</span><b class="num">18</b></div>
+    <div class="dfig rise"><span class="lb">配布サイズ</span><b class="num">5.8<small>MB</small></b></div>
+  </div>
+</div></section>
+
+<section class="sec" id="shots"><div class="wrap">
   <div class="head">
-    <p class="eb">Screens</p>
-    <p class="en">Screens</p>
-    <p class="jp"><img class="pin" src="img/chara/m/yuukun_45.png" alt="" width="184" height="184" loading="lazy" decoding="async"><span class="ul">画面</span></p>
-    <p class="lead">5つの画面を順に見ていきます。</p>
+    <p class="eb"><img class="mark" src="img/chara/s/yuukun_45.png" alt="" width="96" height="96" loading="lazy" decoding="async">Screens</p>
+    <h2 class="h-jp">画面</h2>
+    <p class="h-lead">5つの画面を順に見ていきます。</p>
   </div>
   <div class="shots">
-    <figure>
+    <figure class="rise">
       <div class="ph"><img src="img/kakkun/home.jpg" alt="カッくんのホーム画面" width="1600" height="900" decoding="async"></div>
       <figcaption><span class="cap">① ホーム</span>「まず、一文から。」<b>開いて10秒で書き始められる</b>ことだけを狙った入口です。原稿用紙の配付と回収がなくなるぶん、書く時間がそのまま増えます。</figcaption>
       
     </figure>
-    <figure>
+    <figure class="rise">
       <div class="ph"><img src="img/kakkun/odai.jpg" alt="お題一覧の画面" width="1600" height="900" decoding="async" loading="lazy"></div>
       <figcaption><span class="cap">② お題一覧 ── 145件</span>意見文42・読書感想文3・振り返り38・短作文63。うち45件が教科書の単元にそのまま乗ります。<b>お題ごとにめあての字数が出る</b>ので、書き始める前にゴールが見えます。</figcaption>
       
     </figure>
-    <figure>
+    <figure class="rise">
       <div class="ph"><img src="img/kakkun/write.jpg" alt="入力画面と辞書パネル" width="1600" height="900" decoding="async" loading="lazy"></div>
       <figcaption><span class="cap">③ 入力画面 ── 原稿用紙を学べる</span><b>本物のたて書きの原稿用紙</b>です。マス目も句読点の位置も、書きながら身につきます。右のパネルが辞書 ──<b>書いている途中で引ける</b>ので、探しに行って戻るあいだに書きたかったことを忘れません。</figcaption>
       
     </figure>
-    <figure>
+    <figure class="rise">
       <div class="ph"><img src="img/kakkun/jiten.jpg" alt="カッくんじてんの画面" width="1600" height="900" decoding="async" loading="lazy"></div>
       <figcaption><span class="cap">④ じてん ── 29,506語を同梱</span>ネットにつながっていなくても引けます。五十音順の前後（となりのことば）が必ず並ぶ<b>「引く道具ではなく、めくる道具」</b>にしました。となりを見ているうちに、探していなかった言葉が手に入ります。</figcaption>
       
     </figure>
-    <figure>
+    <figure class="rise">
       <div class="ph"><img src="img/kakkun/portfolio.jpg" alt="ポートフォリオ機能の画面" width="1600" height="900" decoding="async" loading="lazy"></div>
       <figcaption><span class="cap">⑤ ポートフォリオ ── 書いたものが、たまる</span>累計字数・種類べつの本数・いちばん長く書けた1本まで残ります。右上の<b>「2本を くらべる」</b>で、単元のはじめと終わりを横に並べるのがいちばん効きます。下の「書きかけが6本あるよ」は、書き終えていない子を担任が探さなくていいようにするための欄です。</figcaption>
       
@@ -111,12 +110,11 @@
   </div>
 </div></section>
 
-<section id="effect"><div class="wrap dsec">
+<section class="sec" id="effect"><div class="wrap">
   <div class="head">
-    <p class="eb">What it aims for</p>
-    <p class="en">Aim</p>
-    <p class="jp"><img class="pin" src="img/chara/m/gal_front.png" alt="" width="184" height="184" loading="lazy" decoding="async"><span class="ul">見込める効果</span></p>
-    <p class="lead">ねらいは長く書かせることではなく、<b>書き出しで止まらないこと</b>と<b>観点の数が増えること</b>です。</p>
+    <p class="eb"><img class="mark" src="img/chara/s/gal_front.png" alt="" width="96" height="96" loading="lazy" decoding="async">What it aims for</p>
+    <h2 class="h-jp">見込める効果</h2>
+    <p class="h-lead">ねらいは長く書かせることではなく、<b>書き出しで止まらないこと</b>と<b>観点の数が増えること</b>です。</p>
   </div>
   <ul class="plist">
       <li><b class="h">書き出しで止まる5分を、道具のほうで削る</b><span class="t">お題と書き出しの型を、最初から画面に置いています。</span></li>
@@ -127,12 +125,11 @@
   </ul>
 </div></section>
 
-<section id="design"><div class="wrap dsec">
+<section class="sec" id="design"><div class="wrap">
   <div class="head">
-    <p class="eb">Design decisions</p>
-    <p class="en">Design</p>
-    <p class="jp"><img class="pin" src="img/chara/m/kocho_45.png" alt="" width="184" height="184" loading="lazy" decoding="async"><span class="ul">工夫したこと</span></p>
-    <p class="lead">入れたものより、<b>やめたもの</b>のほうが多いページです。</p>
+    <p class="eb"><img class="mark" src="img/chara/s/kocho_45.png" alt="" width="96" height="96" loading="lazy" decoding="async">Design decisions</p>
+    <h2 class="h-jp">工夫したこと</h2>
+    <p class="h-lead">入れたものより、<b>やめたもの</b>のほうが多いページです。</p>
   </div>
   <ul class="plist">
       <li class="stop"><em>やめた</em><b class="h">文章の自動採点は、作らない</b><div class="dia fan"><p class="dcap">のこしたのは添削だけ。点はつけません。</p><div class="fhead"><span class="pill">やめた</span><b>文章の自動採点は、作らない</b></div><ul class="freasons"><li><b>説明できない</b>　通知表の根拠に「AIが3点と言った」は使えない</li><li><b>点に最適化する</b>　「なぜなら」を連発する子が出る</li><li><b>序列の可視化になる</b>　書けない子への支援のはずだった</li><li><b>カッくんが審判になる</b>　書く相手は、教室の友達と先生</li></ul></div></li>
@@ -145,12 +142,11 @@
   </ul>
 </div></section>
 
-<section id="fun"><div class="wrap dsec">
+<section class="sec" id="fun"><div class="wrap">
   <div class="head">
-    <p class="eb">Why kids play</p>
-    <p class="en">Fun</p>
-    <p class="jp"><img class="pin" src="img/chara/m/upa_comet.png" alt="" width="184" height="184" loading="lazy" decoding="async"><span class="ul">楽しさ</span></p>
-    <p class="lead">ごほうびやポイントは、1つも入れていません。</p>
+    <p class="eb"><img class="mark" src="img/chara/s/upa_comet.png" alt="" width="96" height="96" loading="lazy" decoding="async">Why kids play</p>
+    <h2 class="h-jp">楽しさ</h2>
+    <p class="h-lead">ごほうびやポイントは、1つも入れていません。</p>
   </div>
   <ul class="plist">
       <li><b class="h">きょうの じゆう題をひく</b><span class="t">43この中から1つ。前に出たものはしばらく出ません。「ネタ枠」ではなく「じゆう枠」と呼びます。</span></li>
@@ -162,12 +158,11 @@
   </ul>
 </div></section>
 
-<section id="use"><div class="wrap dsec">
+<section class="sec" id="use"><div class="wrap">
   <div class="head">
-    <p class="eb">In the classroom</p>
-    <p class="en">Use</p>
-    <p class="jp"><img class="pin" src="img/chara/m/cook_front.png" alt="" width="184" height="184" loading="lazy" decoding="async"><span class="ul">授業での使い方</span></p>
-    <p class="lead">スキマ帯と授業の中を分けて、混ぜないようにしています。</p>
+    <p class="eb"><img class="mark" src="img/chara/s/cook_front.png" alt="" width="96" height="96" loading="lazy" decoding="async">In the classroom</p>
+    <h2 class="h-jp">授業での使い方</h2>
+    <p class="h-lead">スキマ帯と授業の中を分けて、混ぜないようにしています。</p>
   </div>
   <ul class="plist">
       <li><b class="h">1回に使う時間は4種類</b><div class="dia bars"><ul class="blist"><li><span class="bl">短作文（朝学習）</span><span class="bt"><i style="width:22%"></i></span><span class="br">10分・80〜200字</span></li><li><span class="bl">振り返り（授業末）</span><span class="bt"><i style="width:11%"></i></span><span class="br">5分・150〜300字</span></li><li><span class="bl">意見文（単元の中）</span><span class="bt"><i style="width:33%"></i></span><span class="br">15分×複数時間・400〜600字</span></li><li><span class="bl">読書感想文</span><span class="bt"><i style="width:100%"></i></span><span class="br">3分 → 15〜25分 → 20〜45分</span></li></ul><p class="ftail">スキマ帯と授業の中は<b>混ぜません</b>。</p></div></li>
@@ -180,12 +175,11 @@
 </div></section>
 
 
-<section><div class="wrap dsec">
+<section class="sec"><div class="wrap">
   <div class="head">
-    <p class="eb">Spec</p>
-    <p class="en">Numbers</p>
-    <p class="jp"><img class="pin" src="img/chara/m/library_front.png" alt="" width="184" height="184" loading="lazy" decoding="async"><span class="ul">数字</span></p>
-    <p class="lead">2026年8月時点の実測値です。</p>
+    <p class="eb"><img class="mark" src="img/chara/s/library_front.png" alt="" width="96" height="96" loading="lazy" decoding="async">Spec</p>
+    <h2 class="h-jp">数字</h2>
+    <p class="h-lead">2026年8月時点の実測値です。</p>
   </div>
   <div class="spec"><table><tbody>
       <tr><th>配布HTML</th><td>5,112,133 バイト＝5.83 MB（v1.8 / 2026-08-25）</td></tr>
@@ -208,17 +202,59 @@
   </div>
 
   <div class="backrow">
-    <a class="primary" href="index.html#contact">この教材について相談する <span aria-hidden="true">→</span></a>
+    <a class="primary" href="#contact">この教材について相談する <span aria-hidden="true">→</span></a>
     <a href="works.html"><span aria-hidden="true">←</span> ほかの教材を見る</a>
   </div>
 </div></section>
 
-<footer><div class="wrap">
-  <img class="mate" src="img/chara/m/upa_gold.png" alt="" width="184" height="184" loading="lazy" decoding="async">
-  伊藤 優 ／ 東京都 江東区立第四砂町小学校 教諭 ／ 全国道徳特別活動研究会 幹事<br>
-  このサイトの記述は個人の活動によるものであり、勤務校・江東区教育委員会の見解を示すものではありません。
-</div></footer>
+<div class="band" aria-hidden="true">
+  <svg class="line" viewBox="0 0 1200 14" preserveAspectRatio="none" fill="none">
+    <path d="M0 9 C 150 2, 300 12, 450 7 S 750 2, 900 9 S 1100 12, 1200 6" stroke="#5b3016" stroke-width="3" stroke-linecap="round"/>
+  </svg>
+  <div class="row">
+    <img src="img/chara/m/zuko_45.png" alt="" width="140" height="140" loading="lazy" decoding="async">
+    <img src="img/chara/m/upa_green.png" alt="" width="140" height="140" loading="lazy" decoding="async">
+    <img src="img/chara/m/tayosu_45.png" alt="" width="140" height="140" loading="lazy" decoding="async">
+    <img src="img/chara/m/gal_front.png" alt="" width="140" height="140" loading="lazy" decoding="async">
+    <img src="img/chara/m/library_front.png" alt="" width="140" height="140" loading="lazy" decoding="async">
+    <img src="img/chara/m/upa_comet.png" alt="" width="140" height="140" loading="lazy" decoding="async">
+    <img src="img/chara/m/kocho_45.png" alt="" width="140" height="140" loading="lazy" decoding="async">
+    <img src="img/chara/m/chibi_45.png" alt="" width="140" height="140" loading="lazy" decoding="async">
+  </div>
+</div>
+
+<section class="sec" id="contact"><div class="wrap">
+  <div class="contact">
+    <img class="mate" src="img/chara/m/zuko_45.png" alt="" width="140" height="140" loading="lazy" decoding="async">
+    <p class="eb"><img class="mark" src="img/chara/s/tayosu_front.png" alt="" width="96" height="96" loading="lazy" decoding="async">Contact</p>
+    <h2>お問い合わせ</h2>
+    <p>お仕事のご相談、教材を見てみたいというご依頼、同じ現場の先生からのご質問、どれでもお気軽にどうぞ。数日以内にお返事します。</p>
+    <a class="mail" href="mailto:yuutennis657@gmail.com?subject=%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B%EF%BC%88%E4%BC%8A%E8%97%A4%E5%84%AA%20%E3%82%B5%E3%82%A4%E3%83%88%E3%82%88%E3%82%8A%EF%BC%89">yuutennis657@gmail.com <span aria-hidden="true">→</span></a>
+    <div class="clines">
+      <a href="https://line.me/ti/p/fj9tMweQDR" target="_blank" rel="noopener">LINEでつながる <span aria-hidden="true">→</span></a>
+      <a href="https://line.me/ti/g2/9xsmT5pjwv8jTB-EtUfHn2OoA3Iq0H2ZZqq1gA" target="_blank" rel="noopener">みんなの特活ひろば（仮）に入る <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</div></section>
 
 </main>
+
+<footer class="ft">
+  <div class="wrap in">
+    <img class="mate" src="img/chara/s/upa_gold.png" alt="" width="96" height="96" loading="lazy" decoding="async">
+    <p class="logo"><b>伊藤 優</b><small>ITO YU</small></p>
+    <p class="role">伊藤 優 ／ 東京都 江東区立第四砂町小学校 教諭 ／ 全国道徳特別活動研究会 幹事</p>
+    <nav aria-label="フッター"><a href="index.html">ホーム</a><a href="about.html">わたしのこと</a><a href="works.html" aria-current="page">作った教材</a><a href="results.html">教室で確かめたこと</a><a href="offer.html">できること</a></nav>
+    <div class="links">
+      <a href="mailto:yuutennis657@gmail.com">yuutennis657@gmail.com</a>
+      <a href="https://line.me/ti/p/fj9tMweQDR" target="_blank" rel="noopener">LINEでつながる</a>
+      <a href="https://line.me/ti/g2/9xsmT5pjwv8jTB-EtUfHn2OoA3Iq0H2ZZqq1gA" target="_blank" rel="noopener">みんなの特活ひろば（仮）</a>
+    </div>
+  </div>
+  <div class="fine"><div class="wrap">
+    <p>このサイトの記述は個人の活動によるものであり、勤務校・江東区教育委員会の見解を示すものではありません。<br>
+    掲載した数値は 2026年8月時点のものです。</p>
+  </div></div>
+</footer>
 </body>
 </html>

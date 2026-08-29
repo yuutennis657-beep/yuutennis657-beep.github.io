@@ -218,25 +218,30 @@
 
 <!-- ② 数字パネル（ヒーローに重ねる） -->
 <div class="wrap">
+  <!-- 数字パネル（2026-08-29 しぼりこみ）
+       ・出しっぱなしは「見出し＋数字」だけ。内訳の小さい字はしまってある。
+       ・数字をタップすると、内訳がふわっと浮かび上がる（app.js が付ける .open）。
+       ・JSが動かないときは内訳がそのまま出る＝情報は消えない（.js が付いたときだけ隠れる）。
+       ・data-num / data-dec は、画面に入ったときに0から数え上げるための行き先。 -->
   <div class="stats">
-    <div class="stat">
+    <div class="stat" data-num="16" data-dec="0">
       <span class="lb">自作した教材</span>
-      <b class="num">16<small>本</small></b>
+      <b class="num"><span class="v">16</span><small>本</small></b>
       <span class="d">国語6・社会3・特活2・算数2・理科1</span>
     </div>
-    <div class="stat">
+    <div class="stat" data-num="7" data-dec="0">
       <span class="lb">扱う教科</span>
-      <b class="num">7<small>教科</small></b>
+      <b class="num"><span class="v">7</span><small>教科</small></b>
       <span class="d">国語・社会・理科・算数・体育・道徳・特別活動</span>
     </div>
-    <div class="stat hi">
+    <div class="stat hi" data-num="7" data-dec="1">
       <span class="lb">学年平均の伸び</span>
-      <b class="num"><i class="ar" aria-hidden="true">↑</i>7.0<small>点</small></b>
+      <b class="num"><i class="ar" aria-hidden="true">↑</i><span class="v">7.0</span><small>点</small></b>
       <span class="d"><b>75.4 → 82.4点</b>／6年3学級・2026年7月</span>
     </div>
-    <div class="stat">
+    <div class="stat" data-num="6" data-dec="0">
       <span class="lb">教員歴</span>
-      <b class="num">6<small>年目</small></b>
+      <b class="num"><span class="v">6</span><small>年目</small></b>
       <span class="d">小学校教員として教室に立った年数</span>
     </div>
   </div>
@@ -245,9 +250,9 @@
 <!-- ③ 強み2つ（2026-08-29 追加。4つあったものを本人が2つに絞ったので、ホームにも載せる） -->
 <section class="sec" id="strength" style="background:var(--beige2);border-block:1px solid var(--hair)"><div class="wrap">
   <div class="head">
-    <p class="eb"><img class="mark" src="img/chara/s/kocho_45.png" alt="" width="96" height="96" loading="lazy" decoding="async">What I bring</p>
-    <h2 class="h-jp">わたしが持ち込めるもの</h2>
-    <p class="h-lead">小学校の教員が、授業で使う教材アプリを16本、自分で設計して自分の教室で使っています。<b>わたしが持ち込めるものを、2つ書きます。</b></p>
+    <p class="eb"><img class="mark" src="img/chara/s/kocho_45.png" alt="" width="96" height="96" loading="lazy" decoding="async">My strengths</p>
+    <h2 class="h-jp">わたしの強み</h2>
+    <p class="h-lead">小学校の教員が、授業で使う教材アプリを16本、自分で設計して自分の教室で使っています。<b>わたしの強みを、2つ書きます。</b></p>
     <img class="peek" src="img/chara/m/upa_alien.png" alt="" width="180" height="180" loading="lazy" decoding="async">
   </div>
 
