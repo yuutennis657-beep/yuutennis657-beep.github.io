@@ -58,34 +58,34 @@
 
 <main id="main">
 
-<!-- ① ヒーロー：アプリ画面9枚のモザイク -->
+<!-- ① ヒーロー：左に文字／右にアプリ画面を1枚ずつ（重ねない） -->
 <section class="hero">
-  <div class="mosaic" aria-hidden="true">
-    <img src="img/hero/chiri.webp" alt="" width="480" height="270" fetchpriority="high" decoding="async">
-    <img src="img/hero/kakkun.webp" alt="" width="480" height="270" decoding="async">
-    <img src="img/hero/choiikanji.webp" alt="" width="480" height="270" decoding="async">
-    <img src="img/hero/ihatov.webp" alt="" width="480" height="270" decoding="async">
-    <img src="img/hero/mikurabe.webp" alt="" width="480" height="270" decoding="async">
-    <img src="img/hero/bunsu.webp" alt="" width="480" height="270" decoding="async">
-    <img src="img/hero/torehan.webp" alt="" width="480" height="270" decoding="async">
-    <img src="img/hero/mitori.webp" alt="" width="480" height="270" decoding="async">
-    <img src="img/hero/shaberu.webp" alt="" width="480" height="270" decoding="async">
-    <img src="img/hero/chiri.webp" alt="" width="480" height="270" decoding="async">
-    <img src="img/hero/ihatov.webp" alt="" width="480" height="270" decoding="async">
-    <img src="img/hero/mitori.webp" alt="" width="480" height="270" decoding="async">
-  </div>
-  <div class="veil" aria-hidden="true"></div>
   <div class="wrap in">
-    <p class="eb">Portfolio 2026</p>
-    <h1>願いや想いを、形にする。</h1>
-    <p class="sub2">子どもの「できた」と、先生の「こうしたい」を。</p>
-    <p class="cross">ICT活用 × 特別活動 × 国語</p>
-    <div class="btns">
-      <a class="pill" href="works.html">作った教材を見る <span aria-hidden="true">→</span></a>
-      <a class="pill ghost" href="about.html">わたしのこと <span aria-hidden="true">→</span></a>
+    <div class="txt">
+      <p class="eb">Portfolio 2026</p>
+      <h1>願いや想いを、形にする。</h1>
+      <p class="sub2">子どもの「できた」と、先生の「こうしたい」を。</p>
+      <p class="cross">ICT活用 × 特別活動 × 国語</p>
+      <div class="btns">
+        <a class="pill" href="works.html">作った教材を見る <span aria-hidden="true">→</span></a>
+        <a class="pill ghost" href="about.html">わたしのこと <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="shots" aria-hidden="true">
+        <img class="on" src="img/hero/chiri.webp" alt="" width="1440" height="810" fetchpriority="high" decoding="async">
+        <img data-src="img/hero/kakkun.webp" alt="" width="1440" height="810" decoding="async">
+        <img data-src="img/hero/choiikanji.webp" alt="" width="1440" height="810" decoding="async">
+        <img data-src="img/hero/ihatov.webp" alt="" width="1440" height="810" decoding="async">
+        <img data-src="img/hero/mikurabe.webp" alt="" width="1440" height="810" decoding="async">
+        <img data-src="img/hero/bunsu.webp" alt="" width="1440" height="810" decoding="async">
+        <img data-src="img/hero/torehan.webp" alt="" width="1440" height="810" decoding="async">
+        <img data-src="img/hero/mitori.webp" alt="" width="1440" height="810" decoding="async">
+        <img data-src="img/hero/shaberu.webp" alt="" width="1440" height="810" decoding="async">
+      </div>
+      <img class="tayosu" src="img/chara/m/tayosu_45.png" alt="" width="180" height="180" decoding="async">
     </div>
   </div>
-  <img class="tayosu" src="img/chara/m/tayosu_45.png" alt="" width="180" height="180" decoding="async">
 </section>
 
 <!-- ② 数字パネル（ヒーローに重ねる） -->
@@ -118,7 +118,7 @@
 <section class="sec tight"><div class="wrap">
   <div class="sec-h">
     <div>
-      <p class="eb">In progress</p>
+      <p class="eb"><img class="mark" src="img/chara/s/library_front.png" alt="" width="96" height="96" loading="lazy" decoding="async">In progress</p>
       <h2 class="h-jp">いま取り組んでいること</h2>
     </div>
     <a class="pill sm" href="offer.html#now">一覧を見る <span aria-hidden="true">→</span></a>
@@ -151,46 +151,70 @@
 <div class="splits">
   <section class="split">
     <div class="txt">
-      <p class="eb">Who I am</p>
+      <p class="eb"><img class="mark" src="img/chara/s/tayosu_45.png" alt="" width="96" height="96" loading="lazy" decoding="async">Who I am</p>
       <h2>わたしのこと</h2>
       <p>1998年生まれ。東京都の公立小学校で教員6年目、いまは6年生の担任と国語専科、そして<b>特別活動主任</b>をしています。ICT活用・特別活動・国語の3つが重なるところで仕事をしています。</p>
       <a class="pill" href="about.html">くわしく見る <span aria-hidden="true">→</span></a>
       <img class="mate" src="img/chara/m/tayosu_front.png" alt="" width="120" height="120" loading="lazy" decoding="async">
     </div>
-    <div class="ph"><img src="img/profile.jpg" alt="研究会で話す伊藤優" width="800" height="1000" loading="lazy" decoding="async"></div>
+    <div class="ph">
+      <img src="img/profile.jpg" alt="研究会で話す伊藤優" width="800" height="1000" loading="lazy" decoding="async">
+      <div class="subs">
+        <img src="img/zenkoku_taikai.jpg" alt="全国道徳特別活動研究会 全国大会の壇上" width="1600" height="900" loading="lazy" decoding="async">
+        <img src="img/off_snow.jpg" alt="休日のスノーボード" width="1200" height="900" loading="lazy" decoding="async">
+      </div>
+    </div>
   </section>
 
   <section class="split rev">
     <div class="txt">
-      <p class="eb">What I made</p>
+      <p class="eb"><img class="mark" src="img/chara/s/zuko_45.png" alt="" width="96" height="96" loading="lazy" decoding="async">What I made</p>
       <h2>作った教材</h2>
       <p>小学校教員6年目。国語・社会・理科・算数・体育・特別活動の7教科で、<b>16本</b>の教育アプリを自作しています。子どもが使う教材と、先生が使う道具の両方です。</p>
       <a class="pill" href="works.html">くわしく見る <span aria-hidden="true">→</span></a>
       <img class="mate" src="img/chara/m/upa_alien.png" alt="" width="120" height="120" loading="lazy" decoding="async">
     </div>
-    <div class="ph"><img src="img/works/chiri.jpg" alt="自作した地理教材『旅クエスト』の画面" width="1600" height="900" loading="lazy" decoding="async"></div>
+    <div class="ph">
+      <img src="img/works/chiri.jpg" alt="自作した地理教材『旅クエスト』の画面" width="1600" height="900" loading="lazy" decoding="async">
+      <div class="subs">
+        <img src="img/works/kakkun.jpg" alt="作文アプリ『カッくん』の画面" width="1600" height="900" loading="lazy" decoding="async">
+        <img src="img/works/ihatov.jpg" alt="国語アプリ『イーハトーヴの谷』の画面" width="1600" height="900" loading="lazy" decoding="async">
+      </div>
+    </div>
   </section>
 
   <section class="split">
     <div class="txt">
-      <p class="eb">Evidence</p>
+      <p class="eb"><img class="mark" src="img/chara/s/rika_front.png" alt="" width="96" height="96" loading="lazy" decoding="async">Evidence</p>
       <h2>教室で確かめたこと</h2>
       <p>作った本数より、教室で何が起きたかのほうが大事だと思っています。6年生3学級・のべ101名で、学年平均は<b>75.4 → 82.4点</b>。伸びなかった子のことも書いています。</p>
       <a class="pill" href="results.html">くわしく見る <span aria-hidden="true">→</span></a>
       <img class="mate" src="img/chara/m/upa_gold.png" alt="" width="120" height="120" loading="lazy" decoding="async">
     </div>
-    <div class="ph"><img src="img/works/torehan.jpg" alt="漢字アプリ『トレハん』の画面" width="1600" height="900" loading="lazy" decoding="async"></div>
+    <div class="ph">
+      <img src="img/works/torehan.jpg" alt="漢字アプリ『トレハん』の画面" width="1600" height="900" loading="lazy" decoding="async">
+      <div class="subs">
+        <img src="img/evidence/print.jpg" alt="効果を測るのに使った漢字テストのプリント" width="1200" height="900" loading="lazy" decoding="async">
+        <img src="img/evidence/shoujou.jpg" alt="点数が伸びた子に渡した合格証（氏名は伏せてあります）" width="1200" height="900" loading="lazy" decoding="async">
+      </div>
+    </div>
   </section>
 
   <section class="split rev">
     <div class="txt">
-      <p class="eb">What I can do</p>
+      <p class="eb"><img class="mark" src="img/chara/s/ongaku_45.png" alt="" width="96" height="96" loading="lazy" decoding="async">What I can do</p>
       <h2>できること</h2>
       <p>教材会社の方、研修や研究会をお考えの方、同じ学校現場の方 ── どの入口でも歓迎です。<b>お渡しするのは「作り方」ではなく「確かめ方」</b>です。研修メニューは4本あります。</p>
       <a class="pill" href="offer.html">くわしく見る <span aria-hidden="true">→</span></a>
       <img class="mate" src="img/chara/m/upa_comet.png" alt="" width="120" height="120" loading="lazy" decoding="async">
     </div>
-    <div class="ph"><img src="img/talk.jpg" alt="校内研修で話す伊藤優" width="1600" height="900" loading="lazy" decoding="async"></div>
+    <div class="ph">
+      <img src="img/talk.jpg" alt="校内研修で話す伊藤優" width="1600" height="900" loading="lazy" decoding="async">
+      <div class="subs">
+        <img src="img/tokkatsu_teian.jpg" alt="特別活動の提案授業で板書を示しているところ" width="1600" height="900" loading="lazy" decoding="async">
+        <img src="img/teian2.jpg" alt="研究協議会で提案しているところ" width="1600" height="1000" loading="lazy" decoding="async">
+      </div>
+    </div>
   </section>
 </div>
 
@@ -198,7 +222,7 @@
 <section class="sec"><div class="wrap">
   <div class="sec-h">
     <div>
-      <p class="eb">Pick up</p>
+      <p class="eb"><img class="mark" src="img/chara/s/cook_front.png" alt="" width="96" height="96" loading="lazy" decoding="async">Pick up</p>
       <h2 class="h-jp">紹介ページのある2本</h2>
     </div>
   </div>
@@ -235,17 +259,21 @@
     <img src="img/chara/m/tayosu_front.png" alt="" width="140" height="140" loading="lazy" decoding="async">
     <img src="img/chara/m/upa_alien.png" alt="" width="140" height="140" loading="lazy" decoding="async">
     <img src="img/chara/m/alien_front.png" alt="" width="140" height="140" loading="lazy" decoding="async">
+    <img src="img/chara/m/upa_gold.png" alt="" width="140" height="140" loading="lazy" decoding="async">
+    <img src="img/chara/m/upa_comet.png" alt="" width="140" height="140" loading="lazy" decoding="async">
+    <img src="img/chara/m/tayosu_45.png" alt="" width="140" height="140" loading="lazy" decoding="async">
   </div>
 </div>
 
 <!-- ⑩ 連絡先 -->
 <section class="sec" id="contact"><div class="wrap">
   <div class="contact">
+    <img class="mate" src="img/chara/m/tayosu_45.png" alt="" width="140" height="140" loading="lazy" decoding="async">
     <svg class="art" viewBox="0 0 400 400" aria-hidden="true">
       <g fill="none" stroke="#ffffff" stroke-width="2">
         <circle cx="200" cy="200" r="70"/><circle cx="200" cy="200" r="128"/><circle cx="200" cy="200" r="186"/>
       </g></svg>
-    <p class="eb">Contact</p>
+    <p class="eb"><img class="mark" src="img/chara/s/tayosu_front.png" alt="" width="96" height="96" loading="lazy" decoding="async">Contact</p>
     <h2>お問い合わせ</h2>
     <p>お仕事のご相談、教材を見てみたいというご依頼、同じ現場の先生からのご質問、どれでもお気軽にどうぞ。数日以内にお返事します。</p>
     <a class="mail" href="mailto:yuutennis657@gmail.com?subject=%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B%EF%BC%88%E4%BC%8A%E8%97%A4%E5%84%AA%20%E3%82%B5%E3%82%A4%E3%83%88%E3%82%88%E3%82%8A%EF%BC%89">yuutennis657@gmail.com <span aria-hidden="true">→</span></a>
@@ -262,6 +290,7 @@
 <!--#FOOT-->
 <footer class="ft">
   <div class="wrap in">
+    <img class="mate" src="img/chara/s/upa_gold.png" alt="" width="96" height="96" loading="lazy" decoding="async">
     <p class="logo"><b>伊藤 優</b><small>ITO YU</small></p>
     <p class="role">伊藤 優 ／ 東京都 江東区立第四砂町小学校 教諭 ／ 全国道徳特別活動研究会 幹事</p>
     <nav aria-label="フッター"><a href="index.html" aria-current="page">ホーム</a><a href="about.html">わたしのこと</a><a href="works.html">作った教材</a><a href="results.html">教室で確かめたこと</a><a href="offer.html">できること</a></nav>
