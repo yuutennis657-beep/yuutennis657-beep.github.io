@@ -21,7 +21,8 @@
     each((root || document).querySelectorAll('.rv'), function (el) {
       if (el.classList.contains('in')) return;
       var b = el.getBoundingClientRect();
-      if (b.top < window.innerHeight * 0.98 && b.bottom > 0 && b.height) {
+      /* 高さ0でも助ける。写真がまだ読みこめていないときに消えたままにしない（2026-08-29） */
+      if (b.top < window.innerHeight * 0.98 && b.bottom >= 0) {
         el.classList.add('in');
         obs.unobserve(el);
       }
@@ -41,10 +42,10 @@
 
   /* ① 並んでいるもの＝カード・年表・写真は、少しずつ時間をずらして出す */
   var ITEMS = ['.kata article', '.work', '.now div', '.offer article',
-               '.proof figure', '.prof-ph', '.prof .nmbig', '.prof .bio',
-               '.facts div', '.prof-figs figure', '.career li', '.dumb-rows li'];
+               '.proof figure', '.pcard', '.pbio .bio',
+               '.pfacts li', '.axl li', '.prof-figs figure', '.career li', '.dumb-rows li'];
   var X  = { '.career li': 1 };                                    /* 横から入る */
-  var PH = { '.work': 1, '.proof figure': 1, '.prof-ph': 1, '.prof-figs figure': 1 };  /* 写真は少し寄って戻る */
+  var PH = { '.work': 1, '.proof figure': 1, '.pcard': 1, '.prof-figs figure': 1 };  /* 写真は少し寄って戻る */
 
   each(ITEMS, function (sel) {
     var parents = [], counts = [];
