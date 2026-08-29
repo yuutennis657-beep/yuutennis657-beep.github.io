@@ -335,6 +335,35 @@
     check();
   })();
 
+  /* ── ホームだけ：節ごとに小出しにする（2026-08-30 追加）────────────
+     ホームは開いた瞬間の情報量が多く、どこから読むかが決まらない。
+     「その画面まで来たら、そこが出る」形にして、読む順番を作る。
+     ・ここでやるのは印つけだけ。出す仕組みは下の .rise にまかせる
+     ・ヒーローには付けない（幕が開いた直後に見えているべきもの）
+     ・--i（何番目か）は下の処理が兄弟の並びから自動で決める＝ここでは触らない
+     ・--ry は動く距離。節の単位のものは大きめ（30px）にして、はっきり出す
+     ・JSが落ちれば .rise が付かない＝最初から全部見える。読めなくはならない */
+  (function(){
+    if(!document.querySelector('main > section.hero')) return;   /* ホーム以外は何もしない */
+    [['.stats .stat',0],
+     ['#strength .head',1],
+     ['.splits .split > *',1],
+     ['.sec .sec-h',1],
+     ['.band .row img',0],
+     ['#contact .contact > *',0]
+    ].forEach(function(pair){
+      [].forEach.call(document.querySelectorAll(pair[0]), function(el){
+        if(el.classList.contains('rise')) return;                    /* すでに印がある */
+        /* 飾り（キャラ・背景の図）は順番に入れない。入れると本文の出が遅れる */
+        if(el.tagName === 'svg' || el.classList.contains('mate')) return;
+        if(el.closest && el.closest('.hero')) return;                /* ヒーローは除く */
+        if(el.parentElement && el.closest && el.parentElement.closest('.rise')) return;  /* 入れ子にしない */
+        el.classList.add('rise');
+        if(pair[1]) el.style.setProperty('--ry','30px');
+      });
+    });
+  })();
+
   /* ── 出現（1要素1回だけ）──────────────── */
   var rise = [].slice.call(document.querySelectorAll('.rise'));
   if(!rise.length) return;
@@ -355,4 +384,30 @@
     });
   }, {threshold:.15, rootMargin:'0px 0px -5% 0px'});
   rise.forEach(function(el){ io.observe(el); });
+
+  /* ── 保険（2026-08-30 追加）────────────────────────────
+     IntersectionObserver は「裏のタブで開かれている間」は返ってこない。
+     ホームは出番待ちが30個ほどあるので、返ってこないと ほぼ空白のページになる。
+     （実際、裏で開いた状態では 0/32 しか出ないことを確認した。）
+     そこで、自分の目でも位置を見る。スクロール中・画面の大きさが変わったとき・
+     タブに戻ってきたとき・開いて1.2秒後。出し終わったものは見に行かない。 */
+  var pending = rise.slice();
+  function sweep(){
+    if(!pending.length) return;
+    var h = window.innerHeight || document.documentElement.clientHeight;
+    pending = pending.filter(function(el){
+      if(el.classList.contains('in')) return false;
+      var r = el.getBoundingClientRect();
+      if(r.top < h * 0.88 && r.bottom > 0){ el.classList.add('in'); io.unobserve(el); return false; }
+      return true;
+    });
+  }
+  var tick = 0;
+  window.addEventListener('scroll', function(){
+    if(tick) return;
+    tick = (window.requestAnimationFrame || setTimeout)(function(){ tick = 0; sweep(); }, 16);
+  }, {passive:true});
+  window.addEventListener('resize', sweep);
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden) sweep(); });
+  setTimeout(sweep, 1200);
 })();
