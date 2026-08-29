@@ -477,9 +477,10 @@ b,strong{font-weight:500}
   .stat{padding:14px 12px 16px}
   .stat span.d{font-size:11px;line-height:1.45}   /* 3行になるのを防ぐ */
   .stat .num{font-size:30px;margin:2px 0 4px}
-  .hero{padding-top:176px}
-  .hero .mosaic,.hero .veil{height:176px}
-  .hero .mosaic{grid-template-columns:repeat(2,1fr)}
+  /* スマホでもアプリ画面が9枚見えるようにする（2列4枚→3列9枚。2026-08-29） */
+  .hero{padding-top:240px}
+  .hero .mosaic,.hero .veil{height:225px}
+  .hero .mosaic{grid-template-columns:repeat(3,1fr);transform:rotate(-3deg) scale(1.08)}
   .cards,.now,.pfacts,.works{grid-template-columns:1fr}
   .work.feature{grid-column:span 1}
   .pfacts li.wide{grid-column:span 1}
