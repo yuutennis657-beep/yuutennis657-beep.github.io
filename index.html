@@ -29,8 +29,87 @@
 <script src="app.js" defer></script>
 <script src="nowrap.js" defer></script>
 <!--/#HEAD-->
+
+<!-- ══ 開幕のカーテン（2026-08-29 追加）══════════════════════
+     ・見た目はぜんぶ下の CSS アニメーション。JSは「2回目以降は出さない」係だけ。
+       JSが動かなくても、カーテンは必ず開く（開かないと本文が読めなくなるため）。
+     ・スタイルを hp.css ではなくここに直接書いている理由：
+       外部CSSの読みこみを待つと、開幕の一瞬だけ素の本文が見えてしまう。
+     ・「動きを減らす」設定の人には出さない。
+     ・同じタブの2ページ目からは出さない（毎回見せられると うっとうしいので）。 -->
+<script>
+(function(){try{
+  var d=document.documentElement, m=window.matchMedia;
+  if(sessionStorage.getItem('hpCurtain')==='1'){d.className+=' no-cv';return;}
+  if(m&&m('(prefers-reduced-motion:reduce)').matches){d.className+=' no-cv';return;}
+  sessionStorage.setItem('hpCurtain','1');
+}catch(e){}})();
+</script>
+<style>
+.no-cv #curtain{display:none}
+@media (prefers-reduced-motion:reduce){#curtain{display:none}}
+
+/* 幕ぜんたい。1.0秒たったら地の色を消し、2.05秒で完全に居なくなる */
+#curtain{position:fixed;inset:0;z-index:200;pointer-events:none;background:#35694a;
+  animation:cvBg 0s linear 1s forwards, cvOff 0s linear 2.05s forwards}
+@keyframes cvBg{to{background:transparent}}
+@keyframes cvOff{to{visibility:hidden}}
+
+/* 左右の幕。1.0秒からひらく */
+#curtain .p{position:absolute;top:0;bottom:0;width:50%;overflow:hidden;background:#35694a;
+  background-image:radial-gradient(rgba(255,255,255,.055) .9px,transparent .9px);
+  background-size:9px 9px;
+  animation:cvL 1.05s cubic-bezier(.72,0,.22,1) 1s forwards}
+#curtain .p.l{left:0;box-shadow:inset -18px 0 30px -18px rgba(0,0,0,.6)}
+#curtain .p.r{left:50%;box-shadow:inset 18px 0 30px -18px rgba(0,0,0,.6);animation-name:cvR}
+@keyframes cvL{to{transform:translateX(-100.4%)}}
+@keyframes cvR{to{transform:translateX(100.4%)}}
+
+/* 名前。左右の幕それぞれに同じものを置き、真ん中でぴたりと重ねてある。
+   ＝幕がひらくと、名前が縦にすっと裂ける。 */
+#curtain .nm{position:absolute;top:50%;display:flex;flex-direction:column;align-items:center;
+  white-space:nowrap;color:#fffdf7;opacity:0;
+  transform:translate(-50%,-50%);
+  animation:cvName .85s cubic-bezier(.2,.75,.25,1) .12s forwards}
+#curtain .p.l .nm{left:100%}
+#curtain .p.r .nm{left:0}
+#curtain .nm b{font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;
+  font-weight:700;font-size:clamp(30px,7.4vw,62px);line-height:1.1;letter-spacing:.06em}
+#curtain .nm i{font-family:"Roboto Condensed","Helvetica Neue",Arial,sans-serif;
+  font-style:normal;font-weight:700;font-size:clamp(10px,1.7vw,14px);
+  letter-spacing:.42em;margin-top:12px;color:#bcd6c3;text-indent:.42em}
+@keyframes cvName{
+  from{opacity:0;transform:translate(-50%,calc(-50% + 18px)) scale(.965)}
+   to {opacity:1;transform:translate(-50%,-50%) scale(1)}}
+
+/* 合わせ目の金の線。すっと下に伸びて、幕がひらく合図で消える */
+#curtain .seam{position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;
+  /* 名前のところだけ線を切る（名前の上に線が乗ると、汚れに見えるため） */
+  background:linear-gradient(180deg,transparent 0,#fbbf19 14%,#fbbf19 42%,
+    transparent 44%,transparent 57%,#fbbf19 59%,#fbbf19 86%,transparent 100%);
+  transform:scaleY(0);opacity:0;
+  animation:cvSeam .75s cubic-bezier(.2,.75,.25,1) .05s forwards,
+            cvSeamOut .45s ease 1s forwards}
+@keyframes cvSeam{to{transform:scaleY(1);opacity:.9}}
+@keyframes cvSeamOut{to{opacity:0}}
+</style>
 </head>
 <body>
+<div id="curtain" aria-hidden="true">
+  <div class="p l"><span class="nm"><b>伊藤 優</b><i>ITO YU</i></span></div>
+  <div class="p r"><span class="nm"><b>伊藤 優</b><i>ITO YU</i></span></div>
+  <div class="seam"></div>
+</div>
+<script>
+/* 保険。ここが本体ではない（見た目はぜんぶCSS）。
+   動きを止められる環境＝裏のタブ・省電力・古い端末 では CSS アニメが
+   進まないことがあり、そのままだと幕が開かず本文が読めなくなる。
+   2.4秒たったら、動きの状態にかかわらず幕を取り除く。 */
+(function(){
+  var c=document.getElementById('curtain'); if(!c) return;
+  setTimeout(function(){ if(c.parentNode) c.parentNode.removeChild(c); }, 2400);
+})();
+</script>
 <!--#HEADER-->
 <a class="skip" href="#main">本文へ移動</a>
 <header class="hd">
@@ -76,18 +155,63 @@
       </div>
     </div>
     <div class="stage">
-      <div class="shots" aria-hidden="true">
-        <img class="on" src="img/hero/chiri.webp" alt="" width="1440" height="810" fetchpriority="high" decoding="async">
-        <img data-src="img/hero/kakkun.webp" alt="" width="1440" height="810" decoding="async">
-        <img data-src="img/hero/choiikanji.webp" alt="" width="1440" height="810" decoding="async">
-        <img data-src="img/hero/ihatov.webp" alt="" width="1440" height="810" decoding="async">
-        <img data-src="img/hero/mikurabe.webp" alt="" width="1440" height="810" decoding="async">
-        <img data-src="img/hero/bunsu.webp" alt="" width="1440" height="810" decoding="async">
-        <img data-src="img/hero/torehan.webp" alt="" width="1440" height="810" decoding="async">
-        <img data-src="img/hero/mitori.webp" alt="" width="1440" height="810" decoding="async">
-        <img data-src="img/hero/shaberu.webp" alt="" width="1440" height="810" decoding="async">
+      <!-- 画面カード＝右から左へ流れるスライド。
+           自動で1枚ずつ／タップで次へ／指で横に払うと動く（app.js）。
+           矢印と下の点は app.js が作る＝JSが動かないときは先頭の1枚がそのまま出る。
+           キャラは1枚に1体。画面が変わると、となりに立つキャラも入れかわる。 -->
+      <div class="frame">
+        <div class="deck" role="group" aria-roledescription="スライド" aria-label="自作した教材の画面">
+          <ul class="rail">
+            <li class="sl">
+              <img src="img/hero/chiri.webp" alt="" width="1440" height="810" fetchpriority="high" decoding="async">
+              <p class="cap"><b>旅クエスト</b><span>社会（地理）</span></p>
+            </li>
+            <li class="sl">
+              <img data-src="img/hero/kakkun.webp" alt="" width="1440" height="810" decoding="async">
+              <p class="cap"><b>カッくん</b><span>国語（作文）</span></p>
+            </li>
+            <li class="sl">
+              <img data-src="img/hero/choiikanji.webp" alt="" width="1440" height="810" decoding="async">
+              <p class="cap"><b>超いい感じ</b><span>国語（漢字）</span></p>
+            </li>
+            <li class="sl">
+              <img data-src="img/hero/ihatov.webp" alt="" width="1440" height="810" decoding="async">
+              <p class="cap"><b>イーハトーヴの谷</b><span>国語（読むこと）</span></p>
+            </li>
+            <li class="sl">
+              <img data-src="img/hero/mikurabe.webp" alt="" width="1440" height="810" decoding="async">
+              <p class="cap"><b>ミクラベ</b><span>体育（器械運動）</span></p>
+            </li>
+            <li class="sl">
+              <img data-src="img/hero/bunsu.webp" alt="" width="1440" height="810" decoding="async">
+              <p class="cap"><b>分数バトル</b><span>算数（分数）</span></p>
+            </li>
+            <li class="sl">
+              <img data-src="img/hero/torehan.webp" alt="" width="1440" height="810" decoding="async">
+              <p class="cap"><b>トレハん</b><span>国語（漢字）</span></p>
+            </li>
+            <li class="sl">
+              <img data-src="img/hero/mitori.webp" alt="" width="1440" height="810" decoding="async">
+              <p class="cap"><b>ミトリ</b><span>教員用（評価）</span></p>
+            </li>
+            <li class="sl">
+              <img data-src="img/hero/shaberu.webp" alt="" width="1440" height="810" decoding="async">
+              <p class="cap"><b>シャベル</b><span>教員用（週案）</span></p>
+            </li>
+          </ul>
+        </div>
+        <div class="chars" aria-hidden="true">
+          <img class="on" src="img/chara/m/tayosu_45.png" alt="" width="384" height="384" decoding="async">
+          <img data-src="img/chara/m/library_front.png" alt="" width="384" height="384" decoding="async">
+          <img data-src="img/chara/m/chibi_45.png" alt="" width="384" height="384" decoding="async">
+          <img data-src="img/chara/m/upa_comet.png" alt="" width="384" height="384" decoding="async">
+          <img data-src="img/chara/m/gal_front.png" alt="" width="384" height="384" decoding="async">
+          <img data-src="img/chara/m/upa_gold.png" alt="" width="384" height="384" decoding="async">
+          <img data-src="img/chara/m/upa_alien.png" alt="" width="384" height="384" decoding="async">
+          <img data-src="img/chara/m/kocho_45.png" alt="" width="384" height="384" decoding="async">
+          <img data-src="img/chara/m/yuukun_45.png" alt="" width="384" height="384" decoding="async">
+        </div>
       </div>
-      <img class="tayosu" src="img/chara/m/tayosu_45.png" alt="" width="180" height="180" decoding="async">
     </div>
   </div>
 </section>

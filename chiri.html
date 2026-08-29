@@ -22,98 +22,97 @@
 <meta name="twitter:title" content="旅クエスト ｜ 伊藤 優">
 <meta name="twitter:description" content="日本と世界を「旅行」して覚える地理教材。4択で知識を、きせかえと模様がえで文化を、地球球体モードで地理の感覚を、記述問題で受験まで。単一HTMLでオフラインで動きます。">
 <meta name="twitter:image" content="https://yuutennis657-beep.github.io/img/ogp.jpg">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2335694a'/%3E%3Cg fill='none' stroke='%23faf8f0' stroke-opacity='.92' stroke-width='3'%3E%3Ccircle cx='32' cy='32' r='8'/%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Ccircle cx='32' cy='32' r='26'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23e9e8da'/%3E%3Ccircle cx='32' cy='32' r='16' fill='%23fbbf19'/%3E%3Cg fill='none' stroke='%235b3016' stroke-width='3'%3E%3Ccircle cx='32' cy='32' r='24'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700&family=Roboto+Condensed:wght@700&display=swap">
+<link rel="stylesheet" href="hp.css">
+<script src="app.js" defer></script>
 <script src="nowrap.js" defer></script>
-<script src="motion.js" defer></script>
 </head>
 <body>
 
-<aside class="side">
-  <div class="side-photo">
-    <svg viewBox="0 0 200 200" aria-hidden="true">
-      <g fill="none" stroke="#35694a" stroke-opacity=".2" stroke-width="1.2">
-        <circle cx="100" cy="100" r="42"/><circle cx="100" cy="100" r="64"/><circle cx="100" cy="100" r="86"/>
-      </g></svg>
-    <span class="mono">優</span>
-    <img src="img/portrait.jpg" alt="伊藤優" onerror="this.remove()">
-  </div>
-  <div class="side-body">
-    <p class="nm">伊藤 優<small>ITO YU</small></p>
-    <p class="ttl">江東区立第四砂町小学校 教諭<br>小学校教員6年目・6年生担任／国語専科<br>全国道徳特別活動研究会 幹事<br><span style="color:#f5d69a">ICT活用 × 特別活動 × 国語</span></p>
-    <nav>
-      <a href="#shots">画面</a>
-      <a href="#effect">見込める効果</a>
-      <a href="#design">工夫</a>
-      <a href="#fun">楽しさ</a>
-      <a href="#use">授業での使い方</a>
-      <a href="index.html">サイトにもどる</a>
+<a class="skip" href="#main">本文へ移動</a>
+<header class="hd">
+  <div class="wrap in">
+    <nav aria-label="サイト内">
+      <div class="grp a"><a href="index.html"><img src="img/chara/s/upa_green.png" alt="" width="36" height="36" loading="lazy" decoding="async">ホーム</a><a href="about.html"><img src="img/chara/s/tayosu_front.png" alt="" width="36" height="36" loading="lazy" decoding="async">わたしのこと</a></div>
+      <div class="grp b"><a href="works.html" aria-current="page"><img src="img/chara/s/upa_alien.png" alt="" width="36" height="36" loading="lazy" decoding="async">作った教材</a><a href="results.html"><img src="img/chara/s/upa_gold.png" alt="" width="36" height="36" loading="lazy" decoding="async">教室で確かめたこと</a><a href="offer.html"><img src="img/chara/s/upa_comet.png" alt="" width="36" height="36" loading="lazy" decoding="async">できること</a></div>
     </nav>
-    <a class="cta" href="index.html#contact">CONTACT <span aria-hidden="true">→</span></a>
+    <a class="logo" href="index.html"><b>伊藤 優</b><small>ITO YU</small></a>
+    <button class="hb" type="button" aria-expanded="false" aria-controls="drawer">
+      <i></i><span class="sr">メニューを開く</span>
+    </button>
   </div>
-</aside>
-
-<main>
-
-<div class="wrap crumb"><a href="works.html"><span aria-hidden="true">←</span> 作った教材にもどる</a></div>
-
-<div class="wrap dhero">
-  <img class="peek" src="img/chara/m/tayosu_45.png" alt="" width="184" height="184" decoding="async">
-  <p class="eb st" style="--i:0">社会（地理）／ 小4〜中2</p>
-  <h1 class="st" style="--i:1">旅クエスト</h1>
-  <p class="sub st" style="--i:1">単一HTML 83.6MB・47都道府県＋196カ国・写真1,708枚／サイト内の別名『地理クエスト』</p>
-  <p class="lead st" style="--i:2"><b>白い地図は、うばわれたからではなく、まだ行っていないから白い。</b><br>この一行から作り直した地理教材です。</p>
-
-  <div class="dfigs st" style="--i:3">
-    <div class="dfig"><span class="lb">都道府県</span><b class="num">47</b></div>
-    <div class="dfig"><span class="lb">世界</span><b class="num">196<small>カ国</small></b></div>
-    <div class="dfig"><span class="lb">日本の問題</span><b class="num">932<small>問</small></b></div>
-    <div class="dfig"><span class="lb">写真</span><b class="num">1,708<small>枚</small></b></div>
+</header>
+<div class="dw" id="drawer" hidden>
+  <div class="top">
+    <span class="logo"><b>伊藤 優</b></span>
+    <button class="hb dw-close" type="button" style="display:flex">
+      <i></i><span class="sr">メニューを閉じる</span>
+    </button>
   </div>
+  <a class="it" href="index.html"><img src="img/chara/s/upa_green.png" alt="" width="24" height="24" loading="lazy" decoding="async">ホーム</a><a class="it" href="about.html"><img src="img/chara/s/tayosu_front.png" alt="" width="24" height="24" loading="lazy" decoding="async">わたしのこと</a><a class="it" href="works.html" aria-current="page"><img src="img/chara/s/upa_alien.png" alt="" width="24" height="24" loading="lazy" decoding="async">作った教材</a><a class="it" href="results.html"><img src="img/chara/s/upa_gold.png" alt="" width="24" height="24" loading="lazy" decoding="async">教室で確かめたこと</a><a class="it" href="offer.html"><img src="img/chara/s/upa_comet.png" alt="" width="24" height="24" loading="lazy" decoding="async">できること</a>
 </div>
 
-<section id="shots"><div class="wrap dsec">
+<main id="main">
+
+<section class="sec dtop"><div class="wrap">
+  <p class="crumb"><a href="works.html"><span aria-hidden="true">←</span> 作った教材にもどる</a></p>
+  <div class="head dhero">
+  <img class="peek" src="img/chara/m/tayosu_45.png" alt="" width="184" height="184" decoding="async">
+  <p class="eb">社会（地理）／ 小4〜中2</p>
+  <h1 class="h-jp">旅クエスト</h1>
+  <p class="sub">単一HTML 83.6MB・47都道府県＋196カ国・写真1,708枚／サイト内の別名『地理クエスト』</p>
+  <p class="h-lead"><b>白い地図は、うばわれたからではなく、まだ行っていないから白い。</b><br>この一行から作り直した地理教材です。</p>
+  </div>
+
+  <div class="dfigs">
+    <div class="dfig rise"><span class="lb">都道府県</span><b class="num">47</b></div>
+    <div class="dfig rise"><span class="lb">世界</span><b class="num">196<small>カ国</small></b></div>
+    <div class="dfig rise"><span class="lb">日本の問題</span><b class="num">932<small>問</small></b></div>
+    <div class="dfig rise"><span class="lb">写真</span><b class="num">1,708<small>枚</small></b></div>
+  </div>
+</div></section>
+
+<section class="sec" id="shots"><div class="wrap">
   <div class="head">
-    <p class="eb">Screens</p>
-    <p class="en">Screens</p>
-    <p class="jp"><img class="pin" src="img/chara/m/zuko_45.png" alt="" width="184" height="184" loading="lazy" decoding="async"><span class="ul">画面</span></p>
-    <p class="lead">5つの入口を順に見ていきます。先生用のデモモード（URLの末尾に <code>#demo</code>）で開いているので、旅ずみの状態です。子どものきろくは1バイトも変わりません。</p>
+    <p class="eb"><img class="mark" src="img/chara/s/zuko_45.png" alt="" width="96" height="96" loading="lazy" decoding="async">Screens</p>
+    <h2 class="h-jp">画面</h2>
+    <p class="h-lead">5つの入口を順に見ていきます。先生用のデモモード（URLの末尾に <code>#demo</code>）で開いているので、旅ずみの状態です。子どものきろくは1バイトも変わりません。</p>
   </div>
   <div class="shots">
-    <figure>
+    <figure class="rise">
       <div class="ph"><img src="img/chiri/title.jpg" alt="旅クエストのタイトル画面" width="1600" height="900" decoding="async"></div>
       <figcaption><span class="cap">入口 ── ゴールは1つだけ</span>日本47県／世界48カ国（深く）／全世界196カ国（浅く広く）／ドリルの4モード。<b>ゴールは「机の上の地球儀を、元どおりにする」の1つだけ</b>です。以前は6つありましたが、ゴールが6つあるのは無いのと同じでした。</figcaption>
       
     </figure>
-    <figure>
+    <figure class="rise">
       <div class="ph"><img src="img/chiri/quiz.jpg" alt="4択の出題画面" width="1600" height="900" decoding="async" loading="lazy"></div>
       <figcaption><span class="cap">① 問題本編 ── 4択で知識を入れる</span><b>写真・国の形・世界地図の3つを同時に出します。</b>思い出すのではなく、目の前の資料から読み取って答える形です。ダミーの選択肢も県名ハッシュで固定しました（選択肢が変わると、子どもには別の問題になるからです）。</figcaption>
       
     </figure>
-    <figure>
+    <figure class="rise">
       <div class="ph"><img src="img/chiri/kisekae_jp.jpg" alt="きせかえ画面（大阪の衣装）" width="1600" height="900" decoding="async" loading="lazy"></div>
       <figcaption><span class="cap">② きせかえ ── 文化を、着る</span>大阪は「ヒョウ柄＋もじゃもじゃパーマ＋たこ焼き」で<b>★ネタ枠</b>。混ぜる制限をかけていないので、北海道の服で沖縄へ行くと「あついーー！」と言い、そこで気候区分のデータが解禁されます。</figcaption>
       <div class="dia cols"><p class="dcap">衣装の3部品</p><ul class="clist"><li><svg viewBox="0 0 64 64" class="dart" aria-hidden="true"><path d="M12 44h40" /><path d="M20 44c0-14 4-24 12-24s12 10 12 24"/></svg><b>かぶりもの</b><span>自然・地形</span></li><li><svg viewBox="0 0 64 64" class="dart" aria-hidden="true"><path d="M22 16l10 6 10-6 10 8-5 7-3-2v23H20V29l-3 2-5-7z"/></svg><b>はおりもの</b><span>しごと・文化</span></li><li><svg viewBox="0 0 64 64" class="dart" aria-hidden="true"><rect x="16" y="24" width="32" height="26" rx="4"/><path d="M25 24v-5a7 7 0 0 1 14 0v5"/></svg><b>持ちもの</b><span>名物</span></li></ul><p class="ftail">地理の3つの見方と、そのまま重なります。</p></div>
     </figure>
-    <figure>
+    <figure class="rise">
       <div class="ph"><img src="img/chiri/kisekae_world.jpg" alt="きせかえ画面（フランスの衣装）" width="1600" height="900" decoding="async" loading="lazy"></div>
       <figcaption><span class="cap">② きせかえ ── なぜその国なのか、が出る</span>フランスのバゲットには「<b>EUでいちばん農地が広い、小麦の輸出も世界有数</b>」。集めた285点すべてに、この一行が付いています。</figcaption>
       
     </figure>
-    <figure>
+    <figure class="rise">
       <div class="ph"><img src="img/chiri/wagaya.jpg" alt="わが家の模様がえ画面" width="1600" height="900" decoding="async" loading="lazy"></div>
       <figcaption><span class="cap">③ 模様がえ ── 集めたものを、飾る</span>3Dの「わが家」に旅で集めたものを置きます。写真は<b>フィンランドの ととのい いす</b>。<b>サウナ → 水ぶろ → 外気浴 の順に置いて寝ころぶと「ととのった〜！」</b>（作者の趣味です）。同じ47/47でも家の見た目はちがうので、<b>他人と数で比べる表示は作っていません</b>。</figcaption>
       
     </figure>
-    <figure>
+    <figure class="rise">
       <div class="ph"><img src="img/chiri/globe.jpg" alt="地球球体モードの画面" width="1600" height="900" decoding="async" loading="lazy"></div>
       <figcaption><span class="cap">④ 地球球体モード ── 地理の感覚を、体で</span>歩く速さは実距離で一定なので、高緯度を走ると<b>「地図では近いのに、なかなか着かない」</b>が体で分かります。</figcaption>
       <div class="dia pair"><p class="dcap">スライダー1本で、平面⇄球をなめらかに補間します</p><div class="pbox "><svg viewBox="0 0 64 64" class="dart" aria-hidden="true"><rect x="8" y="14" width="48" height="36" rx="3"/><ellipse cx="32" cy="26" rx="13" ry="8"/></svg><b>平面（メルカトル）</b><span>グリーンランドがアフリカ大に見える</span></div><div class="parrow" aria-hidden="true">→</div><div class="pbox good"><svg viewBox="0 0 64 64" class="dart" aria-hidden="true"><circle cx="32" cy="32" r="21"/><ellipse cx="32" cy="32" rx="9" ry="21"/><path d="M11 32h42M15 21h34M15 43h34"/><ellipse cx="30" cy="24" rx="4" ry="2.6"/></svg><b>球</b><span>実際の面積に縮む。高緯度は「地図より遠い」</span></div></div>
     </figure>
-    <figure>
+    <figure class="rise">
       <div class="ph"><img src="img/chiri/kijutsu.jpg" alt="記述問題の画面" width="1600" height="900" decoding="async" loading="lazy"></div>
       <figcaption><span class="cap">⑤ 記述問題 ── 受験にも届く</span>4択で入れた知識を、<b>自分の言葉で説明できるか</b>まで持っていきます。左に<b>答え方の型</b>を4つ常設（①聞かれているのは理由 ②25〜45字 ③「〜から」でしめる ④入れたい言葉は3つ）── <b>答えを教えずに、書き方だけを教える</b>ための欄です。数値をすべて一次資料で裏取りした99問。</figcaption>
       
@@ -121,12 +120,10 @@
   </div>
 </div></section>
 
-<section id="effect"><div class="wrap dsec">
+<section class="sec" id="effect"><div class="wrap">
   <div class="head">
-    <p class="eb">What it aims for</p>
-    <p class="en">Aim</p>
-    <p class="jp"><img class="pin" src="img/chara/m/rika_front.png" alt="" width="184" height="184" loading="lazy" decoding="async"><span class="ul">見込める効果</span></p>
-    <p class="lead"></p>
+    <p class="eb"><img class="mark" src="img/chara/s/rika_front.png" alt="" width="96" height="96" loading="lazy" decoding="async">What it aims for</p>
+    <h2 class="h-jp">見込める効果</h2>
   </div>
   <ul class="plist">
       <li><b class="h">5つの入口が、それぞれちがう力を育てます</b><div class="dia rows"><ul class="rlist"><li><span class="rl">① 問題本編（4択）</span><span class="ra">→</span><span class="rr">知識をひととおり入れる</span></li><li><span class="rl">② きせかえ</span><span class="ra">→</span><span class="rr">文化を、着て覚える</span></li><li><span class="rl">③ 模様がえ</span><span class="ra">→</span><span class="rr">集めたものを、飾って結びつける</span></li><li><span class="rl">④ 地球球体モード</span><span class="ra">→</span><span class="rr">位置・距離・地形の感覚</span></li><li><span class="rl">⑤ 記述問題</span><span class="ra">→</span><span class="rr">自分の言葉で説明する力</span></li></ul></div></li>
@@ -138,12 +135,11 @@
   </ul>
 </div></section>
 
-<section id="design"><div class="wrap dsec">
+<section class="sec" id="design"><div class="wrap">
   <div class="head">
-    <p class="eb">Design decisions</p>
-    <p class="en">Design</p>
-    <p class="jp"><img class="pin" src="img/chara/m/kocho_45.png" alt="" width="184" height="184" loading="lazy" decoding="async"><span class="ul">工夫したこと</span></p>
-    <p class="lead">判断の記録です。<b>やめたもの・ひっくり返したもの</b>を中心に書きます。</p>
+    <p class="eb"><img class="mark" src="img/chara/s/kocho_45.png" alt="" width="96" height="96" loading="lazy" decoding="async">Design decisions</p>
+    <h2 class="h-jp">工夫したこと</h2>
+    <p class="h-lead">判断の記録です。<b>やめたもの・ひっくり返したもの</b>を中心に書きます。</p>
   </div>
   <ul class="plist">
       <li class="stop"><em>3回ひっくり返した</em><b class="h">ガチャ</b><span class="t">一度は「残るのは回しつづける動線だけ＝学習アプリがいちばん持ってはいけないもの」と結論しました。</span><div class="dia pair"><div class="pbox bad"><b>引く装置</b><span>演出0.8秒。子どもは解説を一度も読まなくなった</span></div><div class="parrow" aria-hidden="true">→</div><div class="pbox good"><b>立ち止まって読む装置</b><span>先生の一言「説明を確認する時間を確保できる」で採用</span></div></div></li>
@@ -156,12 +152,11 @@
   </ul>
 </div></section>
 
-<section id="fun"><div class="wrap dsec">
+<section class="sec" id="fun"><div class="wrap">
   <div class="head">
-    <p class="eb">Why kids play</p>
-    <p class="en">Fun</p>
-    <p class="jp"><img class="pin" src="img/chara/m/chibi_45.png" alt="" width="184" height="184" loading="lazy" decoding="async"><span class="ul">楽しさ</span></p>
-    <p class="lead">集めることと、飾ることです。</p>
+    <p class="eb"><img class="mark" src="img/chara/s/chibi_45.png" alt="" width="96" height="96" loading="lazy" decoding="async">Why kids play</p>
+    <h2 class="h-jp">楽しさ</h2>
+    <p class="h-lead">集めることと、飾ることです。</p>
   </div>
   <ul class="plist">
       <li><b class="h">ご当地たよす95体＋国旗たよす148体</b><span class="t">148体が地味だからこそ、民族衣装が光ります。196カ国ぜんぶに民族衣装を着せると、アジア12カ国が「ふつう」になります。</span></li>
@@ -172,12 +167,11 @@
   </ul>
 </div></section>
 
-<section id="use"><div class="wrap dsec">
+<section class="sec" id="use"><div class="wrap">
   <div class="head">
-    <p class="eb">In the classroom</p>
-    <p class="en">Use</p>
-    <p class="jp"><img class="pin" src="img/chara/m/ongaku_45.png" alt="" width="184" height="184" loading="lazy" decoding="async"><span class="ul">授業での使い方</span></p>
-    <p class="lead">大前提から書きます。ここは正直に言っておかないといけないところです。</p>
+    <p class="eb"><img class="mark" src="img/chara/s/ongaku_45.png" alt="" width="96" height="96" loading="lazy" decoding="async">In the classroom</p>
+    <h2 class="h-jp">授業での使い方</h2>
+    <p class="h-lead">大前提から書きます。ここは正直に言っておかないといけないところです。</p>
   </div>
   <ul class="plist">
       <li class="stop"><em>大前提</em><b class="h">主戦場は、家庭学習・自主学習です</b><span class="t">授業中に学級全員で使うことは、設計の最初から前提にしていません。これが「単元計画とのなじみが弱い」の根です。</span></li>
@@ -189,12 +183,11 @@
 </div></section>
 
 
-<section><div class="wrap dsec">
+<section class="sec"><div class="wrap">
   <div class="head">
-    <p class="eb">Spec</p>
-    <p class="en">Numbers</p>
-    <p class="jp"><img class="pin" src="img/chara/m/library_front.png" alt="" width="184" height="184" loading="lazy" decoding="async"><span class="ul">数字</span></p>
-    <p class="lead">2026年8月時点の実測値です。</p>
+    <p class="eb"><img class="mark" src="img/chara/s/library_front.png" alt="" width="96" height="96" loading="lazy" decoding="async">Spec</p>
+    <h2 class="h-jp">数字</h2>
+    <p class="h-lead">2026年8月時点の実測値です。</p>
   </div>
   <div class="spec"><table><tbody>
       <tr><th>本体</th><td>83,627,029 バイト＝83.63 MB（単一HTML）／スマホ版 54.33 MB</td></tr>
@@ -218,17 +211,59 @@
   </div>
 
   <div class="backrow">
-    <a class="primary" href="index.html#contact">この教材について相談する <span aria-hidden="true">→</span></a>
+    <a class="primary" href="#contact">この教材について相談する <span aria-hidden="true">→</span></a>
     <a href="works.html"><span aria-hidden="true">←</span> ほかの教材を見る</a>
   </div>
 </div></section>
 
-<footer><div class="wrap">
-  <img class="mate" src="img/chara/m/tayosu_front.png" alt="" width="184" height="184" loading="lazy" decoding="async">
-  伊藤 優 ／ 東京都 江東区立第四砂町小学校 教諭 ／ 全国道徳特別活動研究会 幹事<br>
-  このサイトの記述は個人の活動によるものであり、勤務校・江東区教育委員会の見解を示すものではありません。
-</div></footer>
+<div class="band" aria-hidden="true">
+  <svg class="line" viewBox="0 0 1200 14" preserveAspectRatio="none" fill="none">
+    <path d="M0 9 C 150 2, 300 12, 450 7 S 750 2, 900 9 S 1100 12, 1200 6" stroke="#5b3016" stroke-width="3" stroke-linecap="round"/>
+  </svg>
+  <div class="row">
+    <img src="img/chara/m/zuko_45.png" alt="" width="140" height="140" loading="lazy" decoding="async">
+    <img src="img/chara/m/upa_green.png" alt="" width="140" height="140" loading="lazy" decoding="async">
+    <img src="img/chara/m/tayosu_45.png" alt="" width="140" height="140" loading="lazy" decoding="async">
+    <img src="img/chara/m/gal_front.png" alt="" width="140" height="140" loading="lazy" decoding="async">
+    <img src="img/chara/m/library_front.png" alt="" width="140" height="140" loading="lazy" decoding="async">
+    <img src="img/chara/m/upa_comet.png" alt="" width="140" height="140" loading="lazy" decoding="async">
+    <img src="img/chara/m/kocho_45.png" alt="" width="140" height="140" loading="lazy" decoding="async">
+    <img src="img/chara/m/chibi_45.png" alt="" width="140" height="140" loading="lazy" decoding="async">
+  </div>
+</div>
+
+<section class="sec" id="contact"><div class="wrap">
+  <div class="contact">
+    <img class="mate" src="img/chara/m/zuko_45.png" alt="" width="140" height="140" loading="lazy" decoding="async">
+    <p class="eb"><img class="mark" src="img/chara/s/tayosu_front.png" alt="" width="96" height="96" loading="lazy" decoding="async">Contact</p>
+    <h2>お問い合わせ</h2>
+    <p>お仕事のご相談、教材を見てみたいというご依頼、同じ現場の先生からのご質問、どれでもお気軽にどうぞ。数日以内にお返事します。</p>
+    <a class="mail" href="mailto:yuutennis657@gmail.com?subject=%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B%EF%BC%88%E4%BC%8A%E8%97%A4%E5%84%AA%20%E3%82%B5%E3%82%A4%E3%83%88%E3%82%88%E3%82%8A%EF%BC%89">yuutennis657@gmail.com <span aria-hidden="true">→</span></a>
+    <div class="clines">
+      <a href="https://line.me/ti/p/fj9tMweQDR" target="_blank" rel="noopener">LINEでつながる <span aria-hidden="true">→</span></a>
+      <a href="https://line.me/ti/g2/9xsmT5pjwv8jTB-EtUfHn2OoA3Iq0H2ZZqq1gA" target="_blank" rel="noopener">みんなの特活ひろば（仮）に入る <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</div></section>
 
 </main>
+
+<footer class="ft">
+  <div class="wrap in">
+    <img class="mate" src="img/chara/s/tayosu_front.png" alt="" width="96" height="96" loading="lazy" decoding="async">
+    <p class="logo"><b>伊藤 優</b><small>ITO YU</small></p>
+    <p class="role">伊藤 優 ／ 東京都 江東区立第四砂町小学校 教諭 ／ 全国道徳特別活動研究会 幹事</p>
+    <nav aria-label="フッター"><a href="index.html">ホーム</a><a href="about.html">わたしのこと</a><a href="works.html" aria-current="page">作った教材</a><a href="results.html">教室で確かめたこと</a><a href="offer.html">できること</a></nav>
+    <div class="links">
+      <a href="mailto:yuutennis657@gmail.com">yuutennis657@gmail.com</a>
+      <a href="https://line.me/ti/p/fj9tMweQDR" target="_blank" rel="noopener">LINEでつながる</a>
+      <a href="https://line.me/ti/g2/9xsmT5pjwv8jTB-EtUfHn2OoA3Iq0H2ZZqq1gA" target="_blank" rel="noopener">みんなの特活ひろば（仮）</a>
+    </div>
+  </div>
+  <div class="fine"><div class="wrap">
+    <p>このサイトの記述は個人の活動によるものであり、勤務校・江東区教育委員会の見解を示すものではありません。<br>
+    掲載した数値は 2026年8月時点のものです。</p>
+  </div></div>
+</footer>
 </body>
 </html>
