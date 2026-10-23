@@ -67047,6 +67047,14 @@ Game.prototype.pickQuizList=function(pool){
       const ctx={tag:q.tag,pn:q._pn,q:q.q,k:q.k,a:q.a,ds:q.ds};
       if(!picQ(this,ctx))delete q.noHintMap;
     }
+    /* 体験版：写真は 関東の 県の ぶんだけ 入れて ある。写真が 出ない 問題は
+       「写真は 〜」と 書かない（写真が 無いのに 写真の 話を しない）。 */
+    for(const q of seq){
+      if(!/写真/.test(q.q||''))continue;
+      const ctx={tag:q.tag,pn:q._pn,q:q.q,k:q.k,a:q.a,ds:q.ds};
+      if(picQ(this,ctx))continue;
+      q.q=q.q.replace(/写真は /,'').replace(/写真の 楽器は/,'ピアノは');
+    }
   }catch(e){}
   return seq;
 };

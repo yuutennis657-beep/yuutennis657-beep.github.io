@@ -669,6 +669,8 @@ body::after {
 @keyframes popIn { 0%{transform:translate(-50%,-50%) scale(.7);opacity:0} 100%{transform:translate(-50%,-50%) scale(1);opacity:1} }
 .hint-popup h3 { color:var(--neon-red); font-size:16px; text-shadow:0 0 10px var(--neon-red); margin-bottom:11px; font-family:'Orbitron',monospace; letter-spacing:.1em; }
 .hint-popup p  { color:var(--neon-yellow); font-size:14px; line-height:1.65; }
+.hp-frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 2px;font-size:14px;line-height:1.1}
+.hp-bar{align-self:stretch;height:1.5px;background:currentColor;margin:1px 0}
 
 
 /* Freeze countdown */
@@ -104019,18 +104021,27 @@ function triggerRedFlash(){
   el.classList.remove('active'); void el.offsetWidth; el.classList.add('active');
 }
 
+/* ヒントの中の数：「1_1/2」を 帯分数の 形で 見せる（記号の まま 出さない） */
+function hpFrac(str){
+  str=String(str);
+  let w='',f=str;
+  if(str.includes('_')){ [w,f]=str.split('_'); }
+  if(!f.includes('/')) return str;
+  const [n,d]=f.split('/');
+  return w+'<span class="hp-frac"><span>'+n+'</span><span class="hp-bar"></span><span>'+d+'</span></span>';
+}
 function showHint(q){
   let txt;
   if(q.hint==='back'){
-    txt=`□ を求めるには、最初の数を答えで割るよ！<br>【 ${q.a} ÷ ${q.eq} 】を計算してみよう！`;
+    txt=`□ を求めるには、最初の数を答えで割るよ！<br>【 ${hpFrac(q.a)} ÷ ${hpFrac(q.eq)} 】を計算してみよう！`;
   } else if(q.hint==='front'){
-    txt=`★大注目！□ が前にあるときは、<br>答えに割る数を【掛け算】すれば元に戻るよ！<br>【 ${q.eq} × ${q.div} 】を計算してみよう！`;
+    txt=`★大注目！□ が前にあるときは、<br>答えに割る数を【掛け算】すれば元に戻るよ！<br>【 ${hpFrac(q.eq)} × ${hpFrac(q.div)} 】を計算してみよう！`;
   } else if(q.hint==='3term_last'){
-    txt=`3口の割り算！まず前2つを計算！<br>【 ${q.a} ÷ ${q.div} 】を先に計算して、<br>その結果を答えで割ってみよう！`;
+    txt=`3口の割り算！まず前2つを計算！<br>【 ${hpFrac(q.a)} ÷ ${hpFrac(q.div)} 】を先に計算して、<br>その結果を答えで割ってみよう！`;
   } else if(q.hint==='3term_first'){
-    txt=`□が一番前！答えに後ろの2つを<br>【掛け算】すれば元に戻るよ！<br>【 ${q.eq} × ${q.div} × ${q.div2} 】を計算！`;
+    txt=`□が一番前！答えに後ろの2つを<br>【掛け算】すれば元に戻るよ！<br>【 ${hpFrac(q.eq)} × ${hpFrac(q.div)} × ${hpFrac(q.div2)} 】を計算！`;
   } else if(q.hint==='3term_mid'){
-    txt=`□が真ん中！最初の数を<br>【答え × 3番目の数】で割ってみよう！<br>【 ${q.a} ÷ (${q.eq} × ${q.div2}) 】を計算！`;
+    txt=`□が真ん中！最初の数を<br>【答え × 3番目の数】で割ってみよう！<br>【 ${hpFrac(q.a)} ÷ (${hpFrac(q.eq)} × ${hpFrac(q.div2)}) 】を計算！`;
   } else {
     txt=`ヒント：よく考えて計算してみよう！`;
   }
