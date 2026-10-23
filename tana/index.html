@@ -251,6 +251,185 @@ body{color:var(--fg);font-family:var(--f);font-size:15px;line-height:1.65;letter
 .wd-flow::before{top:24px;bottom:24px}
 .wd-node{align-self:start;margin-top:8px}
 .wd-fe{align-self:stretch}
+
+/* ===== 最初の画面（見本）：左ぞろえの見出し＋確かめた数字・上の帯に棚えらび ===== */
+.hm-top{position:sticky;top:env(safe-area-inset-top,0px);z-index:12;display:flex;align-items:center;gap:16px;margin:0 -16px;padding:10px 16px;
+  background:var(--glass);-webkit-backdrop-filter:saturate(180%) blur(18px);backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid var(--line)}
+.hm-brand{display:flex;align-items:center;gap:8px;flex:none}
+.hm-brand img{width:34px;height:auto}
+.hm-brand b{font-size:16px;letter-spacing:.04em}
+.hm-top .ws-tabs{margin:0 auto;flex:0 1 auto;min-width:0}
+.hm-by{flex:none;font-size:13px;font-weight:600;color:var(--sub)}
+.hm-hero{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:40px;align-items:end;padding:56px 0 24px}
+.hm-eye{margin:0 0 12px;font-size:14px;font-weight:700;letter-spacing:.12em;color:var(--sub)}
+.hm-copy h1{margin:0;font-size:clamp(30px,4.6vw,58px);line-height:1.22;letter-spacing:-.015em;font-weight:800}
+.hm-copy h1 span{display:inline-block;white-space:nowrap;background:linear-gradient(90deg,#1a5fb4,#1e7b45);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hm-lead{margin:18px 0 0;font-size:17px;line-height:1.7;color:var(--sub);max-width:36em;text-wrap:balance;word-break:auto-phrase}
+.hm-stats{display:flex;flex-direction:column;gap:10px}
+.hm-stt{margin:0;font-size:12px;font-weight:700;letter-spacing:.1em;color:var(--sub)}
+.hm-stat{display:grid;grid-template-columns:1fr auto;grid-template-areas:"s b" "n b";align-items:center;gap:2px 12px;text-align:left;border:0;cursor:pointer;
+  background:var(--card);border-radius:18px;padding:14px 18px;box-shadow:var(--sh);font-family:inherit;color:var(--fg);min-height:44px;transition:transform .2s,box-shadow .2s}
+@media (hover:hover){.hm-stat:hover{transform:translateY(-2px);box-shadow:var(--shUp)}}
+.hm-stat small{grid-area:s;font-size:13px;font-weight:700;color:var(--sub)}
+.hm-stat span{grid-area:n;font-size:12px;color:var(--sub)}
+.hm-stat b{grid-area:b;font-size:32px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.hm-stat b i{font-style:normal;font-weight:500;color:var(--sub);margin:0 4px;font-size:22px}
+.hm-stat b em{font-style:normal;font-size:15px;font-weight:600;color:var(--sub);margin-left:3px}
+.ws-hero,.ws-bar{display:none}
+@media (max-width:900px){
+  .hm-top{flex-wrap:wrap;gap:8px}
+  .hm-top .ws-tabs{order:3;width:100%;max-width:100%}
+  .hm-by{margin-left:auto}
+  .hm-hero{grid-template-columns:1fr;gap:24px;padding:28px 0 8px}
+  .hm-stats{flex-direction:row;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:4px 16px 10px}
+  .hm-stats::-webkit-scrollbar{display:none}
+  .hm-stt{display:none}
+  .hm-stat{flex:0 0 78%;grid-template-columns:1fr;grid-template-areas:"s" "b" "n"}
+}
+/* カード：写真を主役に。教科は写真の上に。色の線はやめる */
+.ws-tile[class*=" s-"]{box-shadow:var(--sh)}
+.ws-tile[class*=" s-"] .ws-pic{border-bottom:0}
+.ws-tile{position:relative;border-radius:20px}
+.ws-tile .ws-subj{position:absolute;top:10px;left:10px;margin:0;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.ws-tb{padding:12px 14px 14px}
+.ws-tb b{font-size:16px}
+.ws-shelf{margin-top:44px}
+
+/* 詳しいページ：画面ギャラリー（2〜3枚・横に送る） */
+.sh-wrap{display:flex;flex-direction:column;gap:6px;min-width:0}
+.sh-ttl{margin:0;font-size:13px;font-weight:700;color:var(--sub);display:flex;justify-content:space-between;gap:8px}
+.sh-ttl span{font-weight:500}
+.sh-row{list-style:none;margin:0;padding:2px 2px 8px;display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:thin}
+.sh-row li{flex:0 0 88%;scroll-snap-align:start}
+.sh-row figure{margin:0;background:var(--card);border-radius:14px;box-shadow:var(--sh);overflow:hidden}
+.sh-row img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#111}
+.sh-row figcaption{display:flex;gap:8px;align-items:flex-start;padding:8px 12px 10px;font-size:14px;line-height:1.5}
+.sh-row figcaption b{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--btn);color:var(--btnFg);font-size:12px;margin-top:1px}
+.sh-band{max-width:1320px;margin:0 auto;width:100%;padding-block:18px 4px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+@media (min-width:960px){
+  .sh-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible;gap:20px}
+  .sh-row li{flex:none}
+  .sh-ttl span{display:none}
+}
+
+/* 情報の整理：数字は順番に意味がある所だけ */
+.wd-sec h3{font-size:17px;margin-bottom:10px}
+.wd-steps2{margin:8px 0 0;padding-top:8px;border-top:1px solid var(--line);font-size:13px;font-weight:600;color:var(--fg);line-height:1.6}
+.wd-steps2 span{color:var(--sub)}
+.wd-flow{gap:12px}
+.wd-flow::before{left:7px;top:18px;bottom:18px}
+.wd-flow li{grid-template-columns:16px minmax(0,1fr) minmax(0,1.25fr)}
+.wd-node{width:14px;height:14px;border:2px solid var(--sub);background:var(--bg);margin-top:14px;align-self:start}
+.wd-flow li.key .wd-node{background:#1a5fb4;border-color:#1a5fb4}
+.wd-sup{border:0;border-top:1px solid var(--line);border-radius:0;padding:12px 0 0;margin-top:16px}
+.sh-ttl{font-size:12px;letter-spacing:.06em}
+@media (max-width:600px){.wd-flow li{grid-template-columns:16px 1fr}}
+/* 徐々に見せる：0.5秒以内・動きを減らす設定では止める */
+@keyframes mo-up{from{opacity:.6;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:no-preference){
+  .ws-detail:not([hidden]) .sh-row li,
+  .ws-detail:not([hidden]) .wd-col > *,
+  .ws-detail:not([hidden]) .wd-flow li{animation:mo-up .42s cubic-bezier(.2,.75,.25,1) both;animation-delay:calc(var(--d,0)*55ms)}
+  .ws-grid .ws-tile{animation:mo-up .4s cubic-bezier(.2,.75,.25,1) both;animation-delay:calc(min(var(--d,0),8)*40ms)}
+  .hm-copy > *,.hm-stat{animation:mo-up .45s cubic-bezier(.2,.75,.25,1) both;animation-delay:calc(var(--d,0)*70ms)}
+}
+
+/* ===== 詳しいページ：上から下へ読む物語の順 ===== */
+.st{max-width:1180px;margin:0 auto;padding-block:20px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:40px}
+.st h3{margin:0 0 12px;font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--sub)}
+.st-hero{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr);gap:36px;align-items:center}
+.st-tags{display:flex;flex-wrap:wrap;gap:6px;margin:0}
+.st-tag{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--soft);color:var(--sub)}
+.st-say h2{margin:12px 0 0;font-size:clamp(32px,4vw,44px);line-height:1.15;letter-spacing:-.01em}
+.st-lead{margin:12px 0 0;font-size:clamp(19px,2vw,23px);font-weight:700;line-height:1.5;text-wrap:balance}
+.st-aim{margin:10px 0 0;font-size:15px;line-height:1.7;color:var(--sub)}
+.st-say .wd-voice{margin-top:16px}
+.st-cta{margin-top:20px}
+.st-cta .ws-go{width:auto;padding:0 28px;display:inline-flex}
+.st-shots{min-width:0}
+.st-shots .sh-row{display:flex!important;overflow-x:auto!important;gap:14px!important;padding-bottom:8px;scroll-snap-type:x mandatory}
+.st-shots .sh-row li{scroll-snap-align:start}
+.st-shots .sh-row li{flex:0 0 86%}
+.st-shots .sh-row.one li{flex:0 0 100%}
+.st-use{border-top:1px solid var(--line);padding-top:20px}
+.st-usebody{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) minmax(0,1fr);gap:24px;align-items:center}
+.st-where{margin:0;font-size:15px;font-weight:600;line-height:1.6}
+.st-week{min-width:0}
+.st-week p{margin:6px 0 0;font-size:12px;color:var(--sub)}
+.st-week strong{font-size:14px;color:var(--fg)}
+.st-usebody .wd-steps2{margin:0;padding:0;border:0;font-size:14px}
+.st-why{display:grid;grid-template-columns:minmax(0,1.25fr) auto minmax(0,1fr);gap:20px;align-items:start;border-top:1px solid var(--line);padding-top:20px}
+.st-arrow{align-self:center;font-size:28px;color:var(--sub);font-weight:300}
+.st-res{display:flex;flex-direction:column;gap:10px}
+.st-res h3{margin-bottom:2px}
+.st-mech .wd-fe span{display:none}
+.st-end{display:grid;grid-template-columns:1fr 1fr;gap:16px;border-top:1px solid var(--line);padding-top:20px}
+.st-end small{display:block;font-size:12px;font-weight:700;color:var(--sub);margin-bottom:4px}
+.st-end p{margin:0;font-size:15px;line-height:1.7}
+.st-seen{background:var(--soft);border-radius:14px;padding:14px 16px}
+.st-todo{border:1.5px dashed var(--line);border-radius:14px;padding:14px 16px}
+.st-cav{grid-column:1 / -1;font-size:13px!important;color:var(--sub)}
+.ws-detail .wd-in{display:none}
+@media (max-width:900px){
+  .st{gap:28px}
+  .st-hero{grid-template-columns:1fr;gap:20px}
+  .st-shots{order:-1;margin:0 -16px}
+  .st-shots .sh-row{padding:2px 16px 8px}
+  .st-usebody{grid-template-columns:1fr;gap:12px}
+  .st-why{grid-template-columns:1fr}
+  .st-arrow{transform:rotate(90deg);justify-self:center}
+  .st-end{grid-template-columns:1fr}
+  .st-cta .ws-go{width:100%}
+}
+@media (prefers-reduced-motion:no-preference){
+  .ws-detail:not([hidden]) .st-say > *,.ws-detail:not([hidden]) .st-use,.ws-detail:not([hidden]) .st-res > *,.ws-detail:not([hidden]) .st-end > *{animation:mo-up .42s cubic-bezier(.2,.75,.25,1) both;animation-delay:calc(var(--d,0)*55ms)}
+}
+
+/* しくみ：左の説明と右の画面が連動 */
+.st-main{margin:0;border-radius:16px;overflow:hidden;box-shadow:var(--shUp);background:#111}
+.st-main img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+.st-mech2,.st-res2{border-top:1px solid var(--line);padding-top:20px}
+.mx{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:28px;align-items:start}
+.mx-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;position:relative}
+.mx-item{width:100%;text-align:left;display:grid;grid-template-columns:16px 1fr;grid-template-areas:"d s" "d e";gap:4px 12px;align-items:start;border:1.5px solid var(--line);background:var(--card);border-radius:14px;padding:12px 14px;cursor:pointer;font-family:inherit;color:var(--fg);transition:border-color .2s,box-shadow .2s,transform .2s;min-height:44px}
+.mx-item:hover{box-shadow:var(--sh)}
+.mx-item.on{border-color:#1a5fb4;box-shadow:var(--sh)}
+.mx-dot{grid-area:d;width:12px;height:12px;border-radius:50%;border:2px solid var(--sub);margin-top:5px}
+.mx-item.on .mx-dot{background:#1a5fb4;border-color:#1a5fb4}
+.mx-s{grid-area:s;font-size:15px;font-weight:700;line-height:1.45}
+.mx-s em{display:inline-block;margin-left:8px;font-style:normal;font-size:11px;padding:2px 8px;border-radius:999px;background:#1a5fb4;color:#fff;vertical-align:2px}
+.mx-e{grid-area:e;font-size:14px;line-height:1.6;color:var(--sub)}
+.mx-item.on .mx-e{color:var(--fg)}
+.mx-view{position:sticky;top:76px;min-width:0}
+.mx-fig{display:none;margin:0}
+.mx-fig.on{display:block;animation:mo-up .3s ease both}
+.mx-fig img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:14px;box-shadow:var(--shUp);background:#111}
+.mx-fig figcaption{margin-top:8px;font-size:13px;color:var(--sub);text-align:center}
+.mx-off{aspect-ratio:16/9;border-radius:14px;border:1.5px dashed var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:20px;text-align:center;background:var(--soft)}
+.mx-off b{font-size:16px}.mx-off span{font-size:14px;color:var(--sub)}
+.rs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;align-items:start}
+.rs-tiles{display:flex;flex-direction:column;gap:10px}
+.st-res2 .wd-note{margin-top:10px}
+@media (max-width:900px){.mx{grid-template-columns:1fr;gap:14px}.mx-view{position:sticky;top:calc(60px + env(safe-area-inset-top,0px));z-index:3;order:-1;background:var(--bg);padding:6px 0 8px;margin:0 -4px;box-shadow:0 10px 12px -12px rgba(0,0,0,.25)}.mx-fig figcaption{margin-top:4px}}
+
+/* どう使う：3つに見出し・上をそろえる */
+.us{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(0,1fr);gap:28px;align-items:start}
+.us-cell small{display:block;font-size:12px;font-weight:700;color:var(--sub);margin-bottom:8px;letter-spacing:.04em}
+.us-where{margin:0;font-size:16px;font-weight:700;line-height:1.6}
+.us-blocks{display:flex;gap:6px;flex-wrap:wrap}
+.us-blocks span{flex:1 1 0;min-width:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px 4px;border-radius:12px;background:#e8f0fb;color:#1a5fb4}
+.us-blocks span.b-or{background:#fdf0e0;color:#a35208}
+.us-blocks span.b-gr{background:#e5f4eb;color:#1e7b45}
+.us-blocks span.b-gy{background:var(--soft);color:var(--sub)}
+.us-blocks b{font-size:17px;line-height:1.1}
+.us-blocks i{font-style:normal;font-size:12px;font-weight:600;line-height:1.2;text-align:center}
+.us-note{margin:8px 0 0;font-size:12px;color:var(--sub)}
+.us-flow{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0;position:relative}
+.us-flow li{position:relative;padding:0 0 12px 22px;font-size:15px;font-weight:600;line-height:1.45}
+.us-flow li::before{content:"";position:absolute;left:3px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--bg);border:2px solid var(--fg)}
+.us-flow li:not(:last-child)::after{content:"";position:absolute;left:8px;top:18px;bottom:0;border-left:2px solid var(--line)}
+.us-flow li:last-child{padding-bottom:0}
+@media (max-width:900px){.us{grid-template-columns:1fr;gap:18px}}
 /* 動き：0.5秒以内。減らす設定では止める */
 @keyframes ws-rise{from{transform:translateY(12px)}to{transform:none}}
 @keyframes ws-up{from{transform:translateY(30px);opacity:.6}to{transform:none;opacity:1}}
@@ -264,14 +443,23 @@ body{color:var(--fg);font-family:var(--f);font-size:15px;line-height:1.65;letter
 
 
 <div class="ws-wrap">
-  <header class="ws-hero">
-    <img class="ws-headupa" src="img/upa/hello.png" alt="ウパ丸" style="--i:0">
-    <p class="ws-eyebrow" style="--i:1">教室の作品棚</p>
-    <h1 style="--i:2">教室から生まれた、<br>アプリと授業のわざ。</h1>
-    <p class="ws-lead" style="--i:3">小学校の先生が、自分のクラスのために作りました。気になるものを押して、その場で触ってみてください。</p>
-    <p class="ws-by" style="--i:4">作成者：伊藤 優</p>
+  <div class="hm-top">
+    <div class="hm-brand"><img src="img/upa/hello.png" alt=""><b>教室の作品棚</b></div>
+    <nav class="ws-tabs" id="ws-tabs" aria-label="棚をえらぶ"></nav>
+    <span class="hm-by">作成者：伊藤 優</span>
+  </div>
+  <header class="hm-hero">
+    <div class="hm-copy">
+      <p class="hm-eye">小学校の教室から</p>
+      <h1>子どもの「できた」と、<br>先生の「こうしたい」を、<span>形に。</span></h1>
+      <p class="hm-lead">教室で生まれたアプリと授業のわざ。押して、その場で触ってみてください。</p>
+    </div>
+    <aside class="hm-stats" aria-label="実践の数字">
+      <button type="button" class="hm-stat" data-detail-open="torehan"><small>トレハン・漢字テストの平均</small><b>75.4<i>→</i>82.4<em>点</em></b><span>6年3学級・のべ101人</span></button>
+      <button type="button" class="hm-stat" data-detail-open="tower"><small>タイピングタワーに出た子</small><b>218<em>人</em></b><span>10/23・1〜6年</span></button>
+      <button type="button" class="hm-stat" data-detail-open="shuan"><small>週案アプリ・週案を作る時間</small><b>−30<em>分以上／週</em></b><span>1か月で約2時間（作成者の場合）</span></button>
+    </aside>
   </header>
-  <div class="ws-bar"><nav class="ws-tabs" id="ws-tabs" aria-label="棚をえらぶ"></nav></div>
   <main id="ws-main"></main>
 </div>
 
@@ -307,7 +495,7 @@ const WORKS=[
   {id:'torehan',s:'kids',sub:'国語',name:'トレハン',tag:['国語','小3〜小6'],img:'img/torehan.jpg',
    one:'漢字が苦手な子のための、4択・ステージ制のゲーム。まず「できた」を積む。',
    num:['テストの平均（のべ101人）','75.4点 → 82.4点'],demo:'file',href:'demo/torehan.html',
-   detail:{
+   detail:{shots:[{"img": "img/shots/torehan_1.jpg", "cap": "4択で答えてボスと戦う。まちがえると苦手リストへ"}, {"img": "img/shots/torehan_2.jpg", "cap": "苦手漢字一覧。覚えたら自分で消せる"}, {"img": "img/shots/torehan_3.jpg", "cap": "書き取り修練場。ノートに書いて自分で判定"}],
      lead:'漢字ドリルを開かなかった子が、自分から学び始めた。',
      voice:'「結局、書くことが大事だね」',voiceBy:'実践の終わりの、ある児童のことば',
      aim:'苦手な子が、まず楽しく自分の苦手を見つける4択アプリ。',
@@ -319,9 +507,9 @@ const WORKS=[
      waffle:{up:60,all:99,upL:'点が上がった',dnL:'上がらなかった'},
      statNote:'6年3学級・のべ101名／漢字50問テスト（100点満点）／4〜5月 → 7月',
      seen:'苦手の整理まで進まなかった子は、伸びていない。楽しむだけでは足りない。',
-     flow:[{s:'4択・ステージ制',e:'書けない子も「できた」から始められる',img:'img/torehan_s1.jpg',alt:'4択で漢字を答える対戦の画面'},
-           {s:'まちがいが自動で「苦手リスト」へ',e:'苦手が「あと何問」と数で見える。整理できた子ほど伸びた',key:'差が出たのはここ',img:'img/torehan_s2.jpg',alt:'苦手漢字一覧の画面'},
-           {s:'ノートに書いて、自分で判定',e:'「読める」から「書ける」へ。最後に「書くことが大事」の声',img:'img/torehan_s3.jpg',alt:'書き取り修練場の画面'}],
+     flow:[{s:'4択・ステージ制',e:'書けない子も「できた」から始められる',shot:'img/shots/torehan_1.jpg',img:'img/torehan_s1.jpg',alt:'4択で漢字を答える対戦の画面'},
+           {s:'まちがいが自動で「苦手リスト」へ',e:'苦手が「あと何問」と数で見える。整理できた子ほど伸びた',shot:'img/shots/torehan_2.jpg',key:'差が出たのはここ',img:'img/torehan_s2.jpg',alt:'苦手漢字一覧の画面'},
+           {s:'ノートに書いて、自分で判定',e:'「読める」から「書ける」へ。最後に「書くことが大事」の声',shot:'img/shots/torehan_3.jpg',img:'img/torehan_s3.jpg',alt:'書き取り修練場の画面'}],
      support:[{s:'前回の点と目標点を入れる',e:'くらべる相手は、前回の自分'},
               {s:'苦手が0になるまでボスを倒せない',e:'速く正確に、何度も回したくなる'}],
      caveat:'無作為に分けた実験ではなく、参考の比較。同じ時期にAIのプリントと表彰状も使った。'
@@ -333,7 +521,7 @@ const WORKS=[
   {id:'kakkun',s:'kids',sub:'国語',name:'カッくん',tag:['国語','小1〜小6'],img:'img/kakkun.jpg',
    one:'作文・振り返り・要約の「書く」アプリ。辞典つきで、書きたい言葉が見つかる。',
    num:['起動の速さ／辞典','1.35秒／29,506語'],demo:'file',href:'demo/kakkun.html',
-   detail:{"lead": "書かされる作文から、友だちに届ける作文へ。", "voice": "「作文と聞いても嫌とは思わなくなった」", "voiceBy": "9月末のアンケート、6年の児童の自由記述", "aim": "書き出しで止まらないための作文アプリ。お題・辞典・音声入力つき。", "where": "6年 国語（作文・読書感想文）｜6年3学級・2026年9月", "week": {"total": "9月の4週間", "note": "オレンジ＝自分から書いた短い作文", "blocks": [["朝", "短作文", "b-or", "朝学習"], ["自", "自由作文", "b-or", "自学"], ["国", "読書感想文", "", "国語"], ["読", "友だちの作文を読む", "b-gr", "読み合い"]]}, "steps": ["短い作文を重ねる", "画像で出す", "友だちのを読む"], "range": {"lo": 0, "hi": 100, "step": 20, "u": "%", "label": "コメントが1件以上届いた作品の割合", "aL": "1回目（1組）", "bL": "2回目", "rows": [{"k": "2組", "a": 63, "b": 93}, {"k": "3組", "a": 63, "b": 72}]}, "tiles": [{"k": "書くことへの気持ちが変わった", "b": "66", "u": "%", "note": "6年61名・とても＋少し"}, {"k": "これからも使いたい", "b": "82", "u": "%", "note": "6年61名・肯定的な回答"}], "statNote": "割合＝パドレットの作品とコメントの数（9月）。1回目は1組の75本。気持ち＝9月末の事後アンケート。", "seen": "効いたのはコメントより、友だちの作文を読む側に回ったこと。実物を読んで、あらすじばかりから抜けた子がいた。", "todo": "書く力そのものの伸び。事前と事後の比較では一貫した伸びが確かめられず、比べ方から直す。", "flow": [{"s": "短作文のお題を250件あまり", "e": "長い作文の前に短く書く段階。朝学習や自学で自分から書く子が出た"}, {"s": "原稿用紙のまま画像で書き出す", "e": "名前・題・日付が自動で入る。出すだけで、全員の作文が読める場になる"}, {"s": "友だちの作文を読み、伝わった所を送る", "e": "同じ学年の実物が書き方の手本に。「直して」とは書かない約束", "key": "いちばん効いた"}], "support": [{"s": "辞典と音声入力が書く画面の横に", "e": "言葉を探しに行って忘れない。話して下書きもできる"}, {"s": "ほめるマスコットもポイントもなし", "e": "書く相手は、アプリではなく教室の友だちと先生"}], "caveat": "気持ちが「変わらない」子も3割あまり。読み合いは、まだ学級の中にとどまっている。"}},
+   detail:{"lead": "書かされる作文から、友だちに届ける作文へ。", "voice": "「作文と聞いても嫌とは思わなくなった」", "voiceBy": "9月末のアンケート、6年の児童の自由記述", "aim": "書き出しで止まらないための作文アプリ。お題・辞典・音声入力つき。", "where": "6年 国語（作文・読書感想文）｜6年3学級・2026年9月", "week": {"total": "9月の4週間", "note": "オレンジ＝自分から書いた短い作文", "blocks": [["朝", "短作文", "b-or", "朝学習"], ["自", "自由作文", "b-or", "自学"], ["国", "読書感想文", "", "国語"], ["読", "友だちの作文を読む", "b-gr", "読み合い"]]}, "steps": ["短い作文を重ねる", "画像で出す", "友だちのを読む"], "range": {"lo": 0, "hi": 100, "step": 20, "u": "%", "label": "コメントが1件以上届いた作品の割合", "aL": "1回目（1組）", "bL": "2回目", "rows": [{"k": "2組", "a": 63, "b": 93}, {"k": "3組", "a": 63, "b": 72}]}, "tiles": [{"k": "書くことへの気持ちが変わった", "b": "66", "u": "%", "note": "6年61名・とても＋少し"}, {"k": "これからも使いたい", "b": "82", "u": "%", "note": "6年61名・肯定的な回答"}], "statNote": "割合＝パドレットの作品とコメントの数（9月）。1回目は1組の75本。気持ち＝9月末の事後アンケート。", "seen": "効いたのはコメントより、友だちの作文を読む側に回ったこと。実物を読んで、あらすじばかりから抜けた子がいた。", "todo": "書く力そのものの伸び。事前と事後の比較では一貫した伸びが確かめられず、比べ方から直す。", "flow": [{"s": "短作文のお題を250件あまり", "e": "長い作文の前に短く書く段階。朝学習や自学で自分から書く子が出た", "shot": "img/shots/kakkun_1.jpg"}, {"s": "原稿用紙のまま画像で書き出す", "e": "名前・題・日付が自動で入る。出すだけで、全員の作文が読める場になる", "off": "名前・題・日付を入れて、原稿用紙のまま画像で書き出す"}, {"s": "友だちの作文を読み、伝わった所を送る", "e": "同じ学年の実物が書き方の手本に。「直して」とは書かない約束", "key": "いちばん効いた", "off": "読み合いはアプリの外（パドレット）で行う"}], "support": [{"s": "辞典と音声入力が書く画面の横に", "e": "言葉を探しに行って忘れない。話して下書きもできる"}, {"s": "ほめるマスコットもポイントもなし", "e": "書く相手は、アプリではなく教室の友だちと先生"}], "caveat": "気持ちが「変わらない」子も3割あまり。読み合いは、まだ学級の中にとどまっている。", "shots": [{"img": "img/shots/kakkun_1.jpg", "cap": "お題を選ぶ。本だな・日記・卒業文集の入口も1画面に"}, {"img": "img/shots/kakkun_2.jpg", "cap": "原稿用紙に書く。字数とあと何字がその場で出る"}]}},
   {id:'yamanashi',s:'kids',sub:'国語',name:'イーハトーヴの谷',tag:['国語','小6'],img:'img/yamanashi.jpg',
    one:'物語「やまなし」の9時間を、谷の地図にした。自分で場所をえらんで読み進める。',
    num:['見えにくい所を直した','90か所 → 0か所'],demo:'file',href:'demo/yamanashi.html',
@@ -405,8 +593,8 @@ const WORKS=[
 
   {id:'shuan',s:'tchr',name:'週案アプリ',tag:['先生','学校全体'],img:'img/shuan.jpg',
    one:'1つの台帳に書けば、週案・時数・子どもへの連絡まで出てくる。学校全体で使い始めた。',
-   num:['週案の表示（8月末）','40秒 → 8秒'],demo:'link',href:'https://yuutennis657-beep.github.io/shuan-app/',
-   detail:{
+   num:['週案を作る時間（作成者の場合）','1週間で30分以上へった'],demo:'link',href:'https://yuutennis657-beep.github.io/shuan-app/',
+   detail:{shots:[{"img": "img/shots/shuan_1.jpg", "cap": "1週間の予定と時数が1画面に。直すのもここから"}, {"img": "img/shots/shuan_2.jpg", "cap": "教科ごとの遅れ・進みが棒で見える"}],
      effTitle:'使ってみての効果',
      lead:'1つの台帳に書けば、週案も時数も子どもへの連絡も出てくる。',
      aim:'週案を何枚にも書き写す手間をなくす。先生が入れるのは1つの台帳だけ。',
@@ -415,19 +603,19 @@ const WORKS=[
      steps:['台帳に書く','週案・時数が出る','印刷・配布・投稿'],
      range:{lo:0,hi:40,step:10,u:'秒',down:true,label:'待ち時間（短いほどよい）',aL:'前',bL:'後',
             rows:[{k:'週案の表示',a:40,b:8},{k:'直す画面',a:13,b:3}]},
-     tiles:[{k:'研修で出た頼み',b:'10',u:'件',note:'翌日にすべて反映'},
+     tiles:[{k:'週案を作る時間',b:'−30',u:'分以上／週',note:'1か月で約2時間（作成者の場合）'},{k:'研修で出た頼み',b:'10',u:'件',note:'翌日にすべて反映'},
             {k:'時数の確かめ',b:'1014.8',u:'時間',note:'標準1015とほぼ一致'}],
      statNote:'週案の表示＝8月末（作り手1人で使っていたころ）、直す画面＝10/1の本番。時数＝授業日カレンダーから数えた値と標準時数の照合。',
      seenTitle:'使われ方',
      seen:'他学年・専科・講師・管理職が開き、不具合の報告がその場で届く。先生の声をその日のうちに直す、を6日で58版。',
-     todo:'使っている人数と、1週間で何分へったか。10月・12月・3月のアンケートで確かめる（フォームは用意ずみ）。',
-     flow:[{s:'台帳は1つ。書く道も1本',e:'週案・週予定・子ども用・Classroomが同じ行から出る。書き写しが構造ごと消える',key:'いちばんの芯',img:'img/shuan_s1.jpg',alt:'週予定の画面'},
-           {s:'時数は台帳から自動でたまる',e:'教科ごとの遅れ・進みが棒で見える。数え直しが要らない',img:'img/shuan_s2.jpg',alt:'時数の画面'},
-           {s:'まとめて取る・先に取る',e:'読む回数を減らし、次の画面を先に用意。週案の表示 40秒→8秒、直す画面 13秒→3秒'}],
+     todo:'使っている人数と、ほかの先生では1週間で何分へったか。10月・12月・3月のアンケートで確かめる（フォームは用意ずみ）。',
+     flow:[{s:'台帳は1つ。書く道も1本',e:'週案・週予定・子ども用・Classroomが同じ行から出る。書き写しが構造ごと消える',shot:'img/shots/shuan_1.jpg',key:'いちばんの芯',img:'img/shuan_s1.jpg',alt:'週予定の画面'},
+           {s:'時数は台帳から自動でたまる',e:'教科ごとの遅れ・進みが棒で見える。数え直しが要らない',shot:'img/shots/shuan_2.jpg',img:'img/shuan_s2.jpg',alt:'時数の画面'},
+           {s:'まとめて取る・先に取る',e:'読む回数を減らし、次の画面を先に用意。週案の表示 40秒→8秒、直す画面 13秒→3秒',off:'画面の裏で、次の週を先に読みこんでおく'}],
      supTitle:'毎日使い続けられるしかけ',
      support:[{s:'保存を待たない',e:'押してすぐ閉じる。裏で順に保存し、失敗したら知らせる'},
               {s:'先生の声をその日に直す',e:'研修の10件の頼みを翌日に反映'}],
-     caveat:'速さの数字は8月末と10月の記録。いまの起動は約3〜4秒。使用人数はまだ数えていない。'
+     caveat:'へった時間は作成者の場合。速さの数字は8月末と10月の記録で、いまの起動は約3〜4秒。使用人数はまだ数えていない。'
    }},
   {id:'gakkyu',s:'tchr',name:'学級会アプリ',tag:['先生','特別活動'],img:'img/gakkyu.jpg',
    one:'学級会の発言を、子どもの記録係と先生が記録する。会のあとに、発言の流れをふり返れる。',
@@ -483,6 +671,7 @@ function tiles(list){
   return '<div class="ws-grid">'+list.map(w=>'<button class="ws-tile'+(w.sub?' s-'+SUBJKEY[w.sub]:'')+'" type="button" data-w="'+w.id+'">'+pic(w)+
     '<div class="ws-tb">'+subPill(w)+'<b>'+esc(w.name)+'</b><span>'+esc(w.one)+'</span></div></button>').join('')+'</div>';
 }
+function markTiles(){document.querySelectorAll('.ws-grid').forEach(g=>[...g.children].forEach((t,i)=>t.style.setProperty('--d',i)));}
 function renderMain(){
   $('ws-main').innerHTML=SHELVES.filter(s=>cur==='all'||cur===s.id).map(s=>{
     const list=WORKS.filter(w=>w.s===s.id);
@@ -494,6 +683,7 @@ function renderMain(){
     } else body=tiles(list);
     return '<section class="ws-shelf k-'+s.id+'"><h2><span class="ws-mark">'+s.mark+'</span>'+esc(s.name)+'</h2><p>'+esc(s.lead)+'</p>'+body+'</section>';
   }).join('');
+  markTiles();
 }
 function openWork(id){
   const w=WORKS.find(x=>x.id===id); if(!w)return;
@@ -516,20 +706,21 @@ function openWork(id){
   const s=$('ws-sheet'); s.innerHTML=h; s.hidden=false; s.dataset.w=id;
   s.querySelector('.ws-x').focus();
 }
+function shotsH(list){
+  return '<div class="sh-wrap"><p class="sh-ttl">画面で見る<span>'+list.length+'枚・横に送れます</span></p><ol class="sh-row">'+list.map((x,k)=>
+    '<li><figure><img src="'+x.img+'" alt="'+esc(x.cap)+'" loading="lazy"><figcaption><b>'+(k+1)+'</b>'+esc(x.cap)+'</figcaption></figure></li>').join('')+'</ol></div>';
+}
 function openDetail(id){
   const w=WORKS.find(x=>x.id===id); if(!w||!w.detail)return; const d=w.detail;
   const fmt=v=>Number.isInteger(v)?String(v):v.toFixed(1);
-  const dif=(a,b,u,down)=>{const v=b-a; const good=down?v<0:v>0; return (v>=0?'▲ +':'▼ −')+fmt(Math.abs(v))+u;};
-  /* 点数・秒などのものさし（前→後） */
+  const dif=(a,b,u,down)=>{const v=b-a; const dec=!(Number.isInteger(a)&&Number.isInteger(b)); return (v>=0?'▲ +':'▼ −')+(dec?Math.abs(v).toFixed(1):String(Math.abs(Math.round(v))))+u;};
   let rangeH='';
   if(d.range){ const R=d.range, pos=v=>((v-R.lo)/(R.hi-R.lo)*100).toFixed(2)+'%';
     let ticks=''; const st=R.step||10; for(let t=R.lo;t<=R.hi;t+=st) ticks+='<span style="left:'+pos(t)+'">'+t+'</span>';
-    rangeH='<div class="wd-card wd-range"><div class="wd-rhead"><small>'+esc(R.label||('ものさし（'+R.lo+'〜'+R.hi+R.u+'）'))+'</small><span class="wd-leg"><i class="a"></i>'+esc(R.aL||'前回')+'<i class="b"></i>'+esc(R.bL||'今回')+'</span></div>'+
+    rangeH='<div class="wd-card wd-range"><div class="wd-rhead"><small>'+esc(R.label||'')+'</small><span class="wd-leg"><i class="a"></i>'+esc(R.aL||'前回')+'<i class="b"></i>'+esc(R.bL||'今回')+'</span></div>'+
       R.rows.map(r=>{const l=Math.min(r.a,r.b), h=Math.max(r.a,r.b);
-        return '<div class="wd-db"><small>'+esc(r.k)+'</small><div class="wd-dbl">'+
-        '<span class="wd-dbs" style="left:'+pos(l)+';width:calc('+pos(h)+' - '+pos(l)+')"></span>'+
-        '<span class="wd-dot wd-dot-a" style="left:'+pos(r.a)+'"><b>'+fmt(r.a)+'</b></span>'+
-        '<span class="wd-dot wd-dot-b" style="left:'+pos(r.b)+'"><b>'+fmt(r.b)+'</b></span></div>'+
+        return '<div class="wd-db"><small>'+esc(r.k)+'</small><div class="wd-dbl"><span class="wd-dbs" style="left:'+pos(l)+';width:calc('+pos(h)+' - '+pos(l)+')"></span>'+
+        '<span class="wd-dot wd-dot-a" style="left:'+pos(r.a)+'"><b>'+fmt(r.a)+'</b></span><span class="wd-dot wd-dot-b" style="left:'+pos(r.b)+'"><b>'+fmt(r.b)+'</b></span></div>'+
         '<em>'+dif(r.a,r.b,R.u,R.down)+'</em></div>';}).join('')+'<div class="wd-ticks">'+ticks+'</div></div>'; }
   const tiles=(d.tiles||(d.tile?[d.tile]:[])).map(t=>'<div class="wd-card wd-tile"><small>'+esc(t.k)+'</small><p>'+
       (t.a!=null?'<span class="wd-a">'+fmt(t.a)+'</span>→':'')+'<strong>'+esc(t.b)+'</strong>'+esc(t.u||'')+
@@ -538,33 +729,41 @@ function openDetail(id){
   if(d.waffle){ const W=d.waffle; let dots=''; for(let k=0;k<W.all;k++) dots+='<i class="'+(k<W.up?'up':'')+'"></i>';
     waffleH='<div class="wd-card wd-waffle"><div class="wd-dots" role="img" aria-label="'+W.all+'中 '+W.up+'が'+esc(W.upL)+'">'+dots+'</div>'+
       '<p><span class="up">■ '+esc(W.upL)+' <b>'+W.up+esc(W.u||'人')+'</b></span><span>■ '+esc(W.dnL)+' <b>'+(W.all-W.up)+esc(W.u||'人')+'</b></span></p></div>'; }
-  const useH=(d.where?'<p class="wd-where">'+esc(d.where)+'</p>':'')+
-    (d.week?'<div class="wd-week" aria-label="'+esc(d.week.total)+'"><div class="wd-blocks" style="grid-template-columns:repeat('+d.week.blocks.length+',1fr)">'+d.week.blocks.map(b=>'<span class="'+(b[2]||'')+'" title="'+esc(b[1])+'"><b>'+esc(b[0])+'</b>'+esc(b[3]||d.week.per||'')+'</span>').join('')+'</div>'+
-       '<p><strong>'+esc(d.week.total)+'</strong>'+(d.week.note?'　'+esc(d.week.note):'')+'</p>':'<div class="wd-week">')+
-    (d.steps?'<ol class="wd-steps">'+d.steps.map((t,k)=>'<li><i>'+(k+1)+'</i>'+esc(t)+'</li>').join('<li class="wd-arr" aria-hidden="true">→</li>')+'</ol>':'')+'</div>';
-  let h='<div class="wd-bar"><button class="ws-back" type="button" data-dclose>← 棚にもどる</button>'+
-     '<b>'+esc(w.name)+'</b><span class="wd-bartag">'+(w.sub?subPill(w):'<em class="ws-subj s-tchr2">'+esc((SHELVES.find(x=>x.id===w.s)||{}).mark||'')+'</em>')+'</span><span class="wd-by">作成者：伊藤 優</span>'+
-     (w.demo==='file'?'<button class="ws-go wd-play" type="button" data-play="'+w.href+'"><i>5</i>▶ 触ってみる</button>':
-      w.demo==='link'?'<a class="ws-go wd-play" href="'+w.href+'" target="_blank" rel="noopener"><i>5</i>▶ 触ってみる</a>':'')+'</div>'+
-   '<article class="wd-in">'+
-   '<div class="wd-col wd-c1">'+
-     '<header class="wd-hero">'+pic(w)+'<h2>'+esc(w.name)+'</h2><p class="wd-lead">'+esc(d.lead)+'</p>'+
-     (d.voice?'<blockquote class="wd-voice"><span aria-hidden="true">“</span>'+esc(d.voice.replace(/[「」]/g,''))+'<cite>'+esc(d.voiceBy||'')+'</cite></blockquote>':'')+'</header>'+
-     '<section class="wd-sec"><h3><i>1</i>ひとこと</h3><p class="wd-p">'+esc(d.aim)+'</p></section>'+
-     '<section class="wd-sec"><h3><i>2</i>'+esc(d.useTitle||'授業のどこで使うか')+'</h3>'+useH+'</section>'+
-   '</div>'+
-   '<div class="wd-col wd-c2"><section class="wd-sec"><h3><i>3</i>'+esc(d.effTitle||'学習効果')+'</h3>'+
-     rangeH+tiles+waffleH+
-     (d.statNote?'<p class="wd-note">'+esc(d.statNote)+'</p>':'')+
-     (d.seen?'<div class="wd-seen"><small>'+esc(d.seenTitle||'先生の見取り')+'</small>'+esc(d.seen)+'</div>':'')+
-     (d.todo?'<div class="wd-todo"><small>これから確かめること</small>'+esc(d.todo)+'</div>':'')+'</section></div>'+
-   '<div class="wd-col wd-c3"><section class="wd-sec"><h3><i>4</i>'+esc(d.whyTitle||'このしくみがあるから、この効果が出る')+'</h3>'+
-     '<ol class="wd-flow">'+d.flow.map((x,k)=>'<li class="'+(x.key?'key':'')+'"><span class="wd-node">'+(k+1)+'</span>'+
-        '<div class="wd-fs">'+(x.img?'<img src="'+x.img+'" alt="'+esc(x.alt||'')+'" loading="lazy">':'')+'<span>'+esc(x.s)+'</span>'+(x.key?'<em>'+esc(x.key)+'</em>':'')+'</div><div class="wd-fe"><span aria-hidden="true">→</span>'+esc(x.e)+'</div></li>').join('')+'</ol>'+
-     (d.support?'<div class="wd-sup"><small>'+esc(d.supTitle||'やる気を支えるしかけ')+'</small><div>'+d.support.map(x=>'<p><b>'+esc(x.s)+'</b>'+esc(x.e)+'</p>').join('')+'</div></div>':'')+
-     (d.caveat?'<p class="wd-caveat">'+esc(d.caveat)+'</p>':'')+'</section><p class="wd-by wd-by-m">作成者：伊藤 優</p></div>'+
-   '</article>';
+  const shots=d.shots||(w.img?[{img:w.img,cap:''}]:[]);
+  const play=w.demo==='file'?'<button class="ws-go st-play" type="button" data-play="'+w.href+'">▶ 触ってみる</button>':
+             w.demo==='link'?'<a class="ws-go st-play" href="'+w.href+'" target="_blank" rel="noopener">▶ 触ってみる</a>':'';
+  const tag=(w.sub?subPill(w):'<em class="ws-subj s-tchr2">'+esc((SHELVES.find(x=>x.id===w.s)||{}).mark||'')+'</em>')+(w.tag||[]).filter(t=>t!==w.sub).map(t=>'<span class="st-tag">'+esc(t)+'</span>').join('');
+  let h='<div class="wd-bar"><button class="ws-back" type="button" data-dclose>← 棚にもどる</button><b>'+esc(w.name)+'</b><span class="wd-bartag"></span><span class="wd-by">作成者：伊藤 優</span>'+play.replace('st-play','wd-play')+'</div>'+
+  '<article class="st">'+
+   /* 1 何のアプリか */
+   '<section class="st-hero">'+
+     '<div class="st-say"><p class="st-tags">'+tag+'</p><h2>'+esc(w.name)+'</h2><p class="st-lead">'+esc(d.lead)+'</p><p class="st-aim">'+esc(d.aim)+'</p>'+
+       (d.voice?'<blockquote class="wd-voice"><span aria-hidden="true">“</span>'+esc(d.voice.replace(/[「」]/g,''))+'<cite>'+esc(d.voiceBy||'')+'</cite></blockquote>':'')+
+       (play?'<div class="st-cta">'+play+'</div>':'')+'</div>'+
+     (w.img?'<div class="st-shots"><figure class="st-main"><img src="'+w.img+'" alt="'+esc(w.name)+'の画面"></figure></div>':'')+
+   '</section>'+
+   /* 2 どう使う */
+   '<section class="st-use"><h3>'+esc(d.useTitle||'どう使う')+'</h3><div class="us">'+
+     '<div class="us-cell"><small>いつ・どこで</small><p class="us-where">'+esc(d.where||'').replace('｜','<br>')+'</p></div>'+
+     (d.week?'<div class="us-cell"><small>'+esc(d.week.total)+'</small><div class="us-blocks">'+d.week.blocks.map(b=>'<span class="'+(b[2]||'')+'"><b>'+esc(b[0])+'</b><i>'+esc(b[3]||d.week.per||'')+'</i></span>').join('')+'</div>'+(d.week.note?'<p class="us-note">'+esc(d.week.note)+'</p>':'')+'</div>':'')+
+     (d.steps?'<div class="us-cell"><small>流れ</small><ol class="us-flow">'+d.steps.map(t=>'<li>'+esc(t)+'</li>').join('')+'</ol></div>':'')+
+   '</div></section>'+
+   /* 3 しくみ → その結果 */
+   '<section class="st-mech2"><h3>'+esc(d.whyTitle||'このしくみがあるから、この効果が出る')+'</h3><div class="mx">'+
+     '<ol class="mx-list">'+d.flow.map((x,k)=>'<li><button type="button" class="mx-item'+(x.key?' key':'')+(k===0?' on':'')+'" data-mx="'+k+'" aria-pressed="'+(k===0)+'"><span class="mx-dot" aria-hidden="true"></span><span class="mx-s">'+esc(x.s)+(x.key?'<em>'+esc(x.key)+'</em>':'')+'</span><span class="mx-e">'+esc(x.e)+'</span></button></li>').join('')+'</ol>'+
+     '<div class="mx-view" aria-live="polite">'+d.flow.map((x,k)=>{const im=x.shot||x.img; return '<figure class="mx-fig'+(k===0?' on':'')+'" data-fig="'+k+'">'+(im?'<img src="'+im+'" alt="'+esc(x.alt||x.s)+'" loading="lazy">':'<div class="mx-off"><b>'+esc(x.s)+'</b><span>'+esc(x.off||'この段の画面は、まだありません')+'</span></div>')+'<figcaption>'+esc(x.s)+'</figcaption></figure>';}).join('')+'</div>'+
+     '</div>'+(d.support?'<div class="wd-sup"><small>'+esc(d.supTitle||'やる気を支えるしかけ')+'</small><div>'+d.support.map(x=>'<p><b>'+esc(x.s)+'</b>'+esc(x.e)+'</p>').join('')+'</div></div>':'')+'</section>'+
+   '<section class="st-res2"><h3>'+esc(d.effTitle&&d.effTitle!=='学習効果'?d.effTitle:'その結果')+'</h3><div class="rs-grid">'+rangeH+(waffleH||'')+'<div class="rs-tiles">'+tiles+'</div></div>'+
+     (d.statNote?'<p class="wd-note">'+esc(d.statNote)+'</p>':'')+'</section>'+
+   /* 4 さいごに */
+   '<section class="st-end">'+
+     (d.seen?'<div class="st-seen"><small>'+esc(d.seenTitle||'先生の見取り')+'</small><p>'+esc(d.seen)+'</p></div>':'')+
+     (d.todo?'<div class="st-todo"><small>これから確かめること</small><p>'+esc(d.todo)+'</p></div>':'')+
+     (d.caveat?'<p class="st-cav">'+esc(d.caveat)+'</p>':'')+
+   '</section>'+
+  '</article>';
   const el=$('ws-detail'); el.innerHTML=h; el.hidden=false; el.scrollTop=0; el.dataset.w=id; closeWork();
+  let n=0; el.querySelectorAll('.st-say > *, .sh-row li, .st-use, .st-mech .wd-flow li, .st-res > *, .st-end > *').forEach(x=>x.style.setProperty('--d',Math.min(n++,12)));
   el.querySelector('[data-dclose]').focus();
 }
 function closeDetail(){ $('ws-detail').hidden=true; $('ws-detail').innerHTML=''; }
@@ -583,14 +782,19 @@ $('ws-sheet').addEventListener('click',e=>{
   const dd=e.target.closest('[data-detail]'); if(dd)return openDetail(dd.dataset.detail);
   const p=e.target.closest('[data-play]'); if(p)play(p.dataset.play);
 });
+function mxShow(k){const el=$('ws-detail');el.querySelectorAll('.mx-item').forEach(b=>{const on=b.dataset.mx==k;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on);});el.querySelectorAll('.mx-fig').forEach(f=>f.classList.toggle('on',f.dataset.fig==k));}
+$('ws-detail').addEventListener('mouseover',e=>{const b=e.target.closest('.mx-item');if(b&&matchMedia('(hover:hover)').matches)mxShow(b.dataset.mx);});
 $('ws-detail').addEventListener('click',e=>{
+  const mx=e.target.closest('.mx-item'); if(mx){mxShow(mx.dataset.mx);return;}
   if(e.target.closest('[data-dclose]'))return closeDetail();
   const p=e.target.closest('[data-play]'); if(p){ $('ws-sheet').dataset.w=$('ws-detail').dataset.w; play(p.dataset.play); }
 });
 $('ws-back').addEventListener('click',()=>{$('ws-play').hidden=true;$('ws-frame').src='about:blank'});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-detail-open]');if(b)openDetail(b.dataset.detailOpen);});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('ws-play').hidden)$('ws-back').click();else if(!$('ws-detail').hidden)closeDetail();else closeWork();}});
 try{const t=localStorage.getItem('ws-tab');if(t&&(t==='all'||SHELVES.some(s=>s.id===t)))cur=t}catch(_){}
 renderTabs();renderMain();
+document.querySelectorAll('.hm-copy > *, .hm-stat').forEach((x,i)=>x.style.setProperty('--d',i));
 </script>
 
 </body>
