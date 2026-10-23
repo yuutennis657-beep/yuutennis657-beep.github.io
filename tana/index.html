@@ -484,7 +484,7 @@ const SUBJKEY={'国語':'koku','社会':'sha','算数':'san','体育':'tai','特
 const subPill=w=>w.sub?'<em class="ws-subj s-'+SUBJKEY[w.sub]+'">'+esc(w.sub)+'</em>':'';
 function tiles(list){
   return '<div class="ws-grid">'+list.map(w=>'<button class="ws-tile'+(w.sub?' s-'+SUBJKEY[w.sub]:'')+'" type="button" data-w="'+w.id+'">'+pic(w)+
-    '<div class="ws-tb">'+subPill(w)+'<b>'+esc(w.name)+'</b><span>'+esc(w.one)+'</span>'+canLabel(w)+'</div></button>').join('')+'</div>';
+    '<div class="ws-tb">'+subPill(w)+'<b>'+esc(w.name)+'</b><span>'+esc(w.one)+'</span></div></button>').join('')+'</div>';
 }
 function renderMain(){
   $('ws-main').innerHTML=SHELVES.filter(s=>cur==='all'||cur===s.id).map(s=>{
