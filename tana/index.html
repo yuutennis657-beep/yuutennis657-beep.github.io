@@ -344,7 +344,7 @@ body{color:var(--fg);font-family:var(--f);font-size:15px;line-height:1.65;letter
 .st-lead{margin:12px 0 0;font-size:clamp(19px,2vw,23px);font-weight:700;line-height:1.5;text-wrap:balance}
 .st-aim{margin:10px 0 0;font-size:15px;line-height:1.7;color:var(--sub)}
 .st-say .wd-voice{margin-top:16px}
-.st-cta{margin-top:20px}
+.st-cta{margin-top:20px;display:flex;flex-wrap:wrap;gap:10px}
 .st-cta .ws-go{width:auto;padding:0 28px;display:inline-flex}
 .st-shots{min-width:0}
 .st-shots .sh-row{display:flex!important;overflow-x:auto!important;gap:14px!important;padding-bottom:8px;scroll-snap-type:x mandatory}
@@ -739,7 +739,7 @@ function openDetail(id){
    '<section class="st-hero">'+
      '<div class="st-say"><p class="st-tags">'+tag+'</p><h2>'+esc(w.name)+'</h2><p class="st-lead">'+esc(d.lead)+'</p><p class="st-aim">'+esc(d.aim)+'</p>'+
        (d.voice?'<blockquote class="wd-voice"><span aria-hidden="true">“</span>'+esc(d.voice.replace(/[「」]/g,''))+'<cite>'+esc(d.voiceBy||'')+'</cite></blockquote>':'')+
-       (play?'<div class="st-cta">'+play+'</div>':'')+'</div>'+
+       (play?'<div class="st-cta">'+play+(w.extra?'<button class="ws-go ws-sec" type="button" data-play="'+w.extra.href+'">'+esc(w.extra.label)+'</button>':'')+'</div>':'')+'</div>'+
      (w.img?'<div class="st-shots"><figure class="st-main"><img src="'+w.img+'" alt="'+esc(w.name)+'の画面"></figure></div>':'')+
    '</section>'+
    /* 2 どう使う */
@@ -776,7 +776,7 @@ $('ws-tabs').addEventListener('click',e=>{const b=e.target.closest('[data-t]');i
   try{localStorage.setItem('ws-tab',cur)}catch(_){}});
 $('ws-main').addEventListener('click',e=>{
   const j=e.target.closest('[data-jump]'); if(j){const t=$(j.dataset.jump); if(t)t.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'}); return;}
-  const b=e.target.closest('[data-w]');if(b)openWork(b.dataset.w)});
+  const b=e.target.closest('[data-w]');if(!b)return; const w=WORKS.find(x=>x.id===b.dataset.w); if(w&&w.detail)openDetail(w.id); else openWork(b.dataset.w);});
 $('ws-sheet').addEventListener('click',e=>{
   if(e.target.id==='ws-sheet'||e.target.closest('[data-close]'))return closeWork();
   const dd=e.target.closest('[data-detail]'); if(dd)return openDetail(dd.dataset.detail);
