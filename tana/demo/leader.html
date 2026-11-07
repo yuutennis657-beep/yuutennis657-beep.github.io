@@ -1,0 +1,2201 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head><script>
+/* 体験版のしかけ（作品棚）。どこにも つながず、手もとで 動かす。 */
+(function () {
+  try { var t = '__t'; window.localStorage.setItem(t, t); window.localStorage.removeItem(t); }
+  catch (e) {
+    var mem = {};
+    var ls = { getItem: function (k) { return Object.prototype.hasOwnProperty.call(mem, k) ? mem[k] : null; },
+      setItem: function (k, v) { mem[k] = String(v); }, removeItem: function (k) { delete mem[k]; },
+      clear: function () { mem = {}; }, key: function (i) { return Object.keys(mem)[i] || null; },
+      get length() { return Object.keys(mem).length; } };
+    try { Object.defineProperty(window, 'localStorage', { value: ls, configurable: true }); } catch (e2) {}
+    try { Object.defineProperty(window, 'sessionStorage', { value: ls, configurable: true }); } catch (e3) {}
+  }
+  var lastNote = 0;
+  function note(msg) {
+    var now = Date.now(); if (now - lastNote < 4000) return; lastNote = now;
+    function show() {
+      var d = document.createElement('div'); d.setAttribute('role', 'status'); d.textContent = msg;
+      d.style.cssText = 'position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:2147483647;' +
+        'background:#fff;color:#333;border:1px solid #bbb;border-radius:8px;padding:6px 12px;' +
+        'font:14px/1.5 sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.15);pointer-events:none;max-width:90vw;text-align:center';
+      document.body.appendChild(d); setTimeout(function () { if (d.parentNode) d.parentNode.removeChild(d); }, 3500);
+    }
+    if (document.body) show(); else document.addEventListener('DOMContentLoaded', show);
+  }
+  window.__DEMO_NOTE = note;
+  var OK = /^(https?:)?\/\/(fonts\.googleapis\.com|fonts\.gstatic\.com|cdnjs\.cloudflare\.com|cdn\.jsdelivr\.net|unpkg\.com)\//i;
+  function outside(u) { var s = String((u && u.url) || u || ''); return /^(https?:)?\/\//i.test(s) && s.indexOf(location.origin) !== 0 && !OK.test(s); }
+  var rf = window.fetch;
+  if (rf) window.fetch = function (u) { if (outside(u)) { note('体験版なので、どこにも送りません'); return Promise.reject(new TypeError('体験版なので外へはつなぎません')); } return rf.apply(this, arguments); };
+  var xo = XMLHttpRequest.prototype.open, xs = XMLHttpRequest.prototype.send;
+  XMLHttpRequest.prototype.open = function (m, u) { this.__out = outside(u); return xo.apply(this, arguments); };
+  XMLHttpRequest.prototype.send = function () { if (this.__out) { note('体験版なので、どこにも送りません'); var x = this; setTimeout(function () { try { x.onerror && x.onerror(new Event('error')); } catch (e) {} }, 50); return; } return xs.apply(this, arguments); };
+  if (navigator.sendBeacon) navigator.sendBeacon = function () { note('体験版なので、どこにも送りません'); return true; };
+  var fs = HTMLFormElement.prototype.submit;
+  HTMLFormElement.prototype.submit = function () { note('体験版なので、どこにも送りません'); };
+  document.addEventListener('submit', function (e) { var a = e.target && e.target.getAttribute && e.target.getAttribute('action'); if (a && outside(a)) { e.preventDefault(); note('体験版なので、どこにも送りません'); } }, true);
+  var wo = window.open; window.open = function (u) { if (outside(u)) { note('体験版なので、外のページは開きません'); return null; } return wo.apply(this, arguments); };
+  note('体験版です。どこにも送りません');
+})();
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>リーダー診断｜みんなでシェアするリーダーシップ（6年・学級活動3）</title>
+<style>
+  :root{
+    --zen:#5c8a54;   /* 全体：森の緑 */
+    --mae:#c85a3c;   /* 前：テラコッタ */
+    --naka:#d29433;  /* 真ん中：山吹 */
+    --ushiro:#5a7fa0;/* 後ろ：藍ねずみ */
+    --p:#c85a3c;     /* P機能 */
+    --m:#5a7fa0;     /* M機能 */
+    --ink:#3c352a;   /* 墨（温かい茶黒） */
+    --sub:#857a64;   /* 弱い墨 */
+    --line:#e2d7bf;  /* 紙の罫線 */
+    --bg:#f6efdd;    /* クリーム紙 */
+    --card:#fffdf5;  /* 生成りの白 */
+    --accent:#5c8a54;/* 主色：緑 */
+    --soft:#eef1de;  /* やわらかな緑みの下地 */
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"BIZ UDPGothic","UD デジタル教科書体 NP-R","Hiragino Maru Gothic ProN","Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP","Yu Gothic",Meiryo,system-ui,sans-serif;
+    color:var(--ink); background:var(--bg); line-height:1.7;
+    -webkit-text-size-adjust:100%; font-size:16px;
+  }
+  header.top{
+    background:#5c8a54;
+    color:#fffdf5; padding:18px 16px 14px; text-align:center;
+  }
+  header.top h1{margin:0; font-size:20px; letter-spacing:.02em}
+  header.top p{margin:4px 0 0; font-size:12.5px; opacity:.92}
+  .wrap{max-width:920px; margin:0 auto; padding:0 12px 60px}
+  /* tabs */
+  nav.tabs{
+    display:flex; gap:6px; position:sticky; top:0; z-index:20;
+    background:var(--bg); padding:10px 6px; border-bottom:1px solid var(--line);
+    overflow-x:auto;
+  }
+  nav.tabs button{
+    flex:1 0 auto; min-width:96px; border:1px solid var(--line); background:#fff;
+    color:var(--sub); border-radius:12px; padding:10px 8px; font-size:13.5px; font-weight:700;
+    cursor:pointer; white-space:nowrap;
+  }
+  nav.tabs button.active{background:var(--accent); color:#fff; border-color:var(--accent)}
+  section.panel{display:none; padding:16px 4px}
+  section.panel.active{display:block}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px; margin:14px 0; box-shadow:0 1px 0 rgba(0,0,0,.02)}
+  h2.title{font-size:17px; margin:2px 0 6px}
+  .lead{color:var(--sub); font-size:13.5px; margin:0 0 6px}
+  .btn{
+    display:inline-block; border:none; border-radius:12px; padding:12px 18px; font-size:15px; font-weight:800;
+    cursor:pointer; background:var(--accent); color:#fff;
+  }
+  .btn.sec{background:#eef2f1; color:var(--ink); border:1px solid var(--line)}
+  .btn.wide{width:100%; text-align:center}
+  .btn:disabled{opacity:.5; cursor:default}
+  .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+  .pill{display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding:5px 12px; font-size:12.5px; font-weight:800; color:#fff}
+  .pill.zen{background:var(--zen)} .pill.mae{background:var(--mae)} .pill.naka{background:var(--naka)} .pill.ushiro{background:var(--ushiro)}
+  .pill.pf{background:var(--p)} .pill.mf{background:var(--m)}
+  .muted{color:var(--sub); font-size:12.5px}
+  input[type=text]{font-size:15px; padding:10px 12px; border:1px solid var(--line); border-radius:10px; width:100%}
+  select{font-size:15px; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:#fff}
+  label.fld{display:block; font-size:12.5px; color:var(--sub); font-weight:700; margin:0 0 4px}
+
+  /* progress */
+  .prog{height:8px; background:#e9eeec; border-radius:99px; overflow:hidden; margin:6px 0 14px}
+  .prog > i{display:block; height:100%; background:linear-gradient(90deg,#2e7d5b,#3f7ecb); width:0%}
+
+  /* question */
+  .qwrap{min-height:210px}
+  .q-count{font-size:12.5px; color:var(--sub); font-weight:800}
+  .q-text{font-size:18px; font-weight:800; margin:8px 0 14px; line-height:1.5}
+  .scale{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .scale button{
+    border:2px solid var(--line); background:#fff; border-radius:14px; padding:14px 10px; font-size:15px; font-weight:800; cursor:pointer; color:var(--ink)
+  }
+  .scale button:hover{border-color:var(--accent)}
+  .scale button .em{display:block; font-size:22px; margin-bottom:2px}
+  .navbtns{display:flex; justify-content:space-between; margin-top:14px}
+
+  /* mountain */
+  .mount-box{width:100%; max-width:520px; margin:0 auto}
+  svg.mount{width:100%; height:auto; display:block; border-radius:14px; background:linear-gradient(#eaf6ff,#f4fbff)}
+  .zone-label{font-weight:800; font-size:13px}
+  .count-badge{font-weight:900}
+
+  /* PM meter */
+  .meter{position:relative; height:36px; border-radius:99px; background:linear-gradient(90deg,#3f7ecb 0 50%, #e8622a 50% 100%); margin:10px 0 4px; overflow:hidden}
+  .meter .mid{position:absolute; left:50%; top:0; bottom:0; width:2px; background:rgba(255,255,255,.7)}
+  .meter .mark{position:absolute; top:-6px; width:0; height:0; transform:translateX(-50%);
+    border-left:9px solid transparent; border-right:9px solid transparent; border-top:12px solid #22303a}
+  .meter-ends{display:flex; justify-content:space-between; font-size:12px; font-weight:800}
+  .meter-ends .l{color:var(--m)} .meter-ends .r{color:var(--p)}
+
+  /* bars for class */
+  .bar-row{display:flex; align-items:center; gap:10px; margin:9px 0}
+  .bar-row .nm{width:66px; font-weight:800; font-size:13.5px; text-align:right}
+  .bar-track{flex:1; background:#eef2f1; border-radius:99px; height:26px; position:relative; overflow:hidden}
+  .bar-fill{height:100%; display:flex; align-items:center; justify-content:flex-end; color:#fff; font-weight:900; font-size:12.5px; padding-right:8px; min-width:26px}
+  .gap-tag{display:inline-block; background:#fff3e6; color:#c9541b; border:1px dashed #e8a06a; border-radius:8px; padding:2px 8px; font-size:12px; font-weight:800}
+
+  .members{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
+  .chip{display:inline-flex; align-items:center; gap:7px; background:#f5f8f7; border:1px solid var(--line); border-radius:999px; padding:5px 8px 5px 10px; font-size:13px; font-weight:700}
+  .chip .dot{width:10px;height:10px;border-radius:50%}
+  .chip button{border:none; background:#e6ebe9; color:#5c6b74; border-radius:50%; width:20px; height:20px; cursor:pointer; font-weight:900; line-height:1}
+  .empty{color:var(--sub); font-size:13px; padding:8px 0}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  @media(max-width:520px){ .grid2{grid-template-columns:1fr} }
+  .note{background:var(--soft); border-radius:12px; padding:12px 14px; font-size:13px; color:#274b3c}
+  .tag4{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:6px}
+  .tag4 button{border:2px solid var(--line); background:#fff; border-radius:12px; padding:10px 4px; font-weight:800; cursor:pointer; font-size:14px}
+  .tag4 button.on{color:#fff}
+  .tag4 button.zen.on{background:var(--zen);border-color:var(--zen)} .tag4 button.mae.on{background:var(--mae);border-color:var(--mae)}
+  .tag4 button.naka.on{background:var(--naka);border-color:var(--naka)} .tag4 button.ushiro.on{background:var(--ushiro);border-color:var(--ushiro)}
+  .tag2{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:6px}
+  .tag2 button{border:2px solid var(--line); background:#fff; border-radius:12px; padding:10px 4px; font-weight:800; cursor:pointer; font-size:14px}
+  .tag2 button.pf.on{background:var(--p); color:#fff; border-color:var(--p)}
+  .tag2 button.mf.on{background:var(--m); color:#fff; border-color:var(--m)}
+  .foot{ text-align:center; color:var(--sub); font-size:11.5px; margin-top:18px}
+  details{margin-top:8px}
+  summary{cursor:pointer; font-weight:800; font-size:13.5px; color:var(--accent)}
+  .kv{font-size:13.5px; margin:6px 0}
+  .kv b{display:inline-block; min-width:84px}
+  .hint-li{margin:4px 0; font-size:13.5px}
+  /* 一覧 */
+  .lf-card{border-radius:16px}
+  .lf-title{display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap}
+  .lf-title .role{font-weight:800; font-size:14px; color:var(--sub)}
+  .lf-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  @media(max-width:560px){ .lf-grid{grid-template-columns:1fr} }
+  .lf-block{border:1px solid var(--line); border-radius:12px; padding:11px 13px; background:#fcfdfd}
+  .lf-block.pf{border-top:4px solid var(--p)} .lf-block.mf{border-top:4px solid var(--m)}
+  .lf-h{font-weight:800; font-size:13.5px; margin-bottom:7px; line-height:1.55}
+  .lf-tag{display:inline-block; color:#fff; border-radius:7px; padding:2px 8px; font-size:11.5px; margin-right:6px; vertical-align:middle}
+  .lf-tag.pf{background:var(--p)} .lf-tag.mf{background:var(--m)}
+  .lf-ul{margin:0; padding-left:18px}
+  .lf-ul li{font-size:13px; margin:4px 0; color:#39454c; line-height:1.55}
+  /* UD ビジュアル強化（一覧） */
+  svg.concept{width:100%; max-width:400px; height:auto; display:block; border-radius:14px; background:linear-gradient(#eaf6ff,#f4fbff); margin:4px auto 12px}
+  .big-lead{font-size:20px; font-weight:800; text-align:center; line-height:1.7; margin:4px 0 14px}
+  .big-lead b{color:var(--accent)}
+  .points3{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:6px 0}
+  @media(max-width:520px){ .points3{grid-template-columns:1fr} }
+  .pt{background:#f4f8f7; border:1px solid var(--line); border-radius:14px; padding:12px 10px; text-align:center}
+  .pt-ico{font-size:32px; display:block; line-height:1.3}
+  .pt b{display:block; font-size:16px; margin:2px 0}
+  .pt span{font-size:13px; color:var(--sub)}
+  .legend{display:flex; gap:16px; flex-wrap:wrap; justify-content:center; margin-top:12px; font-size:13.5px; font-weight:700; color:var(--sub)}
+  .legend .lg{display:inline-flex; align-items:center; gap:6px}
+  .pcard{border-top:7px solid var(--c)}
+  .pcard-head{display:flex; align-items:center; gap:14px; margin-bottom:12px}
+  .pcard-ico{font-size:40px; line-height:1; flex:0 0 auto; width:66px; height:66px; display:flex; align-items:center; justify-content:center; background:#eef3f1; border-radius:18px}
+  .pcard-name{font-size:18px; font-weight:800; display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+  .pcard-sum{font-size:15.5px; color:var(--ink); margin-top:4px; font-weight:700}
+  .pm2{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:2px}
+  @media(max-width:520px){ .pm2{grid-template-columns:1fr} }
+  .pm-mini{border:1px solid var(--line); border-radius:12px; padding:11px 13px; background:#fcfdfd}
+  .pm-mini.pf{border-top:5px solid var(--p)} .pm-mini.mf{border-top:5px solid var(--m)}
+  .pm-mini .pm-ico{font-size:24px; line-height:1}
+  .pm-mini b{display:block; font-size:14px; margin:3px 0 3px}
+  .pm-mini.pf b{color:var(--p)} .pm-mini.mf b{color:var(--m)}
+  .pm-mini span{font-size:14px; color:#2c3840; line-height:1.5; font-weight:600}
+  details.dud{margin-top:12px; border-top:1px dashed var(--line); padding-top:8px}
+  details.dud summary{font-size:14px}
+  /* シェアードリーダーシップ くわしい解説 */
+  h2.title.tapme{cursor:pointer; user-select:none}
+  h2.title.tapme::after{content:"タップでくわしく"; font-size:11px; font-weight:800; color:var(--accent); background:var(--soft); border-radius:999px; padding:3px 9px; margin-left:8px; vertical-align:2px; white-space:nowrap}
+  details.slmore{margin-top:14px}
+  details.slmore > summary{
+    list-style:none; display:block; text-align:center; cursor:pointer;
+    background:var(--accent); color:#fffdf5; border-radius:14px; padding:13px 16px;
+    font-size:15.5px; font-weight:900; letter-spacing:.02em; box-shadow:0 2px 0 #476c41;
+  }
+  details.slmore > summary::-webkit-details-marker{display:none}
+  details.slmore > summary::before{content:"▼ "; font-size:12px}
+  details.slmore[open] > summary::before{content:"▲ "}
+  details.slmore[open] > summary{border-radius:14px 14px 0 0; box-shadow:none}
+  .sl-body{border:2px solid var(--accent); border-top:none; border-radius:0 0 14px 14px; padding:16px 15px 18px; background:#fbfdf8}
+  .sl-body p{font-size:15px; line-height:1.9; margin:0 0 12px}
+  .sl-body p:last-child{margin-bottom:0}
+  .sl-h{display:flex; align-items:center; gap:9px; margin:20px 0 8px; font-size:16.5px; font-weight:900; color:var(--accent); line-height:1.5}
+  .sl-h:first-child{margin-top:2px}
+  .sl-h .sl-n{flex:0 0 auto; width:30px; height:30px; border-radius:50%; background:var(--accent); color:#fffdf5; font-size:14px; display:flex; align-items:center; justify-content:center}
+  .sl-say{background:#fff; border:1px dashed var(--line); border-left:5px solid var(--naka); border-radius:10px; padding:10px 13px; margin:10px 0 12px; font-size:14.5px; line-height:1.8}
+  .sl-say b{color:var(--mae)}
+  .sl-ul{margin:6px 0 12px; padding-left:20px}
+  .sl-ul li{font-size:14.5px; line-height:1.8; margin:5px 0}
+  .sl-pos{display:grid; grid-template-columns:1fr 1fr; gap:9px; margin:8px 0 12px}
+  @media(max-width:520px){ .sl-pos{grid-template-columns:1fr} }
+  .sl-p{border:1px solid var(--line); border-radius:12px; padding:10px 12px; background:#fff; border-top:5px solid var(--c)}
+  .sl-p b{display:block; font-size:15px; margin-bottom:3px; color:var(--c)}
+  .sl-p span{font-size:13.5px; line-height:1.65; color:#3d4a44}
+  .sl-final{background:var(--soft); border-radius:14px; padding:14px 15px; margin-top:16px; font-size:15.5px; font-weight:800; line-height:1.9; color:#274b3c; text-align:center}
+  /* 8タイプ */
+  .sl-g{margin:14px 0 6px; border:1px solid var(--line); border-left:6px solid var(--c); border-radius:12px; overflow:hidden; background:#fff}
+  .sl-g-h{background:var(--c); color:#fffdf5; font-weight:900; font-size:15px; padding:8px 12px; display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+  .sl-g-h .sl-g-sub{font-weight:700; font-size:12.5px; opacity:.92}
+  .sl-t2{display:grid; grid-template-columns:1fr 1fr; gap:0}
+  @media(max-width:560px){ .sl-t2{grid-template-columns:1fr} }
+  .sl-t{padding:11px 13px 13px}
+  .sl-t + .sl-t{border-left:1px dashed var(--line)}
+  @media(max-width:560px){ .sl-t + .sl-t{border-left:none; border-top:1px dashed var(--line)} }
+  .sl-t .tg{display:inline-block; color:#fffdf5; border-radius:7px; padding:1px 8px; font-size:11.5px; font-weight:800; margin-right:6px; vertical-align:2px}
+  .sl-t .tg.pf{background:var(--p)} .sl-t .tg.mf{background:var(--m)}
+  .sl-t .nm{font-size:15px; font-weight:900; line-height:1.5}
+  .sl-t .ds{display:block; font-size:13.5px; line-height:1.75; margin-top:5px; color:#3d4a44}
+  .sl-t .ex{display:block; font-size:13px; line-height:1.7; margin-top:6px; padding:6px 9px; background:#f7f9f4; border-radius:8px; color:#4a5a50}
+  .sl-t .ex b{color:var(--ink)}
+  /* タイトル画面 */
+  #titlescreen{position:fixed; inset:0; z-index:1000; background:linear-gradient(168deg,#c3dbd0 0%, #ecdfc4 100%); display:flex; align-items:center; justify-content:center; padding:18px; overflow:auto}
+  .ts-inner{background:#fff; border-radius:26px; max-width:530px; width:100%; padding:24px 22px 22px; text-align:center; box-shadow:0 22px 55px rgba(0,0,0,.28)}
+  .ts-badge{display:inline-block; background:var(--soft); color:var(--accent); font-weight:800; font-size:13px; padding:6px 15px; border-radius:999px; margin-bottom:8px}
+  .ts-title{font-size:42px; font-weight:900; margin:2px 0 4px; letter-spacing:.05em; color:var(--ink); line-height:1.15}
+  .ts-sub{font-size:15px; color:var(--sub); font-weight:700; margin:0 0 8px}
+  #tsScene{margin:4px 0 2px}
+  .ts-lead{font-size:18px; font-weight:800; line-height:1.7; margin:10px 0 16px}
+  .ts-lead b{color:var(--accent)}
+  .ts-start{border:none; background:#c85a3c; color:#fffdf5; font-size:21px; font-weight:900; padding:15px 46px; border-radius:16px; cursor:pointer}
+  .ts-start:active{transform:translateY(1px)}
+  .ts-foot{font-size:12px; color:var(--sub); margin:14px 0 0}
+  /* ===== おしゃれ＆ワクワク 演出 ===== */
+  body{ background:
+    radial-gradient(1000px 360px at 100% -6%, #efe6cd 0, rgba(239,230,205,0) 60%),
+    radial-gradient(820px 340px at -8% 6%, #edf0dc 0, rgba(237,240,220,0) 55%),
+    var(--bg); }
+  #grain{position:fixed; inset:0; z-index:2000; pointer-events:none; opacity:.05; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+  header.top{border-radius:0 0 22px 22px}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  @keyframes drift{from{transform:translateX(-6px)}to{transform:translateX(22px)}}
+  @keyframes twinkle{0%,100%{opacity:.2; transform:scale(.6)}50%{opacity:1; transform:scale(1)}}
+  @keyframes sunpulse{0%,100%{opacity:.45}50%{opacity:.85}}
+  @keyframes pop{0%{opacity:0; transform:scale(.9)}100%{opacity:1; transform:scale(1)}}
+  @keyframes fadeup{0%{opacity:0; transform:translateY(16px)}100%{opacity:1; transform:translateY(0)}}
+  @keyframes btnpulse{0%,100%{box-shadow:0 4px 0 rgba(120,102,64,.22)}50%{box-shadow:0 4px 0 rgba(120,102,64,.22), 0 9px 22px rgba(92,138,84,.42)}}
+  @keyframes blobfloat{0%,100%{transform:translate(0,0)}50%{transform:translate(12px,-16px)}}
+  @keyframes fall{0%{transform:translateY(-10px) rotate(0)}100%{transform:translateY(720px) rotate(420deg); opacity:.15}}
+  @keyframes shine{0%{left:-45%}60%,100%{left:120%}}
+  svg.concept .mk{transform-box:fill-box; transform-origin:center; animation:floaty 3s ease-in-out infinite}
+  svg.concept .cloud1{animation:drift 9s ease-in-out infinite alternate}
+  svg.concept .cloud2{animation:drift 13s ease-in-out infinite alternate}
+  svg.concept .spk{transform-box:fill-box; transform-origin:center; animation:twinkle 2.2s ease-in-out infinite}
+  svg.concept .sunglow{animation:sunpulse 4s ease-in-out infinite}
+  .ts-blob{position:absolute; border-radius:50%; filter:blur(36px); opacity:.4; z-index:0; animation:blobfloat 11s ease-in-out infinite}
+  .ts-blob.b1{width:210px; height:210px; background:#bcd3ac; top:5%; left:5%}
+  .ts-blob.b2{width:250px; height:250px; background:#e6cfa0; bottom:3%; right:3%; animation-duration:14s}
+  .ts-inner{position:relative; z-index:1; animation:pop .55s cubic-bezier(.2,.8,.2,1.2) both; border:2px solid #efe6d0}
+  .ts-title{color:var(--ink)}
+  .ts-emo{margin-right:2px}
+  .ts-fadeup{opacity:0; animation:fadeup .6s ease-out forwards}
+  .ts-start{position:relative; overflow:hidden; animation:fadeup .6s ease-out .46s both, btnpulse 2.4s ease-in-out 1.3s infinite}
+  .ts-start:hover{filter:brightness(1.06)}
+  .ts-start .sheen{position:absolute; top:0; bottom:0; width:34%; left:-45%; background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent); animation:shine 3.4s ease-in-out infinite}
+  nav.tabs button{transition:transform .12s ease, box-shadow .12s ease}
+  nav.tabs button.active{transform:translateY(-1px) scale(1.03); box-shadow:0 4px 12px rgba(46,125,91,.28)}
+  #ichiranList .pcard{animation:fadeup .5s ease-out both}
+  #ichiranList .pcard:nth-child(1){animation-delay:.04s}
+  #ichiranList .pcard:nth-child(2){animation-delay:.12s}
+  #ichiranList .pcard:nth-child(3){animation-delay:.2s}
+  #ichiranList .pcard:nth-child(4){animation-delay:.28s}
+  .pcard{transition:transform .15s ease, box-shadow .15s ease}
+  .pcard:hover{transform:translateY(-3px); box-shadow:0 12px 26px rgba(0,0,0,.09)}
+  .pcard-ico{transition:transform .2s ease}
+  .pcard:hover .pcard-ico{transform:scale(1.08) rotate(-4deg)}
+  .btn{transition:transform .12s ease, filter .12s ease}
+  .btn:hover{filter:brightness(1.06)}
+  .btn:active{transform:translateY(1px)}
+  .scale button{transition:transform .1s ease, border-color .1s ease}
+  .scale button:active{transform:scale(.96)}
+  #result > .card{position:relative; overflow:hidden; animation:pop .5s cubic-bezier(.2,.8,.2,1.2) both}
+  .confetti{position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:5}
+  .confetti i{position:absolute; top:-16px; width:9px; height:14px; opacity:.9; animation-name:fall; animation-timing-function:cubic-bezier(.35,.15,.6,1); animation-iteration-count:1}
+  /* ===== 手描き絵本風 仕上げ ===== */
+  .card{background:var(--card); border:2px solid #eaddbf; border-radius:18px; box-shadow:0 3px 0 rgba(120,102,64,.07), 0 10px 22px rgba(120,102,64,.06)}
+  h2.title{display:inline-block; background:linear-gradient(transparent 62%, rgba(210,148,51,.38) 62%); padding:0 3px; border-radius:2px}
+  nav.tabs{background:var(--bg); border-bottom:2px dashed var(--line)}
+  nav.tabs button{background:var(--card); border:2px solid #e6d9bd; border-radius:14px; color:var(--sub)}
+  nav.tabs button.active{background:var(--accent); color:#fffdf5; border-color:var(--accent)}
+  .pill{border:1.5px solid rgba(0,0,0,.10)}
+  .btn{border:2px solid rgba(0,0,0,.10); box-shadow:0 3px 0 rgba(120,102,64,.20)}
+  .btn:active{transform:translateY(2px); box-shadow:0 1px 0 rgba(120,102,64,.20)}
+  .btn.sec{background:#f3edda; color:var(--ink); border-color:#e2d6ba; box-shadow:0 2px 0 rgba(120,102,64,.14)}
+  .meter{background:linear-gradient(90deg,var(--m) 0 50%, var(--p) 50% 100%)}
+  .meter .mark{border-top-color:var(--ink)}
+  .pcard-ico{background:#eef1de; border:2px solid #e3e6cf}
+  .pt{background:#faf6e6; border-color:#e9dfc4}
+  .pt-ico{font-size:0; line-height:1}
+  .pm-mini{background:#fbf8ee}
+  .ts-start{border:2px solid rgba(0,0,0,.10)}
+  .kai{margin-top:10px; background:#fdf5e3; border:1.5px dashed #e2c489; border-radius:12px; padding:10px 12px}
+  summary.kai-h{cursor:pointer; font-weight:800; font-size:13px; color:#9a6a1a; margin:0; list-style:none; user-select:none}
+  summary.kai-h::-webkit-details-marker{display:none}
+  summary.kai-h::before{content:"▶"; font-size:10px; margin-right:6px; color:#c99a3f}
+  .kai[open] > summary.kai-h{margin-bottom:7px}
+  .kai[open] > summary.kai-h::before{content:"▼"}
+  .kai ul{margin:0; padding-left:0; list-style:none}
+  .kai li{font-size:13px; margin:5px 0; color:#463f30; line-height:1.55}
+  .kai-ph{display:inline-block; background:#e7bd76; color:#5a3d0e; font-size:11px; font-weight:800; border-radius:6px; padding:1px 8px; margin-right:6px}
+  .qtag{display:inline-block; font-weight:800; font-size:12.5px; color:#fffdf5; border-radius:999px; padding:5px 14px; margin:2px 0 12px; border:1.5px solid rgba(0,0,0,.08)}
+  .qtag.pf{background:var(--p)} .qtag.mf{background:var(--m)}
+  /* ===== 結果：P/M 大きな指標（矢印） ===== */
+  /* ===== 結果：①→②→③ の整理 ===== */
+  .steps-lead{text-align:center; font-size:14.5px; font-weight:800; margin:4px 0 16px; line-height:1.65}
+  .steps-lead b{color:var(--accent)}
+  .steps3{display:flex; align-items:stretch; justify-content:center; gap:9px; flex-wrap:wrap; margin:0 0 18px}
+  .steps3 .st{flex:1 1 180px; min-width:150px; max-width:310px; border:2.5px solid var(--c); border-radius:16px;
+    background:#fffdf5; padding:14px 10px 12px; text-align:center; position:relative}
+  .steps3 .st .no{position:absolute; top:-12px; left:50%; transform:translateX(-50%); width:26px; height:26px;
+    border-radius:50%; background:var(--c); color:#fffdf5; font-size:14px; font-weight:900;
+    display:flex; align-items:center; justify-content:center; border:2px solid #fffdf5}
+  .steps3 .stq{font-size:12px; font-weight:800; color:var(--sub); line-height:1.4}
+  .steps3 .stv{font-size:21px; font-weight:900; color:var(--c); line-height:1.3; margin-top:3px}
+  .steps3 .sts{font-size:12.5px; font-weight:700; color:var(--sub); margin-top:3px; line-height:1.45}
+  .steps3 .op{display:flex; align-items:center; justify-content:center; font-size:23px; font-weight:900; color:#b3a68a; flex:0 0 auto}
+  .steps3 .st.hero{background:#fdf6e6; box-shadow:0 4px 0 rgba(120,102,64,.16)}
+  .steps3 .st.hero .stv{font-size:23px}
+  @media(max-width:600px){
+    .steps3{flex-direction:column; align-items:stretch; gap:5px}
+    .steps3 .st{flex:0 0 auto; max-width:none; padding:12px 10px 11px}
+    .steps3 .op{font-size:19px; padding:1px 0}
+  }
+  .secbox{border:2px solid #e6d9bd; border-radius:18px; background:#fffdf5; padding:15px}
+  .sechead{display:flex; align-items:center; gap:10px; margin:0 0 11px; padding-bottom:9px; border-bottom:2px dashed var(--line)}
+  .sechead .no{width:32px; height:32px; border-radius:50%; background:var(--c,var(--accent)); color:#fffdf5;
+    font-weight:900; font-size:17px; display:flex; align-items:center; justify-content:center; flex:0 0 auto}
+  .sechead .q{font-size:16px; font-weight:900; line-height:1.35}
+  .sechead .q small{display:block; font-size:11.5px; color:var(--sub); font-weight:700; margin-top:2px}
+  .sec-title{font-size:18px; font-weight:900; text-align:center; margin:10px 0 4px; line-height:1.45; color:var(--c,var(--ink))}
+  .sec-desc{font-size:14px; color:var(--sub); text-align:center; margin:0; line-height:1.65}
+  .secbox .pmbig{border:none; background:transparent; padding:0; margin:0}
+  .secbox .mount-box{margin:0 auto}
+  /* ===== 結果：横に広く使うレイアウト ===== */
+  .wrap{max-width:1180px}
+  .res-2{display:grid; gap:12px}
+  @media(min-width:900px){ .res-2{grid-template-columns:1fr 1fr; gap:18px; align-items:start} }
+  .res-top{display:grid; grid-template-columns:1fr; gap:12px; align-items:center}
+  .res-headline{text-align:center; font-weight:900; font-size:20px; margin:10px 0 3px; line-height:1.45}
+  .res-sub{text-align:center; color:var(--sub); font-size:14px; margin:0 0 2px; line-height:1.6}
+  .t4note{margin-top:10px; text-align:center; font-size:13.5px; line-height:1.75}
+  .t4note b{font-size:15px}
+  @media(min-width:900px){
+    .res-top{grid-template-columns:minmax(300px,400px) 1fr; gap:26px; align-items:start}
+    .res-headline{text-align:left; font-size:23px; margin-top:0}
+    .res-sub{text-align:left; font-size:15px}
+    .mount-box{max-width:100%}
+  }
+  .pmbig{margin:10px 0 4px; background:#fbf8ee; border:2px solid #eaddbf; border-radius:18px; padding:14px 14px 15px}
+  .pmbig-head{display:flex; align-items:center; gap:12px; justify-content:flex-start; flex-wrap:nowrap; text-align:left}
+  /* 幅がせまいときだけ、バッジを上に置いて見出しを1行に収める */
+  @media(max-width:430px){
+    .pmbig-head{flex-direction:column; align-items:center; gap:7px; text-align:center}
+    .pm-verdict{width:100%}
+  }
+  /* P/M の意味を大きく見せるパネル（主役） */
+  .pm-desc{margin-top:14px; border-radius:16px; padding:13px 16px 15px; background:#fffdf5;
+    border:2px solid var(--dc,var(--accent)); border-left-width:9px}
+  .pm-desc-h{display:inline-flex; align-items:center; gap:6px; background:var(--dc,var(--accent)); color:#fffdf5;
+    font-size:12.5px; font-weight:900; border-radius:999px; padding:4px 13px; margin-bottom:9px; letter-spacing:.03em}
+  .pm-desc p{margin:0; font-size:15px; line-height:1.9; font-weight:700; color:#332e24}
+  .pm-desc p + p{margin-top:9px}
+  .pm-desc p.pm-desc-t{font-size:18px; font-weight:900; color:var(--dc,var(--accent)); margin:0 0 8px; line-height:1.5}
+  .kw{background:linear-gradient(transparent 56%, var(--kwc,rgba(210,148,51,.42)) 56%); padding:0 2px; border-radius:2px}
+  @media(min-width:900px){ .pm-desc p{font-size:15.5px} .pm-desc p.pm-desc-t{font-size:20px} }
+  .pm-badge{width:62px; height:62px; border-radius:18px; flex:0 0 auto; color:#fffdf5;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    border:2px solid rgba(0,0,0,.10); box-shadow:0 4px 0 rgba(0,0,0,.13); animation:pop .5s cubic-bezier(.2,.8,.2,1.2) both}
+  .pm-badge .l{font-size:30px; font-weight:900; line-height:1}
+  .pm-badge .s{font-size:9.5px; font-weight:800; letter-spacing:.04em; margin-top:2px}
+  .pm-verdict{flex:1 1 auto; min-width:0; font-size:17px; font-weight:900; line-height:1.4}
+  .pm-verdict .big{font-size:21px}
+  .pm-verdict .hd{display:block; white-space:nowrap}
+  .pm-verdict .sub{display:block; font-size:13px; color:var(--sub); font-weight:700; margin-top:2px; line-height:1.5}
+  .pm-scale{position:relative; margin-top:10px; padding-top:52px}
+  .pm-track{height:28px; border-radius:99px; border:2px solid rgba(0,0,0,.09); position:relative; overflow:hidden;
+    background:linear-gradient(90deg,var(--m) 0 50%, var(--p) 50% 100%)}
+  .pm-track .mid{position:absolute; left:50%; top:0; bottom:0; width:3px; background:rgba(255,255,255,.85); transform:translateX(-50%)}
+  .pm-midlabel{position:absolute; left:50%; transform:translateX(-50%); margin-top:3px; font-size:10.5px; font-weight:800; color:var(--sub)}
+  .pm-ptr{position:absolute; top:0; transform:translateX(-50%); text-align:center; z-index:3;
+    animation:ptrdrop .75s cubic-bezier(.2,.9,.3,1.35) .15s both}
+  .pm-ptr .you{display:inline-block; background:var(--ink); color:#fffdf5; font-size:12.5px; font-weight:900;
+    line-height:1.35; border-radius:999px; padding:3px 12px; white-space:nowrap; box-shadow:0 3px 0 rgba(0,0,0,.15)}
+  .pm-ptr .ar{display:block; margin:1px auto 0; animation:ptrbob 1.9s ease-in-out 1s infinite}
+  @keyframes ptrdrop{0%{opacity:0; transform:translateX(-50%) translateY(-22px) scale(.8)}100%{opacity:1; transform:translateX(-50%) translateY(0) scale(1)}}
+  @keyframes ptrbob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+  .pm-ends{display:flex; justify-content:space-between; gap:8px; margin-top:6px; position:relative}
+  .pm-ends span{font-size:12.5px; font-weight:800; line-height:1.35}
+  .pm-ends .l{color:var(--m); text-align:left} .pm-ends .r{color:var(--p); text-align:right}
+  .pm-ends small{display:block; font-size:10.5px; font-weight:700; color:var(--sub); white-space:nowrap}
+  .pm-scores{display:flex; justify-content:center; gap:8px; margin-top:12px; flex-wrap:wrap}
+  .pm-score{display:inline-flex; align-items:center; gap:5px; background:#fffdf5; border:2px solid var(--line);
+    border-radius:12px; padding:6px 10px; font-size:12.5px; font-weight:800; white-space:nowrap}
+  .pm-score b{font-size:16px}
+  .pm-score.pf{border-color:var(--p); color:var(--p)} .pm-score.mf{border-color:var(--m); color:var(--m)}
+  /* ===== 結果：君が持っている力 ===== */
+  .power{margin-top:14px; border:2px solid #e6d9bd; border-radius:18px; background:#fffdf5; overflow:hidden}
+  .power-h{background:var(--c,var(--accent)); color:#fffdf5; font-size:17px; font-weight:900; padding:11px 14px; display:flex; align-items:center; gap:8px}
+  .power-body{padding:14px}
+  .power-lead{font-size:15px; font-weight:800; line-height:1.65; margin:0 0 11px}
+  .power-lead em{font-style:normal; background:linear-gradient(transparent 60%, rgba(210,148,51,.42) 60%); padding:0 2px}
+  .power-no{display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%;
+    background:rgba(255,255,255,.28); border:2px solid rgba(255,255,255,.75); font-size:14px; flex:0 0 auto}
+  .t8box{border:2px solid var(--c,var(--accent)); border-radius:14px; background:#fffdf5; padding:13px 15px; margin:0 0 14px}
+  .t8name{font-size:21px; font-weight:900; color:var(--c,var(--accent)); line-height:1.35; display:flex; align-items:center; gap:7px}
+  .t8ds{margin:7px 0 0; font-size:15px; line-height:1.8; font-weight:700; color:#332e24}
+  .t8ex{margin:8px 0 0; background:#f7f4e7; border-radius:10px; padding:8px 11px; font-size:13.5px; line-height:1.7; color:#463f30}
+  .t8ex b{color:var(--c,var(--accent))}
+  @media(min-width:900px){ .t8name{font-size:24px} .t8ds{font-size:15.5px} }
+  .power-cols{display:grid; gap:16px}
+  @media(min-width:900px){
+    .power-cols{grid-template-columns:1fr 1fr; gap:22px; align-items:start}
+    .power-h{font-size:19px; padding:13px 18px}
+    .power-body{padding:18px}
+    .power-lead{font-size:16px}
+    .scene-h{margin-top:0}
+  }
+  /* 応援メッセージ（強みの解説） */
+  .pw-yell{background:#f7f4e7; border:1.5px solid #ece2c8; border-radius:14px; padding:14px 16px;
+    font-size:15px; line-height:1.95; font-weight:700; color:#3a3428; margin:0 0 13px}
+  .pw-yell .yh{display:block; font-size:13px; font-weight:900; color:var(--c,var(--accent)); margin-bottom:5px; letter-spacing:.03em}
+  @media(min-width:900px){ .pw-yell{font-size:15.5px} }
+  .pw-list{list-style:none; margin:0; padding:0}
+  .pw-list li{display:flex; align-items:flex-start; gap:9px; background:#f7f4e7; border:1.5px solid #ece2c8;
+    border-radius:12px; padding:9px 12px; margin:7px 0; font-size:14.5px; font-weight:800; line-height:1.55}
+  .pw-list li .n{flex:0 0 auto; width:24px; height:24px; border-radius:50%; background:var(--c,var(--accent)); color:#fffdf5;
+    font-size:13px; font-weight:900; display:flex; align-items:center; justify-content:center; margin-top:1px}
+  .pw-plus{margin-top:11px; background:#fdf5e3; border:1.5px dashed #e2c489; border-radius:12px; padding:9px 12px; font-size:13.5px; line-height:1.6}
+  .pw-plus b{color:#9a6a1a}
+  .scene-h{margin:16px 0 6px; font-size:15.5px; font-weight:900; display:flex; align-items:center; gap:7px}
+  .scenes{display:grid; gap:8px}
+  .scene{display:flex; align-items:flex-start; gap:10px; border:1.5px solid var(--line); border-left:6px solid var(--sc,var(--accent));
+    border-radius:12px; padding:10px 12px; background:#fcfbf4}
+  .scene .tg{flex:0 0 auto; background:var(--sc,var(--accent)); color:#fffdf5; font-size:11.5px; font-weight:900;
+    border-radius:8px; padding:3px 9px; margin-top:1px; min-width:62px; text-align:center}
+  .scene .tx{font-size:14px; line-height:1.6; font-weight:600; color:#3a3428}
+  @media(max-width:400px){
+    .scene{flex-direction:column; gap:5px}
+    .pm-verdict{font-size:15.5px} .pm-verdict .big{font-size:19px}
+    .pm-badge{width:54px; height:54px; border-radius:16px}
+    .pm-badge .l{font-size:26px} .pm-badge .s{font-size:9px}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important}
+    .ts-fadeup, #ichiranList .pcard{opacity:1 !important}
+  }
+  /* ===== ④ めざす自分 ===== */
+  .aim{margin-top:14px; border:2px solid #e6d9bd; border-radius:18px; background:#fffdf5; overflow:hidden}
+  .aim-h{background:var(--accent); color:#fffdf5; font-size:17px; font-weight:900; padding:11px 14px; display:flex; align-items:center; gap:8px}
+  .aim-body{padding:14px}
+  .aim-lead{font-size:14.5px; line-height:1.75; font-weight:700; margin:0 0 4px}
+  .aim-note{font-size:13px; color:var(--sub); font-weight:700; line-height:1.7; margin:0 0 11px}
+  .aim-st{display:flex; align-items:center; gap:8px; font-size:14.5px; font-weight:900; margin:16px 0 7px}
+  .aim-st .n{flex:0 0 auto; width:24px; height:24px; border-radius:50%; background:var(--accent); color:#fffdf5;
+    font-size:12.5px; display:flex; align-items:center; justify-content:center}
+  .aim-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:8px}
+  @media(max-width:760px){ .aim-grid{grid-template-columns:repeat(2,1fr)} }
+  .aim-t{border:2px solid var(--line); background:#fff; border-radius:13px; padding:9px 8px 10px; cursor:pointer;
+    text-align:center; font-family:inherit; color:var(--ink); line-height:1.4; transition:transform .12s ease, box-shadow .12s ease}
+  .aim-t:hover{transform:translateY(-2px); box-shadow:0 6px 14px rgba(0,0,0,.08)}
+  .aim-t .pos{display:block; font-size:11px; font-weight:800; color:var(--sub)}
+  .aim-t .nm{display:block; font-size:14px; font-weight:900; margin-top:2px}
+  .aim-t .fn{display:inline-block; margin-top:5px; font-size:10.5px; font-weight:900; color:#fffdf5; border-radius:6px; padding:1px 7px}
+  .aim-t .fn.pf{background:var(--p)} .aim-t .fn.mf{background:var(--m)}
+  .aim-t.now{border-style:dashed}
+  .aim-t.on{border-color:var(--c); background:#fbf8ee; box-shadow:0 0 0 3px rgba(92,138,84,.15)}
+  .aim-t.on .nm{color:var(--c)}
+  .aim-badge{display:inline-block; font-size:10px; font-weight:900; color:var(--sub); background:var(--soft); border-radius:999px; padding:1px 7px; margin-top:4px}
+  .aim-pick{border:2px solid var(--c,var(--accent)); border-radius:14px; background:#fbf8ee; padding:13px 15px; margin-top:12px}
+  .aim-pick .ttl{font-size:19px; font-weight:900; color:var(--c,var(--accent)); display:flex; align-items:center; gap:7px; line-height:1.35}
+  .aim-pick .ttl small{font-size:12px; font-weight:800; color:var(--sub)}
+  .aim-pick .ds{font-size:14.5px; line-height:1.8; font-weight:700; margin:7px 0 0; color:#332e24}
+  .aim-acts{list-style:none; margin:8px 0 0; padding:0}
+  .aim-acts li{margin:7px 0}
+  .aim-acts label{display:flex; align-items:flex-start; gap:9px; background:#fff; border:1.5px solid var(--line);
+    border-radius:12px; padding:9px 12px; font-size:14px; line-height:1.6; font-weight:600; cursor:pointer}
+  .aim-acts label:has(input:checked){border-color:var(--c,var(--accent)); background:#fffdf5; box-shadow:inset 0 0 0 1px var(--c,var(--accent))}
+  .aim-acts input{width:19px; height:19px; margin:2px 0 0; flex:0 0 auto; accent-color:var(--c,var(--accent))}
+  .aim-acts .ph{display:inline-block; background:#e7bd76; color:#5a3d0e; font-size:11px; font-weight:900; border-radius:6px; padding:1px 8px; margin-right:6px}
+  .aim-when{display:flex; flex-wrap:wrap; gap:7px; margin-top:2px}
+  .aim-when button{border:2px solid var(--line); background:#fff; border-radius:999px; padding:6px 13px;
+    font-family:inherit; font-size:13px; font-weight:800; color:var(--ink); cursor:pointer}
+  .aim-when button.on{background:var(--accent); border-color:var(--accent); color:#fffdf5}
+  .aim-decl{width:100%; border:2px solid var(--line); border-radius:12px; padding:10px 12px; font-family:inherit;
+    font-size:15px; line-height:1.8; color:var(--ink); background:#fff; resize:vertical; min-height:76px}
+  .aim-decl:focus{outline:none; border-color:var(--accent)}
+  .aim-cnt{font-size:11.5px; color:var(--sub); text-align:right; margin:3px 0 0}
+  .aim-foot{display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:14px}
+  .aim-hint{font-size:12.5px; color:var(--sub); text-align:center; margin:7px 0 0}
+  /* ===== ② 先生に提出 ===== */
+  .ts-step{display:flex; align-items:center; gap:8px; font-size:15px; font-weight:900; margin:18px 0 8px}
+  .ts-step:first-of-type{margin-top:10px}
+  .ts-step .n{flex:0 0 auto; width:25px; height:25px; border-radius:50%; background:var(--accent); color:#fffdf5;
+    font-size:13px; display:flex; align-items:center; justify-content:center}
+  #teishutsu .fld{display:block; font-size:12.5px; font-weight:800; color:var(--sub); margin-bottom:3px}
+  #teishutsu input[type=text], #teishutsu select{
+    width:100%; border:2px solid var(--line); border-radius:11px; padding:10px 11px; font-family:inherit;
+    font-size:15px; color:var(--ink); background:#fff}
+  #teishutsu input[type=text]:focus, #teishutsu select:focus{outline:none; border-color:var(--accent)}
+  #teishutsu select{appearance:none; background-image:linear-gradient(45deg,transparent 50%,var(--sub) 50%),linear-gradient(135deg,var(--sub) 50%,transparent 50%);
+    background-position:calc(100% - 18px) 52%, calc(100% - 12px) 52%; background-size:6px 6px, 6px 6px; background-repeat:no-repeat; padding-right:34px}
+  #teishutsu .ok{border-color:var(--accent); background:#f7faf5}
+  #tsFrame{width:100%; height:620px; border:2px solid var(--line); border-radius:14px; background:#fff}
+  @media(max-width:560px){ #tsFrame{height:520px} }
+  .ts-badge2{display:inline-block; font-size:11.5px; font-weight:900; color:#fffdf5; background:var(--accent);
+    border-radius:999px; padding:2px 10px; margin-left:6px}
+  #tsAdmin .kv{display:flex; gap:10px; align-items:baseline}
+  #tsAdmin .kv b{flex:0 0 auto; min-width:128px}
+  #tsAdmin .kv span{font-weight:800; background:#fdf5e3; border:1px dashed #e2c489; border-radius:7px; padding:1px 9px}
+  /* ===== 印刷プレビュー（カードは canvas で描くので、画面・印刷・JPEGが必ず同じ見た目になる） ===== */
+  #printSheet{display:none}
+  #printSheet img{display:block; width:100%; height:auto}
+  #prModal{position:fixed; inset:0; z-index:2000; background:rgba(40,35,25,.62); display:none;
+    align-items:flex-start; justify-content:center; padding:14px; overflow:auto}
+  #prModal.on{display:flex}
+  .prm{background:var(--card); border-radius:18px; width:100%; max-width:660px; box-shadow:0 22px 55px rgba(0,0,0,.34); overflow:hidden}
+  .prm-h{background:var(--accent); color:#fffdf5; padding:12px 14px; display:flex; align-items:center; justify-content:space-between; gap:10px}
+  .prm-h b{font-size:16px; font-weight:900}
+  .prm-h .x{background:rgba(255,255,255,.18); border:none; color:#fffdf5; width:32px; height:32px; border-radius:50%;
+    font-size:19px; font-weight:900; cursor:pointer; line-height:1}
+  .prm-b{padding:14px; background:#e8e2d2; max-height:62vh; overflow:auto}
+  .prm-b img{display:block; width:100%; height:auto; background:#fff; box-shadow:0 3px 14px rgba(0,0,0,.25); border-radius:2px}
+  .prm-f{padding:12px 14px 14px; display:flex; gap:8px; flex-wrap:wrap; justify-content:center}
+  .prm-f .btn{padding:12px 16px; font-size:14.5px}
+  .prm-note{font-size:12px; color:var(--sub); text-align:center; margin:0 14px 14px; line-height:1.6}
+  @media print{
+    @page{ size:A4 portrait; margin:0 }
+    html,body{background:#fff !important; margin:0; padding:0; height:auto}
+    #grain, header.top, nav.tabs, .wrap, #titlescreen, .foot, #prModal{display:none !important}
+    #printSheet{display:block !important; margin:0; padding:0; page-break-inside:avoid; break-inside:avoid}
+    /* 画像1枚なので「背景のグラフィック」の設定に関係なく、見たままが出る */
+    #printSheet img{width:100%; height:auto; max-height:99.4vh; object-fit:contain; page-break-after:avoid; break-after:avoid}
+  }
+</style>
+</head>
+<body>
+<div id="grain"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <filter id="rough" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.013" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.2"/></filter>
+</defs></svg>
+<div id="titlescreen">
+  <div class="ts-blob b1"></div>
+  <div class="ts-blob b2"></div>
+  <div class="ts-inner">
+    <div class="ts-badge ts-fadeup" style="animation-delay:.05s">6年 学級活動(3)・キャリア形成</div>
+    <h1 class="ts-title ts-fadeup" style="animation-delay:.12s"><span class="ts-emo"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="var(--zen)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-4px"><path d="M2.5 19 L9.5 6.5 L14 13 L16.7 9 L21.5 19 Z"/><path d="M7.9 11.6 L9.5 8.8 L11.2 11.6"/></svg></span> リーダー診断</h1>
+    <p class="ts-sub ts-fadeup" style="animation-delay:.2s">山登りリーダーシップで、自分の“得意”を見つけよう</p>
+    <div id="tsScene" class="ts-fadeup" style="animation-delay:.28s"></div>
+    <p class="ts-lead ts-fadeup" style="animation-delay:.36s">リーダーは <b>1人じゃない</b>。<br>みんなで <b>力を分け合って</b> 登ろう。</p>
+    <button class="ts-start" id="tsStart">▶ はじめる<span class="sheen"></span></button>
+    <p class="ts-foot ts-fadeup" style="animation-delay:.6s">タブレットのブラウザで動きます ／ 体験版なので、どこにも送りません</p>
+  </div>
+</div>
+<header class="top">
+  <h1><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fffdf5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px"><path d="M2.5 19 L9.5 6.5 L14 13 L16.7 9 L21.5 19 Z"/><path d="M7.9 11.6 L9.5 8.8 L11.2 11.6"/></svg> リーダー診断</h1>
+  <p>山登りリーダーシップ　｜　一覧 → 自己診断 → 先生に提出</p>
+</header>
+
+<div class="wrap">
+  <nav class="tabs" id="tabs">
+    <button data-tab="ichiran" class="active">一覧</button>
+    <button data-tab="shindan">① 自己診断</button>
+    <button data-tab="teishutsu">② 先生に提出</button>
+  </nav>
+
+  <!-- ===== 一覧 ===== -->
+  <section class="panel active" id="ichiran">
+    <div class="card concept">
+      <h2 class="title tapme" id="conceptTitle">シェアードリーダーシップって？</h2>
+      <div id="conceptScene"></div>
+      <p class="big-lead">リーダーは <b>1人じゃない</b>。<br>みんなで <b>力を分け合って</b> 登る。</p>
+      <div class="points3">
+        <div class="pt"><span class="pt-ico"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="var(--zen)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.6" cy="8.8" r="2.6"/><path d="M4.3 18 C4.3 12.9 12.9 12.9 12.9 18"/><circle cx="16" cy="9.8" r="2.3"/><path d="M12.7 18 C12.7 13.6 19.7 13.6 19.7 18"/></svg></span><b>1人じゃない</b><span>だれもがリーダーになれる</span></div>
+        <div class="pt"><span class="pt-ico"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="var(--mae)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.6"/><path d="M12 12 V3.4 M12 12 L19.4 16.3 M12 12 L4.6 16.3"/></svg></span><b>分け合う</b><span>4つの役をみんなで担う</span></div>
+        <div class="pt"><span class="pt-ico"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="var(--ushiro)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9.2 A7 7 0 0 1 18 8"/><path d="M18 4.4 V8 H14.4"/><path d="M18 14.8 A7 7 0 0 1 6 16"/><path d="M6 19.6 V16 H9.6"/></svg></span><b>入れかわる</b><span>場面で担当がチェンジ</span></div>
+      </div>
+      <div class="legend">
+        <span class="lg"><span class="pill pf"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fffdf5" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M4.8 12.6 L10 17.6 L19.2 7"/></svg> P機能</span> やりとげる力</span>
+        <span class="lg"><span class="pill mf"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fffdf5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M12 19.6 C4.2 14 5.2 6.7 9.2 6.7 C11 6.7 12 8.2 12 8.2 C12 8.2 13 6.7 14.8 6.7 C18.8 6.7 19.8 14 12 19.6 Z"/></svg> M機能</span> みんなを大切にする力</span>
+      </div>
+      <p class="muted" style="margin-top:10px; text-align:center">※ どの役にも <b>優劣はありません</b>。自分の得意を出しつつ、チームの“すきま”を補い合うのがコツ。</p>
+
+      <details class="slmore" id="slMore">
+        <summary>シェアードリーダーシップって、なに？ ── くわしく読む</summary>
+        <div class="sl-body">
+
+          <div class="sl-h"><span class="sl-n">1</span>「リーダー」って、どんな人だと思う？</div>
+          <p>「リーダー」と聞くと、こんな人を思いうかべるかもしれません。学級委員。キャプテン。声が大きくて、みんなの前で堂々と話せる人。ぐいぐい引っぱっていける人。</p>
+          <p>そして、心の中でこう思ったことはありませんか。</p>
+          <div class="sl-say">「わたしは、そういうタイプじゃないな」<br>「ぼくは、前に出るのが苦手だから、リーダーには向いてない」</div>
+          <p>でも、それはちょっとした<b>かんちがい</b>です。<br>じつは、リーダーは「なる人」ではなく、<b>その場でリーダーシップを出している人</b>のことなのです。</p>
+
+          <div class="sl-h"><span class="sl-n">2</span>リーダーシップは「性格」じゃなく「行動」</div>
+          <p>ここがいちばん大事なところ。<b>リーダーシップとは、チームのためになる「行動」のこと</b>です。生まれつきの性格や、声の大きさで決まるものではありません。</p>
+          <p>たとえば、こんな行動もぜんぶリーダーシップです。</p>
+          <ul class="sl-ul">
+            <li>「つぎ、なにするんだっけ？」と、みんなが止まったときに聞いてみる</li>
+            <li>だれもやりたがらない片づけを、だまって始める</li>
+            <li>意見が言えずにいる友だちに「どう思う？」と聞く</li>
+            <li>ケンカになりそうなとき「どっちの気持ちも分かるよ」と言う</li>
+            <li>失敗した友だちに「大丈夫、次いこう」と声をかける</li>
+            <li>時間を見て「あと5分だよ」と教える</li>
+          </ul>
+          <p>どうでしょう。前に立って号令をかけていなくても、<b>チームを前に進めている</b>のが分かりますか。これがリーダーシップです。だから、<b>行動できる人はみんな、リーダーシップを持っている</b>ということになります。</p>
+
+          <div class="sl-h"><span class="sl-n">3</span>「シェアード」＝ みんなで分け合う</div>
+          <p>「シェアード（shared）」は英語で<b>「分け合う」</b>という意味です。<br>つまり<b>シェアードリーダーシップ</b>とは、<b>リーダーの役目を、たった1人にまかせきりにせず、クラスのみんなで分け合うこと</b>です。</p>
+          <p>1人のリーダーがぜんぶをやろうとすると、こうなりがちです。</p>
+          <ul class="sl-ul">
+            <li>その人だけがつかれて、しんどくなる</li>
+            <li>ほかの人は「言われたことをやるだけ」になって、たいくつになる</li>
+            <li>その人が休んだ日に、クラスが止まってしまう</li>
+            <li>いいアイデアを持っている人がいても、出す場面がない</li>
+          </ul>
+          <p>でも、みんなで分け合うと、こうなります。<b>一人ひとりの得意が全部つかえる</b>ので、チームはずっと強くなります。</p>
+
+          <div class="sl-h"><span class="sl-n">4</span>「山登り」で考えてみよう</div>
+          <p>クラスで山に登るところを想像してみてください。目標という山の頂上を、みんなでめざします。このとき、登るチームには<b>4つの場所</b>があります。</p>
+          <div class="sl-pos">
+            <div class="sl-p" style="--c:var(--zen)"><b>全体（ヘリコプター）</b><span>空から全体を見わたす役。「今どのへん？」「この道でいい？」と、進み方を考える。</span></div>
+            <div class="sl-p" style="--c:var(--mae)"><b>前（先頭）</b><span>先に立って道をつくる役。「行こう！」と自分から一歩ふみ出して、やる気に火をつける。</span></div>
+            <div class="sl-p" style="--c:var(--naka)"><b>真ん中（つなぐ）</b><span>人と人をつなぐ役。話しかけたり、笑わせたり。バラバラにならないようにする。</span></div>
+            <div class="sl-p" style="--c:var(--ushiro)"><b>後ろ（支える）</b><span>最後尾で支える役。おくれた人に寄りそい、「大丈夫だよ」と勇気づける。</span></div>
+          </div>
+          <p>考えてみてください。<b>前を走る人だけの山登りは、うまくいくでしょうか。</b><br>先頭がどんなに速くても、道がまちがっていたら（＝全体の役がいない）みんな迷子になります。おくれた人に気づく人がいなければ（＝後ろの役がいない）、その子は取りのこされます。ギスギスした空気をほぐす人がいなければ（＝真ん中の役がいない）、チームはバラバラになります。</p>
+          <p><b>4つとも、なくてはならない</b>のです。だから、この4つに「えらい・えらくない」はまったくありません。「ちがう」だけです。</p>
+
+          <div class="sl-h"><span class="sl-n">5</span>2つの力（P機能・M機能）</div>
+          <p>リーダーシップには、大きく2つの力があります。</p>
+          <ul class="sl-ul">
+            <li><b>P機能＝やりとげる力。</b>目標に向かって進める力。計画を立てる、時間を守る、最後までやりきる。</li>
+            <li><b>M機能＝みんなを大切にする力。</b>安心できる空気をつくる力。話を聞く、気づかう、はげます。</li>
+          </ul>
+          <p>この2つは、車の<b>両輪</b>のようなものです。やりとげる力ばかりだと、きびしくてつらいチームになります。大切にする力ばかりだと、仲はいいけれど前に進みません。<b>両方あるから、チームはうまく登れる</b>のです。そして、この2つを1人でそろえる必要はありません。<b>チーム全体でそろっていればいい</b>——これがシェアードリーダーシップの考え方です。</p>
+
+          <div class="sl-h"><span class="sl-n">6</span>組み合わせると「8つのタイプ」になる</div>
+          <p>ここで、<b>4つの場所</b>と<b>2つの力</b>をかけ算してみましょう。4×2で、リーダーシップは<b>8つのタイプ</b>に分かれます。この診断でわかるのは、この8つのうち、あなたがいちばん出しやすいのはどれか、ということです。</p>
+
+          <div class="sl-g" style="--c:var(--zen)">
+            <div class="sl-g-h">全体（ヘリコプター役）<span class="sl-g-sub">空から全体を見わたす</span></div>
+            <div class="sl-t2">
+              <div class="sl-t"><div class="nm"><span class="tg pf">P</span>見通しマスター</div>
+                <span class="ds">ゴールまでの道すじを整理できる人。「今どこまで進んだ？」「次に何がいる？」と、やることの順番を考えられます。</span>
+                <span class="ex"><b>こんなとき：</b>話し合いが行ったり来たりしているとき、「決めたいのはこれだよね」と地図を出せる。</span></div>
+              <div class="sl-t"><div class="nm"><span class="tg mf">M</span>役わりデザイナー</div>
+                <span class="ds">一人ひとりの得意によく気づく人。「この仕事はあの子が向いてそう」と、みんなの力が活きる形を考えられます。</span>
+                <span class="ex"><b>こんなとき：</b>仕事が一部の人に集まっているとき、「ここ、手伝える人いる？」と配り直せる。</span></div>
+            </div>
+          </div>
+
+          <div class="sl-g" style="--c:var(--mae)">
+            <div class="sl-g-h">前（先頭でひっぱる役）<span class="sl-g-sub">最初の一歩をつくる</span></div>
+            <div class="sl-t2">
+              <div class="sl-t"><div class="nm"><span class="tg pf">P</span>一歩めスターター</div>
+                <span class="ds">だれも動いていないときに、自分から動き出せる人。「じゃあ、やってみよう」と決めて、行動で示せます。</span>
+                <span class="ex"><b>こんなとき：</b>シーンとして手が挙がらない場面で、いちばんに手を挙げられる。</span></div>
+              <div class="sl-t"><div class="nm"><span class="tg mf">M</span>やる気の火つけ役</div>
+                <span class="ds">友だちのよさを見つけて、言葉にできる人。「一緒にやろう」の一言で、まわりの一歩を後おしできます。</span>
+                <span class="ex"><b>こんなとき：</b>やりたそうなのに迷っている子に、「これ得意だよね、やってみない？」と言える。</span></div>
+            </div>
+          </div>
+
+          <div class="sl-g" style="--c:var(--naka)">
+            <div class="sl-g-h">真ん中（つなぐ役・ムードメーカー）<span class="sl-g-sub">人と仕事をつなぐ</span></div>
+            <div class="sl-t2">
+              <div class="sl-t"><div class="nm"><span class="tg pf">P</span>段取りつなぎ役</div>
+                <span class="ds">バラバラに進んでいる仕事をつなげられる人。進み具合を見て、「次はこれ」と流れを整えられます。</span>
+                <span class="ex"><b>こんなとき：</b>グループごとに準備がちぐはぐなとき、「そっちが終わったらこっちね」とつなげる。</span></div>
+              <div class="sl-t"><div class="nm"><span class="tg mf">M</span>空気づくりの名人</div>
+                <span class="ds">人の表情や気持ちの変化に気づける人。話しにくそうな子に声をかけ、安心して話せる空気をつくれます。</span>
+                <span class="ex"><b>こんなとき：</b>意見がぶつかってピリッとしたとき、「どっちも分かる気がする」と間に立てる。</span></div>
+            </div>
+          </div>
+
+          <div class="sl-g" style="--c:var(--ushiro)">
+            <div class="sl-g-h">後ろ（支える役）<span class="sl-g-sub">みんなを支え、勇気づける</span></div>
+            <div class="sl-t2">
+              <div class="sl-t"><div class="nm"><span class="tg pf">P</span>縁の下の力もち</div>
+                <span class="ds">自分からできることを見つけて動ける人。準備や片づけ、こまかいフォローで、みんなが動きやすい状態をつくれます。</span>
+                <span class="ex"><b>こんなとき：</b>だれも気づいていない道具の用意を、言われる前にすませておける。</span></div>
+              <div class="sl-t"><div class="nm"><span class="tg mf">M</span>勇気づけ名人</div>
+                <span class="ds">うまくいかなかった人の気持ちに寄りそえる人。がんばりを認めて、「もう一回やってみよう」と思わせられます。</span>
+                <span class="ex"><b>こんなとき：</b>失敗して落ちこんでいる友だちに、「そこまでやれたのすごいよ」と言える。</span></div>
+            </div>
+          </div>
+
+          <p>読んでみて、どうでしたか。<b>「これ、自分かも」と思うものが、きっと一つはあったはずです。</b>むしろ、二つ三つ当てはまった人も多いでしょう。それでいいのです。8つのタイプは、人を8種類に決めつけるための箱ではありません。<b>リーダーシップの出し方が、少なくとも8通りある</b>ということを示しているだけです。</p>
+          <p>だから、こう考えてみてください。<b>「自分にはリーダーシップがあるか」ではなく、「自分はどのタイプで出しているか」。</b>8つもあれば、どこにも当てはまらない人はいません。</p>
+
+          <div class="sl-h"><span class="sl-n">7</span>役は「入れかわって」いい</div>
+          <p>ここも大事なところ。役は、一度決めたらずっと同じ、ではありません。<b>場面によって、担当は入れかわります。</b></p>
+          <ul class="sl-ul">
+            <li>運動会では「前」でぐいぐい引っぱった人が、</li>
+            <li>調べ学習では「全体」を見て計画を立てる役になり、</li>
+            <li>友だちが落ちこんだ日には「後ろ」でそっと支える役になる。</li>
+          </ul>
+          <p>ふだんは静かな人が、係の仕事ではだれよりもたよりになる。にぎやかな人が、大事な場面で人の話をじっくり聞く。そんなことは、いくらでも起こります。<b>あなたは「1つの役の人」ではありません。</b>場面に合わせて、いろいろな役ができるのです。</p>
+
+          <div class="sl-h"><span class="sl-n">8</span>だから、あなたにもリーダーシップがある</div>
+          <p>ここまで読んでくれたあなたに、いちばん伝えたいことがあります。</p>
+          <p><b>リーダーシップは、一部の特別な人だけが持っている「才能」ではありません。</b>クラスの全員が、もうすでに持っている「力のもと」です。</p>
+          <p>あなたが今までにやってきた、こんなことを思い出してみてください。</p>
+          <div class="sl-say">消しゴムを落とした友だちに、ひろってわたしたこと。<br>グループで意見が出ないとき、勇気を出して「じゃあ、これは？」と言ってみたこと。<br>だれも気づいていない配りものに気づいて、手をのばしたこと。<br>いやな気持ちになっている子のとなりに、そっとすわったこと。</div>
+          <p>そのぜんぶが、もうリーダーシップです。<b>あなたはとっくに、リーダーシップを出しています。</b>ただ、それに名前がついていなかっただけなのです。</p>
+          <p>この診断でわかるのは、「リーダーかどうか」ではありません。<b>あなたのリーダーシップは、どんな形をしているか</b>です。どの形が出ても、それはあなたの<b>強み</b>。そして、あまり出なかった形は、これから<b>のばせるところ（のびしろ）</b>です。だめなところ、ではありません。</p>
+
+          <div class="sl-h"><span class="sl-n">9</span>あしたから、やってみよう</div>
+          <ul class="sl-ul">
+            <li><b>自分の得意を、遠りょせずに出す。</b>「こういうの得意だから、やるね」と言ってみる。</li>
+            <li><b>チームの“すきま”を見つけて、うめる。</b>「今、だれも全体を見てないな」と気づいたら、そこに入る。</li>
+            <li><b>友だちのリーダーシップに気づいて、言葉にする。</b>「さっき声かけてくれて、うれしかった」——これも立派なリーダーシップです。</li>
+          </ul>
+          <p>だれか1人がすごいチームより、<b>全員が少しずつリーダーシップを出しているチーム</b>のほうが、ずっと強くて、ずっと楽しい。それが、シェアードリーダーシップです。</p>
+
+          <div class="sl-final">リーダーは、えらばれる人じゃない。<br>あなたが「やってみよう」と動いた、その<b>しゅんかん</b>に生まれる。<br>だから——<b>クラス全員が、リーダーです。</b></div>
+        </div>
+      </details>
+    </div>
+    <div id="ichiranList"></div>
+  </section>
+
+  <!-- ===== 自己診断 ===== -->
+  <section class="panel" id="shindan">
+    <div class="card" id="shindan-intro">
+      <h2 class="title">自分の得意なリーダーシップをさがそう</h2>
+      <p class="lead">12個の質問に、直感で答えてみよう。「山登り」のどのポジション（全体・前・真ん中・後ろ）と、P機能・M機能のどちらが得意かが見えてきます。</p>
+      <div class="row" style="margin:8px 0 4px">
+        <span class="pill zen">全体</span><span class="pill mae">前</span><span class="pill naka">真ん中</span><span class="pill ushiro">後ろ</span>
+      </div>
+      <p class="muted">※ どのポジションにも「よい・わるい」はありません。ちがいこそがチームの力になります。</p>
+      <button class="btn wide" id="startBtn" style="margin-top:8px">はじめる</button>
+    </div>
+
+    <div class="card" id="quiz" style="display:none">
+      <div class="q-count" id="qCount"></div>
+      <div class="prog"><i id="progBar"></i></div>
+      <div class="qtag" id="qTag"></div>
+      <div class="qwrap">
+        <div class="q-text" id="qText"></div>
+        <div class="scale">
+          <button data-v="4"><span class="em">◎</span>とても そう思う</button>
+          <button data-v="3"><span class="em">○</span>そう思う</button>
+          <button data-v="2"><span class="em">△</span>あまり…</button>
+          <button data-v="1"><span class="em">✕</span>ちがうかな</button>
+        </div>
+      </div>
+      <div class="navbtns">
+        <button class="btn sec" id="backBtn">← もどる</button>
+        <span class="muted" id="qHint">タップで選ぶと次へ進みます</span>
+      </div>
+    </div>
+
+    <div id="result" style="display:none"></div>
+  </section>
+
+  <!-- ===== ② 先生に提出（Googleフォーム） ===== -->
+  <section class="panel" id="teishutsu">
+    <div class="card">
+      <h2 class="title">先生に提出する</h2>
+      <p class="lead">自己診断がおわったら、ここから先生に提出します。下の欄を入れて、フォームの「送信」を押してください。</p>
+
+      <div class="ts-step"><span class="n">1</span>自分のことを入れる</div>
+      <div class="grid2">
+        <div><label class="fld">組</label><select id="fKumi" data-sf="kumi"></select></div>
+        <div><label class="fld">出席番号</label><input type="text" id="fBan" data-sf="ban" inputmode="numeric" placeholder="例）12"></div>
+      </div>
+      <div class="grid2" style="margin-top:8px">
+        <div><label class="fld">名字</label><input type="text" id="fSei" data-sf="sei" placeholder="例）みなみ"></div>
+        <div><label class="fld">名前</label><input type="text" id="fMei" data-sf="mei" placeholder="例）優"></div>
+      </div>
+
+      <div class="ts-step"><span class="n">2</span>自己判断の結果</div>
+      <p class="muted" id="fLeaderNote" style="margin:0 0 6px">※「① 自己診断」をやると、ここに結果が自動で入ります。</p>
+      <select id="fLeader" data-sf="leader"></select>
+
+      <div class="ts-step"><span class="n">3</span>フォームで送信する</div>
+      <div class="row">
+        <button class="btn" id="tsOpenForm">この内容でフォームを開く</button>
+        <button class="btn sec" id="tsNewTab">別のタブで開く</button>
+      </div>
+      <p class="muted" id="tsMsg" style="margin:8px 0 0"></p>
+      <div id="tsFrameBox" style="display:none; margin-top:10px">
+        <iframe id="tsFrame" title="提出フォーム" src="about:blank" loading="lazy"></iframe>
+        <p class="muted" style="margin:6px 0 0">↑ この中の「送信」を押すと提出完了です。うまく表示されないときは「別のタブで開く」を使ってください。</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <details id="tsAdmin">
+        <summary>先生用：フォームの設定（最初に1回だけ）</summary>
+        <p class="muted" style="margin:8px 0 6px">Googleフォームの「<b>回答を事前入力したリンク</b>」を貼るだけで、質問のIDを自動で読みとります。HTMLを書きかえる必要はありません。</p>
+        <div class="note" style="margin-bottom:8px">
+          <b>手順</b><br>
+          ① フォームに5つの質問を作る（組／出席番号／名字／名前／自己判断の結果）。<br>
+          ② 右上「⋮」→「回答を事前入力したリンクを取得」。<br>
+          ③ 下の<b>見本の値</b>を入れて「リンクを取得」→ コピー。<br>
+          ④ そのURLを下の欄に貼って「読みこむ」。
+        </div>
+        <div class="kv"><b>組</b><span>1組</span></div>
+        <div class="kv"><b>出席番号</b><span>99</span></div>
+        <div class="kv"><b>名字</b><span>見本</span></div>
+        <div class="kv"><b>名前</b><span>太郎</span></div>
+        <div class="kv"><b>自己判断の結果</b><span>前（一歩めスターター）</span></div>
+        <textarea id="tsCfgUrl" placeholder="（フォームの 事前入力リンク）ntry.…=99&…" style="width:100%; height:84px; margin-top:8px; border:1px solid var(--line); border-radius:10px; padding:8px; font-size:12px; font-family:inherit"></textarea>
+        <div class="row" style="margin-top:8px">
+          <button class="btn" id="tsCfgRead">読みこむ</button>
+          <button class="btn sec" id="tsCfgClear">設定を消す</button>
+        </div>
+        <p class="muted" id="tsCfgMsg" style="margin:8px 0 0"></p>
+
+        <div style="margin-top:14px; border-top:1px dashed var(--line); padding-top:10px">
+          <b style="font-size:13.5px">フォームの選択肢（コピーして貼れます）</b>
+          <p class="muted" style="margin:4px 0 6px">「自己判断の結果」はラジオボタンにして、下の8つを選択肢に貼ってください（1行ずつ自動で分かれます）。こうするとフォームの「回答」タブでそのまま集計グラフが見られます。</p>
+          <textarea id="tsChoices" readonly style="width:100%; height:120px; border:1px solid var(--line); border-radius:10px; padding:8px; font-size:12px; font-family:inherit"></textarea>
+          <button class="btn sec" id="tsCopyChoices" style="margin-top:6px">選択肢をコピー</button>
+          <span class="muted" id="tsCopyMsg"></span>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <div class="foot">リーダー診断 ／ 山登りリーダーシップ（シェアードリーダーシップ）／ 学級活動(3)・6年 ／ 体験版では、どこにも送りません</div>
+</div>
+
+<!-- 印刷用シート（画面には出さず、印刷のときだけ出る） -->
+<div id="printSheet" aria-hidden="true"></div>
+
+<!-- 印刷プレビュー -->
+<div id="prModal">
+  <div class="prm">
+    <div class="prm-h"><b>印刷プレビュー（A4・たて）</b><button class="x" id="prmX" aria-label="とじる">×</button></div>
+    <div class="prm-b"><img id="prmImg" alt="めざす自分カードのプレビュー"></div>
+    <div class="prm-f">
+      <button class="btn" id="prmPrint">印刷する</button>
+      <button class="btn" id="prmJpeg">JPEGで保存</button>
+      <button class="btn sec" id="prmClose">とじる</button>
+    </div>
+    <p class="prm-note">見えているとおりに印刷されます。印刷ダイアログでは「用紙：A4」「余白：なし（既定）」のままでOK。</p>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ============================================================
+   ★先生用の設定（ここだけ書きかえればOK）★
+   セットアップ手順は別紙「セットアップ手順」を参照。
+   ============================================================ */
+/* ============ 配る版の設定（つなぐ先を書くのはここ1か所） ============
+   ・form が空なら、どこにも送りません（① 自己診断・カードの印刷は使えます。「② 先生に提出」は先生用の画面で設定もできます）。
+   ・自分の Google フォームの送り先（…/formResponse）と、5つの項目番号（entry.〇〇）を書くと、どの端末でも設定なしで送れます。
+     項目番号は、フォームの「回答を事前入力したリンクを取得」で分かります（はじめに.md）。 */
+const KUBARU = {
+  gas:   '',   // 使いません
+  form:  '',   // 例：（自分のフォームの formResponse の URL）
+  entry: { kumi: '', ban: '', sei: '', mei: '', leader: '' },   // 例：kumi: 'entry.123456789'
+  meibo: '',   // 使いません
+};
+const KUBARU_TANMATSU_DAKE = !KUBARU.gas && !KUBARU.form;
+var CONFIG = {
+  // 組の選択肢（学校に合わせて変更）
+  kumiOptions: ["1組","2組","3組","4組"],
+  // Googleフォーム送信用（「回答を事前入力」から取得した値を入れる）
+  form: {
+    // 配る版：上の KUBARU から読む（ここには書かない）
+    actionUrl: KUBARU.form,
+    viewUrl:   KUBARU.form ? KUBARU.form.replace(/formResponse$/, "viewform") : "",
+    entry: { kumi:KUBARU.entry.kumi||"", ban:KUBARU.entry.ban||"", sei:KUBARU.entry.sei||"", mei:KUBARU.entry.mei||"", leader:KUBARU.entry.leader||"" }
+  }
+};
+/* ============ データ定義 ============ */
+var POS = ["全体","前","真ん中","後ろ"];
+var POSKEY = {"全体":"zen","前":"mae","真ん中":"naka","後ろ":"ushiro"};
+var POSINFO = {
+  "全体":{role:"ヘリコプター役（全体を見わたす人）",
+    desc:"全体を見わたして、進み方やみんなの力の活かし方を考えるのが得意。",
+    strong:"見通しを立てる・役割を考える・ゴールから逆算する。"},
+  "前":{role:"先頭でひっぱる役",
+    desc:"自分から一歩ふみ出し、みんなのやる気に火をつけるのが得意。",
+    strong:"最初の一歩・行動で示す・友だちのよさを引き出して声かけ。"},
+  "真ん中":{role:"つなぐ役・ムードメーカー",
+    desc:"仕事や人をつなぎ、関わりやすい空気をつくるのが得意。",
+    strong:"意見をつなぐ・困っている人に気づく・全体の雰囲気づくり。"},
+  "後ろ":{role:"支える役",
+    desc:"みんなを支え、寄りそって勇気づけるのが得意。",
+    strong:"準備やフォロー・寄りそい・もう一度挑戦できる勇気づけ。"}
+};
+var PMINFO = {
+  "P":{name:"P機能（やりとげる力）", desc:"目標に向かって進める・行動する力。"},
+  "M":{name:"M機能（みんなを大切にする力）", desc:"安心できる空気や人間関係をつくる力。"}
+};
+
+/* 一覧：4ポジション×P/M の詳しい行動（既存の印刷教材に準拠） */
+var POSFULL = {
+  "全体":{ role:"ヘリコプター役（全体を見わたす）",
+    P:{h:"目標に向けて全体を見通し、進め方を考えることができる人", items:[
+      "今どこまで進んでいるかを考えることができる",
+      "ゴールまでに何が必要かを整理することができる",
+      "やることの順番や優先順位を考えることができる",
+      "全体の流れを見通して、進め方を考えることができる"]},
+    M:{h:"みんなの力が活かされるように全体を整えることができる人", items:[
+      "一人一人の得意なことや良さに気づくことができる",
+      "誰がどの役割に合いそうかを考えることができる",
+      "偏りが出ないように、みんなが関われる形を考えることができる",
+      "それぞれの力が活きるように、役割や関わり方を調整することができる"]}},
+  "前":{ role:"先頭でひっぱる役",
+    P:{h:"自分から一歩踏み出し、行動で示すことができる人", items:[
+      "誰も動いていないときに、自分から一歩踏み出すことができる",
+      "「じゃあやってみよう」と決断して動き始めることができる",
+      "迷っている場面で、前に進むきっかけとなる行動ができる",
+      "困難な状況でも仲間を守りながら、安心して動ける姿を示すことができる"]},
+    M:{h:"一人一人のよさを引き出し、動き出すきっかけをつくることができる人", items:[
+      "相手のよさや強みに気づき、言葉にして伝えることができる",
+      "「一緒にやってみよう」と声をかけ、最初の一歩を後押しできる",
+      "相手の考えや気持ちを引き出すような問いかけができる",
+      "その人らしく動けるように関わり、「やってみたい」と思える状態をつくることができる"]}},
+  "真ん中":{ role:"つなぐ役・ムードメーカー",
+    P:{h:"流れを見ながら仕事をつなぎ、進み方を調整することができる人", items:[
+      "進度を確認し、「次に何をするか」を整理することができる",
+      "バラバラに進んでいる仕事をつなぎ、全体として動くように整えることができる",
+      "タスクの量やスピードを見て、無理のない進め方に調整することができる",
+      "進み具合や役割を見直し、必要に応じて再調整や提案ができる"]},
+    M:{h:"一人一人に気づきながら、人と人をつなぎ、関わりやすい状態をつくることができる人", items:[
+      "一人一人の様子（表情・気持ち・体調など）に気づくことができる",
+      "困っている人や、話しにくそうな人に声をかけることができる",
+      "人の意見や気持ちをつなぎ、分かりやすくつなぎ直すことができる",
+      "安心して話せる関係をつくることができる"]}},
+  "後ろ":{ role:"支える役",
+    P:{h:"みんなを支えながら、全体が前に進むように行動することができる人", items:[
+      "自分からできることを見つけて、周りを支えることができる",
+      "みんなが動きやすくなるように、準備やフォローができる",
+      "誰かが困っているときに気づき、必要なサポートができる",
+      "みんなのやりたいことや目標を理解し、それが実現するように支えることができる"]},
+    M:{h:"寄り添いながら勇気づけ、もう一度挑戦できる状態をつくることができる人", items:[
+      "うまくいかなかった人の気持ちに寄り添うことができる",
+      "努力や過程を認め、安心できる言葉をかけることができる",
+      "「もう一回やってみようかな」と思えるように勇気づけることができる",
+      "その人のペースや状態に合わせて、再び挑戦できる状態をつくることができる"]}}
+};
+/* 手描き風アイコン（絵文字の代わり）24x24, 中心12,12, stroke=線色 */
+var ICONP = {
+  "全体":'<path d="M2.6 12 C6 6.8 18 6.8 21.4 12 C18 17.2 6 17.2 2.6 12 Z"/><circle cx="12" cy="12" r="2.7" fill="CURR" stroke="none"/>',
+  "前":'<path d="M6.6 21 V4"/><path d="M6.6 4.6 H17.6 L13.8 8 L17.6 11.4 H6.6"/>',
+  "真ん中":'<rect x="3.8" y="8.6" width="10" height="6.8" rx="3.4"/><rect x="10.2" y="8.6" width="10" height="6.8" rx="3.4"/>',
+  "後ろ":'<path d="M9 9.2 L12 6.2 L15 9.2"/><path d="M12 6.4 V11.2"/><path d="M5.6 13 C5.6 18.6 18.4 18.6 18.4 13"/>',
+  "check":'<path d="M4.8 12.6 L10 17.6 L19.2 7"/>',
+  "heart":'<path d="M12 19.6 C4.2 14 5.2 6.7 9.2 6.7 C11 6.7 12 8.2 12 8.2 C12 8.2 13 6.7 14.8 6.7 C18.8 6.7 19.8 14 12 19.6 Z"/>',
+  "people":'<circle cx="8.6" cy="8.8" r="2.6"/><path d="M4.3 18 C4.3 12.9 12.9 12.9 12.9 18"/><circle cx="16" cy="9.8" r="2.3"/><path d="M12.7 18 C12.7 13.6 19.7 13.6 19.7 18"/>',
+  "share":'<circle cx="12" cy="12" r="8.6"/><path d="M12 12 V3.4 M12 12 L19.4 16.3 M12 12 L4.6 16.3"/>',
+  "swap":'<path d="M6 9.2 A7 7 0 0 1 18 8"/><path d="M18 4.4 V8 H14.4"/><path d="M18 14.8 A7 7 0 0 1 6 16"/><path d="M6 19.6 V16 H9.6"/>',
+  "mountain":'<path d="M2.5 19 L9.5 6.5 L14 13 L16.7 9 L21.5 19 Z"/><path d="M7.9 11.6 L9.5 8.8 L11.2 11.6"/>'
+};
+function iconInner(name, color){ return (ICONP[name]||"").replace(/CURR/g, color); }
+function htmlIcon(name, px, color){
+  return '<svg class="ic" viewBox="0 0 24 24" width="'+px+'" height="'+px+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle">'+iconInner(name,color)+'</svg>';
+}
+function svgIcon(name, cx, cy, size, color){
+  var s=(size/24).toFixed(3);
+  return '<g transform="translate('+(cx-size/2).toFixed(1)+','+(cy-size/2).toFixed(1)+') scale('+s+')" fill="none" stroke="'+color+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+iconInner(name,color)+'</g>';
+}
+var POSUD = {
+  "全体":{sum:"上から全体を見て、進め方を考える人", p:"ゴールまでの道すじを整理する", m:"みんなの力が活きる役わりを考える"},
+  "前":{sum:"先頭に立って、最初の一歩をつくる人", p:"自分から動いて、やってみる", m:"「一緒にやろう」と声をかける"},
+  "真ん中":{sum:"人と仕事をつなぐ、ムードメーカー", p:"バラバラをつないで流れを整える", m:"困っている人に気づいて声をかける"},
+  "後ろ":{sum:"みんなを支えて、勇気づける人", p:"準備やフォローでみんなを助ける", m:"寄りそって「もう一回」を後おしする"}
+};
+/* 学級会の一連の過程（話し合い→準備→実践）での行動例 */
+var KAIPHASES = ["話し合い","準備","実践"];
+var KAI = {
+  "全体":{
+    "話し合い":"「今日決めたいことは何だっけ？」とゴールと残り時間を確かめ、話がそれたら戻す。",
+    "準備":"だれが何を・いつまでにやるか、準備全体の見通しを立てて進み具合を確かめる。",
+    "実践":"本番の流れ全体を見て時間や進行を調整し、みんなが活躍できているか見る。"},
+  "前":{
+    "話し合い":"いちばん最初に自分の考えを言って、話し合いの口火を切る。",
+    "準備":"「まず自分がやってみる」と準備の一歩をふみ出し、仲間を巻き込む。",
+    "実践":"進んで前に立って盛り上げ、みんなのよさを引き出して声をかける。"},
+  "真ん中":{
+    "話し合い":"賛成と反対を「二つをまとめると…」とつなぎ、困っている子に声をかける。",
+    "準備":"別々に進む準備をつなぎ、「次はこれ」と段取りを整える。",
+    "実践":"進行とみんなをつなぎ、入れていない人・困っている人に気づいて声をかける。"},
+  "後ろ":{
+    "話し合い":"出た意見を黒板やボードに整理し、通らなかった子に寄りそう。",
+    "準備":"道具の準備や片づけでみんなを支え、つまずいた子を励ます。",
+    "実践":"記録や後片づけなど裏方で支え、失敗しても「次いこう」と勇気づける。"}
+};
+/* ①ポジション（場所）の短いよび名 ※「一覧」タブと合わせる */
+var POSSUB = {
+  "全体":{role:"ヘリコプター役", sub:"空から全体を見わたす"},
+  "前":{role:"先頭でひっぱる役", sub:"最初の一歩をつくる"},
+  "真ん中":{role:"つなぐ役・ムードメーカー", sub:"人と仕事をつなぐ"},
+  "後ろ":{role:"支える役", sub:"みんなを支え、勇気づける"}
+};
+/* ①場所 × ②P/M ＝ 8つのタイプ ※「一覧」タブの名前と説明をそのまま使う */
+var TYPE8 = {
+  "全体":{
+    "P":{name:"見通しマスター",
+      ds:"ゴールまでの道すじを整理できる人。「今どこまで進んだ？」「次に何がいる？」と、やることの順番を考えられます。",
+      ex:"話し合いが行ったり来たりしているとき、「決めたいのはこれだよね」と地図を出せる。"},
+    "M":{name:"役わりデザイナー",
+      ds:"一人ひとりの得意によく気づく人。「この仕事はあの子が向いてそう」と、みんなの力が活きる形を考えられます。",
+      ex:"仕事が一部の人に集まっているとき、「ここ、手伝える人いる？」と配り直せる。"}},
+  "前":{
+    "P":{name:"一歩めスターター",
+      ds:"だれも動いていないときに、自分から動き出せる人。「じゃあ、やってみよう」と決めて、行動で示せます。",
+      ex:"シーンとして手が挙がらない場面で、いちばんに手を挙げられる。"},
+    "M":{name:"やる気の火つけ役",
+      ds:"友だちのよさを見つけて、言葉にできる人。「一緒にやろう」の一言で、まわりの一歩を後おしできます。",
+      ex:"やりたそうなのに迷っている子に、「これ得意だよね、やってみない？」と言える。"}},
+  "真ん中":{
+    "P":{name:"段取りつなぎ役",
+      ds:"バラバラに進んでいる仕事をつなげられる人。進み具合を見て、「次はこれ」と流れを整えられます。",
+      ex:"グループごとに準備がちぐはぐなとき、「そっちが終わったらこっちね」とつなげる。"},
+    "M":{name:"空気づくりの名人",
+      ds:"人の表情や気持ちの変化に気づける人。話しにくそうな子に声をかけ、安心して話せる空気をつくれます。",
+      ex:"意見がぶつかってピリッとしたとき、「どっちも分かる気がする」と間に立てる。"}},
+  "後ろ":{
+    "P":{name:"縁の下の力もち",
+      ds:"自分からできることを見つけて動ける人。準備や片づけ、こまかいフォローで、みんなが動きやすい状態をつくれます。",
+      ex:"だれも気づいていない道具の用意を、言われる前にすませておける。"},
+    "M":{name:"勇気づけ名人",
+      ds:"うまくいかなかった人の気持ちに寄りそえる人。がんばりを認めて、「もう一回やってみよう」と思わせられます。",
+      ex:"失敗して落ちこんでいる友だちに、「そこまでやれたのすごいよ」と言える。"}}
+};
+
+/* 結果画面：P機能・M機能とはどんな力か（自己肯定感を高める長め解説） */
+var PMLONG = {
+  "P":{ title:"P機能＝やりとげる力", col:"var(--p)", kw:"rgba(200,90,60,.30)",
+    lines:[
+      'きみは、<span class="kw">「やる」と決めたことを最後までやりぬける人</span>。まわりがまよって止まっているときでも、「じゃあ、こうしよう」と先に動いて、チームを前に進めることができる。',
+      'その一歩があるから、みんなは安心してついていける。話し合いが止まったとき、準備がなかなか進まないとき——<span class="kw">きみが動き出すだけで、クラスの空気が変わる</span>。これは、だれにでもできることではありません。きみのいちばん大きな武器です。']},
+  "M":{ title:"M機能＝みんなを大切にする力", col:"var(--m)", kw:"rgba(90,127,160,.32)",
+    lines:[
+      'きみは、<span class="kw">人の気持ちの小さな変化に気づける人</span>。だれかが困っているとき、言い出せずにいるとき、そのサインを見のがしません。',
+      'きみがいるだけで、まわりは「ここなら言ってもだいじょうぶ」と思える。<span class="kw">その安心があるから、みんなは思いきって挑戦できる</span>。目には見えにくいけれど、チームをいちばん深いところで支えているのは、きみのような力です。']},
+  "TS":{ title:"P機能もM機能も、これから育つ力", col:"var(--zen)", kw:"rgba(92,138,84,.32)",
+    lines:[
+      'きみは今、<span class="kw">どちらの力もこれから伸びていく時期</span>です。今の点数は「まだ出していないだけ」であって、力がないという意味ではありません。',
+      'リーダーシップは、<span class="kw">やってみた回数だけ育ちます</span>。まずは気になる役を一つえらんで、次の学級会でためしてみよう。<span class="kw">一度やってみた自分は、もう今日までの自分とはちがいます</span>。']},
+  "T":{ title:"P機能とM機能、どちらも使える力", col:"var(--zen)", kw:"rgba(92,138,84,.32)",
+    lines:[
+      'きみは、<span class="kw">「前に進める力」と「みんなを支える力」を、どちらも同じくらい持っている人</span>。場面に合わせて、引っぱることも、寄りそうこともできます。',
+      'これはとてもめずらしくて、心強いこと。<span class="kw">チームがどんな状態のときでも、きみは必要とされます</span>。今日は引っぱる日、今日は支える日——そうやって使い分けられるのが、きみの強みです。']}
+};
+
+/* 結果画面：ポジション×P/M ごとの応援メッセージ */
+var YELL = {
+  "全体":{
+    "P":'クラスの中で、<span class="kw">先の見通しを立てられる人は、そう多くありません</span>。きみは、今どこにいて、あと何をすればゴールに着くのかを、頭の中に地図として描けます。だからみんながバラバラに動きそうなときでも、きみのひと言で全体がそろう。<span class="kw">きみの「見通す力」が、クラスの時間をむだにしていません</span>。',
+    "M":'きみは、全体を上から見ながら、<span class="kw">一人一人のちがいまで同時に見えている人</span>。だれが何を得意としていて、だれが今ちょっとつらそうか——その両方が見えるのは、本当にすごいことです。だからきみが役わりを考えると、<span class="kw">だれも取り残されないチームになります</span>。'},
+  "前":{
+    "P":'<span class="kw">最初の一歩は、いちばん勇気がいります</span>。それをきみは、自然にやってのける。きみが動いたしゅんかん、「あ、やっていいんだ」とまわりの気持ちがほぐれます。<span class="kw">クラスが動き出すスイッチを持っているのは、きみです</span>。',
+    "M":'きみは、<span class="kw">人のいいところを見つけて、ちゃんと言葉にできる人</span>。「いっしょにやろう」のひと言で、あと一歩がふみ出せなかった友だちが動き出します。<span class="kw">きみの声かけが、だれかの「やってみたい」に火をつけています</span>。それは、本人も気づいていないくらい大きな力です。'},
+  "真ん中":{
+    "P":'バラバラに進んでいるものを見て、<span class="kw">「つながっていない場所」に気づける人</span>は、そう多くありません。きみがつなぎ直すから、一人一人のがんばりがむだにならず、一つの形になります。<span class="kw">きみは、チームのまん中で全体を回しています</span>。',
+    "M":'きみは、<span class="kw">教室の空気を読める人</span>。だれが話したそうにしているか、だれが今しんどいのか、言われなくても気づけます。きみが声をかけるから、言えなかった気持ちが言葉になる。<span class="kw">きみがいる班は、話しやすい班になります</span>。それは、きみがつくっている空気です。'},
+  "後ろ":{
+    "P":'<span class="kw">見えないところで支える仕事は、いちばん気づかれにくい</span>。でも、それがないとチームは動きません。きみが先回りして準備してくれるから、みんなは安心して自分のことに集中できる。<span class="kw">きみは、チームの土台をつくっています</span>。',
+    "M":'うまくいかなかったとき、<span class="kw">そばにいてくれる人がいるかどうかで、その先はまったく変わります</span>。きみは、失敗した友だちに寄りそって、「もう一回やってみようかな」と思わせることができる。<span class="kw">きみのひと言が、だれかの再挑戦をつくっています</span>。それは、いちばんあたたかいリーダーシップです。'}
+};
+
+/* 結果画面：「君が持っている力」＋活かせる場面（ポジション×P/M） */
+var SCENECOL = {"学級会":"zen","行事":"mae","班・グループ":"naka","毎日の生活":"ushiro"};
+var IKASU = {
+  "全体":{
+    "P":{ sum:"全体を見わたして、ゴールまでの道すじをつくる力",
+      chikara:["ゴールから逆算して、段取りを組み立てる力","「今どこまで進んだか」を見きわめる力","やることの順番・優先順位を決める力"],
+      bamen:[
+        ["学級会","はじめに「今日決めるのはここまで」とゴールと残り時間を確かめ、話がそれたら戻す。"],
+        ["行事","運動会や学習発表会で、本番の日から逆算して「いつまでに何を」を書き出し、進み具合を確かめる。"],
+        ["班・グループ","発表までの流れを分けて、班の「やることリスト」をつくる。"],
+        ["毎日の生活","朝のうちに一日の予定を見て、「先にやること」を決めてから動く。"]]},
+    "M":{ sum:"みんなの力が活きるように、全体を整える力",
+      chikara:["一人一人の得意やよさに気づく力","だれがどの役に合いそうかを考える力","みんなが関われる形につくり直す力"],
+      bamen:[
+        ["学級会","まだ話していない人に出番や役をつくって、意見が一部の人にかたよらないようにする。"],
+        ["行事","絵が得意・声が大きいなど、得意を活かした役わり分担を提案する。"],
+        ["班・グループ","仕事がかたよっていないか見て、多すぎる人の分を配り直す。"],
+        ["毎日の生活","たてわり班や下学年との活動で、みんなが入りやすい進め方を考える。"]]}},
+  "前":{
+    "P":{ sum:"だれよりも先に、最初の一歩をふみ出す力",
+      chikara:["だれも動かないときに自分から始める力","「じゃあやってみよう」と決めて動き出す力","言葉より先に、行動で示す力"],
+      bamen:[
+        ["学級会","しーんとしているとき、いちばんに手を挙げて自分の考えを言い、話し合いの口火を切る。"],
+        ["行事","練習が始まらないとき「まずやってみよう」と先に動いて、空気を動かす。"],
+        ["班・グループ","「じゃあ、ここは自分がやる」と最初に役を引き受ける。"],
+        ["毎日の生活","そうじや当番で、だれもやりたがらない仕事に自分から取りかかる。"]]},
+    "M":{ sum:"友だちのよさを引き出して、動き出すきっかけをつくる力",
+      chikara:["相手のよさや強みに気づいて、言葉にして伝える力","「いっしょにやろう」とさそって背中をおす力","「やってみたい」を引き出す問いかけの力"],
+      bamen:[
+        ["学級会","「〇〇さんの考えも聞いてみたい」と言って、話しにくそうな友だちに出番をつくる。"],
+        ["行事","「いっしょにやろう」とさそって、まよっている仲間を巻きこむ。"],
+        ["班・グループ","苦手そうな子に「ここならできるよ」と役を提案して、はじめの一歩を後おしする。"],
+        ["毎日の生活","入りにくそうにしている子を、休み時間の遊びにさそう。"]]}},
+  "真ん中":{
+    "P":{ sum:"バラバラを一本につないで、進み方を調整する力",
+      chikara:["別々に進んでいることをつなぎ、全体を動かす力","「次に何をするか」を整理する力","量やスピードを見て、無理のない進め方に直す力"],
+      bamen:[
+        ["学級会","出た意見を「この二つをまとめると…」とつなぎ直して、話し合いを前に進める。"],
+        ["行事","係ごとにバラバラに進む準備をつなぎ、ぬけているところを見つけて知らせる。"],
+        ["班・グループ","「あと10分だから、ここまでやろう」と時間とやることを配分する。"],
+        ["毎日の生活","そうじで手があいた人に「次はここお願い」と仕事をふる。"]]},
+    "M":{ sum:"一人一人に気づいて、人と人をつなぐ力",
+      chikara:["表情や様子の小さな変化に気づく力","困っている人・話しにくそうな人に声をかける力","安心して話せる空気をつくる力"],
+      bamen:[
+        ["学級会","言いたそうにしている子に「どう思う？」と聞いて、意見を引き出す。"],
+        ["行事","意見がぶつかったとき、両方の言い分を聞いて「どっちも大事だね」とつなぐ。"],
+        ["班・グループ","会話に入れていない子に話をふって、みんなが参加できるようにする。"],
+        ["毎日の生活","給食や休み時間に、元気がなさそうな子に「だいじょうぶ？」と声をかける。"]]}},
+  "後ろ":{
+    "P":{ sum:"先回りして準備し、裏からみんなを進ませる力",
+      chikara:["自分にできることを見つけて、周りを支える力","みんなが動きやすいように準備・フォローする力","困っている人に気づいて、必要な手助けをする力"],
+      bamen:[
+        ["学級会","出た意見を黒板やノートに整理して記録し、あとから見返せるようにする。"],
+        ["行事","道具の準備や片づけを引き受けて、みんなが練習に集中できるようにする。"],
+        ["班・グループ","資料や道具をそろえて、発表しやすい状態をつくっておく。"],
+        ["毎日の生活","そうじの最後に見回って、やり残しをそっと仕上げる。"]]},
+    "M":{ sum:"寄りそって勇気づけ、「もう一回」をつくる力",
+      chikara:["うまくいかなかった人の気持ちに寄りそう力","努力や過程を認めて、安心できる言葉をかける力","「もう一回やってみよう」と思わせる力"],
+      bamen:[
+        ["学級会","意見が通らなかった子に「その考えもよかったよ」と伝える。"],
+        ["行事","本番で失敗した子に「ドンマイ、次いこう」と声をかける。"],
+        ["班・グループ","結果だけでなく「ここまでできたね」とがんばった過程を認める。"],
+        ["毎日の生活","目立たないけれど毎日きちんとやっている人のよさを見つけて、本人に伝える。"]]}}
+};
+
+/* P・Mの大小によるPM理論の4タイプ */
+var TYPE4 = {
+  "大P大M":{name:"バランス型リーダー", desc:"進めることも、みんなを大切にすることも、どちらもできるタイプ。"},
+  "大P小M":{name:"ぐいぐい進めるタイプ", desc:"目標に向かって行動する力（P）が強め。みんなの気持ちにも目を向けると、さらにいい。"},
+  "小P大M":{name:"みんなを支えるタイプ", desc:"人を大切にし、安心をつくる力（M）が強め。一歩ふみ出す行動（P）も足すと、さらにいい。"},
+  "小P小M":{name:"これから伸ばすタイプ", desc:"リーダーシップはこれから。まずは気になる役を一つえらんで、挑戦してみよう。"}
+};
+
+function conceptSVG(){
+  var spots=[{p:"全体",x:322,y:52},{p:"前",x:250,y:104},{p:"真ん中",x:182,y:154},{p:"後ろ",x:114,y:202}];
+  var markers = spots.map(function(s,i){
+    var col="var(--"+POSKEY[s.p]+")";
+    return '<g class="mk" style="animation-delay:'+(i*0.35).toFixed(2)+'s">'+
+      '<circle cx="'+s.x+'" cy="'+s.y+'" r="20" fill="#fffdf5" stroke="'+col+'" stroke-width="2.5"/>'+
+      svgIcon(s.p, s.x, s.y-0.5, 22, col)+
+      '<rect x="'+(s.x-31)+'" y="'+(s.y+21)+'" width="62" height="20" rx="6" fill="'+col+'"/>'+
+      '<text x="'+s.x+'" y="'+(s.y+34.5)+'" text-anchor="middle" font-size="12" fill="#fffdf5" font-weight="800">'+s.p+'</text>'+
+    '</g>';
+  }).join("");
+  function spk(x,y,z){ return '<path d="M'+x+' '+(y-z)+' V'+(y+z)+' M'+(x-z)+' '+y+' H'+(x+z)+'" stroke="#c39a45" stroke-width="1.6" stroke-linecap="round"/>'; }
+  return '<svg class="concept" viewBox="0 0 400 250" role="img" aria-label="山を4つの役わりでみんなで登るイメージ">'+
+    '<rect x="0" y="0" width="400" height="250" fill="#dce7dd"/>'+
+    '<g filter="url(#rough)">'+
+      '<circle cx="62" cy="48" r="19" fill="#f2c94c" stroke="#c99f36" stroke-width="2"/>'+
+      '<g fill="#fbf7ea" stroke="#e6ddc6" stroke-width="1.5"><ellipse cx="150" cy="44" rx="22" ry="12"/><ellipse cx="322" cy="32" rx="16" ry="9"/></g>'+
+      '<path d="M0,250 L95,140 L175,196 L250,150 L340,200 L400,168 L400,250 Z" fill="#bcd0a2" stroke="#82a066" stroke-width="2"/>'+
+      '<path d="M0,250 L150,74 L232,150 L300,66 L400,250 Z" fill="#94b06d" stroke="#5f7d45" stroke-width="2.5"/>'+
+      '<path d="M281,93 L300,66 L319,93 Z" fill="#f1eede" stroke="#c7c1a6" stroke-width="1.5"/>'+
+      '<g fill="#5f8a55" stroke="#496d40" stroke-width="1.5"><path d="M56,236 L70,236 L63,213 Z"/><path d="M78,240 L94,240 L86,215 Z"/></g>'+
+      '<path d="M40,238 C120,208 130,168 186,153 C238,138 220,106 264,88" fill="none" stroke="#a9885a" stroke-width="11" stroke-linecap="round"/>'+
+      '<path d="M40,238 C120,208 130,168 186,153 C238,138 220,106 264,88" fill="none" stroke="#e6cf9c" stroke-width="7" stroke-linecap="round"/>'+
+      '<line x1="300" y1="66" x2="300" y2="45" stroke="#a2432a" stroke-width="2.5"/><path d="M300,45 L316,50 L300,55 Z" fill="#c85a3c" stroke="#a2432a" stroke-width="1.5"/>'+
+    '</g>'+
+    spk(344,74,4)+spk(96,120,3.5)+spk(214,184,3.5)+
+    markers+
+  '</svg>';
+}
+
+function renderIchiran(){
+  var html = POS.map(function(p){
+    var f=POSFULL[p], u=POSUD[p], k=POSKEY[p];
+    function detail(fn){
+      return '<div class="lf-block '+(fn==="P"?"pf":"mf")+'">'+
+        '<div class="lf-h"><span class="lf-tag '+(fn==="P"?"pf":"mf")+'">'+(fn==="P"?"P機能":"M機能")+'</span>'+f[fn].h+'</div>'+
+        '<ul class="lf-ul">'+f[fn].items.map(function(it){return "<li>"+it+"</li>";}).join("")+'</ul>'+
+      '</div>';
+    }
+    return '<div class="card pcard" style="--c:var(--'+k+')">'+
+      '<div class="pcard-head">'+
+        '<span class="pcard-ico">'+htmlIcon(p,36,'var(--'+k+')')+'</span>'+
+        '<div><div class="pcard-name"><span class="pill '+k+'">'+p+'</span>'+f.role+'</div>'+
+        '<div class="pcard-sum">'+u.sum+'</div></div>'+
+      '</div>'+
+      '<div class="pm2">'+
+        '<div class="pm-mini pf"><span class="pm-ico">'+htmlIcon('check',22,'var(--p)')+'</span><b>P：やりとげる</b><span>'+u.p+'</span></div>'+
+        '<div class="pm-mini mf"><span class="pm-ico">'+htmlIcon('heart',22,'var(--m)')+'</span><b>M：大切にする</b><span>'+u.m+'</span></div>'+
+      '</div>'+
+      '<details class="kai"><summary class="kai-h">学級会での例（話し合い→準備→実践）</summary><ul>'+KAIPHASES.map(function(ph){return '<li><span class="kai-ph">'+ph+'</span>'+KAI[p][ph]+'</li>';}).join("")+'</ul></details>'+
+      '<details class="dud"><summary>くわしい行動を見る（各4つ）</summary>'+
+        '<div class="lf-grid" style="margin-top:10px">'+detail("P")+detail("M")+'</div>'+
+      '</details>'+
+    '</div>';
+  }).join("");
+  document.getElementById("ichiranList").innerHTML = html;
+}
+
+/* 質問：pos=ポジション, pm=機能。ポジション各3問、P6問/M6問 */
+var Q = [
+  {t:"クラスや班が「今どこまで進んでいるか」を考えるのが好きだ。", pos:"全体", pm:"P"},
+  {t:"だれがどの役割に合いそうか、みんなの力が活きる分け方を考えられる。", pos:"全体", pm:"M"},
+  {t:"ゴールから逆算して、やることの順番を整理するのが得意だ。", pos:"全体", pm:"P"},
+  {t:"だれも動いていないとき、自分から一歩ふみ出して始められる。", pos:"前", pm:"P"},
+  {t:"友だちのよさや強みに気づいて、「いっしょにやろう」と声をかけられる。", pos:"前", pm:"M"},
+  {t:"まよっている友だちに寄りそって、「やってみよう」と後おしできる。", pos:"前", pm:"M"},
+  {t:"バラバラに進んでいることを、つないで全体が動くように整えられる。", pos:"真ん中", pm:"P"},
+  {t:"困っていそうな人や、話しにくそうな人に、進んで声をかけられる。", pos:"真ん中", pm:"M"},
+  {t:"みんなの意見を整理して、話し合いがまとまるようにつなげられる。", pos:"真ん中", pm:"P"},
+  {t:"みんなが動きやすいように、準備やフォローを進んでできる。", pos:"後ろ", pm:"P"},
+  {t:"うまくいかなかった人の気持ちに寄りそって、勇気づけられる。", pos:"後ろ", pm:"M"},
+  {t:"自分にできることを見つけて、周りをそっと支えられる。", pos:"後ろ", pm:"M"}
+];
+
+/* ============ シェアードリーダーシップ くわしい解説の開閉 ============ */
+(function(){
+  var t = document.getElementById("conceptTitle"), d = document.getElementById("slMore");
+  if(!t || !d) return;
+  t.addEventListener("click", function(){
+    d.open = !d.open;
+    if(d.open){ d.scrollIntoView({behavior:"smooth", block:"start"}); }
+  });
+})();
+
+/* ============ 画面切りかえ ============ */
+var tabs = document.getElementById("tabs");
+tabs.addEventListener("click", function(e){
+  var b = e.target.closest("button"); if(!b) return;
+  var id = b.getAttribute("data-tab");
+  Array.prototype.forEach.call(tabs.children, function(x){x.classList.remove("active");});
+  b.classList.add("active");
+  document.querySelectorAll("section.panel").forEach(function(s){s.classList.remove("active");});
+  document.getElementById(id).classList.add("active");
+  window.scrollTo(0,0);
+});
+
+/* ============ 山のSVG ============ */
+function mountSVG(counts, highlight){
+  var anchors = {
+    "全体":{x:330,y:54}, "前":{x:225,y:120}, "真ん中":{x:170,y:180}, "後ろ":{x:110,y:240}
+  };
+  function marker(pos){
+    var a = anchors[pos]; var c = counts? (counts[pos]||0) : null;
+    var col = "var(--"+POSKEY[pos]+")";
+    var hl = (highlight===pos);
+    var r = 20;
+    var badge = "";
+    if(counts){
+      var isGap = (c===0);
+      var rr = isGap? 16 : (18 + Math.min(c,8)*2);
+      badge =
+        '<circle cx="'+a.x+'" cy="'+a.y+'" r="'+rr+'" fill="'+(isGap?'#fffdf5':col)+'" '+
+        (isGap?'stroke="#c99f36" stroke-dasharray="4 3" stroke-width="2"':'stroke="#fffdf5" stroke-width="2.5"')+'/>'+
+        '<text x="'+a.x+'" y="'+(a.y+5)+'" text-anchor="middle" class="count-badge" font-size="'+(isGap?12:16)+'" fill="'+(isGap?'#b06a1e':'#fffdf5')+'">'+(isGap?'0':c)+'</text>';
+    } else {
+      badge =
+        '<g'+(hl?'':' opacity="0.4"')+'><circle cx="'+a.x+'" cy="'+a.y+'" r="'+r+'" fill="'+col+'" stroke="#fffdf5" stroke-width="2.5"/>'+
+        svgIcon(pos, a.x, a.y-0.5, 21, "#fffdf5")+'</g>'+
+        (hl? '<circle cx="'+a.x+'" cy="'+a.y+'" r="'+(r+7)+'" fill="none" stroke="'+col+'" stroke-width="3"/>':'');
+    }
+    var lx = a.x, ly = a.y - ( counts ? (24+ (counts&&counts[pos]?Math.min(counts[pos],8):0)) : 30);
+    var label = '<text x="'+lx+'" y="'+ly+'" text-anchor="middle" class="zone-label" fill="'+col+'">'+pos+'</text>';
+    return badge + label;
+  }
+  var svg =
+  '<svg class="mount" viewBox="0 0 400 300" role="img" aria-label="山登りマップ">'+
+    '<rect x="0" y="0" width="400" height="300" fill="#dce7dd"/>'+
+    '<g filter="url(#rough)">'+
+      '<circle cx="66" cy="54" r="20" fill="#f2c94c" stroke="#c99f36" stroke-width="2"/>'+
+      '<path d="M0,300 L120,150 L200,205 L280,150 L360,205 L400,180 L400,300 Z" fill="#bcd0a2" stroke="#82a066" stroke-width="2"/>'+
+      '<path d="M0,300 L150,86 L214,152 L300,70 L400,300 Z" fill="#94b06d" stroke="#5f7d45" stroke-width="2.5"/>'+
+      '<path d="M279,99 L300,70 L321,99 Z" fill="#f1eede" stroke="#c7c1a6" stroke-width="1.5"/>'+
+      '<path d="M40,286 C120,251 120,210 176,185 C222,164 210,128 252,108" fill="none" stroke="#a9885a" stroke-width="10" stroke-linecap="round"/>'+
+      '<path d="M40,286 C120,251 120,210 176,185 C222,164 210,128 252,108" fill="none" stroke="#e6cf9c" stroke-width="6.5" stroke-linecap="round"/>'+
+      '<line x1="252" y1="108" x2="252" y2="88" stroke="#a2432a" stroke-width="2.5"/><path d="M252,88 L268,93 L252,98 Z" fill="#c85a3c" stroke="#a2432a" stroke-width="1.5"/>'+
+    '</g>'+
+    '<text x="272" y="102" font-size="12" fill="#5f7d45" font-weight="700">ゴール</text>'+
+    marker("後ろ")+marker("真ん中")+marker("前")+marker("全体")+
+  '</svg>';
+  return svg;
+}
+
+/* ============ 自己診断 ============ */
+var qi = 0, answers = [];
+var startBtn = document.getElementById("startBtn");
+var quiz = document.getElementById("quiz");
+var intro = document.getElementById("shindan-intro");
+var resultBox = document.getElementById("result");
+
+startBtn.onclick = function(){
+  qi=0; answers=[];
+  intro.style.display="none"; resultBox.style.display="none";
+  quiz.style.display="block"; renderQ();
+};
+document.querySelectorAll("#quiz .scale button").forEach(function(b){
+  b.onclick = function(){ answers[qi] = parseInt(b.getAttribute("data-v"),10); next(); };
+});
+document.getElementById("backBtn").onclick = function(){
+  if(qi>0){ qi--; renderQ(); } else { quiz.style.display="none"; intro.style.display="block"; }
+};
+function renderQ(){
+  document.getElementById("qCount").textContent = "しつもん "+(qi+1)+" / "+Q.length;
+  document.getElementById("progBar").style.width = (qi/Q.length*100)+"%";
+  document.getElementById("qText").textContent = Q[qi].t;
+  // P/Mどちらの質問かを色で示す（P=赤・M=青）
+  var isP = Q[qi].pm==="P";
+  var qt = document.getElementById("qTag");
+  qt.className = "qtag "+(isP?"pf":"mf");
+  qt.textContent = isP ? "P機能（やりとげる力）についての質問" : "M機能（みんなを大切にする力）についての質問";
+  var qtext = document.getElementById("qText");
+  qtext.style.borderLeft = "6px solid "+(isP?"var(--p)":"var(--m)");
+  qtext.style.paddingLeft = "12px";
+  // 選択済みを軽く反映
+  document.querySelectorAll("#quiz .scale button").forEach(function(b){
+    b.style.borderColor = (answers[qi]==parseInt(b.getAttribute("data-v"),10)) ? (isP?"var(--p)":"var(--m)") : "var(--line)";
+  });
+}
+function next(){
+  if(qi < Q.length-1){ qi++; renderQ(); }
+  else { showResult(); }
+}
+function computeScores(ans){
+  var pos = {"全体":0,"前":0,"真ん中":0,"後ろ":0};
+  var pm = {"P":0,"M":0};
+  for(var i=0;i<Q.length;i++){
+    var v = ans[i]||0;
+    pos[Q[i].pos]+= v;
+    pm[Q[i].pm]+= v;
+  }
+  var sorted = POS.slice().sort(function(a,b){return pos[b]-pos[a];});
+  var max = pos[sorted[0]], second = pos[sorted[1]], min = pos[sorted[3]];
+  var lead = max - second;                             // 1位と2位の差
+  // 最上位（同点は回答の重み付き和でローテーションし、全体への偏りを防ぐ）
+  var ties = POS.filter(function(p){return pos[p]===max;});
+  var top;
+  if(ties.length===1){ top = ties[0]; }
+  else { var seed=0; for(var j=0;j<ans.length;j++){ seed += (ans[j]||0)*(j+1); } top = ties[seed % ties.length]; }
+  var lows = POS.filter(function(p){return pos[p]===min;});
+  var pLevel = pm.P >= 15 ? "大" : "小";               // 6問×中点2.5=15
+  var mLevel = pm.M >= 15 ? "大" : "小";
+  var type4 = pLevel+"P"+mLevel+"M";
+  var lean = pm.P >= pm.M ? "P" : "M";
+  return {pos:pos, pm:pm, top:top, lead:lead, lows:lows, pLevel:pLevel, mLevel:mLevel, type4:type4, lean:lean};
+}
+/* 結果：①＋②＝③ の早わかりストリップ */
+function steps3HTML(s){
+  var top = s.top, lean = s.lean, k = POSKEY[top];
+  var pcol = "var(--"+k+")";
+  var mcol = (lean === "P") ? "var(--p)" : "var(--m)";
+  var t8 = TYPE8[top][lean];
+  function st(no, col, q, v, sub, hero){
+    return '<div class="st'+(hero?' hero':'')+'" style="--c:'+col+'">'+
+      '<span class="no">'+no+'</span>'+
+      '<div class="stq">'+q+'</div><div class="stv">'+v+'</div><div class="sts">'+sub+'</div></div>';
+  }
+  return '<p class="steps-lead">診断でわかったのは、<b>「①場所」</b>と<b>「②力の出し方」</b>の2つ。<br>この2つをかけ算すると、きみのタイプが決まります。</p>'+
+  '<div class="steps3">'+
+    st("①", pcol, "山のどこで力を出す？", top, POSSUB[top].role, false)+
+    '<div class="op">×</div>'+
+    st("②", mcol, "どうやって力を出す？", (lean==="P"?"P機能":"M機能"), (lean==="P"?"やりとげる力":"みんなを大切にする力"), false)+
+    '<div class="op">＝</div>'+
+    st("③", pcol, "きみのタイプは", t8.name, "8つのうちの1つ", true)+
+  '</div>';
+}
+/* セクション見出し（①②③） */
+function secheadHTML(no, col, q, sub){
+  return '<div class="sechead" style="--c:'+col+'"><span class="no">'+no+'</span>'+
+    '<span class="q">'+q+'<small>'+sub+'</small></span></div>';
+}
+
+/* 結果：P/M を大きな矢印で示す指標 */
+function pmBigHTML(s, pct){
+  var diff = s.pm.P - s.pm.M;
+  var tie  = (diff === 0);
+  var lean = tie ? null : (diff > 0 ? "P" : "M");
+  var col  = tie ? "var(--zen)" : (lean === "P" ? "var(--p)" : "var(--m)");
+  var gap  = Math.abs(diff);
+  var deg  = gap >= 6 ? "はっきり" : (gap >= 3 ? "やや" : "少し");
+  var badge, verdict, subtxt;
+  if(tie){
+    badge  = '<div class="pm-badge" style="background:linear-gradient(135deg,var(--m),var(--p))">'+
+             '<span class="l" style="font-size:26px">P＝M</span><span class="s">バランス</span></div>';
+    verdict= '<span class="hd">きみは <span class="big">PとMが同じくらい</span></span>';
+    subtxt = '「やりとげる力」と「みんなを大切にする力」を、どちらも同じくらい使えるタイプ。';
+  } else if(lean === "P"){
+    badge  = '<div class="pm-badge" style="background:var(--p)"><span class="l">P</span><span class="s">やりとげる</span></div>';
+    verdict= '<span class="hd">きみは <span class="big" style="color:var(--p)">P機能</span> が'+deg+'強め</span>';
+    subtxt = '目標に向かって進める・行動する力で、みんなを前に動かすタイプ。';
+  } else {
+    badge  = '<div class="pm-badge" style="background:var(--m)"><span class="l">M</span><span class="s">大切にする</span></div>';
+    verdict= '<span class="hd">きみは <span class="big" style="color:var(--m)">M機能</span> が'+deg+'強め</span>';
+    subtxt = '安心できる空気や人間関係をつくる力で、みんなを支えるタイプ。';
+  }
+  var arrow = '<svg class="ar" width="44" height="26" viewBox="0 0 54 34" aria-hidden="true">'+
+    '<path d="M4 4 L50 4 L27 32 Z" fill="'+col+'" stroke="var(--ink)" stroke-width="2.6" stroke-linejoin="round"/></svg>';
+  return '<div class="pmbig">'+
+    '<div class="pmbig-head">'+badge+
+      '<div class="pm-verdict">'+verdict+'<span class="sub">'+subtxt+'</span></div>'+
+    '</div>'+
+    '<div class="pm-scale">'+
+      '<div class="pm-ptr" style="left:'+pct+'%"><span class="you">きみはここ</span>'+arrow+'</div>'+
+      '<div class="pm-track"><span class="mid"></span></div>'+
+      '<div class="pm-ends">'+
+        '<span class="l">◀ M機能<small>みんなを大切にする力</small></span>'+
+        '<span class="pm-midlabel">まん中</span>'+
+        '<span class="r">P機能 ▶<small>やりとげる力</small></span>'+
+      '</div>'+
+    '</div>'+
+    '<div class="pm-scores">'+
+      '<span class="pm-score mf">'+htmlIcon('heart',16,'var(--m)')+' M機能 <b>'+s.pm.M+'</b>/24（'+s.mLevel+'）</span>'+
+      '<span class="pm-score pf">'+htmlIcon('check',16,'var(--p)')+' P機能 <b>'+s.pm.P+'</b>/24（'+s.pLevel+'）</span>'+
+    '</div>'+
+    pmDescHTML(tie ? ((s.pLevel==="小" && s.mLevel==="小") ? "TS" : "T") : lean)+
+  '</div>';
+}
+/* P/M がどんな力かを大きく説明するパネル */
+function pmDescHTML(key){
+  var d = PMLONG[key];
+  var lead = (key==="TS") ? "きみのこれからの力"
+           : (key==="T")  ? "どちらも使えるきみは、こんな人"
+           : (key==="P")  ? "P機能が強いきみは、こんな人"
+                          : "M機能が強いきみは、こんな人";
+  return '<div class="pm-desc" style="--dc:'+d.col+'; --kwc:'+d.kw+'">'+
+    '<span class="pm-desc-h">'+htmlIcon(key==="M"?'heart':(key==="P"?'check':'people'),14,'#fffdf5')+' '+lead+'</span>'+
+    '<p class="pm-desc-t">'+d.title+'</p>'+
+    d.lines.map(function(t){ return '<p>'+t+'</p>'; }).join("")+
+  '</div>';
+}
+
+/* 結果：君が持っている力＋活かせる場面 */
+function powerHTML(s, isKore){
+  var top = s.top, lean = s.lean, k = POSKEY[top];
+  var d = IKASU[top][lean];
+  var other = (lean === "P") ? "M" : "P";
+  var od = IKASU[top][other];
+  var otherBig = (other === "P") ? (s.pLevel === "大") : (s.mLevel === "大");
+  var fname = function(f){ return f === "P" ? "P機能（やりとげる力）" : "M機能（みんなを大切にする力）"; };
+  var t8 = TYPE8[top][lean];
+  var head = (isKore ? "きみがのばしていけるタイプは" : "きみのタイプは")+"「"+t8.name+"」";
+  var lead = '<em>①「'+top+'」（'+POSSUB[top].role+'）</em> × <em>②'+fname(lean)+'</em>'+
+             '<br>この2つをかけ算した、8つのタイプのうちの1つです。';
+  var t8box = '<div class="t8box">'+
+      '<div class="t8name">'+htmlIcon(top,22,'var(--'+k+')')+' '+t8.name+'</div>'+
+      '<p class="t8ds">'+t8.ds+'</p>'+
+      '<p class="t8ex"><b>こんなとき：</b>'+t8.ex+'</p>'+
+    '</div>';
+  var plus = otherBig
+    ? '<b>もう一つの持ち味：</b>'+od.chikara[0]+'。<br>P・Mのどちらも使えるのが、きみの強み。'
+    : '<b>ここを足すと、もっと強くなる：</b>'+od.chikara[0]+'。<br>まずは一つの場面だけ、意識してみよう。';
+  var yellKw = (lean === "P") ? "rgba(200,90,60,.30)" : "rgba(90,127,160,.32)";
+  var yell = (isKore ? '今はまだ、自分でも気づいていないかもしれません。でも、きみの中にはこの力の芽が確かにあります。<br>' : '')
+           + YELL[top][lean];
+  return '<div class="power" style="--c:var(--'+k+')">'+
+    '<div class="power-h"><span class="power-no">③</span>'+head+'</div>'+
+    '<div class="power-body">'+
+      '<p class="power-lead">'+lead+'</p>'+
+      t8box+
+      '<div class="power-cols">'+
+        '<div>'+
+          '<div class="pw-yell" style="--kwc:'+yellKw+'"><span class="yh">'+htmlIcon('mountain',15,'var(--'+k+')')+' きみの強み</span>'+yell+'</div>'+
+          '<ul class="pw-list">'+ d.chikara.map(function(c,i){
+            return '<li><span class="n">'+(i+1)+'</span><span>'+c+'</span></li>';
+          }).join("") +'</ul>'+
+          '<div class="pw-plus">'+plus+'</div>'+
+        '</div>'+
+        '<div>'+
+          '<div class="scene-h">'+htmlIcon('mountain',18,'var(--'+k+')')+' こんな場面で活かせる</div>'+
+          '<div class="scenes">'+ d.bamen.map(function(b){
+            return '<div class="scene" style="--sc:var(--'+(SCENECOL[b[0]]||"zen")+')">'+
+              '<span class="tg">'+b[0]+'</span><span class="tx">'+b[1]+'</span></div>';
+          }).join("") +'</div>'+
+          '<p class="muted" style="margin:11px 0 0">※ この中から <b>一つだけ</b> えらんで、次の学級会や行事でやってみよう。</p>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+
+/* ============ ④ めざす自分 ============ */
+var AIMWHEN = ["学級会","係・当番","そうじ","行事（運動会・発表会など）","毎日の生活","クラブ・委員会"];
+var aimState = { pos:null, fn:null, acts:[], free:"", when:[], decl:"" };
+
+function aimTypeCards(nowPos, nowFn){
+  return POS.map(function(p){
+    return ["P","M"].map(function(f){
+      var t = TYPE8[p][f], k = POSKEY[p];
+      var isNow = (p===nowPos && f===nowFn);
+      return '<button type="button" class="aim-t'+(isNow?" now":"")+'" data-pos="'+p+'" data-fn="'+f+'" style="--c:var(--'+k+')">'+
+        '<span class="pos">'+p+'</span>'+
+        '<span class="nm">'+t.name+'</span>'+
+        '<span class="fn '+(f==="P"?"pf":"mf")+'">'+f+'機能</span>'+
+        (isNow?'<span class="aim-badge">いまの結果</span>':'')+
+      '</button>';
+    }).join("");
+  }).join("");
+}
+function aimHTML(s){
+  return '<div class="aim" id="aimBox">'+
+    '<div class="aim-h"><span class="power-no">④</span>めざす自分をきめよう</div>'+
+    '<div class="aim-body">'+
+      '<p class="aim-lead">診断でわかったのは、<b>今のきみ</b>。ここからは、<b>これから育てたい自分</b>を自分で決めます。</p>'+
+      '<p class="aim-note">※ 今の結果と<b>同じタイプ</b>をえらんで「もっとのばす」でもいいし、<b>ちがうタイプ</b>をえらんで「のびしろを育てる」でもかまいません。えらび方に正解はありません。</p>'+
+
+      '<div class="aim-st"><span class="n">1</span>めざすタイプを1つえらぶ</div>'+
+      '<div class="aim-grid" id="aimGrid">'+ aimTypeCards(s.top, s.lean) +'</div>'+
+      '<div id="aimPick">'+ aimPickEmpty() +'</div>'+
+
+      '<div class="aim-st"><span class="n">3</span>いつ・どこでやってみる？</div>'+
+      '<div class="aim-when" id="aimWhen">'+
+        AIMWHEN.map(function(w){ return '<button type="button" data-w="'+w+'">'+w+'</button>'; }).join("")+
+      '</div>'+
+
+      '<div class="aim-st"><span class="n">4</span>めざす自分を、言葉にする</div>'+
+      '<textarea class="aim-decl" id="aimDecl" maxlength="120" placeholder="例）わたしは、学級会で意見が止まったとき、「わたしはこう思う」と最初に言える人になります。"></textarea>'+
+      '<p class="aim-cnt"><span id="aimCnt">0</span>/120字</p>'+
+
+      '<div class="aim-foot">'+
+        '<button class="btn" id="aimPrint">印刷プレビューを見る</button>'+
+        '<button class="btn sec" id="aimJpeg">JPEGで保存</button>'+
+      '</div>'+
+      '<p class="aim-hint">「めざす自分カード」（A4・たて）ができます。印刷して、ふりかえり欄に手書きできます。<br>'+
+        '※ カードに名前を入れたいときは、先に「② 先生に提出」タブで組・番号・名前を入れてください。</p>'+
+    '</div>'+
+  '</div>';
+}
+function aimPickEmpty(){
+  return '<div class="aim-st"><span class="n">2</span>そのために、やってみる行動をえらぶ</div>'+
+    '<p class="aim-note" style="margin:0">↑ まず、めざすタイプを1つえらぶと、ここに行動の候補が出ます。</p>';
+}
+function renderAimPick(){
+  var box = document.getElementById("aimPick");
+  if(!box) return;
+  if(!aimState.pos){ box.innerHTML = aimPickEmpty(); return; }
+  var p = aimState.pos, f = aimState.fn, t = TYPE8[p][f], k = POSKEY[p];
+  var acts = KAIPHASES.map(function(ph){ return {ph:ph, tx:KAI[p][ph]}; });
+  acts.push({ph:"ふだん", tx:t.ex});
+  box.innerHTML =
+    '<div class="aim-pick" style="--c:var(--'+k+')">'+
+      '<div class="ttl">'+htmlIcon(p,20,'var(--'+k+')')+' '+t.name+' <small>'+p+' × '+f+'機能</small></div>'+
+      '<p class="ds">'+t.ds+'</p>'+
+    '</div>'+
+    '<div class="aim-st"><span class="n">2</span>そのために、やってみる行動をえらぶ</div>'+
+    '<ul class="aim-acts" id="aimActs" style="--c:var(--'+k+')">'+
+      acts.map(function(a,i){
+        return '<li><label><input type="checkbox" data-i="'+i+'" data-tx="'+esc(a.ph+"：" +a.tx)+'">'+
+          '<span><span class="ph">'+a.ph+'</span>'+a.tx+'</span></label></li>';
+      }).join("")+
+      '<li><label style="align-items:center"><input type="checkbox" id="aimFreeChk">'+
+        '<input type="text" id="aimFree" placeholder="自分で考えた行動を書く" '+
+        'style="flex:1; border:none; border-bottom:2px dotted var(--line); background:transparent; font-family:inherit; font-size:14px; padding:3px 2px; color:var(--ink)"></label></li>'+
+    '</ul>';
+  var actsEl = document.getElementById("aimActs");
+  actsEl.addEventListener("change", collectAim);
+  actsEl.addEventListener("input", function(e){
+    if(e.target.id==="aimFree"){ document.getElementById("aimFreeChk").checked = !!e.target.value.trim(); collectAim(); }
+  });
+  collectAim();
+}
+function collectAim(){
+  var actsEl = document.getElementById("aimActs");
+  aimState.acts = [];
+  if(actsEl){
+    actsEl.querySelectorAll('input[type="checkbox"][data-tx]').forEach(function(c){
+      if(c.checked) aimState.acts.push(c.getAttribute("data-tx"));
+    });
+    var fc = document.getElementById("aimFreeChk"), fx = document.getElementById("aimFree");
+    aimState.free = (fc && fc.checked && fx && fx.value.trim()) ? fx.value.trim() : "";
+  }
+}
+function wireAim(s){
+  var grid = document.getElementById("aimGrid");
+  if(!grid) return;
+  grid.addEventListener("click", function(e){
+    var b = e.target.closest(".aim-t"); if(!b) return;
+    grid.querySelectorAll(".aim-t").forEach(function(x){ x.classList.remove("on"); });
+    b.classList.add("on");
+    aimState.pos = b.getAttribute("data-pos");
+    aimState.fn  = b.getAttribute("data-fn");
+    renderAimPick();
+    document.getElementById("aimPick").scrollIntoView({behavior:"smooth", block:"nearest"});
+  });
+  var when = document.getElementById("aimWhen");
+  when.addEventListener("click", function(e){
+    var b = e.target.closest("button"); if(!b) return;
+    b.classList.toggle("on");
+    aimState.when = Array.prototype.filter.call(when.children, function(x){ return x.classList.contains("on"); })
+      .map(function(x){ return x.getAttribute("data-w"); });
+  });
+  var decl = document.getElementById("aimDecl"), cnt = document.getElementById("aimCnt");
+  decl.addEventListener("input", function(){ aimState.decl = decl.value; cnt.textContent = decl.value.length; });
+  document.getElementById("aimPrint").onclick = function(){ collectAim(); openPreview(s); };
+  document.getElementById("aimJpeg").onclick  = function(){ collectAim(); saveCardJpeg(s); };
+}
+
+/* ============================================================
+   めざす自分カード：canvas に描く
+   プレビュー・印刷・JPEG のすべてが同じ絵になる（印刷で罫線が消える等の事故がない）
+   ============================================================ */
+var CARD_FONT = '"BIZ UDPGothic","Hiragino Maru Gothic ProN","Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP","Yu Gothic",Meiryo,sans-serif';
+var CARD = { W:1654, H:2339, M:96 };   // A4たて・200dpi
+
+function cf(px, bold){ return (bold ? "bold " : "") + px + "px " + CARD_FONT; }
+function cardRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);   ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);   ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);     ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+/* 日本語の行折り返し（行頭に置かない文字は前の行に残す） */
+var NO_HEAD = "。、）」』】・？！ーぁぃぅぇぉっゃゅょゎ々";
+function wrapJa(ctx, text, maxW){
+  var lines=[], cur="";
+  for(var i=0; i<text.length; i++){
+    var ch = text.charAt(i);
+    if(ch === "\n"){ lines.push(cur); cur=""; continue; }
+    if(cur && ctx.measureText(cur+ch).width > maxW){
+      if(NO_HEAD.indexOf(ch) >= 0){ lines.push(cur+ch); cur=""; }
+      else { lines.push(cur); cur=ch; }
+    } else cur += ch;
+  }
+  if(cur) lines.push(cur);
+  return lines;
+}
+function drawPara(ctx, text, x, y, maxW, lh, draw){
+  var lines = wrapJa(ctx, text, maxW);
+  if(draw) for(var i=0;i<lines.length;i++) ctx.fillText(lines[i], x, y + i*lh + lh*0.74);
+  return lines.length * lh;
+}
+function drawRules(ctx, x, y, w, n, gap, draw){
+  if(draw){
+    ctx.save(); ctx.strokeStyle="#9a9a9a"; ctx.lineWidth=2;
+    for(var i=0;i<n;i++){
+      var yy = y + (i+1)*gap - 6;
+      ctx.beginPath(); ctx.moveTo(x,yy); ctx.lineTo(x+w,yy); ctx.stroke();
+    }
+    ctx.restore();
+  }
+  return n*gap;
+}
+/* 見出し付きの枠。bodyFn(ctx,x,y,w,draw) は使った高さを返す */
+function drawSection(ctx, y, title, bodyFn, draw){
+  var pad = 26, x = CARD.M, w = CARD.W - CARD.M*2;
+  var ix = x + pad, iw = w - pad*2, ty = y + pad;
+  ctx.fillStyle = "#000"; ctx.font = cf(32,true);
+  if(draw){
+    ctx.fillText(title, ix, ty + 30);
+    ctx.save(); ctx.strokeStyle="#777"; ctx.lineWidth=2; ctx.setLineDash([4,5]);
+    ctx.beginPath(); ctx.moveTo(ix, ty+48); ctx.lineTo(ix+iw, ty+48); ctx.stroke(); ctx.restore();
+  }
+  var bh = bodyFn(ctx, ix, ty + 66, iw, draw);
+  var h  = pad + 66 + bh + pad;
+  if(draw){
+    ctx.save(); cardRect(ctx, x, y, w, h, 16);
+    ctx.strokeStyle = "#1a1a1a"; ctx.lineWidth = 3; ctx.stroke(); ctx.restore();
+  }
+  return h;
+}
+function fieldValue(k){ return String(STUDENT[k] || "").trim(); }
+
+function drawCard(s){
+  var cv = document.createElement("canvas");
+  cv.width = CARD.W; cv.height = CARD.H;
+  var ctx = cv.getContext("2d");
+  ctx.textBaseline = "alphabetic";
+  ctx.fillStyle = "#fff"; ctx.fillRect(0,0,CARD.W,CARD.H);
+
+  var M = CARD.M, W = CARD.W - M*2;
+  var kumi = fieldValue("kumi"), ban = fieldValue("ban"),
+      sei  = fieldValue("sei"),  mei = fieldValue("mei");
+  var namae = (sei + (sei && mei ? " " : "") + mei);
+  var dt = new Date();
+  var dateStr = dt.getFullYear()+"年"+(dt.getMonth()+1)+"月"+dt.getDate()+"日";
+  var now = TYPE8[s.top][s.lean];
+  var aim = aimState.pos ? TYPE8[aimState.pos][aimState.fn] : null;
+
+  /* ---- ヘッダー ---- */
+  ctx.fillStyle = "#000"; ctx.font = cf(58,true);
+  ctx.fillText("めざす自分カード", M, M+56);
+  ctx.font = cf(24); ctx.fillStyle = "#444";
+  ctx.fillText("山登りリーダーシップ ／ 6年 学級活動(3)", M, M+96);
+  // 右：組・番・名前
+  (function(){
+    var y = M+42, x = CARD.W - M;
+    ctx.textAlign = "right"; ctx.fillStyle = "#000";
+    ctx.font = cf(24); ctx.fillText("記入日："+dateStr, x, y+52);
+    ctx.textAlign = "left";
+    var cells = [{l:"組", v:kumi, w:130},{l:"番", v:ban, w:90},{l:"名前", v:namae, w:250}];
+    var total = cells.reduce(function(a,c){ return a + c.w + 46; }, 0);
+    var cx = CARD.W - M - total;
+    cells.forEach(function(c){
+      ctx.font = cf(24); ctx.fillStyle = "#333"; ctx.fillText(c.l, cx, y);
+      cx += 46;
+      ctx.save(); ctx.strokeStyle="#333"; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(cx, y+8); ctx.lineTo(cx+c.w, y+8); ctx.stroke(); ctx.restore();
+      if(c.v){ ctx.font = cf(28,true); ctx.fillStyle="#000";
+        ctx.textAlign="center"; ctx.fillText(c.v, cx+c.w/2, y); ctx.textAlign="left"; }
+      cx += c.w;
+    });
+  })();
+  ctx.save(); ctx.strokeStyle="#1a1a1a"; ctx.lineWidth=6;
+  ctx.beginPath(); ctx.moveTo(M, M+120); ctx.lineTo(CARD.W-M, M+120); ctx.stroke(); ctx.restore();
+
+  /* ---- 本文セクション ---- */
+  var actLines = aimState.acts.slice();
+  if(aimState.free) actLines.push("自分で考えた行動："+aimState.free);
+
+  function body1(ctx,x,y,w,draw){
+    var h = 0;
+    ctx.font = cf(27); ctx.fillStyle="#000";
+    var row = "山のどこ："+s.top+"（"+POSSUB[s.top].role+"）　　強い力："+
+              (s.lean==="P" ? "P機能（やりとげる力）" : "M機能（みんなを大切にする力）")+
+              "　　P "+s.pm.P+"/24　M "+s.pm.M+"/24";
+    h += drawPara(ctx, row, x, y+h, w, 44, draw);
+    h += 8;
+    ctx.font = cf(46,true);
+    if(draw) ctx.fillText("タイプ： "+now.name, x, y+h+46);
+    h += 62;
+    ctx.font = cf(26); ctx.fillStyle="#222";
+    h += drawPara(ctx, now.ds, x, y+h, w, 42, draw);
+    return h;
+  }
+  function body2(ctx,x,y,w,draw){
+    if(!aim) return drawRules(ctx, x, y, w, 2, RULE_GAP, draw);
+    var h = 0;
+    ctx.font = cf(46,true); ctx.fillStyle="#000";
+    if(draw) ctx.fillText(aim.name+"（"+aimState.pos+" × "+aimState.fn+"機能）", x, y+46);
+    h += 62;
+    ctx.font = cf(26); ctx.fillStyle="#222";
+    h += drawPara(ctx, aim.ds, x, y+h, w, 42, draw);
+    return h;
+  }
+  function body3(ctx,x,y,w,draw){
+    var h = 0;
+    if(actLines.length){
+      ctx.font = cf(27); ctx.fillStyle="#000";
+      actLines.forEach(function(t){
+        var bx = x, by = y+h+8;
+        if(draw){
+          ctx.save(); ctx.strokeStyle="#222"; ctx.lineWidth=2.5;
+          ctx.strokeRect(bx, by, 24, 24);
+          ctx.beginPath(); ctx.moveTo(bx+5,by+13); ctx.lineTo(bx+10,by+19); ctx.lineTo(bx+19,by+6);
+          ctx.lineWidth=3.5; ctx.stroke(); ctx.restore();
+          ctx.font = cf(27); ctx.fillStyle="#000";
+        }
+        h += drawPara(ctx, t, x+40, y+h, w-40, 42, draw) + 6;
+      });
+    } else {
+      h += drawRules(ctx, x, y, w, 3, RULE_GAP, draw);
+    }
+    h += 10;
+    ctx.font = cf(27,true); ctx.fillStyle="#000";
+    var lbl = "いつ・どこで：";
+    var lw = ctx.measureText(lbl).width;
+    if(draw) ctx.fillText(lbl, x, y+h+32);
+    if(aimState.when.length){
+      ctx.font = cf(27);
+      if(draw) ctx.fillText(aimState.when.join("　／　"), x+lw+8, y+h+32);
+    } else if(draw){
+      ctx.save(); ctx.strokeStyle="#9a9a9a"; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(x+lw+8, y+h+42); ctx.lineTo(x+w, y+h+42); ctx.stroke(); ctx.restore();
+    }
+    h += 46;
+    return h;
+  }
+  function body4(ctx,x,y,w,draw){
+    var n = 2;
+    var h = drawRules(ctx, x, y, w, n, RULE_GAP, draw);
+    if(aimState.decl){
+      ctx.font = cf(30,true); ctx.fillStyle="#000";
+      var lines = wrapJa(ctx, aimState.decl, w-10);
+      if(draw) for(var i=0;i<lines.length && i<n; i++) ctx.fillText(lines[i], x+6, y + (i+1)*RULE_GAP - 18);
+      if(lines.length > n){ // 3行以上なら罫線を足す
+        h = drawRules(ctx, x, y, w, lines.length, RULE_GAP, false);
+        if(draw){
+          drawRules(ctx, x, y, w, lines.length, RULE_GAP, true);
+          ctx.font = cf(30,true); ctx.fillStyle="#000";
+          for(var j=0;j<lines.length;j++) ctx.fillText(lines[j], x+6, y + (j+1)*RULE_GAP - 18);
+        }
+      }
+    }
+    return h;
+  }
+  function body5(ctx,x,y,w,draw){
+    var h = 0;
+    ctx.font = cf(27,true); ctx.fillStyle="#000";
+    if(draw){
+      ctx.fillText("やってみた日：", x, y+32);
+      ctx.save(); ctx.strokeStyle="#333"; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(x+200, y+42); ctx.lineTo(x+430, y+42); ctx.stroke(); ctx.restore();
+      ctx.fillText("できた度：", x+490, y+32);
+      ctx.font = cf(30); ctx.fillText("◎　　○　　△", x+640, y+32);
+    }
+    h += 60;
+    h += drawRules(ctx, x, y+h, w, 3, RULE_GAP, draw);
+    return h;
+  }
+  function body6(ctx,x,y,w,draw){
+    return drawRules(ctx, x, y, w, 2, RULE_GAP, draw);
+  }
+
+  var secs = [
+    ["1．診断でわかった「今のわたし」", body1],
+    ["2．めざす自分",                  body2],
+    ["3．そのために、やってみる行動",   body3],
+    ["4．めざす自分 宣言",             body4],
+    ["5．やってみて、どうだった？（あとで書く）", body5],
+    ["6．友だち・先生・おうちの人から", body6]
+  ];
+  var GAP = 20, TOP = M + 148, BOTTOM = CARD.H - M - 46;
+
+  /* 1回目：高さを測って、罫線の間かくでページを埋める */
+  RULE_GAP = 56;
+  var used = secs.reduce(function(a,sec){ return a + drawSection(ctx, 0, sec[0], sec[1], false) + GAP; }, 0) - GAP;
+  var slack = (BOTTOM - TOP) - used;
+  var nRules = 7;                                   // 罫線の本数の目安
+  RULE_GAP = Math.max(56, Math.min(84, 56 + slack/nRules));
+
+  /* 2回目：実際に描く */
+  var y = TOP;
+  secs.forEach(function(sec){
+    var h = drawSection(ctx, y, sec[0], sec[1], false);
+    drawSection(ctx, y, sec[0], sec[1], true);
+    y += h + GAP;
+  });
+
+  /* ---- フッター ---- */
+  ctx.font = cf(22); ctx.fillStyle = "#555";
+  ctx.fillText("リーダーは1人じゃない。みんなで力を分け合って登ろう。", M, CARD.H - M + 6);
+  ctx.textAlign = "right";
+  ctx.fillText("リーダー診断／シェアードリーダーシップ", CARD.W - M, CARD.H - M + 6);
+  ctx.textAlign = "left";
+  return cv;
+}
+var RULE_GAP = 56;
+
+function cardFileName(){
+  var sei = fieldValue("sei"), mei = fieldValue("mei"), ban = fieldValue("ban");
+  var who = (ban ? ban+"_" : "") + sei + mei;
+  return "めざす自分カード" + (who ? "_"+who : "") + ".jpg";
+}
+function openPreview(s){
+  var url = drawCard(s).toDataURL("image/jpeg", 0.94);
+  document.getElementById("prmImg").src = url;
+  document.getElementById("printSheet").innerHTML = '<img src="'+url+'" alt="">';
+  document.getElementById("prModal").classList.add("on");
+}
+function closePreview(){ document.getElementById("prModal").classList.remove("on"); }
+/* プレビュー画面のボタン（1回だけ配線する） */
+(function(){
+  var modal = document.getElementById("prModal");
+  document.getElementById("prmX").onclick     = closePreview;
+  document.getElementById("prmClose").onclick = closePreview;
+  modal.addEventListener("click", function(e){ if(e.target === modal) closePreview(); });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape") closePreview(); });
+  document.getElementById("prmPrint").onclick = function(){ window.print(); };
+  document.getElementById("prmJpeg").onclick  = function(){ if(lastResult) saveCardJpeg(lastResult); };
+})();
+function saveCardJpeg(s){
+  var cv = drawCard(s);
+  document.getElementById("printSheet").innerHTML = '<img src="'+cv.toDataURL("image/jpeg",0.94)+'" alt="">';
+  cv.toBlob(function(blob){
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = cardFileName();
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+  }, "image/jpeg", 0.94);
+}
+function esc(t){
+  return String(t).replace(/[&<>"]/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];
+  });
+}
+
+var lastResult = null;
+function showResult(){
+  document.getElementById("progBar").style.width="100%";
+  var s = computeScores(answers);
+  lastResult = s;
+  var isKore = (s.pLevel==="小" && s.mLevel==="小");    // 小P小M（pm型）
+  var named = !isKore;                                   // これから以外は必ず「中でもこれ！」を名指し
+  var strong = s.lead >= 2;                              // はっきり突出しているか
+  var top = s.top, t4 = TYPE4[s.type4];
+  var pmPct = 50 + (s.pm.P - s.pm.M) * (50/Math.max(1,(s.pm.P+s.pm.M)));
+  pmPct = Math.max(6, Math.min(94, pmPct));
+  var headline = htmlIcon(top,26,'var(--'+POSKEY[top]+')')+' 「'+top+'」（'+POSSUB[top].role+'）';
+  var mountHi = top, sub;
+  if(isKore){
+    sub = "いま、いちばん力を出しやすいのはこの場所。"+POSINFO[top].desc+"リーダーシップはこれから育ちます。";
+  } else if(strong){
+    sub = POSINFO[top].desc;
+  } else {
+    sub = "どの場所もバランスよくできそう。その中でもいちばん力を出せそうなのが、ここ。"+POSINFO[top].desc;
+  }
+
+  var kaiHtml;
+  if(named){
+    kaiHtml = '<details class="kai"><summary class="kai-h">学級会での活かし方（話し合い→準備→実践）</summary><ul>'+
+      KAIPHASES.map(function(ph){return '<li><span class="kai-ph">'+ph+'</span>'+KAI[top][ph]+'</li>';}).join("")+'</ul></details>';
+  } else {
+    kaiHtml = '<details class="kai"><summary class="kai-h">学級会でやってみよう（話し合い→準備→実践）</summary><ul>'+
+      '<li><span class="kai-ph">話し合い</span><b>前</b>：'+KAI["前"]["話し合い"]+'</li>'+
+      '<li><span class="kai-ph">準備</span><b>後ろ</b>：'+KAI["後ろ"]["準備"]+'</li>'+
+      '<li><span class="kai-ph">実践</span><b>真ん中</b>：'+KAI["真ん中"]["実践"]+'</li></ul>'+
+      '<p class="muted" style="margin:6px 0 0">どれか一つの場面で、挑戦したい役をえらんでやってみよう。</p></details>';
+  }
+
+  var html =
+  '<div class="card">'+
+    '<h2 class="title">あなたのリーダーシップ</h2>'+
+    steps3HTML(s) +
+
+    '<div class="res-2">'+
+      '<div class="secbox">'+
+        secheadHTML("①", 'var(--'+POSKEY[top]+')', "山のどこで力を出す？", "＝ 4つの場所のうち、きみが力を出しやすいところ")+
+        '<div class="mount-box">'+ mountSVG(null, mountHi) +'</div>'+
+        '<p class="sec-title" style="--c:var(--'+POSKEY[top]+')">'+headline+'</p>'+
+        '<p class="sec-desc">'+sub+'</p>'+
+      '</div>'+
+      '<div class="secbox">'+
+        secheadHTML("②", (s.lean==="P"?'var(--p)':'var(--m)'), "どうやって力を出す？", "＝ 2つの力（P機能・M機能）のうち、きみが強いほう")+
+        pmBigHTML(s, pmPct) +
+        '<div class="note t4note"><b>'+t4.name+'</b>（'+s.type4+'）<br>'+t4.desc+'</div>'+
+      '</div>'+
+    '</div>'+
+
+    powerHTML(s, isKore) +
+
+    aimHTML(s) +
+
+    kaiHtml +
+    (named ? '<div class="note" style="margin-top:10px"><b>強み：</b>'+POSINFO[top].strong+'</div>' : '') +
+
+    '<div class="card" style="background:#fbf8ee; margin-top:12px; text-align:center">'+
+      '<h2 class="title" style="font-size:15px">結果を先生に提出する</h2>'+
+      '<p class="muted" style="margin:2px 0 10px">「② 先生に提出」タブで、組・出席番号・名前を入れて送信します。<br>結果（<b>'+esc(TYPE8[top][s.lean].name)+'</b>）は自動で入ります。</p>'+
+      '<button class="btn wide" id="goTeishutsuBtn">② 先生に提出へ すすむ →</button>'+
+    '</div>'+
+
+    '<div class="row" style="justify-content:center; margin-top:12px">'+
+      '<button class="btn sec" id="retryBtn">もう一度やる</button>'+
+    '</div>'+
+  '</div>';
+
+  resultBox.innerHTML = html;
+  quiz.style.display="none";
+  resultBox.style.display="block";
+  resultBox.scrollIntoView({behavior:"smooth", block:"start"});
+  celebrate(resultBox.querySelector(".card"));
+
+  aimState = { pos:null, fn:null, acts:[], free:"", when:[], decl:"" };
+  wireAim(s);
+
+  document.getElementById("retryBtn").onclick = startBtn.onclick;
+  document.getElementById("goTeishutsuBtn").onclick = function(){ switchTab("teishutsu"); };
+
+  // 診断結果を「先生に提出」タブへ自動で反映
+  setLeaderFromResult(s);
+}
+function switchTab(id){
+  Array.prototype.forEach.call(tabs.children, function(x){ x.classList.toggle("active", x.getAttribute("data-tab")===id); });
+  document.querySelectorAll("section.panel").forEach(function(s){ s.classList.toggle("active", s.id===id); });
+  window.scrollTo(0,0);
+}
+
+/* ============================================================
+   ② 先生に提出（Googleフォーム）
+   ・入力は STUDENT に集約し、どの画面でも同じ値が使われる
+   ・提出は「事前入力リンク」でフォームを開く方式。
+     児童はフォームの送信ボタンを押すだけ（Google側の確認画面が出るので
+     送れたかどうかがはっきり分かる）
+   ============================================================ */
+var STUDENT = { kumi:"", ban:"", sei:"", mei:"", leader:"" };
+var FORMCFG_KEY = "leaderShipFormCfg_v1";
+
+/* 保存してある先生用設定を読み込む（HTMLを書きかえなくても使える） */
+(function loadSavedFormCfg(){
+  try{
+    var raw = localStorage.getItem(FORMCFG_KEY);
+    if(!raw) return;
+    var c = JSON.parse(raw);
+    if(c && c.viewUrl && c.entry){ CONFIG.form.viewUrl = c.viewUrl; CONFIG.form.actionUrl = c.actionUrl||""; CONFIG.form.entry = c.entry; }
+  }catch(e){}
+})();
+function formReady(){
+  var f = CONFIG.form;
+  return !!(f.viewUrl && f.entry && f.entry.leader);
+}
+/* 8タイプの選択肢（フォームのラジオにそのまま貼れる文字列） */
+function leaderChoices(){
+  var out = [];
+  POS.forEach(function(p){ ["P","M"].forEach(function(fn){ out.push(p+"（"+TYPE8[p][fn].name+"）"); }); });
+  return out;
+}
+function buildPrefill(d){
+  var f = CONFIG.form; if(!f.viewUrl) return "";
+  var u = f.viewUrl.split("?")[0] + "?usp=pp_url";
+  function add(k,v){ if(f.entry[k] && v) u += "&"+encodeURIComponent(f.entry[k])+"="+encodeURIComponent(v); }
+  add("kumi",d.kumi); add("ban",d.ban); add("sei",d.sei); add("mei",d.mei); add("leader",d.leader);
+  return u;
+}
+/* 入力欄どうしの同期（結果画面・提出タブのどちらで入れても同じ） */
+function sfSync(el){
+  var k = el.getAttribute("data-sf");
+  STUDENT[k] = el.value;
+  document.querySelectorAll('[data-sf="'+k+'"]').forEach(function(x){ if(x !== el) x.value = el.value; });
+  el.classList.toggle("ok", !!el.value.trim());
+}
+function setLeaderFromResult(s){
+  var v = s.top+"（"+TYPE8[s.top][s.lean].name+"）";
+  STUDENT.leader = v;
+  var sel = document.getElementById("fLeader");
+  if(sel){ sel.value = v; sel.classList.add("ok"); }
+  var note = document.getElementById("fLeaderNote");
+  if(note) note.innerHTML = '診断結果から自動で入りました<span class="ts-badge2">'+esc(TYPE8[s.top][s.lean].name)+'</span>';
+}
+/* 提出タブの初期化 */
+(function initTeishutsu(){
+  var kumiSel = document.getElementById("fKumi");
+  kumiSel.innerHTML = '<option value="">えらぶ</option>' +
+    CONFIG.kumiOptions.map(function(k){ return '<option>'+k+'</option>'; }).join("");
+  document.getElementById("fLeader").innerHTML =
+    '<option value="">まだ診断していません</option>' +
+    POS.map(function(p){
+      return '<optgroup label="'+p+'（'+POSSUB[p].role+'）">'+
+        ["P","M"].map(function(fn){
+          var v = p+"（"+TYPE8[p][fn].name+"）";
+          return '<option value="'+v+'">'+TYPE8[p][fn].name+'（'+(fn==="P"?"P機能":"M機能")+'）</option>';
+        }).join("")+'</optgroup>';
+    }).join("");
+  document.querySelectorAll('[data-sf]').forEach(function(el){
+    el.addEventListener("input",  function(){ sfSync(el); });
+    el.addEventListener("change", function(){ sfSync(el); });
+  });
+  document.getElementById("tsChoices").value = leaderChoices().join("\n");
+
+  var msg = document.getElementById("tsMsg");
+  function missing(){
+    var m = [];
+    if(!STUDENT.kumi) m.push("組");
+    if(!STUDENT.ban.trim()) m.push("出席番号");
+    if(!STUDENT.sei.trim()) m.push("名字");
+    if(!STUDENT.leader) m.push("自己判断の結果（①自己診断をやってください）");
+    return m;
+  }
+  function openForm(inFrame){
+    var m = missing();
+    if(m.length){ msg.textContent = "入れてほしい項目：" + m.join("・"); return; }
+    /* 体験版：どこにも送らない */ msg.textContent = "体験版なので、どこにも送りません（本物では、ここで先生のフォームが開きます）。"; if(window.__DEMO_NOTE) window.__DEMO_NOTE("体験版なので、どこにも送りません"); return;
+    if(!formReady()){
+      msg.innerHTML = "フォームがまだ設定されていません。下の<b>「先生用：フォームの設定」</b>から設定してください。";
+      document.getElementById("tsAdmin").open = true;
+      return;
+    }
+    var url = buildPrefill(STUDENT);
+    if(inFrame){
+      document.getElementById("tsFrameBox").style.display = "block";
+      document.getElementById("tsFrame").src = url + "&embedded=true";
+      msg.textContent = "下のフォームの内容をたしかめて「送信」を押してください。";
+      document.getElementById("tsFrameBox").scrollIntoView({behavior:"smooth", block:"start"});
+    } else {
+      window.open(url, "_blank");
+      msg.textContent = "別のタブでフォームを開きました。そちらで「送信」を押してください。";
+    }
+  }
+  document.getElementById("tsOpenForm").onclick = function(){ openForm(true); };
+  document.getElementById("tsNewTab").onclick   = function(){ openForm(false); };
+
+  /* --- 先生用：事前入力リンクから entry ID を自動で読みとる --- */
+  var SAMPLE = { kumi:"1組", ban:"99", sei:"見本", mei:"太郎", leader:"前（一歩めスターター）" };
+  var cfgMsg = document.getElementById("tsCfgMsg");
+  function showCfgState(){
+    if(formReady()){
+      cfgMsg.innerHTML = '<b style="color:var(--accent)">設定ずみ：フォームにつながっています。</b>';
+    } else {
+      cfgMsg.textContent = "まだ設定されていません。";
+    }
+  }
+  showCfgState();
+  document.getElementById("tsCfgRead").onclick = function(){
+    var url = document.getElementById("tsCfgUrl").value.trim();
+    if(!url){ cfgMsg.textContent = "事前入力リンクを貼りつけてください。"; return; }
+    var m = url.match(/\/forms\/d\/e\/[^\/]+\/viewform/);
+    if(!m){ cfgMsg.textContent = "Googleフォームの事前入力リンクではないようです。もう一度コピーしてください。"; return; }
+    var qs = url.split("?")[1] || "";
+    var entry = {}, found = 0, unknown = [];
+    qs.split("&").forEach(function(pair){
+      var kv = pair.split("=");
+      if(kv.length < 2 || kv[0].indexOf("entry.") !== 0) return;
+      var key = decodeURIComponent(kv[0]).split(".sentinel")[0];
+      var val = decodeURIComponent(kv[1].replace(/\+/g," ")).trim();
+      var hit = null;
+      for(var f in SAMPLE){ if(SAMPLE[f] === val) hit = f; }
+      if(hit && !entry[hit]){ entry[hit] = key; found++; }
+      else if(val) unknown.push(val);
+    });
+    var lack = ["kumi","ban","sei","mei","leader"].filter(function(k){ return !entry[k]; });
+    if(lack.length){
+      var jp = {kumi:"組=1組", ban:"出席番号=99", sei:"名字=見本", mei:"名前=太郎", leader:"自己判断の結果=前（一歩めスターター）"};
+      cfgMsg.innerHTML = "読みとれなかった項目があります：<b>"+lack.map(function(k){return jp[k];}).join(" ／ ")+"</b><br>"+
+        "見本の値をそのとおりに入れて、事前入力リンクを取り直してください。"+
+        (unknown.length ? "<br><span class=\"muted\">（見つかった値："+esc(unknown.join(" / "))+"）</span>" : "");
+      return;
+    }
+    var viewUrl = url.split("?")[0];
+    CONFIG.form.viewUrl  = viewUrl;
+    CONFIG.form.actionUrl = viewUrl.replace(/viewform$/, "formResponse");
+    CONFIG.form.entry = entry;
+    try{ localStorage.setItem(FORMCFG_KEY, JSON.stringify({viewUrl:viewUrl, actionUrl:CONFIG.form.actionUrl, entry:entry})); }catch(e){}
+    cfgMsg.innerHTML = '<b style="color:var(--accent)">設定できました（5つとも読みとれました）。</b>このタブレットに保存したので、次からはそのまま使えます。';
+  };
+  document.getElementById("tsCfgClear").onclick = function(){
+    try{ localStorage.removeItem(FORMCFG_KEY); }catch(e){}
+    // 配る版：消したら KUBARU の値（空ならどこにも送らない）にもどす
+    CONFIG.form.actionUrl = KUBARU.form; CONFIG.form.viewUrl = KUBARU.form ? KUBARU.form.replace(/formResponse$/, "viewform") : "";
+    CONFIG.form.entry = { kumi:KUBARU.entry.kumi||"", ban:KUBARU.entry.ban||"", sei:KUBARU.entry.sei||"", mei:KUBARU.entry.mei||"", leader:KUBARU.entry.leader||"" };
+    document.getElementById("tsCfgUrl").value = "";
+    showCfgState();
+  };
+  document.getElementById("tsCopyChoices").onclick = function(){
+    var ta = document.getElementById("tsChoices");
+    ta.select(); ta.setSelectionRange(0, 99999);
+    var ok = false;
+    try{ ok = document.execCommand("copy"); }catch(e){}
+    if(navigator.clipboard) navigator.clipboard.writeText(ta.value).catch(function(){});
+    document.getElementById("tsCopyMsg").textContent = ok ? "　コピーしました" : "　選択しました（⌘Cでコピー）";
+  };
+})();
+
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+
+/* お祝いの紙吹雪 */
+function celebrate(host){
+  if(!host) return;
+  if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var colors=["#5c8a54","#c85a3c","#d29433","#5a7fa0","#c9b487","#7fa06a"];
+  var wrap=document.createElement("div"); wrap.className="confetti";
+  for(var i=0;i<30;i++){
+    var d=document.createElement("i");
+    d.style.left=(Math.random()*100)+"%";
+    d.style.background=colors[i%colors.length];
+    d.style.animationDelay=(Math.random()*0.6).toFixed(2)+"s";
+    d.style.animationDuration=(1.6+Math.random()*1.3).toFixed(2)+"s";
+    if(i%3===0){ d.style.borderRadius="50%"; d.style.width="10px"; d.style.height="10px"; }
+    if(i%3===2){ d.style.width="7px"; d.style.height="12px"; }
+    wrap.appendChild(d);
+  }
+  host.appendChild(wrap);
+  setTimeout(function(){ if(wrap.parentNode) wrap.parentNode.removeChild(wrap); }, 3400);
+}
+
+/* ============ 初期化 ============ */
+renderIchiran();
+document.getElementById("conceptScene").innerHTML = conceptSVG();
+document.getElementById("tsScene").innerHTML = conceptSVG();
+document.getElementById("tsStart").onclick = function(){
+  document.getElementById("titlescreen").style.display = "none";
+  window.scrollTo(0,0);
+};
+</script>
+</body>
+</html>
