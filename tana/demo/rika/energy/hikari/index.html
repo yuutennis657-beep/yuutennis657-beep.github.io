@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="ja">
+<head><script>window.RL_HOME_URL="../../energy.html";</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>光の はね返り</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* 見本 v0.1（2026-11-07）3年 理科 光の せいしつ（理科ラボ エネルギー）
+   手を かがみに して かたむけると、はね返した 日光の 向きが 変わる。まとに 当てて、光を 重ねると 明るく・あたたかく なる
+   （3年の 部屋なので 漢字は 3年までに） */
+:root{
+  /* エネルギーの 部屋：ポップ・黄と 赤（4つの 部屋で 名前を そろえる 5つ） */
+  --rl-bg:#ffffff; --rl-ink:#1f2937; --rl-accent:#f5b700; --rl-accent2:#e0442b; --rl-soft:#fff6d6;
+  --rl-beam:rgba(245,183,0,.32); --rl-beam2:rgba(245,183,0,.48); --rl-brown:#b45309; --rl-err:#b91c1c; --rl-glow:#ffe28a; --rl-gray:#e5e7eb; --rl-line:#e2cf8e; --rl-mute:#9ca3af; --rl-n:#e0442b; --rl-ok:#1b7f3b; --rl-ray:#d97706; --rl-spot:rgba(80,75,20,.6); --rl-stage:#fffbeb; --rl-sub:#4b5563; --rl-target:#7c2d12; --rl-veil:rgba(255,255,255,.92); --rl-veil2:rgba(255,255,255,.6); --rl-wood:#f3e6c8; --rl-wood2:#8a6d3b;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--rl-bg);color:var(--rl-ink);
+  font-family:"BIZ UDPGothic",sans-serif;font-size:16px;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+.re-app{display:grid;grid-template-rows:auto 1fr;gap:8px;height:100vh;height:100dvh;padding:8px 12px 12px}
+.re-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:52px}
+.re-lab{font-size:15px;color:var(--rl-sub)}
+.re-seg{flex:none;display:flex;border:1px solid var(--rl-line);border-radius:10px;overflow:hidden}
+.re-seg button{min-width:56px;min-height:44px;border:0;background:var(--rl-bg);font-size:16px;display:flex;align-items:center;justify-content:center;gap:4px;padding:0 10px}
+.re-seg button+button{border-left:1px solid var(--rl-line)}
+.re-seg button[aria-pressed="true"]{background:var(--rl-accent);color:var(--rl-ink);box-shadow:inset 0 0 0 2px var(--rl-ink);font-weight:700}
+.re-sp{flex:1}
+.re-main{display:grid;grid-template-columns:1fr 200px;gap:10px;min-height:0}
+.re-stage{position:relative;border-radius:12px;overflow:hidden;background:var(--rl-stage);min-height:0;touch-action:none}
+.re-stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.re-veil{position:absolute;inset:0;background:var(--rl-veil2)}
+.re-veil[hidden],.re-stage video[hidden]{display:none!important}
+.re-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.re-msg{position:absolute;left:50%;top:10px;transform:translateX(-50%);padding:6px 16px;border-radius:20px;
+  background:var(--rl-veil);font-size:18px;font-weight:700;white-space:nowrap;pointer-events:none;max-width:94%;overflow:hidden;text-overflow:ellipsis}
+.re-msg:empty{display:none}
+.re-start{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:var(--rl-bg);padding:16px;text-align:center}
+.re-start[hidden]{display:none!important}
+.re-start p{margin:0;font-size:18px;line-height:1.7}
+.re-start svg{width:min(200px,36%);height:auto}
+.re-big{min-height:56px;padding:0 36px;font-size:22px;font-weight:700;border-radius:28px;border:0;background:var(--rl-accent);color:var(--rl-ink);box-shadow:inset 0 0 0 2px var(--rl-ink)}
+.re-big:disabled{opacity:.6}
+.re-gos{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.re-gos .re-big{display:inline-flex;align-items:center;gap:8px}
+.re-start .re-gos svg{width:26px;height:26px}
+.re-sub{background:var(--rl-bg)}
+.re-start .re-tenote{font-size:15px;color:var(--rl-sub);line-height:1.4}
+@media (max-height:420px){ .re-start .re-tenote{display:none} }
+.re-err{color:var(--rl-err);font-size:16px;max-width:90%}
+.re-err[hidden]{display:none!important}
+.re-side{display:flex;flex-direction:column;align-items:center;gap:6px;border:1px solid var(--rl-line);border-radius:12px;padding:8px;min-height:0;background:var(--rl-bg)}
+.re-thermo{position:relative;flex:1;min-height:0;width:100%;display:flex;justify-content:center;gap:8px}
+.re-tube{position:relative;width:22px;height:100%;border:3px solid var(--rl-ink);border-radius:12px;background:var(--rl-bg);overflow:hidden}
+.re-tube i{position:absolute;left:0;right:0;bottom:0;background:var(--rl-n);height:0}
+.re-ticks{position:relative;height:100%;width:44px}
+.re-ticks span{position:absolute;left:0;font-size:14px;color:var(--rl-sub);transform:translateY(50%)}
+.re-temp{font-size:30px;font-weight:700;font-variant-numeric:tabular-nums}
+.re-hits{display:flex;align-items:center;gap:4px;min-height:30px;font-size:16px;font-weight:700}
+.re-hits svg{width:26px;height:26px;color:var(--rl-brown)}
+.re-side[hidden]{display:none!important}
+.re-thermo{margin:10px 0 8px}
+.re-tabs{display:flex;border:1px solid var(--rl-line);border-radius:12px;overflow:hidden}
+.re-tabs button{min-height:44px;padding:0 14px;border:0;background:var(--rl-bg);font-size:16px;display:flex;align-items:center;gap:6px}
+.re-tabs button+button{border-left:1px solid var(--rl-line)}
+.re-tabs button[aria-pressed="true"]{background:var(--rl-accent);color:var(--rl-ink);box-shadow:inset 0 0 0 2px var(--rl-ink);font-weight:700}
+.re-tabs svg,.re-b svg{width:22px;height:22px;flex:none}
+.re-b{min-height:44px;min-width:44px;padding:0 14px;border:1px solid var(--rl-line);background:var(--rl-soft);border-radius:12px;font-size:16px;display:flex;align-items:center;gap:6px}
+.re-b[hidden]{display:none!important}
+.re-seg button{min-width:44px}
+.re-tube{overflow:visible}
+.re-tube i{border-radius:0 0 9px 9px}
+.re-popline{position:absolute;left:-8px;right:-8px;height:0;border-top:3px dashed var(--rl-ink);transform:translateY(50%)}
+.re-poplab{font-size:14px;font-weight:700;display:flex;align-items:center;gap:4px}
+.re-poplab::before{content:"";width:18px;border-top:3px dashed var(--rl-ink)}
+.re-note{white-space:nowrap;font-size:14px;color:var(--rl-sub);border:1px dashed var(--rl-mute);border-radius:8px;padding:2px 6px;text-align:center}
+@media (max-height:420px){ .re-side{gap:2px;padding:4px} .re-temp{font-size:24px} .re-hits{min-height:24px} .re-hits svg{width:20px;height:20px} }
+</style>
+</head>
+<body>
+<div class="re-app">
+  <div class="re-top">
+    <div class="re-tabs" role="group" aria-label="あそびかた">
+      <button type="button" id="reLearnTab" aria-pressed="true">
+        <svg data-ic="sun"></svg>はね返す</button>
+      <button type="button" id="reGameTab" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 11h14l-1.6 9H6.6z"/><path d="M8 11a2.4 2.4 0 1 1 3.2-3.2A2.6 2.6 0 0 1 16 8.5a2.4 2.4 0 0 1 .5 2.5"/></svg>ポップコーン</button>
+    </div>
+    <span class="re-lab">かがみ</span>
+    <div class="re-seg" id="reNum" role="group" aria-label="かがみの 数">
+      <button type="button" data-v="1" aria-pressed="false">1</button>
+      <button type="button" data-v="2" aria-pressed="true">2</button>
+      <button type="button" data-v="3" aria-pressed="false">3</button>
+      <button type="button" data-v="4" aria-pressed="false">4</button>
+    </div>
+    <span class="re-lab">まい</span>
+    <span class="re-sp"></span>
+    <button class="re-b" type="button" id="reAgain" hidden>
+      <svg data-ic="reset"></svg>もう いちど</button>
+  </div>
+  <div class="re-main">
+    <div class="re-stage" id="reStage">
+      <video id="reVideo" playsinline muted hidden></video>
+      <div class="re-veil" id="reVeil" hidden></div>
+      <canvas id="reCanvas"></canvas>
+      <div class="re-msg" id="reMsg"></div>
+      <div class="re-start" id="reStart">
+        <svg viewBox="0 0 200 140" fill="none" stroke-width="4" stroke-linecap="round" aria-hidden="true" style="stroke:var(--rl-ink)">
+          <circle cx="30" cy="28" r="12"/><path d="M30 6v6M30 44v6M8 28h6M46 28h6M14 12l4 4M42 40l4 4M46 12l-4 4M14 44l4-4"/>
+          <path d="M44 44l52 62" style="stroke:var(--rl-ray)"/><path d="M96 106l74-74" style="stroke:var(--rl-ray)"/>
+          <path d="M72 112l50-10" stroke-width="7"/><circle cx="176" cy="26" r="14" style="stroke:var(--rl-accent2)"/><circle cx="176" cy="26" r="5" style="stroke:var(--rl-accent2)"/>
+        </svg>
+        <p>手を 立てて、指先に かがみを のせよう。<br>手を かたむけると かがみも かたむくよ。</p>
+        <div class="re-gos"><button class="re-big" id="reGo" type="button"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h4l2-3h6l2 3h4v11H3z"/><circle cx="12" cy="13" r="3.5"/></svg><span>カメラで</span></button><button class="re-big re-sub" id="reTap" type="button"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 12V5.5a1.8 1.8 0 0 1 3.6 0V12l3.6.8a2 2 0 0 1 1.5 2.3L18 21h-8l-3.3-4.6a1.6 1.6 0 0 1 2.4-2.1L10 15"/><path d="M6.5 6.5a5.5 5.5 0 0 1 10.5-1"/></svg><span>ゆびで</span></button></div>
+        <p class="re-tenote">ボタンは 手を 上に あげて、しるしを とめると おせるよ</p>
+        <div class="re-err" id="reErr" hidden></div>
+      </div>
+    </div>
+    <section class="re-side" id="reLearnSide" aria-label="まとの あたたかさ">
+      <span class="re-lab">まとの あたたかさ</span>
+      <div class="re-temp" id="reTemp">14℃</div>
+      <div class="re-thermo">
+        <div class="re-tube"><i id="reTube"></i></div>
+        <div class="re-ticks" id="reTicks"></div>
+      </div>
+      <span class="re-lab">当たっている 光</span>
+      <div class="re-hits" id="reHits"></div>
+    </section>
+    <section class="re-side" id="reGameSide" aria-label="なべの おんど" hidden>
+      <span class="re-lab">なべの おんど</span>
+      <div class="re-temp" id="reGTemp">20℃</div>
+      <div class="re-thermo">
+        <div class="re-tube"><i id="reGTube"></i><b class="re-popline" id="rePopLine"></b></div>
+        <div class="re-ticks" id="reGTicks"></div>
+      </div>
+      <span class="re-poplab">線より 上で はじける</span>
+      <span class="re-lab">当たっている 光</span>
+      <div class="re-hits" id="reGHits"></div>
+      <span class="re-note">アプリだけの おはなし</span>
+    </section>
+  </div>
+</div>
+
+<script src="../../seimei/_parts/rs-te.js"></script>
+<!--RE_PARTS--><script>
+/* 部品（mock/rika/energy/_parts から inline.py で 入れた もの。ここは 手で 直さない） */
+const RE_ICONS={"reset": "<path d=\"M4 11a8 8 0 1 1 1 6M4 4v7h7\"/>", "sun": "<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M19 5l-1.5 1.5M6.5 17.5 5 19\"/>"};
+const RE_ART={"sun":{"w":120,"h":120,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"120\" viewBox=\"0 0 120 120\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M102.00 60.00L113.00 60.00\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M89.70 89.70L97.48 97.48\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M60.00 102.00L60.00 113.00\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M30.30 89.70L22.52 97.48\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M18.00 60.00L7.00 60.00\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M30.30 30.30L22.52 22.52\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M60.00 18.00L60.00 7.00\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M89.70 30.30L97.48 22.52\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><circle cx=\"60\" cy=\"60\" r=\"30\" fill=\"{accent}\"/></g></svg>","pts":{"center":[60,60]}},"sunFace":{"w":140,"h":140,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"140\" height=\"140\" viewBox=\"0 0 140 140\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M64.56 28.35L70.00 5.00L75.44 28.35z\" fill=\"{accent}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M86.11 31.21L98.50 20.64L95.54 36.66z\" fill=\"{accent}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M103.34 44.46L126.29 37.50L108.79 53.89z\" fill=\"{accent}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M111.65 64.56L127.00 70.00L111.65 75.44z\" fill=\"{accent}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M108.79 86.11L126.29 102.50L103.34 95.54z\" fill=\"{accent}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M95.54 103.34L98.50 119.36L86.11 108.79z\" fill=\"{accent}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M75.44 111.65L70.00 135.00L64.56 111.65z\" fill=\"{accent}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M53.89 108.79L41.50 119.36L44.46 103.34z\" fill=\"{accent}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M36.66 95.54L13.71 102.50L31.21 86.11z\" fill=\"{accent}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M28.35 75.44L13.00 70.00L28.35 64.56z\" fill=\"{accent}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M31.21 53.89L13.71 37.50L36.66 44.46z\" fill=\"{accent}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M44.46 36.66L41.50 20.64L53.89 31.21z\" fill=\"{accent}\" stroke=\"{ink}\" stroke-width=\"3\"/><circle cx=\"70\" cy=\"70\" r=\"36\" fill=\"{accent}\"/><path d=\"M49 66Q55 57 61 66M79 66Q85 57 91 66M58 80Q70 92 82 80\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/></g></svg>","pts":{"center":[70,70]}},"pan":{"w":260,"h":150,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"260\" height=\"150\" viewBox=\"0 0 260 150\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M165 65L238 39Q250 35 252 44L254 51Q255 57 247 60L174 81z\" fill=\"{sub}\" stroke=\"{ink}\" stroke-width=\"3\"/><ellipse cx=\"242\" cy=\"49\" rx=\"4\" ry=\"3\" fill=\"{bg}\"/><path d=\"M14 68C15 89 28 111 49 119Q96 137 143 119C164 111 177 89 178 68z\" fill=\"{gray}\" stroke=\"{ink}\" stroke-width=\"3\"/><ellipse cx=\"96\" cy=\"68\" rx=\"82\" ry=\"37\" fill=\"{gray}\"/><ellipse cx=\"96\" cy=\"71\" rx=\"70\" ry=\"27\" fill=\"{soft}\"/></g></svg>","pts":{"center":[96,71],"floor":[96,98],"rimL":[14,68],"rimR":[178,68],"handle":[250,49]}},"panHeat":{"w":260,"h":150,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"260\" height=\"150\" viewBox=\"0 0 260 150\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><g stroke=\"none\"><ellipse cx=\"96\" cy=\"71\" rx=\"70\" ry=\"27\" fill=\"{accent2}\"/></g><path d=\"M43 71C42 61 62 58 77 55S104 58 120 57S150 64 149 72S130 84 113 86S87 83 72 85S44 80 43 71z\" fill=\"none\" stroke=\"{accent}\" stroke-width=\"2\"/><path d=\"M64 71C64 65 77 64 88 62S107 65 119 65S130 73 124 76S108 78 98 80S81 77 74 78S63 75 64 71z\" fill=\"none\" stroke=\"{accent}\" stroke-width=\"2\"/></g></svg>","pts":{"center":[96,71],"floor":[96,98],"rimL":[14,68],"rimR":[178,68],"handle":[250,49]}},"kernel":{"w":28,"h":32,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"28\" height=\"32\" viewBox=\"0 0 28 32\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M14 29C10 28 3 19 3 12C3 5 9 2 15 3C22 2 26 8 25 14C24 21 19 28 14 29z\" fill=\"{accent}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M9 24Q14 21 20 24Q17 30 14 29Q11 28 9 24z\" fill=\"{soft}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M8 13Q7 9 12 8\" fill=\"none\" stroke=\"{soft}\" stroke-width=\"3\"/></g></svg>","pts":{"center":[14,16]}},"popcorn1":{"w":56,"h":50,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"56\" height=\"50\" viewBox=\"0 0 56 50\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M22 35L19 45L28 42L34 46L37 34z\" fill=\"{accent}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M13 37C3 37 2 27 8 23C1 14 10 6 19 10C23 0 36 3 38 12C49 7 55 17 48 25C57 32 47 43 37 38C31 45 21 41 20 35Q16 39 13 37z\" fill=\"{bg}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M18 21Q24 21 24 28M35 28Q30 28 29 34\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/></g></svg>","pts":{"center":[28,25]}},"popcorn2":{"w":56,"h":50,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"56\" height=\"50\" viewBox=\"0 0 56 50\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M30 32L31 44L39 40L46 42L42 31z\" fill=\"{accent}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M11 34C1 30 5 19 13 18C7 9 17 2 25 8C32 1 43 6 41 16C52 12 57 24 48 30C51 41 38 44 33 36C25 45 13 45 11 34z\" fill=\"{bg}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M16 28Q23 26 26 32M34 16Q30 20 33 24\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/></g></svg>","pts":{"center":[28,25]}},"popcorn3":{"w":56,"h":50,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"56\" height=\"50\" viewBox=\"0 0 56 50\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M11 28L5 38L14 37L18 44L24 33z\" fill=\"{accent}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M16 34C5 36 2 24 10 19C5 8 16 3 24 11C29 1 43 4 43 15C56 17 52 32 42 33C44 45 28 48 23 38Q17 41 16 34z\" fill=\"{bg}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M19 18Q24 20 23 26M34 29Q29 31 31 36\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/></g></svg>","pts":{"center":[28,25]}},"popcorn4":{"w":56,"h":50,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"56\" height=\"50\" viewBox=\"0 0 56 50\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M25 32L23 44L32 41L39 46L40 33z\" fill=\"{accent}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M9 35C1 29 6 18 15 19C10 6 24 1 31 10C40 4 50 12 46 22C57 29 49 41 39 36C33 45 21 42 20 35Q14 39 9 35z\" fill=\"{bg}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M17 26Q23 25 26 31M34 17Q30 21 33 25\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/></g></svg>","pts":{"center":[28,25]}},"steam":{"w":40,"h":100,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"40\" height=\"100\" viewBox=\"0 0 40 100\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M10 93C-2 77 23 66 12 50S8 25 14 15M24 95C12 79 37 66 26 49S22 22 29 7\" fill=\"none\" stroke=\"{sub}\" stroke-width=\"3\"/></g></svg>","pts":{"base":[20,95]}},"glowSpot":{"w":200,"h":120,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"200\" height=\"120\" viewBox=\"0 0 200 120\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><defs><radialGradient id=\"glowSpotG\"><stop offset=\"0%\" stop-color=\"{accent}\" stop-opacity=\"0.9\"/><stop offset=\"55%\" stop-color=\"{soft}\" stop-opacity=\"0.5\"/><stop offset=\"100%\" stop-color=\"{bg}\" stop-opacity=\"0\"/></radialGradient></defs><ellipse cx=\"100\" cy=\"60\" rx=\"98\" ry=\"58\" fill=\"url(#glowSpotG)\" stroke=\"none\"/></g></svg>","pts":{"center":[100,60]}},"handMirror":{"w":180,"h":56,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"180\" height=\"56\" viewBox=\"0 0 180 56\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M84 28H96V47Q90 53 84 47z\" fill=\"{sub}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M8 22H172V30H8z\" fill=\"{accent2}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M8 16H172V24H8z\" fill=\"{bg}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M33 22L38 18M78 22L83 18M135 22L140 18\" fill=\"none\" stroke=\"{gray}\" stroke-width=\"3\"/></g></svg>","pts":{"center":[90,16],"faceL":[8,16],"faceR":[172,16],"stem":[90,50]}}};
+function reIc(n){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(RE_ICONS[n]||'')+'</svg>'; }
+document.querySelectorAll('svg[data-ic]').forEach(e=>{ e.outerHTML=reIc(e.dataset.ic); });
+const reImg={};
+function reArt(n){ if(reImg[n]) return reImg[n]; const a=RE_ART[n], im=new Image();
+  im.onload=()=>{ if(typeof draw==='function' && typeof cx!=='undefined') try{ draw(); }catch(e){} };   // 絵が 来たら 描き直す
+  im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(a.svg.replace(/\{(\w+)\}/g,(m,k)=>C[k])); return reImg[n]=im; }
+document.addEventListener('DOMContentLoaded',()=>Object.keys(RE_ART).forEach(n=>{ try{ reArt(n); }catch(e){} }));   // 先に 読んで おく（C が できてから）
+// 絵 n の 点 at（名前・[x,y]・なしは まん中）が (x,y) に 来るように s 倍で 描く。ang で 回す
+function reDraw(n,x,y,s,at,ang){ const a=RE_ART[n], im=reArt(n); if(!im.complete||!im.naturalWidth) return false;
+  const p=at?(Array.isArray(at)?at:a.pts[at]):[a.w/2,a.h/2];
+  cx.save(); cx.translate(x,y); if(ang) cx.rotate(ang); cx.scale(s,s); cx.drawImage(im,-p[0],-p[1],a.w,a.h); cx.restore(); return true; }
+// 上と 同じ 置き方の ときの 点 k の 場所
+function rePt(n,x,y,s,at,k){ const a=RE_ART[n], p=at?(Array.isArray(at)?at:a.pts[at]):[a.w/2,a.h/2], q=a.pts[k]; return [x+(q[0]-p[0])*s, y+(q[1]-p[1])*s]; }
+</script><!--/RE_PARTS-->
+<script>
+/* 色は :root の --rl- から 読む（ここに 色を 書かない） */
+const C = new Proxy({}, {get:(o,k)=>o[k]||(o[k]=getComputedStyle(document.documentElement).getPropertyValue('--rl-'+k).trim())});
+
+/* ===== 光の きまり（ここ 1か所） ===== */
+const HK = {
+  SUN:(()=>{ const x=0.5,y=1,l=Math.hypot(x,y); return [x/l,y/l]; })(),   // 日光の 向き（左上から 右下へ）
+  BASE:14, PER:6, TAU:3,      // 光が 0の ときの 温度・光 1つで 上がる 分（かりの 数）・あたたまる はやさ（びょう）
+  TMIN:10, TMAX:40,
+  // ポップコーン（アプリの 中だけの おはなし。本当の 日光では こんなに 早く あつく ならない）
+  G:{ BASE:20, PER:30, TAU:2.5, POP:70, K:0.04, FULL:40, TMIN:0, TMAX:150 },
+  // かがみ（向き phi の 線）で はね返った 向き
+  reflect(d, phi){ const n=[-Math.sin(phi),Math.cos(phi)], k=d[0]*n[0]+d[1]*n[1]; return [d[0]-2*k*n[0], d[1]-2*k*n[1]]; },
+  // (x,y)から 向き r に すすんで、右の かべ（x＝wx）に 当たる 高さ。かべに 行かなければ null
+  hitWall(x,y,r,wx,h){ if(r[0]<=1e-6) return null; const t=(wx-x)/r[0], hy=y+r[1]*t; return (hy<0||hy>h)? null : hy; },
+  // まとに 向けるための かがみの 向き
+  aim(x,y,tx,ty){ let rx=tx-x, ry=ty-y; const l=Math.hypot(rx,ry); rx/=l; ry/=l; const nx=rx-HK.SUN[0], ny=ry-HK.SUN[1]; return Math.atan2(ny,nx)-Math.PI/2; },
+  // 温度：光の 数に むかって だんだん 近づく（R は 上の きまりか G）
+  step(T, n, dt, R){ R=R||HK; const eq=R.BASE+R.PER*n; return eq+(T-eq)*Math.exp(-dt/R.TAU); },
+  // 手 → かがみの 向き。指先に かがみの おぼんを のせる 形：
+  // 手を まっすぐ 立てると かがみは よこ。手を 右に たおすと かがみも 右が 下がる（手と 同じ 向きに かたむく）
+  // w＝手首・m＝中指の つけね（画面の 0〜1、かがみ映像の 向きに 直した もの）・ar＝よこ÷たて
+  handPhi(w, m, ar){ return Math.atan2(m.y-w.y, (m.x-w.x)*ar) + Math.PI/2; },
+};
+window.HK=HK;
+
+/* ===== 画面 ===== */
+const $ = id => document.getElementById(id);
+const cv=$('reCanvas'), cx=cv.getContext('2d');
+let W=0,H=0;
+const S = { mode:'learn', n:2, phi:[0,0,0,0], T:HK.BASE, hits:0, src:'', hands:[], drag:null, lost:0,
+  GT:HK.G.BASE, pop:0, acc:0, full:false, parts:[], fullT:0, clock:0 };
+window.hk={S};
+
+function fit(){
+  const r=$('reStage').getBoundingClientRect(), d=window.devicePixelRatio||1;
+  W=r.width; H=r.height; cv.width=Math.round(W*d); cv.height=Math.round(H*d); cx.setTransform(d,0,0,d,0,0);
+}
+window.addEventListener('resize', ()=>{ fit(); if(S.mode==='learn' && !S.hands.length) aimAll(); });
+function setMsg(t){ const el=$('reMsg'); if(el.textContent!==t) el.textContent=t; }
+function geo(){
+  const L=Math.min(W,H)*0.17;
+  if(S.mode==='game'){
+    const wall=Math.max(150,W*0.28), wx=W-wall, tx=wx+wall*0.4;
+    return { L, wall, wx, hx:tx, tx, ty:H*0.42, tr:Math.max(28,H*0.1),
+      M:[0,1,2,3].map(i=>[W*0.12+i*(wx-W*0.12-40)/3.4, H*(i%2?0.86:0.8)]) };
+  }
+  const wall=Math.max(60,W*0.1);
+  return { L, wall, wx:W-wall, hx:W-wall, tx:W-wall/2, ty:H*0.3, tr:wall*0.5,
+    M:[[W*0.16,H*0.8],[W*0.34,H*0.86],[W*0.52,H*0.8],[W*0.70,H*0.86]] };
+}
+// いま まとに 当たっている 光
+function trace(){
+  const g=geo(), out=[];
+  for(let i=0;i<S.n;i++){
+    const [mx,my]=g.M[i], r=HK.reflect(HK.SUN,S.phi[i]);
+    const y = r[1]<0||r[0]>0 ? HK.hitWall(mx,my,r,g.hx,H) : null;   // 光が 止まる 所（かべ・なべの まん中）
+    out.push({r, y, on: y!==null && Math.abs(y-g.ty)<g.tr});
+  }
+  return out;
+}
+// はじめや 手が ない ときは まとに 向いて 待つ（はね返す だけ）
+function aimAll(){ if(!W) return; const g=geo(); for(let i=0;i<4;i++) S.phi[i]=HK.aim(g.M[i][0],g.M[i][1],g.hx,g.ty); }
+function flatAll(){ for(let i=0;i<4;i++) S.phi[i]=0; }
+function setNum(n){ S.n=n; [...$('reNum').children].forEach(c=>c.setAttribute('aria-pressed',String(+c.dataset.v===n))); }
+$('reNum').onclick=e=>{ const b=e.target.closest('button'); if(b) setNum(+b.dataset.v); };
+
+function setMode(m){
+  S.mode=m;
+  $('reLearnTab').setAttribute('aria-pressed',String(m==='learn')); $('reGameTab').setAttribute('aria-pressed',String(m==='game'));
+  $('reLearnSide').hidden = m!=='learn'; $('reGameSide').hidden = m!=='game'; $('reAgain').hidden = m!=='game';
+  if(m==='game'){ resetGame(); if(S.n<2) setNum(2); } else aimAll();
+  lastHits=-1;
+}
+$('reLearnTab').onclick=()=>setMode('learn');
+$('reGameTab').onclick=()=>setMode('game');
+function resetGame(){ S.GT=HK.G.BASE; S.pop=0; S.acc=0; S.full=false; S.parts=[]; S.fullT=0; flatAll(); setMsg(S.src?'みんなで 光を なべに 集めよう':''); }
+$('reAgain').onclick=resetGame;
+
+// 温度計の 目もり
+function ticks(id,vals,R){ $(id).innerHTML=vals.map(v=>`<span style="bottom:${(v-R.TMIN)/(R.TMAX-R.TMIN)*100}%">${v}℃</span>`).join(''); }
+ticks('reTicks',[10,20,30,40],HK); ticks('reGTicks',[0,50,100,150],HK.G);
+$('rePopLine').style.bottom=(HK.G.POP-HK.G.TMIN)/(HK.G.TMAX-HK.G.TMIN)*100+'%';
+const SUNI=reIc('sun');
+let lastHits=-1;
+function setText(id,t){ const el=$(id); if(el.textContent!==t) el.textContent=t; }
+function advance(dt){
+  S.clock+=dt;
+  // 手が しばらく 見えない ときは まとの 向きへ もどる（はね返す だけ。ゲームでは そのまま）
+  if(S.src==='cam' && !S.hands.length){ S.lost+=dt; if(S.mode==='learn' && S.lost>1.5){ const g=geo(); for(let i=0;i<4;i++){ const a=HK.aim(g.M[i][0],g.M[i][1],g.hx,g.ty); S.phi[i]+=(a-S.phi[i])*Math.min(1,dt*3); } } }
+  else S.lost=0;
+  const tr=trace(); S.hits=tr.filter(o=>o.on).length;
+  const hitsEl = S.mode==='game' ? 'reGHits' : 'reHits';
+  if(S.hits!==lastHits){ lastHits=S.hits; $(hitsEl).innerHTML = S.hits ? SUNI.repeat(S.hits)+'<span>'+S.hits+'</span>' : '<span>0</span>'; }
+  if(S.mode==='learn'){
+    S.T=HK.step(S.T,S.hits,dt);
+    setText('reTemp',Math.round(S.T)+'℃');
+    $('reTube').style.height=Math.max(0,Math.min(100,(S.T-HK.TMIN)/(HK.TMAX-HK.TMIN)*100))+'%';
+  } else {
+    const G=HK.G; S.GT=HK.step(S.GT,S.hits,dt,G);
+    setText('reGTemp',Math.round(S.GT)+'℃');
+    $('reGTube').style.height=Math.max(0,Math.min(100,(S.GT-G.TMIN)/(G.TMAX-G.TMIN)*100))+'%';
+    if(!S.full){
+      S.acc+=Math.max(0,S.GT-G.POP)*G.K*dt;
+      while(S.acc>=1 && S.pop<G.FULL){ S.acc-=1; S.pop++; spawn(); }
+      if(S.pop>=G.FULL){ S.full=true; S.fullT=S.clock; setMsg('なべが いっぱい！ みんなで できたね'); }
+      else if(S.src) setMsg(S.GT>=G.POP ? 'はじけてる！' : S.hits ? 'あたたまってきた…' : 'みんなで 光を なべに 集めよう');
+    }
+    for(const q of S.parts) q.t+=dt;
+    S.parts=S.parts.filter(q=>q.t<q.dur);   // とび終わった ものは なべに つもって いる
+  }
+}
+function spawn(){ const k=KERN[(S.pop*3)%KERN.length]; S.parts.push({i:S.pop-1, from:k, t:0, dur:RM?0.01:0.75}); }
+window.hk.advance=advance; window.hk.trace=trace; window.hk.geo=geo; window.hk.setNum=setNum; window.hk.setMode=setMode; window.hk.aimAll=aimAll; window.hk.resetGame=resetGame;
+
+/* ----- 手 ----- */
+// hands: [{x,y,phi}]（左から じゅんに かがみ 1・2・3・4）
+function onHands(hands){
+  S.hands=hands||[];
+  if(!S.hands.length){ if(!S.full) setMsg('手を 見せてね'); return; }
+  if(S.mode==='learn') setMsg('');
+  const list=[...S.hands].sort((a,b)=>a.x-b.x);
+  list.forEach((h,i)=>{ if(i<S.n){ let d=h.phi-S.phi[i]; while(d>Math.PI/2) d-=Math.PI; while(d<-Math.PI/2) d+=Math.PI; S.phi[i]+=d*0.5; } });
+}
+window.hk.onHands=onHands;
+
+/* ----- さわって 回す（カメラが なくても） ----- */
+function nearMirror(x,y){ const g=geo(); let best=-1, bd=g.L*1.1; for(let i=0;i<S.n;i++){ const d=Math.hypot(x-g.M[i][0],y-g.M[i][1]); if(d<bd){ bd=d; best=i; } } return best; }
+$('reStage').addEventListener('pointerdown', e=>{ if(!S.src) return; const r=$('reStage').getBoundingClientRect(); const i=nearMirror(e.clientX-r.left,e.clientY-r.top); if(i>=0){ S.drag={id:e.pointerId,i}; $('reStage').setPointerCapture(e.pointerId); } });
+$('reStage').addEventListener('pointermove', e=>{ if(!S.drag||S.drag.id!==e.pointerId) return; const r=$('reStage').getBoundingClientRect(), g=geo(), [mx,my]=g.M[S.drag.i];
+  const x=e.clientX-r.left, y=e.clientY-r.top; if(Math.hypot(x-mx,y-my)<8) return; S.phi[S.drag.i]=Math.atan2(y-my,x-mx); });
+const endDrag=e=>{ if(S.drag&&S.drag.id===e.pointerId) S.drag=null; };
+$('reStage').addEventListener('pointerup', endDrag); $('reStage').addEventListener('pointercancel', endDrag);
+
+/* ----- 絵 ----- */
+function band(x0,y0,x1,y1,w,col){ cx.strokeStyle=col; cx.lineWidth=w; cx.lineCap='butt'; cx.beginPath(); cx.moveTo(x0,y0); cx.lineTo(x1,y1); cx.stroke(); }
+// 動きを へらす せってい
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// フライパンの 絵の 上の 場所（絵の 座標）：まだ はじけない つぶ・つもる ポップコーンの 場所
+const KERN=[[50,92],[70,98],[92,100],[114,98],[136,93],[60,84],[82,88],[104,90],[126,86],[96,80]];
+const PILE=(()=>{ const out=[]; const rows=[9,8,7,6,5,4,1]; let seed=7; const rnd=()=>{ seed=(seed*9301+49297)%233280; return seed/233280; };
+  rows.forEach((n,r)=>{ const hw=64-r*9, y=92-r*12; for(let j=0;j<n;j++){ const x=96+(n>1?(-hw+2*hw*j/(n-1)):0)+(rnd()-0.5)*6;
+    out.push({x, y:y+(rnd()-0.5)*5, v:1+Math.floor(rnd()*4), a:(rnd()-0.5)*0.8}); } }); return out; })();
+function panPlace(g){ const s=Math.min(g.wall*1.05/164,(W+24-g.tx)/154, g.tr*3/60); return {s, x:g.tx, y:g.ty}; }   // 絵の center が まとの 所
+function artXY(pp,q){ return [pp.x+(q[0]-RE_ART.pan.pts.center[0])*pp.s, pp.y+(q[1]-RE_ART.pan.pts.center[1])*pp.s]; }
+function corn(i,x,y,s,ang){ const n=PILE[i]?PILE[i].v:1; reDraw('popcorn'+n, x, y, s, 'center', ang||0); }
+function drawPan(g){
+  const pp=panPlace(g), s=pp.s, G=HK.G, now=S.clock;
+  const heat=Math.max(0,Math.min(1,(S.GT-G.BASE)/(G.POP+30-G.BASE)));
+  // 台
+  const top=artXY(pp,[0,132])[1];
+  cx.fillStyle=C.wood; cx.fillRect(g.wx,top,g.wall,H-top);
+  cx.strokeStyle=C.wood2; cx.lineWidth=2; cx.beginPath(); cx.moveTo(g.wx,top); cx.lineTo(W,top); cx.stroke();
+  // フライパン と 熱で 赤く なる 底
+  reDraw('pan', pp.x, pp.y, s, 'center');
+  if(heat>0.02){ cx.save(); cx.globalAlpha=Math.min(0.85,heat*0.9); reDraw('panHeat', pp.x, pp.y, s, 'center'); cx.restore(); }
+  // 光が 集まる 所（光が 多いほど 大きく 明るい）
+  if(S.hits){ cx.save(); cx.globalAlpha=Math.min(1,0.45+0.15*S.hits); const k=s*(0.55+0.12*S.hits); reDraw('glowSpot', pp.x, pp.y, k, 'center'); cx.restore(); }
+  // まだ はじけて いない つぶ（あつく なると ふるえる）
+  const shake = RM?0:Math.max(0,(S.GT-(G.POP-25))/25)*1.6*s;
+  const left = S.full?0:Math.max(2, KERN.length-Math.floor(S.pop/4));
+  for(let i=0;i<left;i++){ const [kx,ky]=artXY(pp,KERN[i]); const j=shake? Math.sin(now*40+i*1.7)*shake:0;
+    reDraw('kernel', kx+j, ky-Math.abs(j)*0.6, s*0.55, 'center', j*0.08); }
+  // つもった ポップコーン（とんで いる ものは まだ）
+  const flying=new Set(S.parts.map(q=>q.i)), ps=s*0.56;
+  let bounce=0; if(S.full && !RM){ const t=now-S.fullT; if(t<0.9) bounce=Math.sin(t/0.9*Math.PI)*6*s; }
+  for(let i=0;i<Math.min(S.pop,PILE.length);i++){ if(flying.has(i)) continue; const [x,y]=artXY(pp,[PILE[i].x,PILE[i].y]); corn(i,x,y-bounce,ps,PILE[i].a); }
+  // とんで いる ポップコーン（つぶから 上へ とび出して、つもる 所へ おちる）
+  for(const q of S.parts){ const f=Math.min(1,q.t/q.dur), [x0,y0]=artXY(pp,q.from), [x1,y1]=artXY(pp,[PILE[q.i].x,PILE[q.i].y]);
+    const up=(70+(q.i%5)*12)*s, x=x0+(x1-x0)*f, y=y0+(y1-y0)*f-up*4*f*(1-f);
+    corn(q.i,x,y,ps*(0.7+0.3*f),PILE[q.i].a+(1-f)*6); }
+  // ゆげ（あつい とき）
+  if(S.GT>G.POP-15){ cx.save(); cx.globalAlpha=Math.min(0.8,(S.GT-(G.POP-15))/40);
+    for(let j=0;j<3;j++){ const [bx,by]=artXY(pp,[60+j*36,58]); const rise=RM?0:((now*18+j*13)%26)*s, sway=RM?0:Math.sin(now*2+j)*3*s;
+      reDraw('steam', bx+sway, by-rise, s*0.55, 'base'); }
+    cx.restore(); }
+  // いっぱいに なった ときの 小さな お祝い（光の すじが 広がって 消える）
+  if(S.full){ const t=RM?1:Math.min(1,(now-S.fullT)/0.9); if(t<1||RM){ const [cxp,cyp]=artXY(pp,[96,40]);
+    cx.save(); cx.globalAlpha=RM?0.9:1-t; cx.strokeStyle=C.ray; cx.lineWidth=4; cx.lineCap='round';
+    for(let j=0;j<10;j++){ const a=-Math.PI+j*Math.PI/9, r0=(40+30*t)*s, r1=r0+18*s; cx.beginPath(); cx.moveTo(cxp+Math.cos(a)*r0,cyp+Math.sin(a)*r0); cx.lineTo(cxp+Math.cos(a)*r1,cyp+Math.sin(a)*r1); cx.stroke(); }
+    cx.restore(); } }
+}
+function draw(){
+  cx.clearRect(0,0,W,H);
+  const g=geo(), tr=trace(), [dx,dy]=HK.SUN, game=S.mode==='game';
+  // 太陽
+  if(!reDraw('sunFace', 46, 46, 84/140, 'center')) reDraw('sun', 40, 40, 64/120, 'center');
+  // かべ（日かげ）
+  if(!game){ cx.fillStyle=C.mute; cx.fillRect(g.wx,0,g.wall,H); }
+  if(!game){ cx.strokeStyle=C.sub; cx.lineWidth=2; cx.beginPath(); cx.moveTo(g.wx,0); cx.lineTo(g.wx,H); cx.stroke(); }
+  // 日光 → かがみ → はね返り
+  for(let i=0;i<S.n;i++){
+    const [mx,my]=g.M[i], o=tr[i], k=Math.max(mx/dx,my/dy);
+    band(mx-dx*k,my-dy*k,mx,my,g.L*0.55,C.beam);
+    const far = o.y!==null ? [g.hx, my+o.r[1]*(g.hx-mx)/o.r[0]] : [mx+o.r[0]*2000, my+o.r[1]*2000];
+    band(mx,my,far[0],far[1],g.L*0.55,C.beam2);
+  }
+  if(game){
+    // 当たった 光は なべの 上に 重なる
+    drawPan(g);
+    cx.fillStyle=C.ink; cx.font='700 15px "BIZ UDPGothic",sans-serif'; cx.textAlign='center'; cx.textBaseline='top';
+    { const pp=panPlace(g), q=artXY(pp,[96,138]); cx.fillText('なべ', q[0], q[1]); }
+  } else {
+    // かべの 光（重なると 明るい）
+    cx.save(); cx.globalCompositeOperation='lighter';
+    for(const o of tr) if(o.y!==null){ cx.fillStyle=C.spot; cx.beginPath(); cx.ellipse(g.tx,o.y,g.wall*0.42,g.L*0.3,0,0,Math.PI*2); cx.fill(); }
+    cx.restore();
+    // まと（わ が 2つ）
+    cx.strokeStyle=C.target; cx.lineWidth=4;
+    cx.beginPath(); cx.arc(g.tx,g.ty,g.wall*0.4,0,Math.PI*2); cx.stroke();
+    cx.lineWidth=3; cx.beginPath(); cx.arc(g.tx,g.ty,g.wall*0.16,0,Math.PI*2); cx.stroke();
+    cx.fillStyle=C.ink; cx.font='700 15px "BIZ UDPGothic",sans-serif'; cx.textAlign='right'; cx.textBaseline='middle';
+    cx.fillText('まと', g.wx-8, g.ty-g.tr-6);
+  }
+  // かがみ（下に 持ち手＝手の 向き。手と 同じ ように かたむく）
+  for(let i=0;i<S.n;i++){
+    const [mx,my]=g.M[i], u=[Math.cos(S.phi[i]),Math.sin(S.phi[i])], hl=g.L/2;
+    let v=[-u[1],u[0]]; if(v[1]<0) v=[-v[0],-v[1]];     // 持ち手は かがみの 下がわ
+    const sl=g.L*0.34, ex=mx+v[0]*sl, ey=my+v[1]*sl;
+    // かがみの 絵：光る 面が 上、うらと 持ち手が 下（線の 向きは 同じなので 下に 持ち手が 来る 向きで 描く）
+    let ang=S.phi[i]; while(ang>Math.PI/2) ang-=Math.PI; while(ang<=-Math.PI/2) ang+=Math.PI;
+    const ms=g.L/164;
+    if(!reDraw('handMirror', mx, my, ms, 'center', ang)){
+      cx.lineCap='round'; cx.strokeStyle=C.sub; cx.lineWidth=5; cx.beginPath(); cx.moveTo(mx,my); cx.lineTo(ex,ey); cx.stroke();
+      cx.strokeStyle=C.ink; cx.lineWidth=10; cx.beginPath(); cx.moveTo(mx-u[0]*hl,my-u[1]*hl); cx.lineTo(mx+u[0]*hl,my+u[1]*hl); cx.stroke();
+      cx.strokeStyle=C.gray; cx.lineWidth=4; cx.beginPath(); cx.moveTo(mx-u[0]*(hl-4),my-u[1]*(hl-4)); cx.lineTo(mx+u[0]*(hl-4),my+u[1]*(hl-4)); cx.stroke(); }
+    cx.fillStyle=C.bg; cx.strokeStyle= tr[i].on?C.ok:C.ink; cx.lineWidth=3;
+    cx.beginPath(); cx.arc(ex,ey+8,13,0,Math.PI*2); cx.fill(); cx.stroke();
+    cx.fillStyle= tr[i].on?C.ok:C.ink; cx.font='700 15px "BIZ UDPGothic",sans-serif'; cx.textAlign='center'; cx.textBaseline='middle'; cx.fillText(String(i+1),ex,ey+9);
+  }
+  // 手の しるし
+  for(const h of S.hands){ const hx=h.x*W, hy=h.y*H;
+    cx.lineWidth=4; cx.strokeStyle=C.accent2; cx.fillStyle=C.veil; cx.beginPath(); cx.arc(hx,hy,15,0,Math.PI*2); cx.fill(); cx.stroke();
+    cx.fillStyle=C.ink; cx.font='700 14px "BIZ UDPGothic",sans-serif'; cx.textAlign='center'; cx.textBaseline='middle'; cx.fillText('手',hx,hy+1); }
+}
+let last=performance.now();
+function tick(t){ requestAnimationFrame(tick); const dt=Math.min(0.1,(t-last)/1000); last=t; advance(dt); draw(); }
+fit(); setNum(2); setMode('learn'); advance(0); requestAnimationFrame(tick);
+window.hk.draw=draw;
+
+
+/* ----- 手で ボタンを おす（生命の 部屋の 部品 RsTe）：人さし指を 上に あげた 手だけを しるしに する。
+   その 手は 部屋の 操作には 使わない（回す・かがみを もつ 手と ぶつからない） ----- */
+const RE_UP=0.3, RE_BOX=[0.1,0.02,0.9,RE_UP+0.02];
+function reHandPick(list){
+  let up=null; for(const L of (list||[])) if(L[8].y<RE_UP && (!up||L[8].y<up[8].y)) up=L;
+  if(window.RsTe) up ? RsTe.point(1-up[8].x, up[8].y, RE_BOX) : RsTe.point(null);
+  return (list||[]).filter(L=>L!==up);
+}
+window.reHandPick=reHandPick;
+// ゆびで（カメラ なし）：かがみを 指で まわす
+function reTapGo(){ S.src='mouse'; S.hands=[]; setMsg(''); $('reStart').hidden=true; }
+$('reTap').onclick=reTapGo;
+if(/[?&]test/.test(location.search)) $('reGo').onclick=reTapGo;
+</script>
+
+<script type="module">
+/* ===== カメラと 手の トラッキング（手首 → 中指の つけね の 向きから HK.handPhi で かがみの 向きを 出す） ===== */
+const $ = id => document.getElementById(id);
+const VER = '0.10.14';
+const video = $('reVideo');
+let lm=null, lastT=-1, modelP=null;
+async function loadModel(){
+  const vision = await import(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}`);
+  const fs = await vision.FilesetResolver.forVisionTasks(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}/wasm`);
+  const opts = d => ({ baseOptions:{ modelAssetPath:'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task', delegate:d },
+    runningMode:'VIDEO', numHands:4, minHandDetectionConfidence:0.5, minHandPresenceConfidence:0.5, minTrackingConfidence:0.5 });
+  try{ return await vision.HandLandmarker.createFromOptions(fs, opts('GPU')); }
+  catch(e){ return await vision.HandLandmarker.createFromOptions(fs, opts('CPU')); }
+}
+if(!/[?&]test/.test(location.search)){
+  modelP = loadModel().catch(e=>{ modelP=null; throw e; }); modelP.catch(()=>{});
+  $('reGo').onclick = start;
+}
+async function start(){
+  const err=$('reErr'); err.hidden=true;
+  $('reGo').disabled=true; $('reGo').lastElementChild.textContent='じゅんびちゅう…';
+  try{
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ const e=new Error('nocam'); e.name='NoCamPage'; throw e; }
+    const stream = await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280},height:{ideal:720},facingMode:'user'},audio:false});
+    video.srcObject=stream; await video.play();
+    lm = await (modelP || (modelP = loadModel()));
+    window.hk.S.src='cam'; $('reStart').hidden=true; video.hidden=false; $('reVeil').hidden=false;
+    loop();
+  }catch(e){
+    $('reGo').disabled=false; $('reGo').lastElementChild.textContent='もう いちど';
+    err.hidden=false;
+    err.textContent = (window.RsTe ? RsTe.errText(e) : 'カメラが つかえません。')+' ［ゆびで］でも できるよ。';
+  }
+}
+function loop(){
+  requestAnimationFrame(loop);
+  const now=performance.now();
+  if(!lm || video.readyState<2 || video.currentTime===lastT) return;
+  lastT=video.currentTime;
+  const res = lm.detectForVideo(video, now);
+  const vw=video.videoWidth||1280, vh=video.videoHeight||720, ar=vw/vh;
+  const r=video.getBoundingClientRect(), sc=Math.max(r.width/vw, r.height/vh), dw=vw*sc, dh=vh*sc;
+  const toStage=(x,y)=>({x:(x*dw-(dw-r.width)/2)/r.width, y:(y*dh-(dh-r.height)/2)/r.height});
+  window.hk.onHands(window.reHandPick(res.landmarks).map(L=>{
+    const w={x:1-L[0].x, y:L[0].y}, m={x:1-L[9].x, y:L[9].y}, p=toStage(m.x,m.y);   // かがみの むき
+    return {x:p.x, y:p.y, phi:window.HK.handPhi(w,m,ar)}; }));
+}
+</script>
+<!--rl-home--><script>
+/* 理科ラボ：どの へやにも 出す「もどる」ボタン（11-07）。決まりは ここ 1か所。
+   へやの 上の帯（.xx-top）の いちばん左に 44px の ⌂ を 足す。帯が ない へやは 左下に うかべる。
+   行き先：その へやが 入っている 部屋の ページ（理科ラボ/1_エネルギー.html など）。そこから ホームへも もどれる。
+   へやの 中の 字や クラス名には さわらない（クラス名は rlh- で はじめる）。 */
+(function(){
+  if(window.__rlHome) return; window.__rlHome=1;
+  // どの へやが どの 部屋に 入るか（mock/ の 下の 道 → 部屋の ページ）
+  var PAGE={energy:'1_エネルギー.html',ryushi:'2_粒子.html',seimei:'3_生命.html',chikyu:'4_地球.html'};
+  var EXTRA={teko:'energy','karada-mirror':'seimei',tentai:'chikyu','seiza-tsunagu':'chikyu'};
+  function room(p){
+    var m=/\/mock\/rika\/(energy|ryushi|seimei|chikyu)\//.exec(p); if(m) return m[1];
+    m=/\/mock\/([^\/]+)\//.exec(p); return m&&EXTRA[m[1]]||'';
+  }
+  function href(){
+    var p=decodeURIComponent(location.pathname), r=room(p), i=p.lastIndexOf('/mock/');
+    if(window.RL_HOME_URL) return window.RL_HOME_URL;          // 授業メイトの 中では 入れる側が 決める
+    if(!r||i<0) return '';
+    return 'file://'+encodeURI(p.slice(0,i)+'/理科ラボ/'+PAGE[r]);
+  }
+  function put(){
+    var to=href(); if(!to||document.querySelector('.rlh-home')) return;
+    var a=document.createElement('a'); a.className='rlh-home'; a.href=to; a.title='へやの 一らんに もどる';
+    a.setAttribute('aria-label','へやの 一らんに もどる');
+    a.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>';
+    var st=document.createElement('style');
+    st.textContent='.rlh-home{flex:0 0 44px;width:44px;height:44px;margin-right:8px;display:inline-flex;align-items:center;justify-content:center;border-radius:22px;background:var(--rl-bg,white);color:var(--rl-ink,black);border:1px solid currentColor;text-decoration:none;box-sizing:border-box}'+
+      '.rlh-home:hover{opacity:.8}.rlh-home:focus-visible{outline:3px solid currentColor;outline-offset:2px}'+
+      '.rlh-home.rlh-float{position:fixed;left:12px;bottom:12px;z-index:9999;margin:0}';
+    document.head.appendChild(st);
+    var bar=[].slice.call(document.querySelectorAll('[class$="-top"],[class*="-top "]')).filter(function(e){
+      var r=e.getBoundingClientRect(); return r.top<20&&r.height>=44&&getComputedStyle(e).display.indexOf('flex')>=0;})[0];
+    if(bar) bar.insertBefore(a,bar.firstChild); else { a.classList.add('rlh-float'); document.body.appendChild(a); }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',put); else put();
+})();
+</script><!--/rl-home-->
+</body>
+</html>

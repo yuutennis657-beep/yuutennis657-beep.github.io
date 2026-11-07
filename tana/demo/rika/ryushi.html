@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>理科ラボ もののつくり</title>
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* mock/tools/make_rika_heya.py で 作ったもの。ここは 直さず、作る道具を 直して 流す */
+:root{--rl-bg:#ffffff;--rl-ink:#1f2937;--rl-sub:#4b5563;--rl-accent:#2ba3d9;--rl-accent2:#7fd1ee;--rl-soft:#e6f6fc;--rh-line:#9fd3ea}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--rl-bg);color:var(--rl-ink);font-family:"BIZ UDPGothic",sans-serif;font-size:16px}
+.rh-app{max-width:1180px;margin:0 auto;padding:12px 16px 14px}
+.rh-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.rh-h{margin:0;font-size:28px;display:flex;align-items:baseline;gap:10px;letter-spacing:.03em}
+.rh-h small{font-size:16px;color:var(--rl-sub);font-weight:400}
+.rh-tabs{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.rh-tab{display:flex;align-items:center;gap:4px;min-height:44px;min-width:44px;justify-content:center;padding:0 14px;border:1px solid var(--rh-line);border-radius:22px;
+  color:var(--rl-ink);text-decoration:none;font-size:16px}
+.rh-tab svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.rh-tab[aria-current]{border:2px solid var(--rl-ink);font-weight:700}
+.rh-pic{display:block;background:#fff;min-height:0;min-width:0}
+.rh-pic img{width:100%;height:100%;object-fit:cover;display:block}
+@media (prefers-reduced-motion:reduce){.rh-c,.rk-c{transition:none!important}}
+.rh-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:760px){.rh-grid{grid-template-columns:repeat(2,1fr)}}
+.rh-c{display:flex;flex-direction:column;border-radius:16px;overflow:hidden;background:var(--rl-soft);border:1px solid var(--rh-line);
+  color:var(--rl-ink);text-decoration:none;transition:transform .15s}
+.rh-c:hover,.rh-c:focus-visible{transform:translateY(-3px);outline:2px solid var(--rl-ink);outline-offset:2px}
+.rh-c .rh-pic{aspect-ratio:16/9}
+.rh-nopic{background:var(--rl-soft)!important}
+.rh-t{padding:8px 12px 0;font-size:18px;font-weight:700;line-height:1.35}
+.rh-m{display:flex;align-items:center;gap:8px;padding:4px 12px 10px;font-size:14px;color:var(--rl-sub);margin-top:auto}
+.rh-g{font-weight:700}
+.rh-k{display:flex;align-items:center;gap:4px;margin-left:auto}
+.rh-k svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.rh-note{margin:10px 0 0;font-size:14px;color:var(--rl-sub)}
+</style>
+</head>
+<body>
+<div class="rh-app">
+  <div class="rh-top">
+    <h1 class="rh-h">もののつくり<small>理科ラボ</small></h1>
+    <nav class="rh-tabs" aria-label="理科ラボの 部屋"><a class="rh-tab" href="index.html" aria-label="ホーム"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/></svg></a><a class="rh-tab" href="energy.html">でんきや力</a><a class="rh-tab" href="ryushi.html" aria-current="page">もののつくり</a><a class="rh-tab" href="seimei.html">いきもの</a><a class="rh-tab" href="chikyu.html">そらと大地</a></nav>
+  </div>
+  <div class="rh-grid"><a class="rh-c" href="ryushi/oshichijimeru/index.html"><span class="rh-pic"><img src="img/thumb/ryushi/oshichijimeru_480.webp" alt=""></span><span class="rh-t">空気と水を おしちぢめる</span><span class="rh-m"><span class="rh-g">4年</span><span class="rh-k"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>カメラ</span></span></a><a class="rh-c" href="ryushi/tokekata/index.html"><span class="rh-pic"><img src="img/C/ryushi_480.webp" alt=""></span><span class="rh-t">もののとけ方</span><span class="rh-m"><span class="rh-g">5年</span><span class="rh-k"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>カメラ</span></span></a><a class="rh-c" href="ryushi/mizu-sugata/index.html"><span class="rh-pic"><img src="img/thumb/ryushi/mizu-sugata_480.webp" alt=""></span><span class="rh-t">水の すがた</span><span class="rh-m"><span class="rh-g">4年</span><span class="rh-k"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>カメラ</span></span></a><a class="rh-c" href="ryushi/atatamarikata/index.html"><span class="rh-pic"><img src="img/thumb/ryushi/atatamarikata_480.webp" alt=""></span><span class="rh-t">もののあたたまり方</span><span class="rh-m"><span class="rh-g">4年</span><span class="rh-k"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>カメラ</span></span></a><a class="rh-c" href="ryushi/moekata/index.html"><span class="rh-pic"><img src="img/thumb/ryushi/moekata_480.webp" alt=""></span><span class="rh-t">ものの燃え方</span><span class="rh-m"><span class="rh-g">6年</span><span class="rh-k"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>カメラ</span></span></a></div>
+  <p class="rh-note">カメラの へやは Chrome で ひらいてね</p>
+</div>
+</body>
+</html>

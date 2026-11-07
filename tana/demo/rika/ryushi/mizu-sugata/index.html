@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="ja">
+<head><script>window.RL_HOME_URL="../../ryushi.html";</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>水の すがた</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* 見本 v0.1（2026-11-07）理科ラボ／粒子／4年 水の すがた。パーの 手を かざすと あたためる、グーで ひやす */
+:root{
+  /* 理科ラボ 粒子の 部屋の 色（4つの 部屋で 同じ 名前）。色は ここだけに 書く */
+  --rl-bg:#ffffff; --rl-ink:#1f2937; --rl-accent:#2ba3d9; --rl-accent2:#7fd1ee; --rl-soft:#e6f6fc;
+  /* この 部屋の 意味の 色 */
+  --rp-sub:#4b5563; --rp-mute:#6b7280; --rp-line:#d1d5db; --rp-btn:#f3f4f6; --rp-deep:#0b6e99;
+  --rp-ok:#1b7f3b; --rp-warn:#b45309; --rp-warn2:#d97706; --rp-hot:#c2410c; --rp-hot2:#fb923c; --rp-cold:#1d4ed8;
+  --rp-red:#dc2626; --rp-err:#b91c1c; --rp-flame:#fde68a; --rp-clay:#e7d3b0; --rp-brown:#78350f; --rp-alum:#7c3aed;
+  --rp-t2:#93c5fd; --rp-t4:#f97316;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--rl-bg);color:var(--rl-ink);
+  font-family:"BIZ UDPGothic",sans-serif;font-size:16px;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+.rp-app{display:grid;grid-template-rows:auto 1fr;gap:8px;height:100vh;height:100dvh;padding:8px 12px 12px}
+.rp-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:52px}
+.rp-states{display:flex;gap:6px}
+.rp-states span{display:flex;align-items:center;gap:6px;min-height:44px;padding:0 12px;border:1px solid var(--rp-line);border-radius:22px;color:var(--rp-sub);background:var(--rl-bg)}
+.rp-states span svg{width:22px;height:22px}
+.rp-states span[data-on="1"]{border:2px solid var(--rl-ink);color:var(--rl-ink);font-weight:700}
+.rp-b{min-height:44px;min-width:44px;padding:0 14px;border:1px solid var(--rp-line);background:var(--rp-btn);border-radius:12px;
+  font-size:16px;display:flex;align-items:center;justify-content:center;gap:6px}
+.rp-b svg{width:22px;height:22px}
+.rp-sp{flex:1}
+.rp-main{display:grid;grid-template-columns:1fr 250px;gap:10px;min-height:0}
+.rp-stage{position:relative;border-radius:12px;overflow:hidden;background:var(--rl-soft);min-height:0}
+.rp-stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.rp-veil{position:absolute;inset:0;background:color-mix(in srgb, var(--rl-bg) 60%, transparent)}
+.rp-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.rp-msg{position:absolute;left:50%;top:10px;transform:translateX(-50%);padding:6px 16px;border-radius:20px;
+  background:color-mix(in srgb, var(--rl-bg) 94%, transparent);font-size:20px;font-weight:700;white-space:nowrap;pointer-events:none}
+.rp-msg:empty{display:none}
+.rp-start{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--rl-bg);padding:16px}
+.rp-start p{margin:0;font-size:20px;text-align:center;line-height:1.7}
+.rp-startimg{width:min(440px,62%);max-height:48%;object-fit:contain}
+.rp-start svg{width:min(300px,60%);height:auto}
+.rp-big{min-height:64px;padding:0 40px;font-size:24px;font-weight:700;border-radius:32px;border:0;background:var(--rl-accent);color:var(--rl-ink)}
+.rp-big:disabled{opacity:.6}
+.rp-err{color:var(--rp-err);font-size:16px;max-width:80%;text-align:center}
+.rp-err[hidden],.rp-start[hidden]{display:none!important}
+.rp-side{display:flex;flex-direction:column;gap:8px;min-height:0}
+.rp-temp{border:1px solid var(--rp-line);border-radius:12px;padding:6px 10px;display:flex;align-items:baseline;justify-content:space-between}
+.rp-temp h2{margin:0;font-size:16px}
+.rp-temp b{font-size:34px;font-variant-numeric:tabular-nums}
+.rp-graph{flex:1;min-height:0;border:1px solid var(--rp-line);border-radius:12px;position:relative}
+.rp-graph canvas{position:absolute;inset:0;width:100%;height:100%}
+.rp-say{word-break:keep-all;min-height:48px;overflow-wrap:anywhere;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:12px;
+  font-size:18px;font-weight:700;padding:4px;border:2px solid var(--rp-line)}
+@media (max-width:860px){
+  .rp-main{grid-template-columns:1fr 200px}
+  .rp-states span{padding:0 8px}
+  .rp-temp b{font-size:26px}
+  .rp-say{font-size:15px;min-height:44px}
+}
+.rp-tabs{display:flex;border:1px solid var(--rp-line);border-radius:12px;overflow:hidden}
+.rp-tabs[hidden]{display:none!important}
+.rp-tabs button{min-height:44px;padding:0 12px;border:0;background:var(--rl-bg);font-size:16px;display:flex;align-items:center;gap:6px}
+.rp-tabs button+button{border-left:1px solid var(--rp-line)}
+.rp-tabs button[aria-pressed="true"]{background:var(--rl-accent);color:var(--rl-ink);font-weight:700}
+.rp-tabs svg{width:22px;height:22px;flex:none}
+@media (max-width:860px){ .rp-tabs button{padding:0 8px} .rp-tabs svg{display:none} }
+html #rsTeBtn[aria-pressed="true"]{background:var(--rl-accent);color:var(--rl-ink);border-color:var(--rl-ink)}   /* 手で：おしている ときも 字は こい色 */
+.rp-gos{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.rp-big{display:flex;align-items:center;gap:8px;padding:0 28px}.rp-big svg{width:28px!important;height:28px;flex:none}
+.rp-big.rp-big2{background:var(--rl-bg);border:2px solid var(--rl-ink)}
+</style>
+</head>
+<body>
+<div class="rp-app">
+  <div class="rp-top">
+    <div class="rp-states" id="rpStates" aria-label="いまの すがた">
+      <span data-s="ice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2"/><path d="M9 9l6 6"/></svg>氷（固体）</span>
+      <span data-s="water"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c4 5 6 8 6 11a6 6 0 0 1-12 0c0-3 2-6 6-11z"/></svg>水（えき体）</span>
+      <span data-s="vapor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="7" cy="16" r="2.5"/><circle cx="15" cy="9" r="2.5"/><circle cx="18" cy="17" r="2"/></svg>水じょう気（気体）</span>
+    </div>
+    <div class="rp-tabs" role="group" aria-label="ゆびで おすと" id="rpTapSel" hidden>
+      <button type="button" data-v="hot" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c3 4 5 6 5 10a5 5 0 0 1-10 0c0-2 1-4 2-5 0 2 1 3 2 3 0-3 0-5 1-8z"/></svg>あたためる</button>
+      <button type="button" data-v="cold" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 2v20M4 7l16 10M20 7L4 17"/></svg>ひやす</button>
+    </div>
+    <span class="rp-sp"></span>
+    <button class="rp-b" type="button" id="rpReset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.7"/><path d="M4 4v4h4"/></svg>さいしょから</button>
+  </div>
+  <div class="rp-main">
+    <div class="rp-stage" id="rpStage">
+      <video id="rpVideo" playsinline muted></video>
+      <div class="rp-veil"></div>
+      <canvas id="rpCanvas"></canvas>
+      <div class="rp-msg" id="rpMsg"></div>
+      <div class="rp-start" id="rpStart">
+        <svg viewBox="0 0 300 140" aria-hidden="true">
+          <path d="M120 30v90h60V30" stroke-width="5" stroke-linejoin="round" style="fill:var(--rl-soft);stroke:var(--rl-ink)"/>
+          <path d="M50 70c-14 0-22-12-14-26 4 8 10 8 10 0 0-10 8-16 14-22 0 12 12 18 12 32 0 10-8 16-22 16z" fill="none" stroke-width="5" stroke-linejoin="round" style="stroke:var(--rp-hot)"/>
+          <text x="54" y="110" text-anchor="middle" font-size="20" font-weight="700" style="fill:var(--rp-hot)">パー</text>
+          <path d="M250 22v52M228 35l44 26M228 61l44-26" stroke-width="5" stroke-linecap="round" style="stroke:var(--rp-cold)"/>
+          <text x="250" y="110" text-anchor="middle" font-size="20" font-weight="700" style="fill:var(--rp-cold)">グー</text>
+        </svg>
+        <p>手を パーにして ビーカーに 近づけると あたためる。<br>グーにして 近づけると ひやす。</p>
+        <div class="rp-gos"><button class="rp-big" id="rpGo" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h4l2-3h6l2 3h4v11H3z"/><circle cx="12" cy="13" r="3.5"/></svg>カメラで</button><button class="rp-big rp-big2" id="rpTap" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 12V5.5a1.8 1.8 0 0 1 3.6 0V12l3.6.8a2 2 0 0 1 1.5 2.3L18 21h-8l-3.3-4.6a1.6 1.6 0 0 1 2.4-2.1L10 15"/><path d="M6.5 6.5a5.5 5.5 0 0 1 10.5-1"/></svg>ゆびで</button></div>
+        <div class="rp-err" id="rpErr" hidden></div>
+      </div>
+    </div>
+    <div class="rp-side">
+      <div class="rp-temp"><h2>温度</h2><b id="rpT">20℃</b></div>
+      <div class="rp-graph" aria-label="温度の かわりかた"><canvas id="rpGraph"></canvas></div>
+      <div class="rp-say" id="rpSay">手を かざそう</div>
+    </div>
+  </div>
+</div>
+
+<script>/* 手で おす（生命の 部屋の 部品 seimei/_parts/rs-te.js を tools_parts.py で 中に 入れる） */
+/*RS-TE*/
+/* ===== 手で おす（生命の 部屋で 共通） =====
+   カメラの 手を 画面 ぜんたいの「しるし（わ）」に うつす。ボタンの 上で 手を とめると、わが みちて おせる。
+   星ざ・社会地図の「とめて おす」と 同じ 考え。タップや マウスは そのまま つかえる（どっちでも できる）。
+   つかい方：
+     RsTe.point(nx,ny,box)  … カメラの 中の 位置（0〜1・かがみの むき）。null で しるしを けす
+     RsTe.startHand({onPoint, onLost}) … カメラと 手の トラッキングを はじめる（人さし指の 先＝しるし）
+     RsTe.stop()            … 手を やめる
+     RsTe.cur               … いまの しるしの 位置（画面の px）
+*/
+(function(){
+  const DWELL=1100;                 // とめて おすまでの 時間（ミリ秒）
+  const BOX=[0.1,0.1,0.9,0.9];      // カメラの この はんいを 画面 ぜんたいに 広げる（はしまで とどくように）
+  const SM=0.5;
+  const cv=document.createElement('canvas'); cv.className='rs-te'; cv.setAttribute('aria-hidden','true');
+  cv.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:60';
+  const tip=document.createElement('div'); tip.className='rs-te-tip'; tip.hidden=true;
+  tip.style.cssText='position:fixed;left:50%;top:8px;transform:translateX(-50%);z-index:61;pointer-events:none;background:#fff;border:2px solid var(--rl-ink,#1f2937);border-radius:22px;padding:8px 16px;font-size:16px;font-weight:700;color:var(--rl-ink,#1f2937);white-space:nowrap';
+  const st=document.createElement('style');
+  st.textContent='.rs-te-near{box-shadow:inset 0 0 0 4px var(--rl-accent,#23784a)!important}#rsTeBtn[aria-pressed="true"]{background:var(--rl-accent,#23784a);color:#fff;border-color:var(--rl-accent,#23784a)}';
+  const g=cv.getContext('2d');
+  function size(){ const d=window.devicePixelRatio||1; cv.width=innerWidth*d; cv.height=innerHeight*d; g.setTransform(d,0,0,d,0,0); }
+  function mount(){ document.head.appendChild(st); document.body.appendChild(cv); document.body.appendChild(tip); size(); }
+  if(document.body) mount(); else document.addEventListener('DOMContentLoaded',mount);
+  addEventListener('resize',size);
+  const T={cur:null, el:null, t0:0, done:false, on:false, dwell:DWELL, clicks:0};
+  const cl=v=>Math.max(0,Math.min(1,v));
+  T.point=function(nx,ny,box){
+    if(nx==null){ T.cur=null; return null; }
+    const b=box||BOX, x=cl((nx-b[0])/(b[2]-b[0]))*innerWidth, y=cl((ny-b[1])/(b[3]-b[1]))*innerHeight;
+    if(!T.cur) T.cur={x,y}; else { T.cur.x+=(x-T.cur.x)*SM; T.cur.y+=(y-T.cur.y)*SM; }
+    return T.cur;
+  };
+  T.say=function(t){ tip.hidden=!t; if(t && tip.textContent!==t) tip.textContent=t; };
+  function target(){
+    const c=T.cur; if(!c) return null;
+    const e=document.elementFromPoint(c.x,c.y), b=e&&e.closest&&e.closest('button');
+    return b && !b.disabled && b.offsetParent && !b.closest('[hidden]') ? b : null;
+  }
+  function frame(now){
+    requestAnimationFrame(frame);
+    g.clearRect(0,0,innerWidth,innerHeight);
+    const c=T.cur, el=target();
+    if(el!==T.el){ if(T.el) T.el.classList.remove('rs-te-near'); T.el=el; T.t0=now; T.done=false; if(el) el.classList.add('rs-te-near'); }
+    let prog=0;
+    if(el && !T.done){ prog=Math.min(1,(now-T.t0)/T.dwell); if(prog>=1){ T.done=true; T.clicks++; el.click(); } }
+    if(!c) return;
+    const R=Math.max(20,Math.min(innerWidth,innerHeight)*0.035);
+    const ink=getComputedStyle(document.documentElement).getPropertyValue('--rl-ink').trim()||'#1f2937';
+    const acc=getComputedStyle(document.documentElement).getPropertyValue('--rl-accent').trim()||'#23784a';
+    g.lineWidth=7; g.strokeStyle='#fff'; g.beginPath(); g.arc(c.x,c.y,R,0,7); g.stroke();
+    g.lineWidth=3; g.strokeStyle=ink; g.beginPath(); g.arc(c.x,c.y,R,0,7); g.stroke();
+    g.fillStyle=ink; g.beginPath(); g.arc(c.x,c.y,4,0,7); g.fill();
+    // みちる わ：こい ふちの 上に 部屋の 色（黄など うすい 色でも 白地で 見える）
+    if(prog>0 && !T.done){ g.lineCap='round'; const a1=-Math.PI/2+prog*Math.PI*2;
+      g.lineWidth=11; g.strokeStyle=ink; g.beginPath(); g.arc(c.x,c.y,R+8,-Math.PI/2,a1); g.stroke();
+      g.lineWidth=6; g.strokeStyle=acc; g.beginPath(); g.arc(c.x,c.y,R+8,-Math.PI/2,a1); g.stroke(); }
+  }
+  requestAnimationFrame(frame);
+
+  /* ---- 手の トラッキング（人さし指の 先） ---- */
+  const VER='0.10.14';
+  let hands=null, video=null, stream=null, lastT=-1, onPoint=null, onLost=null, seen=0;
+  async function load(){
+    const vision=await import(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}`);
+    const fs=await vision.FilesetResolver.forVisionTasks(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}/wasm`);
+    const o=d=>({baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task',delegate:d},runningMode:'VIDEO',numHands:1});
+    try{ return await vision.HandLandmarker.createFromOptions(fs,o('GPU')); }
+    catch(e){ return await vision.HandLandmarker.createFromOptions(fs,o('CPU')); }
+  }
+  T.errText=function(e){
+    return e&&e.name==='NoCamPage' ? 'この ひらきかたでは カメラが つかえません。Chrome で ひらいてね。'
+      : e&&(e.name==='NotFoundError'||e.name==='NotReadableError') ? 'カメラが みつかりません。ほかの アプリで つかっていないか みてね。'
+      : e&&e.name==='NotAllowedError' ? 'カメラが つかえません。先生に カメラを ゆるして もらってね。'
+      : 'じゅんびが できませんでした。インターネットに つながっているか みてね。';
+  };
+  T.startHand=async function(opt){
+    opt=opt||{}; onPoint=opt.onPoint||null; onLost=opt.onLost||null; opt_hint=opt.hint!=null?opt.hint:'人さし指を カメラに 見せてね';
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ const e=new Error(); e.name='NoCamPage'; throw e; }
+    if(!video){ video=document.createElement('video'); video.playsInline=true; video.muted=true; video.setAttribute('playsinline','');
+      video.style.cssText='position:fixed;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none'; document.body.appendChild(video); }
+    stream=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:960},height:{ideal:540},facingMode:'user'},audio:false});
+    video.srcObject=stream; await video.play();
+    hands=hands||await load();
+    T.on=true; T.video=video; seen=performance.now(); requestAnimationFrame(track);
+    return video;
+  };
+  function track(){
+    if(!T.on) return;
+    requestAnimationFrame(track);
+    if(!hands||video.readyState<2||video.currentTime===lastT) return;
+    lastT=video.currentTime;
+    const now=performance.now(), r=hands.detectForVideo(video,now), L=(r.landmarks||[])[0];
+    if(L){ seen=now; const c=T.point(1-L[8].x, L[8].y); T.say(''); if(onPoint) onPoint(c); }
+    else { T.point(null); if(onPoint) onPoint(null); if(now-seen>1200 && opt_hint) T.say(opt_hint); if(onLost) onLost(); }
+  }
+  let opt_hint='人さし指を カメラに 見せてね';
+  T.stop=function(){ T.on=false; T.point(null); T.say(''); if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; } if(onPoint) onPoint(null); };
+  // 「手で」ボタン：おすと カメラの 手が はじまる。もう いちど おすと やめる
+  T.bindButton=function(btn,opt){
+    btn.setAttribute('aria-pressed','false');
+    btn.addEventListener('click',async()=>{
+      if(T.on){ T.stop(); btn.setAttribute('aria-pressed','false'); return; }
+      btn.disabled=true; T.say('じゅんびちゅう…');
+      try{ await T.startHand(opt); btn.setAttribute('aria-pressed','true'); T.say(''); }
+      catch(e){ T.say(T.errText(e)); setTimeout(()=>T.say(''),5000); }
+      finally{ btn.disabled=false; }
+    });
+  };
+  window.RsTe=T;
+})();
+/*RS-TE-END*/
+</script>
+<script>
+/* 色は :root から 読む（K＝そのまま、KA＝すきとおらせる） */
+const RL_CS=getComputedStyle(document.documentElement), RL_C={};
+const K=n=>RL_C[n]||(RL_C[n]=RL_CS.getPropertyValue('--'+n).trim());
+const KA=(n,a)=>{ const h=K(n).replace('#',''); return `rgba(${parseInt(h.slice(0,2),16)},${parseInt(h.slice(2,4),16)},${parseInt(h.slice(4,6),16)},${a})`; };
+/*RP-PARTS*/
+const RP_PARTS={beaker:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjQwIiB2aWV3Qm94PSIwIDAgMjAwIDI0MCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJlYWtlci13YWxsIiB4MT0iMCIgeDI9IjEiPgogICAgICA8c3RvcCBzdG9wLWNvbG9yPSIjZmZmZmZmIiBzdG9wLW9wYWNpdHk9IjAuNyIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjAuNDUiIHN0b3AtY29sb3I9IiNlNmY2ZmMiIHN0b3Atb3BhY2l0eT0iMC4yNSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM3ZmQxZWUiIHN0b3Atb3BhY2l0eT0iMC4zIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8ZyBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogICAgPHBhdGggZD0iTTIwIDIwSDE4MFYyMTVRMTgwIDIzMCAxNjUgMjMwSDM1UTIwIDIzMCAyMCAyMTVaIiBmaWxsPSIjZTZmNmZjIiBmaWxsLW9wYWNpdHk9IjAuMTgiLz4KICAgIDxwYXRoIGQ9Ik0xNCAyMEwzIDlRMiA3IDYgN0gzMEwzNiAxNEgxODRRMTkwIDE0IDE5MSAxMEwxOTQgMTFRMTk0IDIwIDE4NiAyMFYyMTZRMTg2IDIzNyAxNjUgMjM3SDM1UTE0IDIzNyAxNCAyMTZaIE0yMCAyMFYyMTVRMjAgMjMwIDM1IDIzMEgxNjVRMTgwIDIzMCAxODAgMjE1VjIwWiIgZmlsbD0idXJsKCNiZWFrZXItd2FsbCkiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPgogICAgPHBhdGggZD0iTTE0IDIwTDMgOVEyIDcgNiA3SDMwTDM2IDE0SDE4NFExOTAgMTQgMTkxIDEwTDE5NCAxMVExOTQgMjAgMTg2IDIwVjIxNlExODYgMjM3IDE2NSAyMzdIMzVRMTQgMjM3IDE0IDIxNloiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFmMjkzNyIgc3Ryb2tlLW9wYWNpdHk9IjAuODUiIHN0cm9rZS13aWR0aD0iMiIvPgogICAgPHBhdGggZD0iTTIwIDIwTDkgMTBNMjAgMjBWMjE1UTIwIDIzMCAzNSAyMzBIMTY1UTE4MCAyMzAgMTgwIDIxNVYyME0zNiAyMEgxODAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFmMjkzNyIgc3Ryb2tlLW9wYWNpdHk9IjAuNzgiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgICA8cGF0aCBkPSJNMTcgMzRWMjA3IiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS1vcGFjaXR5PSIwLjc1IiBzdHJva2Utd2lkdGg9IjIuNSIvPgogICAgPHBhdGggZD0iTTE4MyAzMFYyMTRRMTgzIDIzMyAxNjUgMjMzIiBmaWxsPSJub25lIiBzdHJva2U9IiMyYmEzZDkiIHN0cm9rZS1vcGFjaXR5PSIwLjEzIiBzdHJva2Utd2lkdGg9IjMiLz4KICAgIDxwYXRoIGQ9Ik0zNCAyMzNIMTUxIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS1vcGFjaXR5PSIwLjciIHN0cm9rZS13aWR0aD0iMiIvPgogIDwvZz4KPC9zdmc+',
+thermometer:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSIzMDAiIHZpZXdCb3g9IjAgMCA0MCAzMDAiPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJ0aGVybW9tZXRlci1nbGFzcyIgeDE9IjAiIHgyPSIxIj4KICAgICAgPHN0b3Agc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIwLjciLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIwLjUiIHN0b3AtY29sb3I9IiNlNmY2ZmMiIHN0b3Atb3BhY2l0eT0iMC4yIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzdmZDFlZSIgc3RvcC1vcGFjaXR5PSIwLjI4Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8ZyBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbGluZWNhcD0icm91bmQiPgogICAgPHBhdGggZD0iTTEyIDI2OC41MTA5VjEzQTggOCAwIDAgMSAyOCAxM1YyNjguNTEwOUExNCAxNCAwIDEgMSAxMiAyNjguNTEwOVogTTE0IDI2OS42MDc3VjEzQTYgNiAwIDAgMSAyNiAxM1YyNjkuNjA3N0ExMiAxMiAwIDEgMSAxNCAyNjkuNjA3N1oiIGZpbGw9InVybCgjdGhlcm1vbWV0ZXItZ2xhc3MpIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz4KICAgIDxwYXRoIGQ9Ik0xMiAyNjguNTEwOVYxM0E4IDggMCAwIDEgMjggMTNWMjY4LjUxMDlBMTQgMTQgMCAxIDEgMTIgMjY4LjUxMDlaIiBmaWxsPSJub25lIiBzdHJva2U9IiMxZjI5MzciIHN0cm9rZS1vcGFjaXR5PSIwLjg1IiBzdHJva2Utd2lkdGg9IjEuNCIvPgogICAgPHBhdGggZD0iTTE0IDI2N1YxM0E2IDYgMCAwIDEgMjYgMTNWMjY3IiBmaWxsPSJub25lIiBzdHJva2U9IiMxZjI5MzciIHN0cm9rZS1vcGFjaXR5PSIwLjc1IiBzdHJva2Utd2lkdGg9IjAuOSIvPgogICAgPHBhdGggZD0iTTE4IDIwVjI2OE0yMiAyMFYyNjgiIHN0cm9rZT0iIzFmMjkzNyIgc3Ryb2tlLW9wYWNpdHk9IjAuNzUiIHN0cm9rZS13aWR0aD0iMC43Ii8+CiAgICA8cGF0aCBkPSJNMTggMjY4LjE2Nzg0QTEyIDEyIDAgMSAwIDIyIDI2OC4xNjc4NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWYyOTM3IiBzdHJva2Utb3BhY2l0eT0iMC43NSIgc3Ryb2tlLXdpZHRoPSIwLjgiLz4KICAgIDxwYXRoIGQ9Ik0xNS41IDIyVjI1NiIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utb3BhY2l0eT0iMC44IiBzdHJva2Utd2lkdGg9IjEuNCIvPgogICAgPHBhdGggZD0iTTI3IDIzVjI2MSIgc3Ryb2tlPSIjMmJhM2Q5IiBzdHJva2Utb3BhY2l0eT0iMC4xMyIgc3Ryb2tlLXdpZHRoPSIxIi8+CiAgICA8cGF0aCBkPSJNOC40IDI3N1E2LjkgMjgzIDExLjUgMjg4IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS1vcGFjaXR5PSIwLjciIHN0cm9rZS13aWR0aD0iMS4zIi8+CiAgPC9nPgo8L3N2Zz4=',
+start:'data:image/webp;base64,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'};
+/*RP-PARTS-END*/
+/* Codex で 作った 部品の 絵（parts/*.svg を tools_parts.py で 中に 入れる）。読めない ときは 前の 線の 絵 */
+const PIMG={}; for(const k in RP_PARTS){ if(k==='start') continue; const im=new Image(); im.onload=()=>{ try{ draw(); }catch(e){} }; im.src=RP_PARTS[k]; PIMG[k]=im; }
+const ok=k=>!!(PIMG[k] && PIMG[k].complete && PIMG[k].naturalWidth>0);
+if(RP_PARTS.start){ const sv=document.querySelector('.rp-start svg'); if(sv){ const im=new Image(); im.src=RP_PARTS.start; im.alt=''; im.className='rp-startimg'; sv.replaceWith(im); } }
+
+/* ===== きまり（1か所） ===== */
+// 熱の やりとりを 1つの 量で 考える。とけている間（0℃）と ふっとうしている間（100℃）は 温度が かわらない。
+const RP = {
+  LM:30,          // 氷が ぜんぶ とけるのに いる 熱（見本なので 実さいより 小さく した）
+  LV:150,         // 水が ぜんぶ 水じょう気に なるのに いる 熱（同じく 小さく した）
+  MIN:-20,        // 氷を ひやせる 下の はし（氷と 食塩で ひやす）
+  ICE_GROW:0.1,   // 氷に なると 体積が 約1.1倍
+  POWER:15,       // 手を いちばん 近づけた ときの 1びょうの 熱
+  heat(s,q){      // s={T,f,m} f=氷の わりあい m=のこっている 水の りょう（はじめ1）
+    while(Math.abs(q)>1e-9 && s.m>1e-9){
+      if(q>0){
+        if(s.T<0){ const d=Math.min(q,-s.T); s.T+=d; q-=d; }
+        else if(s.f>0){ const d=Math.min(q, s.f*RP.LM); s.f-=d/RP.LM; q-=d; s.T=0; if(s.f<1e-9) s.f=0; }
+        else if(s.T<100){ const d=Math.min(q,100-s.T); s.T+=d; q-=d; }
+        else { const d=Math.min(q, s.m*RP.LV); s.m-=d/RP.LV; q-=d; s.T=100; if(s.m<1e-9){ s.m=0; } }
+      }else{
+        if(s.T>0){ const d=Math.min(-q,s.T); s.T-=d; q+=d; }
+        else if(s.f<1){ const d=Math.min(-q,(1-s.f)*RP.LM); s.f+=d/RP.LM; q+=d; s.T=0; if(s.f>1-1e-9) s.f=1; }
+        else if(s.T>RP.MIN){ const d=Math.min(-q,s.T-RP.MIN); s.T-=d; q+=d; }
+        else break;
+      }
+    }
+    return s;
+  },
+  vol(s){ return s.m*(1+RP.ICE_GROW*s.f); },
+  state(s){
+    if(s.m<=1e-9) return 'gone';
+    if(s.f>=1) return 'ice';
+    if(s.f>0) return 'melt';
+    if(s.T>=100) return 'boil';
+    return 'water';
+  },
+};
+window.RP = RP;
+const $ = id => document.getElementById(id);
+const rp = { s:{T:20,f:0,m:1}, hand:null, power:0, hist:[], t:0, src:'', bub:[], last:0 };
+window.rp = rp;
+
+/* ===== 手から あたためる・ひやす ===== */
+// pts：{x,y,fist}（画面の 0〜1）
+function onHand(pts){
+  const h=(pts||[])[0];
+  if(!h){ rp.hand=null; rp.power=0; setMsg('手を 見せて'); return; }
+  setMsg('');
+  const p=[h.x*W,h.y*H];
+  rp.hand = rp.hand ? {x:rp.hand.x+(p[0]-rp.hand.x)*0.6, y:rp.hand.y+(p[1]-rp.hand.y)*0.6, fist:h.fist} : {x:p[0],y:p[1],fist:h.fist};
+  const g=geo(), bx=g.x+g.w/2, by=g.y+g.h*0.6;
+  const d=Math.hypot(rp.hand.x-bx, rp.hand.y-by)/Math.max(W,H);
+  const near=Math.max(0,Math.min(1,(0.42-d)/0.27));     // 近いほど 強い
+  rp.power = (h.fist?-1:1)*near;
+}
+function setMsg(t){ const el=$('rpMsg'); if(el.textContent!==t) el.textContent=t; }
+function step(dt){
+  RP.heat(rp.s, rp.power*RP.POWER*dt);
+  rp.t+=dt;
+  if(rp.t-rp.last>=0.25){ rp.last=rp.t; rp.hist.push(rp.s.T); if(rp.hist.length>240) rp.hist.shift(); }
+}
+
+/* ===== えがく ===== */
+const cv=$('rpCanvas'), cx=cv.getContext('2d'), gv=$('rpGraph'), gx=gv.getContext('2d');
+let W=0,H=0,GW=0,GH=0;
+function fit(){ const d=window.devicePixelRatio||1;
+  let r=$('rpStage').getBoundingClientRect(); W=r.width; H=r.height; cv.width=Math.round(W*d); cv.height=Math.round(H*d); cx.setTransform(d,0,0,d,0,0);
+  r=gv.parentNode.getBoundingClientRect(); GW=r.width; GH=r.height; gv.width=Math.round(GW*d); gv.height=Math.round(GH*d); gx.setTransform(d,0,0,d,0,0); }
+window.addEventListener('resize', ()=>{ fit(); draw(); });
+// ビーカーの 絵（parts/beaker.svg）は 中の場所が x20〜180・y20〜230
+function geo(){ let h=H*0.56, w=h/1.3125; if(w>W*0.3){ w=W*0.3; h=w*1.3125; } const x=(W-w)/2, y=H*0.3; return {x,y,w,h}; }
+window.rpGeo=geo;
+
+function draw(){
+  const s=rp.s, g=geo(), st=RP.state(s);
+  cx.clearRect(0,0,W,H);
+  const full=g.h*0.55, lv=full*RP.vol(s), top=g.y+g.h-lv;
+  // 中み：氷は 下、水は 上（とけている 間）
+  const iceH=lv*s.f*(1+RP.ICE_GROW)/(1+RP.ICE_GROW*s.f) || 0;
+  if(lv>0){
+    cx.fillStyle=KA('rl-accent2',.85); cx.fillRect(g.x, top, g.w, lv-iceH);
+    if(iceH>0){ cx.fillStyle=K('rl-soft'); cx.fillRect(g.x, g.y+g.h-iceH, g.w, iceH);
+      cx.strokeStyle=K('rp-mute'); cx.lineWidth=2; for(let k=0;k<5;k++){ const xx=g.x+g.w*(0.15+k*0.18); cx.beginPath(); cx.moveTo(xx,g.y+g.h-iceH*0.2); cx.lineTo(xx+12,g.y+g.h-iceH*0.6); cx.stroke(); } }
+    cx.strokeStyle=K('rp-deep'); cx.lineWidth=2; cx.beginPath(); cx.moveTo(g.x,top); cx.lineTo(g.x+g.w,top); cx.stroke();
+  }
+  // あわ（ふっとう）
+  if(st==='boil'){ if(Math.random()<0.6) rp.bub.push({x:g.x+12+Math.random()*(g.w-24), y:g.y+g.h-6, r:4+Math.random()*7}); }
+  rp.bub=rp.bub.filter(b=>{ b.y-=3+b.r*0.3; b.r+=0.15; if(b.y<top) return false;
+    cx.strokeStyle=K('rp-deep'); cx.lineWidth=2; cx.fillStyle=KA('rl-bg',.7); cx.beginPath(); cx.arc(b.x,b.y,b.r,0,6.28); cx.fill(); cx.stroke(); return true; });
+  // 湯気（白い けむり）
+  if(st==='boil' || (st==='water' && s.T>80)){
+    cx.strokeStyle=KA('rp-mute',.9); cx.lineWidth=4; cx.lineCap='round';
+    for(let k=0;k<3;k++){ const bx=g.x+g.w*(0.25+k*0.25); cx.beginPath();
+      for(let i=0;i<8;i++){ const yy=g.y-8-i*10, xx=bx+Math.sin(i*0.9+rp.t*4+k)*8; i?cx.lineTo(xx,yy):cx.moveTo(xx,yy); } cx.stroke(); }
+  }
+  // ビーカー と はじめの 水面
+  // 温度計（赤い 液 → その上に ガラスの 温度計）
+  const tx=g.x+g.w*0.78, tt=g.y-34;
+  if(ok('thermometer')){ const sc=(g.y+g.h-8-tt)/292, T=Math.max(RP.MIN,Math.min(110,s.T)), ty=tt+(262-(T-RP.MIN)/(110-RP.MIN)*236)*sc;
+    cx.fillStyle=K('rp-red'); cx.beginPath(); cx.arc(tx,tt+280*sc,10*sc,0,6.28); cx.fill(); cx.fillRect(tx-2*sc,ty,4*sc,tt+280*sc-ty);
+    cx.drawImage(PIMG.thermometer, tx-20*sc, tt, 40*sc, 300*sc); }
+  if(ok('beaker')){ const sc=g.w/160; cx.drawImage(PIMG.beaker, g.x-20*sc, g.y-20*sc, 200*sc, 240*sc); }
+  else { cx.strokeStyle=K('rl-ink'); cx.lineWidth=5; cx.lineJoin='round';
+    cx.beginPath(); cx.moveTo(g.x-8,g.y); cx.lineTo(g.x,g.y+8); cx.lineTo(g.x,g.y+g.h); cx.lineTo(g.x+g.w,g.y+g.h); cx.lineTo(g.x+g.w,g.y); cx.stroke(); }
+  const y0=g.y+g.h-full; cx.strokeStyle=K('rp-warn'); cx.lineWidth=3; cx.setLineDash([8,6]);
+  cx.beginPath(); cx.moveTo(g.x-g.w*0.16,y0); cx.lineTo(g.x+g.w*1.14,y0); cx.stroke(); cx.setLineDash([]);
+  cx.fillStyle=K('rp-warn'); cx.font='700 15px "BIZ UDPGothic",sans-serif'; cx.textAlign='left'; cx.textBaseline='middle'; cx.fillText('はじめ', g.x+g.w*1.18, y0);
+  // ことば（あわ・湯気）
+  cx.fillStyle=K('rl-ink'); cx.font='700 16px "BIZ UDPGothic",sans-serif';
+  if(st==='boil'){ cx.textAlign='left'; cx.fillText('あわ＝水じょう気', g.x+g.w*1.18, g.y+g.h*0.8); cx.fillText('湯気', g.x+g.w*0.85, g.y-60); }
+  // 温度計（絵が 読めない とき）
+  if(!ok('thermometer')){ const tx=g.x+g.w*0.82, tt=g.y-20, tb=g.y+g.h-14; cx.strokeStyle=K('rl-ink'); cx.lineWidth=3; cx.fillStyle=K('rl-bg');
+  cx.beginPath(); cx.roundRect(tx-6,tt,12,tb-tt,6); cx.fill(); cx.stroke();
+  const ty=tb-(s.T-RP.MIN)/(110-RP.MIN)*(tb-tt-6); cx.fillStyle=K('rp-red'); cx.fillRect(tx-3,ty,6,tb-ty-3); }
+  // 手
+  if(rp.hand){ const {x,y,fist}=rp.hand, c=fist?K('rp-cold'):K('rp-hot'), R=Math.max(22,Math.min(W,H)*0.05);
+    cx.lineWidth=4; cx.strokeStyle=c; cx.fillStyle=KA('rl-bg',.92); cx.beginPath(); cx.arc(x,y,R,0,6.28); cx.fill(); cx.stroke();
+    cx.lineCap='round';
+    if(fist){ cx.beginPath(); for(let k=0;k<3;k++){ const a=k*Math.PI/3; cx.moveTo(x+Math.cos(a)*R*0.6,y+Math.sin(a)*R*0.6); cx.lineTo(x-Math.cos(a)*R*0.6,y-Math.sin(a)*R*0.6); } cx.stroke(); }
+    else { cx.beginPath(); cx.moveTo(x,y-R*0.6); cx.bezierCurveTo(x+R*0.6,y-R*0.1,x+R*0.5,y+R*0.55,x,y+R*0.55); cx.bezierCurveTo(x-R*0.5,y+R*0.55,x-R*0.6,y,x,y-R*0.6); cx.stroke(); }
+    cx.fillStyle=c; cx.font='700 16px "BIZ UDPGothic",sans-serif'; cx.textAlign='center'; cx.textBaseline='top';
+    if(Math.abs(rp.power)>0.02) cx.fillText(fist?'ひやす':'あたためる', x, y+R+4); }
+  drawGraph(); show();
+}
+function drawGraph(){
+  gx.clearRect(0,0,GW,GH);
+  const L=50, R=8, T=10, B=26, ww=GW-L-R, hh=GH-T-B, yOf=v=>T+hh*(1-(v-RP.MIN)/(110-RP.MIN));
+  gx.font='14px "BIZ UDPGothic",sans-serif'; gx.textAlign='right'; gx.textBaseline='middle'; gx.fillStyle=K('rp-sub');
+  [[100,'100'],[0,'0']].forEach(([v,t])=>{ const y=yOf(v); gx.strokeStyle=K('rp-mute'); gx.lineWidth=1; gx.setLineDash([4,4]); gx.beginPath(); gx.moveTo(L,y); gx.lineTo(GW-R,y); gx.stroke(); gx.setLineDash([]); gx.fillText(t+'℃',L-4,y); });
+  gx.strokeStyle=K('rl-ink'); gx.lineWidth=1.5; gx.beginPath(); gx.moveTo(L,T); gx.lineTo(L,GH-B); gx.stroke();
+  gx.beginPath(); gx.moveTo(L,GH-B); gx.lineTo(GW-R,GH-B); gx.stroke(); gx.textAlign='right'; gx.textBaseline='bottom'; gx.fillText('時間 →',GW-R,GH-2);
+  if(rp.hist.length>1){ gx.strokeStyle=K('rp-red'); gx.lineWidth=3; gx.beginPath();
+    rp.hist.forEach((v,i)=>{ const x=L+ww*i/239, y=yOf(v); i?gx.lineTo(x,y):gx.moveTo(x,y); }); gx.stroke(); }
+}
+function show(){
+  const s=rp.s, st=RP.state(s);
+  const T=Math.round(s.T)+'℃'; if($('rpT').textContent!==T) $('rpT').textContent=T;
+  const on={ice:['ice'],melt:['ice','water'],water:['water'],boil:['water','vapor'],gone:['vapor']}[st];
+  document.querySelectorAll('#rpStates span').forEach(e=>{ const v=on.includes(e.dataset.s)?'1':''; if(e.dataset.on!==v) e.dataset.on=v; });
+  const say={ice:'こおった（体積が ふえた）',melt:'0℃のまま とけていく',water:'水',boil:'ふっとう（100℃のまま）',gone:'水が 空気中へ 出ていった'}[st];
+  const t = st==='melt' && rp.power<0 ? '0℃のまま こおっていく' : say;
+  if($('rpSay').textContent!==t) $('rpSay').textContent=t;
+}
+let prevT=0;
+function loopDraw(now){ requestAnimationFrame(loopDraw); if(!rp.src) return; const dt=Math.min(0.1,(now-(prevT||now))/1000); prevT=now; step(dt); draw(); }
+
+$('rpReset').onclick=()=>{ rp.s={T:20,f:0,m:1}; rp.hist=[]; rp.bub=[]; draw(); };
+fit(); show(); drawGraph();
+
+function toStage(c){ if(!c) return null; const r=$('rpStage').getBoundingClientRect(), x=(c.x-r.left)/r.width, y=(c.y-r.top)/r.height;
+  return (x>=0&&x<=1&&y>=0&&y<=1) ? {x,y} : null; }
+// カメラの 手（0〜1・かがみの むき）
+window.rpCam=(hs)=>{
+  const h=(hs||[])[0]; if(!h){ RsTe.point(null); onHand([]); return; }
+  const q=toStage(RsTe.point(h.x, h.y));
+  if(q) onHand([{x:q.x, y:q.y, fist:h.fist}]); else { onHand([]); setMsg(''); }
+};
+// ゆびで（カメラなし）：［あたためる］［ひやす］を えらんで、ビーカーを ゆびで おさえる
+let tapId=null, tapCold=false;
+function startTap(){ $('rpStart').hidden=true; $('rpTapSel').hidden=false; rp.src='tap'; fit(); draw(); requestAnimationFrame(loopDraw); }
+$('rpTap').onclick=startTap;
+document.querySelectorAll('#rpTapSel button').forEach(b=>b.onclick=()=>{ tapCold=b.dataset.v==='cold';
+  document.querySelectorAll('#rpTapSel button').forEach(x=>x.setAttribute('aria-pressed', x===b?'true':'false')); });
+const tapXY=e=>{ const r=$('rpStage').getBoundingClientRect(); return {x:(e.clientX-r.left)/r.width, y:(e.clientY-r.top)/r.height, fist:tapCold}; };
+$('rpStage').addEventListener('pointerdown', e=>{ if(rp.src!=='tap') return; tapId=e.pointerId; $('rpStage').setPointerCapture?.(tapId); onHand([tapXY(e)]); });
+$('rpStage').addEventListener('pointermove', e=>{ if(rp.src!=='tap'||e.pointerId!==tapId) return; onHand([tapXY(e)]); });
+const tapUp=e=>{ if(e.pointerId!==tapId) return; tapId=null; onHand([]); setMsg(''); };
+$('rpStage').addEventListener('pointerup', tapUp); $('rpStage').addEventListener('pointercancel', tapUp);
+window.rpFeed=(pts,dt)=>{ onHand(pts); if(dt) step(dt); draw(); };
+window.rpOnHands=onHand; window.rpDraw=draw; window.rpFit=fit; window.rpStep=step;
+if(/[?&]test/.test(location.search)){
+  $('rpGo').textContent='マウスで ためす';
+  let down=false, lastE=null;
+  $('rpGo').onclick=()=>{ $('rpStart').hidden=true; rp.src='mouse'; fit(); draw(); requestAnimationFrame(loopDraw); };
+  const st=$('rpStage'), mv=e=>{ if(rp.src!=='mouse') return; lastE={clientX:e.clientX,clientY:e.clientY}; const r=st.getBoundingClientRect(); onHand([{x:(e.clientX-r.left)/r.width, y:(e.clientY-r.top)/r.height, fist:down}]); };
+  st.addEventListener('pointerdown', e=>{ down=true; mv(e); });
+  window.addEventListener('pointerup', ()=>{ down=false; if(lastE) mv(lastE); });
+  st.addEventListener('pointermove', mv);
+  st.addEventListener('pointerleave', ()=>{ if(rp.src==='mouse') onHand([]); });
+}
+</script>
+
+<script type="module">
+/* ===== カメラと 手の トラッキング＝ふたりで なぞろう と 同じ 作り（ここは 手1つ・グーか パーか） ===== */
+const $ = id => document.getElementById(id);
+const VER = '0.10.14';
+const video = $('rpVideo');
+let lm=null, lastT=-1, modelP=null;
+async function loadModel(){
+  const vision = await import(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}`);
+  const fs = await vision.FilesetResolver.forVisionTasks(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}/wasm`);
+  const opts = d => ({ baseOptions:{ modelAssetPath:'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task', delegate:d },
+    runningMode:'VIDEO', numHands:1, minHandDetectionConfidence:0.5, minHandPresenceConfidence:0.5, minTrackingConfidence:0.5 });
+  try{ return await vision.HandLandmarker.createFromOptions(fs, opts('GPU')); }
+  catch(e){ return await vision.HandLandmarker.createFromOptions(fs, opts('CPU')); }
+}
+if(!/[?&]test/.test(location.search)){
+  modelP = loadModel().catch(e=>{ modelP=null; throw e; }); modelP.catch(()=>{});
+  $('rpGo').onclick = start;
+}
+async function start(){
+  const err=$('rpErr'); err.hidden=true;
+  $('rpGo').disabled=true; $('rpGo').textContent='じゅんびちゅう…';
+  try{
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ const e=new Error('nocam'); e.name='NoCamPage'; throw e; }
+    const stream = await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280},height:{ideal:720},facingMode:'user'},audio:false});
+    video.srcObject=stream; await video.play();
+    lm = await (modelP || (modelP = loadModel()));
+    $('rpStart').hidden=true; window.rp.src='cam';
+    requestAnimationFrame(()=>window.rpFit());
+    loop(performance.now());
+  }catch(e){
+    $('rpGo').disabled=false; $('rpGo').textContent='もう いちど';
+    err.hidden=false;
+    err.textContent = (e && e.name==='NoCamPage') ? 'この ひらきかたでは カメラが つかえません。Chrome で ひらいてね。'
+      : (e && (e.name==='NotFoundError'||e.name==='NotReadableError')) ? 'カメラが みつかりません。ほかの アプリで つかっていないか みてね。'
+      : (e && e.name==='NotAllowedError') ? 'カメラが つかえません。先生に カメラを ゆるして もらってね。'
+      : 'じゅんびが できませんでした（'+(e && (e.name||e.message)||'')+'）。インターネットに つながっているか みてね。';
+  }
+}
+let prev=0;
+function loop(now){
+  requestAnimationFrame(loop);
+  const dt=Math.min(0.1,(now-(prev||now))/1000); prev=now;
+  if(lm && video.readyState>=2 && video.currentTime!==lastT){
+    lastT=video.currentTime;
+    const res = lm.detectForVideo(video, now);
+    const pts = (res.landmarks||[]).map(L=>{
+      const d=(a,b)=>Math.hypot(L[a].x-L[b].x, L[a].y-L[b].y), palm=d(0,9)||1e-6;
+      const tips=(d(8,0)+d(12,0)+d(16,0)+d(20,0))/4;
+      return {x:1-L[9].x, y:L[9].y, fist: tips/palm<1.35};      // 指先が 手首に 近い＝グー
+    });
+    window.rpCam(pts);
+  }
+  window.rpStep(dt); window.rpDraw();
+}
+</script>
+<!--rl-home--><script>
+/* 理科ラボ：どの へやにも 出す「もどる」ボタン（11-07）。決まりは ここ 1か所。
+   へやの 上の帯（.xx-top）の いちばん左に 44px の ⌂ を 足す。帯が ない へやは 左下に うかべる。
+   行き先：その へやが 入っている 部屋の ページ（理科ラボ/1_エネルギー.html など）。そこから ホームへも もどれる。
+   へやの 中の 字や クラス名には さわらない（クラス名は rlh- で はじめる）。 */
+(function(){
+  if(window.__rlHome) return; window.__rlHome=1;
+  // どの へやが どの 部屋に 入るか（mock/ の 下の 道 → 部屋の ページ）
+  var PAGE={energy:'1_エネルギー.html',ryushi:'2_粒子.html',seimei:'3_生命.html',chikyu:'4_地球.html'};
+  var EXTRA={teko:'energy','karada-mirror':'seimei',tentai:'chikyu','seiza-tsunagu':'chikyu'};
+  function room(p){
+    var m=/\/mock\/rika\/(energy|ryushi|seimei|chikyu)\//.exec(p); if(m) return m[1];
+    m=/\/mock\/([^\/]+)\//.exec(p); return m&&EXTRA[m[1]]||'';
+  }
+  function href(){
+    var p=decodeURIComponent(location.pathname), r=room(p), i=p.lastIndexOf('/mock/');
+    if(window.RL_HOME_URL) return window.RL_HOME_URL;          // 授業メイトの 中では 入れる側が 決める
+    if(!r||i<0) return '';
+    return 'file://'+encodeURI(p.slice(0,i)+'/理科ラボ/'+PAGE[r]);
+  }
+  function put(){
+    var to=href(); if(!to||document.querySelector('.rlh-home')) return;
+    var a=document.createElement('a'); a.className='rlh-home'; a.href=to; a.title='へやの 一らんに もどる';
+    a.setAttribute('aria-label','へやの 一らんに もどる');
+    a.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>';
+    var st=document.createElement('style');
+    st.textContent='.rlh-home{flex:0 0 44px;width:44px;height:44px;margin-right:8px;display:inline-flex;align-items:center;justify-content:center;border-radius:22px;background:var(--rl-bg,white);color:var(--rl-ink,black);border:1px solid currentColor;text-decoration:none;box-sizing:border-box}'+
+      '.rlh-home:hover{opacity:.8}.rlh-home:focus-visible{outline:3px solid currentColor;outline-offset:2px}'+
+      '.rlh-home.rlh-float{position:fixed;left:12px;bottom:12px;z-index:9999;margin:0}';
+    document.head.appendChild(st);
+    var bar=[].slice.call(document.querySelectorAll('[class$="-top"],[class*="-top "]')).filter(function(e){
+      var r=e.getBoundingClientRect(); return r.top<20&&r.height>=44&&getComputedStyle(e).display.indexOf('flex')>=0;})[0];
+    if(bar) bar.insertBefore(a,bar.firstChild); else { a.classList.add('rlh-float'); document.body.appendChild(a); }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',put); else put();
+})();
+</script><!--/rl-home-->
+</body>
+</html>

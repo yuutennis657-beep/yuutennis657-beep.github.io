@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="ja">
+<head><script>window.RL_HOME_URL="../../energy.html";</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>電磁石の はたらき</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* 見本 v0.2（2026-11-07）5年 理科 電流が うみ出す 力（理科ラボ エネルギー）タッチだけ
+   v0.2：授業の 流れ 1〜4（つくる／N極と S極／強くする／くらし）に 組み直した。電流計（A）を 足した。ボルトは 中学なので 出さない。
+   v0.1：
+   まき数（100回・200回）と かん電池（1こ・2こを 直列）を 1つずつ 変えて、引きつける クリップの 数で 強さを くらべる。
+   電流の 向きを 変えると N と S が 入れかわる（方位じしんで たしかめる） */
+:root{
+  /* エネルギーの 部屋：ポップ・黄と 赤（4つの 部屋で 名前を そろえる 5つ） */
+  --rl-bg:#ffffff; --rl-ink:#1f2937; --rl-accent:#f5b700; --rl-accent2:#e0442b; --rl-soft:#fff6d6;
+  --rl-blue:#1d4ed8; --rl-brown:#b45309; --rl-line:#e2cf8e; --rl-n:#e0442b; --rl-ok:#1b7f3b; --rl-rule:#f3e8c4; --rl-stage:#fffbeb; --rl-sub:#4b5563; --rl-gray:#e5e7eb;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--rl-bg);color:var(--rl-ink);
+  font-family:"BIZ UDPGothic",sans-serif;font-size:16px;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+.re-app{display:grid;grid-template-rows:auto 1fr;gap:8px;height:100vh;height:100dvh;padding:8px 12px 12px}
+.re-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:52px}
+.re-b{min-height:44px;min-width:44px;padding:0 14px;border:1px solid var(--rl-line);background:var(--rl-soft);border-radius:12px;
+  font-size:16px;display:flex;align-items:center;justify-content:center;gap:6px}
+.re-b svg{width:22px;height:22px;flex:none}
+.re-sw{min-width:150px;font-weight:700}
+.re-sw[aria-pressed="true"]{background:var(--rl-ok);border-color:var(--rl-ok);color:var(--rl-bg)}
+.re-sp{flex:1}
+@media (max-width:900px){ #rsTeBtn .re-hl,#reClear .re-hl{display:none} }   /* せまい 画面では しるしだけ（帯を 1行に） */
+.re-b[hidden]{display:none!important}
+.re-tabs{display:flex;border:1px solid var(--rl-line);border-radius:12px;overflow:hidden}
+.re-tabs button{min-height:44px;min-width:44px;border:0;background:var(--rl-bg);font-size:16px;padding:0 12px;display:flex;align-items:center;gap:6px}
+.re-tabs button+button{border-left:1px solid var(--rl-line)}
+.re-tabs button[aria-pressed="true"]{background:var(--rl-accent);color:var(--rl-ink);box-shadow:inset 0 0 0 2px var(--rl-ink);font-weight:700}
+.re-no{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;border:2px solid currentColor;font-size:14px;font-weight:700;flex:none}
+.re-step{display:flex;flex-direction:column;gap:8px;min-height:0;flex:1}
+.re-step[hidden]{display:none!important}
+.re-h{margin:2px 2px 0;font-size:17px;font-weight:700}
+.re-p{margin:0 2px;font-size:15px;line-height:1.5;color:var(--rl-sub)}
+.re-chk{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.re-chk li{display:flex;align-items:flex-start;gap:8px;font-size:15px;line-height:1.45;padding:6px 8px;border-radius:10px;background:var(--rl-soft)}
+.re-chk li svg{width:22px;height:22px;flex:none;color:var(--rl-ok)}
+.re-chk .re-yet{width:22px;height:22px;flex:none;border:2px dashed var(--rl-sub);border-radius:50%}
+.re-chk li.re-done{font-weight:700}
+.re-cmp{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:15px;line-height:1.4;padding:6px 4px;border-top:1px solid var(--rl-line)}
+.re-cmp b{white-space:nowrap}
+.re-note{font-size:14px;color:var(--rl-sub);padding:2px}
+@media (max-height:420px){ .re-p{display:none} .re-chk li{padding:3px 6px} .re-cmp{padding:2px 4px} }
+@media (max-width:900px){ .re-tabs button{padding:0 8px} .re-tabs .re-tl{display:none} }
+.re-main{display:grid;grid-template-columns:1fr 300px;gap:10px;min-height:0}
+.re-stage{position:relative;border-radius:12px;overflow:hidden;background:var(--rl-stage);min-height:0}
+.re-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.re-side{display:flex;flex-direction:column;gap:8px;border:1px solid var(--rl-line);border-radius:12px;padding:8px;min-height:0;background:var(--rl-bg)}
+.re-row{flex:none;display:flex;align-items:center;gap:6px}
+.re-row>span{width:84px;flex:none;font-size:15px;color:var(--rl-sub)}
+.re-seg{display:flex;flex:1;border:1px solid var(--rl-line);border-radius:10px;overflow:hidden}
+.re-seg button{flex:1;min-height:44px;min-width:44px;border:0;background:var(--rl-bg);font-size:16px;padding:0 4px;line-height:1.1}
+.re-seg button+button{border-left:1px solid var(--rl-line)}
+.re-seg button[aria-pressed="true"]{background:var(--rl-accent);color:var(--rl-ink);box-shadow:inset 0 0 0 2px var(--rl-ink);font-weight:700}
+.re-rec{display:flex;flex-direction:column;min-height:0;flex:1;border-top:1px solid var(--rl-line)}
+.re-rec-h,.re-rec li{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:2px;align-items:center;text-align:center}
+.re-rec-h{color:var(--rl-sub);font-size:14px;padding:6px 0 2px}
+.re-rec ol{list-style:none;margin:0;padding:0;overflow:auto;flex:1;min-height:0}
+.re-rec li{padding:5px 0;border-top:1px solid var(--rl-rule);font-size:15px}
+.re-rec li .re-chg{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px;font-weight:700}
+.re-none{color:var(--rl-sub);font-size:14px;padding:6px 2px}
+.re-none[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="re-app">
+  <div class="re-top">
+    <div class="re-tabs" role="group" aria-label="学習の 流れ">
+      <button type="button" id="reSt1" data-st="1" aria-pressed="true"><span class="re-no">1</span>つくる</button>
+      <button type="button" id="reSt2" data-st="2" aria-pressed="false"><span class="re-no">2</span>N極と S極</button>
+      <button type="button" id="reSt3" data-st="3" aria-pressed="false"><span class="re-no">3</span>強く<span class="re-tl">する</span></button>
+      <button type="button" id="reSt4" data-st="4" aria-pressed="false"><span class="re-no">4</span>くらし</button>
+    </div>
+    <button class="re-b re-sw" type="button" id="reSw" aria-pressed="false">
+      <svg data-ic="switch"></svg><span>スイッチ 切</span></button>
+    <span class="re-sp"></span>
+    <button class="re-b" type="button" id="rsTeBtn" aria-label="手で うごかす"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V11M11 10V4a1.5 1.5 0 0 1 3 0v6M14 10V5.5a1.5 1.5 0 0 1 3 0V13"/><path d="M8 12.5 6.6 11a1.6 1.6 0 0 0-2.4 2.1L8 18.5A6 6 0 0 0 13 21h0a5 5 0 0 0 5-5v-3"/></svg><span class="re-hl">手で</span></button>
+    <button class="re-b" type="button" id="reClear" aria-label="記録を けす" title="記録を けす" hidden>
+      <svg data-ic="reset"></svg><span class="re-hl">記録を けす</span></button>
+  </div>
+  <div class="re-main">
+    <div class="re-stage" id="reStage"><canvas id="reCanvas"></canvas></div>
+    <section class="re-side" aria-label="学習">
+      <div class="re-step" id="reStep1">
+        <h2 class="re-h">電磁石を つくろう</h2>
+        <p class="re-p">鉄しんに どう線を まいて コイルに し、かん電池に つなぐ。</p>
+        <ul class="re-chk" id="reChk1"></ul>
+        <div class="re-cmp"><b>じしゃく</b><span>いつも 鉄を 引きつける</span><b>電磁石</b><span>電流が 流れている 間だけ 引きつける</span></div>
+      </div>
+      <div class="re-step" id="reStep2" hidden>
+        <h2 class="re-h">N極と S極は あるかな</h2>
+        <p class="re-p">コイルの 両はしに 方位じしんを おいて しらべる。</p>
+        <div class="re-row"><span>電流の 向き</span><div class="re-seg" id="reDir"></div></div>
+        <ul class="re-chk" id="reChk2"></ul>
+      </div>
+      <div class="re-step" id="reStep3" hidden>
+        <div class="re-row"><span>まき数</span><div class="re-seg" id="reTurn"></div></div>
+        <div class="re-row"><span>かん電池</span><div class="re-seg" id="reBat"></div></div>
+        <div class="re-rec">
+          <div class="re-rec-h"><span>まき数</span><span>かん電池</span><span>電流</span><span>クリップ</span></div>
+          <div class="re-none" id="reNone">じょうけんを 1つだけ 変えて、スイッチを 入れよう</div>
+          <ol id="reRec"></ol>
+        </div>
+        <ul class="re-chk" id="reChk3"></ul>
+        <div class="re-note">電流と クリップの 数は アプリの中の 数</div>
+      </div>
+      <div class="re-step" id="reStep4" hidden>
+        <h2 class="re-h">くらしの中の 電磁石</h2>
+        <p class="re-p">スイッチで 鉄を つかんだり はなしたり できる。</p>
+        <ul class="re-chk" id="reChk4"></ul>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script src="../../seimei/_parts/rs-te.js"></script>
+<!--RE_PARTS--><script>
+/* 部品（mock/rika/energy/_parts から inline.py で 入れた もの。ここは 手で 直さない） */
+const RE_ICONS={"reset": "<path d=\"M4 11a8 8 0 1 1 1 6M4 4v7h7\"/>", "switch": "<circle cx=\"5\" cy=\"16\" r=\"2\"/><circle cx=\"19\" cy=\"16\" r=\"2\"/><path d=\"m7 15 10-8M2 20h20\"/>", "yes": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"m7 12 3 3 7-7\"/>"};
+const RE_ART={"coil100":{"w":260,"h":135,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"260\" height=\"135\" viewBox=\"0 0 260 135\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"10\" y=\"55\" width=\"240\" height=\"24\" rx=\"3\" fill=\"{gray}\"/><path d=\"M45.0 94C31.0 89 32.0 41 45.0 36C58.0 32 59.0 85 45.0 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M45.0 94C31.0 89 32.0 41 45.0 36C58.0 32 59.0 85 45.0 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M65.0 94C51.0 89 52.0 41 65.0 36C78.0 32 79.0 85 65.0 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M65.0 94C51.0 89 52.0 41 65.0 36C78.0 32 79.0 85 65.0 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M85.0 94C71.0 89 72.0 41 85.0 36C98.0 32 99.0 85 85.0 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M85.0 94C71.0 89 72.0 41 85.0 36C98.0 32 99.0 85 85.0 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M105.0 94C91.0 89 92.0 41 105.0 36C118.0 32 119.0 85 105.0 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M105.0 94C91.0 89 92.0 41 105.0 36C118.0 32 119.0 85 105.0 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M125.0 94C111.0 89 112.0 41 125.0 36C138.0 32 139.0 85 125.0 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M125.0 94C111.0 89 112.0 41 125.0 36C138.0 32 139.0 85 125.0 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M145.0 94C131.0 89 132.0 41 145.0 36C158.0 32 159.0 85 145.0 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M145.0 94C131.0 89 132.0 41 145.0 36C158.0 32 159.0 85 145.0 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M165.0 94C151.0 89 152.0 41 165.0 36C178.0 32 179.0 85 165.0 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M165.0 94C151.0 89 152.0 41 165.0 36C178.0 32 179.0 85 165.0 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M185.0 94C171.0 89 172.0 41 185.0 36C198.0 32 199.0 85 185.0 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M185.0 94C171.0 89 172.0 41 185.0 36C198.0 32 199.0 85 185.0 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M205.0 94C191.0 89 192.0 41 205.0 36C218.0 32 219.0 85 205.0 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M205.0 94C191.0 89 192.0 41 205.0 36C218.0 32 219.0 85 205.0 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M45 94v23H24M205 94v23h31\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><circle cx=\"24\" cy=\"117\" r=\"4\" fill=\"{bg}\"/><circle cx=\"236\" cy=\"117\" r=\"4\" fill=\"{bg}\"/><text x=\"130\" y=\"16\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"{ink}\" stroke=\"none\" stroke-width=\"2\" paint-order=\"stroke\" font-family=\"'BIZ UDPGothic',sans-serif\" font-weight=\"700\" font-size=\"18\">100回</text></g></svg>","pts":{"terminalA":[24,117],"terminalB":[236,117],"leftPole":[10,67],"rightPole":[250,67],"center":[130,67]}},"coil200":{"w":260,"h":135,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"260\" height=\"135\" viewBox=\"0 0 260 135\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"10\" y=\"55\" width=\"240\" height=\"24\" rx=\"3\" fill=\"{gray}\"/><path d=\"M45.0 94C31.0 89 32.0 41 45.0 36C58.0 32 59.0 85 45.0 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M45.0 94C31.0 89 32.0 41 45.0 36C58.0 32 59.0 85 45.0 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M54.411764705882355 94C40.411764705882355 89 41.411764705882355 41 54.411764705882355 36C67.41176470588235 32 68.41176470588235 85 54.411764705882355 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M54.411764705882355 94C40.411764705882355 89 41.411764705882355 41 54.411764705882355 36C67.41176470588235 32 68.41176470588235 85 54.411764705882355 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M63.82352941176471 94C49.82352941176471 89 50.82352941176471 41 63.82352941176471 36C76.82352941176471 32 77.82352941176471 85 63.82352941176471 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M63.82352941176471 94C49.82352941176471 89 50.82352941176471 41 63.82352941176471 36C76.82352941176471 32 77.82352941176471 85 63.82352941176471 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M73.23529411764706 94C59.23529411764706 89 60.23529411764706 41 73.23529411764706 36C86.23529411764706 32 87.23529411764706 85 73.23529411764706 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M73.23529411764706 94C59.23529411764706 89 60.23529411764706 41 73.23529411764706 36C86.23529411764706 32 87.23529411764706 85 73.23529411764706 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M82.64705882352942 94C68.64705882352942 89 69.64705882352942 41 82.64705882352942 36C95.64705882352942 32 96.64705882352942 85 82.64705882352942 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M82.64705882352942 94C68.64705882352942 89 69.64705882352942 41 82.64705882352942 36C95.64705882352942 32 96.64705882352942 85 82.64705882352942 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M92.05882352941177 94C78.05882352941177 89 79.05882352941177 41 92.05882352941177 36C105.05882352941177 32 106.05882352941177 85 92.05882352941177 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M92.05882352941177 94C78.05882352941177 89 79.05882352941177 41 92.05882352941177 36C105.05882352941177 32 106.05882352941177 85 92.05882352941177 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M101.47058823529412 94C87.47058823529412 89 88.47058823529412 41 101.47058823529412 36C114.47058823529412 32 115.47058823529412 85 101.47058823529412 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M101.47058823529412 94C87.47058823529412 89 88.47058823529412 41 101.47058823529412 36C114.47058823529412 32 115.47058823529412 85 101.47058823529412 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M110.88235294117646 94C96.88235294117646 89 97.88235294117646 41 110.88235294117646 36C123.88235294117646 32 124.88235294117646 85 110.88235294117646 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M110.88235294117646 94C96.88235294117646 89 97.88235294117646 41 110.88235294117646 36C123.88235294117646 32 124.88235294117646 85 110.88235294117646 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M120.29411764705883 94C106.29411764705883 89 107.29411764705883 41 120.29411764705883 36C133.29411764705884 32 134.29411764705884 85 120.29411764705883 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M120.29411764705883 94C106.29411764705883 89 107.29411764705883 41 120.29411764705883 36C133.29411764705884 32 134.29411764705884 85 120.29411764705883 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M129.70588235294116 94C115.70588235294116 89 116.70588235294116 41 129.70588235294116 36C142.70588235294116 32 143.70588235294116 85 129.70588235294116 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M129.70588235294116 94C115.70588235294116 89 116.70588235294116 41 129.70588235294116 36C142.70588235294116 32 143.70588235294116 85 129.70588235294116 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M139.11764705882354 94C125.11764705882354 89 126.11764705882354 41 139.11764705882354 36C152.11764705882354 32 153.11764705882354 85 139.11764705882354 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M139.11764705882354 94C125.11764705882354 89 126.11764705882354 41 139.11764705882354 36C152.11764705882354 32 153.11764705882354 85 139.11764705882354 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M148.52941176470588 94C134.52941176470588 89 135.52941176470588 41 148.52941176470588 36C161.52941176470588 32 162.52941176470588 85 148.52941176470588 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M148.52941176470588 94C134.52941176470588 89 135.52941176470588 41 148.52941176470588 36C161.52941176470588 32 162.52941176470588 85 148.52941176470588 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M157.94117647058823 94C143.94117647058823 89 144.94117647058823 41 157.94117647058823 36C170.94117647058823 32 171.94117647058823 85 157.94117647058823 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M157.94117647058823 94C143.94117647058823 89 144.94117647058823 41 157.94117647058823 36C170.94117647058823 32 171.94117647058823 85 157.94117647058823 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M167.3529411764706 94C153.3529411764706 89 154.3529411764706 41 167.3529411764706 36C180.3529411764706 32 181.3529411764706 85 167.3529411764706 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M167.3529411764706 94C153.3529411764706 89 154.3529411764706 41 167.3529411764706 36C180.3529411764706 32 181.3529411764706 85 167.3529411764706 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M176.76470588235293 94C162.76470588235293 89 163.76470588235293 41 176.76470588235293 36C189.76470588235293 32 190.76470588235293 85 176.76470588235293 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M176.76470588235293 94C162.76470588235293 89 163.76470588235293 41 176.76470588235293 36C189.76470588235293 32 190.76470588235293 85 176.76470588235293 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M186.1764705882353 94C172.1764705882353 89 173.1764705882353 41 186.1764705882353 36C199.1764705882353 32 200.1764705882353 85 186.1764705882353 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M186.1764705882353 94C172.1764705882353 89 173.1764705882353 41 186.1764705882353 36C199.1764705882353 32 200.1764705882353 85 186.1764705882353 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M195.58823529411765 94C181.58823529411765 89 182.58823529411765 41 195.58823529411765 36C208.58823529411765 32 209.58823529411765 85 195.58823529411765 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M195.58823529411765 94C181.58823529411765 89 182.58823529411765 41 195.58823529411765 36C208.58823529411765 32 209.58823529411765 85 195.58823529411765 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M205.0 94C191.0 89 192.0 41 205.0 36C218.0 32 219.0 85 205.0 94\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"7\"/><path d=\"M205.0 94C191.0 89 192.0 41 205.0 36C218.0 32 219.0 85 205.0 94\" fill=\"none\" stroke=\"{accent2}\" stroke-width=\"3\"/><path d=\"M45 94v23H24M205 94v23h31\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><circle cx=\"24\" cy=\"117\" r=\"4\" fill=\"{bg}\"/><circle cx=\"236\" cy=\"117\" r=\"4\" fill=\"{bg}\"/><text x=\"130\" y=\"16\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"{ink}\" stroke=\"none\" stroke-width=\"2\" paint-order=\"stroke\" font-family=\"'BIZ UDPGothic',sans-serif\" font-weight=\"700\" font-size=\"18\">200回</text></g></svg>","pts":{"terminalA":[24,117],"terminalB":[236,117],"leftPole":[10,67],"rightPole":[250,67],"center":[130,67]}},"compass":{"w":140,"h":140,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"140\" height=\"140\" viewBox=\"0 0 140 140\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"70\" cy=\"70\" r=\"61\" fill=\"{accent}\"/><circle cx=\"70\" cy=\"70\" r=\"52\" fill=\"{bg}\"/><text x=\"70\" y=\"30\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"{ink}\" stroke=\"none\" stroke-width=\"2\" paint-order=\"stroke\" font-family=\"'BIZ UDPGothic',sans-serif\" font-weight=\"700\" font-size=\"18\">N</text><text x=\"110\" y=\"70\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"{ink}\" stroke=\"none\" stroke-width=\"2\" paint-order=\"stroke\" font-family=\"'BIZ UDPGothic',sans-serif\" font-weight=\"700\" font-size=\"16\">E</text><text x=\"70\" y=\"110\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"{ink}\" stroke=\"none\" stroke-width=\"2\" paint-order=\"stroke\" font-family=\"'BIZ UDPGothic',sans-serif\" font-weight=\"700\" font-size=\"16\">S</text><text x=\"30\" y=\"70\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"{ink}\" stroke=\"none\" stroke-width=\"2\" paint-order=\"stroke\" font-family=\"'BIZ UDPGothic',sans-serif\" font-weight=\"700\" font-size=\"16\">W</text><path d=\"M42 42l5 5M93 93l5 5M42 98l5-5M93 47l5-5\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/></g></svg>","pts":{"pivot":[70,70]}},"needle":{"w":100,"h":40,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"40\" viewBox=\"0 0 100 40\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><g transform=\"translate(50 20)\"><path d=\"M42 0 0-10V10z\" fill=\"{accent2}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M-42 0 0-10V10z\" fill=\"{bg}\" stroke=\"{ink}\" stroke-width=\"3\"/><circle cx=\"0\" cy=\"0\" r=\"4\" fill=\"{ink}\"/></g></g></svg>","pts":{"pivot":[50,20],"north":[92,20],"south":[8,20]}},"clipHanging":{"w":76,"h":128,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"76\" height=\"128\" viewBox=\"0 0 76 128\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M29 85V28a15 15 0 0 1 30 0v66a22 22 0 0 1-44 0V31M46 29v61a6 6 0 0 1-12 0V37\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"4\"/></g></svg>","pts":{"hook":[44,13],"next":[37,116]}},"nail":{"w":60,"h":150,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"60\" height=\"150\" viewBox=\"0 0 60 150\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M15 13h30v9H34v102l-4 15-4-15V22H15z\" fill=\"{gray}\" stroke=\"{ink}\" stroke-width=\"3\"/></g></svg>","pts":{"head":[30,13],"tip":[30,139]}},"clip":{"w":76,"h":128,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"76\" height=\"128\" viewBox=\"0 0 76 128\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M29 85V28a15 15 0 0 1 30 0v66a22 22 0 0 1-44 0V31M46 29v61a6 6 0 0 1-12 0V37\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"4\"/></g></svg>","pts":{"top":[44,13],"bottom":[37,116],"contactA":[15,64],"contactB":[59,64]}},"steelCan":{"w":120,"h":146,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"146\" viewBox=\"0 0 120 146\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M25 25v98c0 17 70 17 70 0V25z\" fill=\"{gray}\" stroke=\"{ink}\" stroke-width=\"3\"/><ellipse cx=\"60\" cy=\"25\" rx=\"35\" ry=\"12\" fill=\"{soft}\"/><ellipse cx=\"60\" cy=\"25\" rx=\"15\" ry=\"6\" fill=\"{bg}\"/><path d=\"M25 117c12 10 58 10 70 0\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><rect x=\"30\" y=\"55\" width=\"60\" height=\"41\" rx=\"3\" fill=\"{accent}\"/><text x=\"60\" y=\"76\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"{ink}\" stroke=\"none\" stroke-width=\"2\" paint-order=\"stroke\" font-family=\"'BIZ UDPGothic',sans-serif\" font-weight=\"700\" font-size=\"18\">鉄</text></g></svg>","pts":{"top":[60,13],"contactA":[25,105],"contactB":[95,105]}},"aluminumCan":{"w":120,"h":146,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"146\" viewBox=\"0 0 120 146\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M25 25v98c0 17 70 17 70 0V25z\" fill=\"{bg}\" stroke=\"{ink}\" stroke-width=\"3\"/><ellipse cx=\"60\" cy=\"25\" rx=\"35\" ry=\"12\" fill=\"{soft}\"/><ellipse cx=\"60\" cy=\"25\" rx=\"15\" ry=\"6\" fill=\"{bg}\"/><path d=\"M25 117c12 10 58 10 70 0\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><rect x=\"30\" y=\"55\" width=\"60\" height=\"41\" rx=\"3\" fill=\"{soft}\"/><text x=\"60\" y=\"76\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"{ink}\" stroke=\"none\" stroke-width=\"2\" paint-order=\"stroke\" font-family=\"'BIZ UDPGothic',sans-serif\" font-weight=\"700\" font-size=\"18\">アルミ</text></g></svg>","pts":{"top":[60,13],"contactA":[25,105],"contactB":[95,105]}}};
+function reIc(n){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(RE_ICONS[n]||'')+'</svg>'; }
+document.querySelectorAll('svg[data-ic]').forEach(e=>{ e.outerHTML=reIc(e.dataset.ic); });
+const reImg={};
+function reArt(n){ if(reImg[n]) return reImg[n]; const a=RE_ART[n], im=new Image();
+  im.onload=()=>{ if(typeof draw==='function' && typeof cx!=='undefined') try{ draw(); }catch(e){} };   // 絵が 来たら 描き直す
+  im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(a.svg.replace(/\{(\w+)\}/g,(m,k)=>C[k])); return reImg[n]=im; }
+document.addEventListener('DOMContentLoaded',()=>Object.keys(RE_ART).forEach(n=>{ try{ reArt(n); }catch(e){} }));   // 先に 読んで おく（C が できてから）
+// 絵 n の 点 at（名前・[x,y]・なしは まん中）が (x,y) に 来るように s 倍で 描く。ang で 回す
+function reDraw(n,x,y,s,at,ang){ const a=RE_ART[n], im=reArt(n); if(!im.complete||!im.naturalWidth) return false;
+  const p=at?(Array.isArray(at)?at:a.pts[at]):[a.w/2,a.h/2];
+  cx.save(); cx.translate(x,y); if(ang) cx.rotate(ang); cx.scale(s,s); cx.drawImage(im,-p[0],-p[1],a.w,a.h); cx.restore(); return true; }
+// 上と 同じ 置き方の ときの 点 k の 場所
+function rePt(n,x,y,s,at,k){ const a=RE_ART[n], p=at?(Array.isArray(at)?at:a.pts[at]):[a.w/2,a.h/2], q=a.pts[k]; return [x+(q[0]-p[0])*s, y+(q[1]-p[1])*s]; }
+</script><!--/RE_PARTS-->
+<script>
+/* 色は :root の --rl- から 読む（ここに 色を 書かない） */
+const C = new Proxy({}, {get:(o,k)=>o[k]||(o[k]=getComputedStyle(document.documentElement).getPropertyValue('--rl-'+k).trim())});
+
+/* ===== 電磁石の きまり（ここ 1か所） ===== */
+const EM = {
+  TURNS:[100,200], BATS:[1,2],
+  amp(bat){ return bat===2 ? 2.0 : 1.0; },          // アプリの中の 数：2こを 直列に すると 電流が 大きく なる
+  // 引きつける クリップの 数：まき数と 電流に 比べて 大きく なる（アプリの中の 数）
+  clips(turns, bat){ return Math.round(6 * (turns/100) * EM.amp(bat)); },
+  // 左の はしの きょく（電流の 向き dir：1 か -1）
+  leftPole(dir){ return dir>0 ? 'N' : 'S'; },
+  // 学習の 流れ：[しるし, しらべる 前の 問い, わかった こと]
+  STEPS:{
+    1:[['on','スイッチを 入れると？','スイッチを 入れると、クリップを 引きつけた'],
+       ['off','スイッチを 切ると？','スイッチを 切ると、クリップが はなれた']],
+    2:[['pole','コイルの はしは？','コイルの 両はしに N極と S極が ある'],
+       ['flip','電流の 向きを 変えると？','電流の 向きを 変えると、N極と S極が 入れかわる']],
+    3:[['turn','まき数を ふやすと？','まき数を ふやすと、電磁石は 強くなる'],
+       ['amp','電流を 大きくすると？','電流を 大きくすると、電磁石は 強くなる']],
+    4:[['grab','スイッチを 入れると？','鉄の ものだけ つかんだ（アルミかんは つかない）'],
+       ['drop','スイッチを 切ると？','切ると はなせる。じしゃくには できない こと'],
+       ['use','ほかには？','モーター（せんぷうき）や スピーカーにも 使われている']],
+  },
+  // くらし：クレーンの 下に おく もの（鉄か どうか）
+  CRANE:[['nail','鉄の くぎ',true],['aluminumCan','アルミかん',false],['clip','鉄の クリップ',true],['steelCan','スチールかん',true]],
+};
+window.EM=EM;
+
+/* ===== 画面 ===== */
+const $ = id => document.getElementById(id);
+const cv=$('reCanvas'), cx=cv.getContext('2d');
+let W=0,H=0;
+const S = { st:1, turns:100, bat:1, dir:1, on:false, shown:0, rec:[], needle:-Math.PI/2, done:{}, lift:0 };
+window.em={S};
+function fit(){
+  const r=$('reStage').getBoundingClientRect(), d=window.devicePixelRatio||1;
+  W=r.width; H=r.height; cv.width=Math.round(W*d); cv.height=Math.round(H*d); cx.setTransform(d,0,0,d,0,0);
+}
+window.addEventListener('resize', fit);
+const U=()=>Math.min(W,H);
+
+function mark(k){ if(!S.done[k]){ S.done[k]=true; renderChk(); } }
+function renderChk(){
+  for(const n of [1,2,3,4]) $('reChk'+n).innerHTML=EM.STEPS[n].map(([k,q,a])=>S.done[k]
+    ? `<li class="re-done" data-k="${k}">${reIc('yes')}<span>${a}</span></li>`
+    : `<li data-k="${k}"><span class="re-yet" aria-hidden="true"></span><span>${q}</span></li>`).join('');
+}
+
+function seg(id, list, label, key){
+  $(id).innerHTML=list.map(v=>`<button type="button" data-v="${v}" aria-pressed="${S[key]===v}">${label(v)}</button>`).join('');
+  $(id).onclick=e=>{ const b=e.target.closest('button'); if(!b) return; const old=S[key]; S[key]=+b.dataset.v;
+    [...$(id).children].forEach(c=>c.setAttribute('aria-pressed',String(+c.dataset.v===S[key])));
+    if(key==='dir' && S.on && old!==S[key] && S.st===2 && S.done.pole) mark('flip');
+    if(S.on && S.st===3){ S.shown=0; record(); } };
+}
+seg('reTurn', EM.TURNS, v=>v+'回', 'turns');
+seg('reBat', EM.BATS, v=>v===1?'1こ':'2こ 直列', 'bat');
+seg('reDir', [1,-1], v=>v>0?'→':'←', 'dir');
+[...$('reDir').children].forEach((b,i)=>b.setAttribute('aria-label', i?'左向き':'右向き'));
+
+function setSw(on){
+  const was=S.on; S.on=on; $('reSw').setAttribute('aria-pressed',String(on)); $('reSw').lastElementChild.textContent = on?'スイッチ 入':'スイッチ 切';
+  S.shown=0;
+  if(on){ if(S.st===1) mark('on'); if(S.st===2) mark('pole'); if(S.st===3) record(); if(S.st===4) mark('grab'); }
+  else if(was){ if(S.st===1 && S.done.on) mark('off'); if(S.st===4 && S.done.grab){ mark('drop'); mark('use'); } }
+}
+$('reSw').onclick=()=>setSw(!S.on);
+function setStep(n){
+  if(S.on) setSw(false);
+  S.st=n; S.lift=0;
+  for(const k of [1,2,3,4]){ $('reSt'+k).setAttribute('aria-pressed',String(k===n)); $('reStep'+k).hidden=k!==n; }
+  $('reClear').hidden = n!==3;
+  draw();
+}
+document.querySelector('.re-tabs').onclick=e=>{ const b=e.target.closest('button'); if(b) setStep(+b.dataset.st); };
+function record(){
+  const n=EM.clips(S.turns,S.bat), last=S.rec[S.rec.length-1];
+  if(last && last.turns===S.turns && last.bat===S.bat) return;   // 向きだけの ちがいは 同じ 強さ
+  const chg = last?{t:last.turns!==S.turns, b:last.bat!==S.bat}:{};
+  S.rec.push({turns:S.turns, bat:S.bat, a:EM.amp(S.bat), n, chg});
+  if(chg.t && !chg.b) mark('turn');
+  if(chg.b && !chg.t) mark('amp');
+  renderRec();
+}
+function renderRec(){
+  $('reNone').hidden=S.rec.length>0;
+  $('reRec').innerHTML=S.rec.map(r=>`<li><span class="${r.chg.t?'re-chg':''}">${r.turns}回</span><span class="${r.chg.b?'re-chg':''}">${r.bat}こ</span><span>${r.a.toFixed(1)}A</span><b>${r.n}こ</b></li>`).join('');
+  const ol=$('reRec'); ol.scrollTop=ol.scrollHeight;
+}
+$('reClear').onclick=()=>{ S.rec=[]; renderRec(); if(S.on) record(); };
+function advance(dt){
+  const want=(S.on && (S.st===1||S.st===3))?EM.clips(S.turns,S.bat):0;
+  if(S.shown<want) S.shown=Math.min(want,S.shown+dt*30); else if(S.shown>want) S.shown=want;
+  const tgt = S.on ? (EM.leftPole(S.dir)==='N' ? Math.PI : 0) : -Math.PI/2;   // 方位じしんの N（赤）が 向く 方（両はしで 同じ 向き）
+  let d=tgt-S.needle; while(d>Math.PI) d-=2*Math.PI; while(d<-Math.PI) d+=2*Math.PI; S.needle+=d*Math.min(1,dt*6);
+  S.lift = S.on ? Math.min(1,S.lift+dt*2.5) : Math.max(0,S.lift-dt*5);
+}
+window.em.advance=advance; window.em.setSw=setSw; window.em.setStep=setStep; window.em.renderRec=renderRec;
+
+/* ----- 絵 ----- */
+function txt(t,x,y,size,col,al,bl){ cx.fillStyle=col||C.ink; cx.font='700 '+(size||15)+'px "BIZ UDPGothic",sans-serif'; cx.textAlign=al||'center'; cx.textBaseline=bl||'middle'; cx.fillText(t,x,y); }
+function compass(ox,oy,or){
+  reDraw('compass', ox, oy, or*2.2/140, 'pivot');
+  txt('N', ox+Math.cos(S.needle)*(or+12), oy+Math.sin(S.needle)*(or+12), 19, C.n);
+  // はり（N は 色の ぬり、S は 白ぬき＝色だけで なく 形でも 分かる）
+  reDraw('needle', ox, oy, or*0.8/42, 'pivot', S.needle);
+}
+function drawCoil(){
+  const u=U(), cxm=W*(S.st===2?0.5:0.42), cy=H*0.34, L=Math.min(W*0.46,u*1.0);
+  // 鉄しんと コイル（まき数で 絵が 変わる）
+  const cn=S.turns===200?'coil200':'coil100', CA=RE_ART[cn], kc=(L+u*0.1)/(CA.pts.rightPole[0]-CA.pts.leftPole[0]);
+  reDraw(cn, cxm, cy, kc, 'center');
+  const tA=rePt(cn,cxm,cy,kc,'center','terminalA'), tB=rePt(cn,cxm,cy,kc,'center','terminalB');
+  const pL=rePt(cn,cxm,cy,kc,'center','leftPole'), pR=rePt(cn,cxm,cy,kc,'center','rightPole');
+  const x0=tA[0], x1=tB[0];
+  txt('コイル（'+S.turns+'回まき）', cxm, cy-CA.h*kc*0.5-4, 15, C.ink, 'center', 'bottom');
+  // どう線と かん電池
+  const by=H*0.8, bw=u*0.16, bh=u*0.08;
+  cx.strokeStyle=C.ink; cx.lineWidth=3;
+  cx.beginPath(); cx.moveTo(x0,tA[1]); cx.lineTo(x0,by); cx.lineTo(cxm-bw*S.bat/2-8,by); cx.moveTo(cxm+bw*S.bat/2+8,by); cx.lineTo(x1,by); cx.lineTo(x1,tB[1]); cx.stroke();
+  for(let i=0;i<S.bat;i++){ const bx=cxm-bw*S.bat/2+bw*i; cx.fillStyle=C.bg; cx.beginPath(); cx.roundRect(bx+3,by-bh/2,bw-6,bh,5); cx.fill(); cx.stroke();
+    const pl = S.dir>0 ? bx+bw-3 : bx+3; cx.fillStyle=C.ink; cx.fillRect(pl-(S.dir>0?0:4), by-bh*0.2, 4, bh*0.4);
+    txt(S.dir>0?'－　＋':'＋　－', bx+bw/2, by, 14); }
+  txt(S.bat===2?'かん電池 2こ（直列）':'かん電池 1こ', cxm, by+bh/2+6, 14, C.ink, 'center', 'top');
+  // 電流計（3 強くする）
+  if(S.st===3){ const ar=Math.max(16,u*0.05), ax=(cxm+bw*S.bat/2+8+x1)/2;
+    cx.fillStyle=C.bg; cx.strokeStyle=C.ink; cx.lineWidth=3; cx.beginPath(); cx.arc(ax,by,ar,0,Math.PI*2); cx.fill(); cx.stroke();
+    txt('A', ax, by+1, 18);
+    txt(S.on ? EM.amp(S.bat).toFixed(1)+' A' : '0 A', ax, by-ar-6, 18, C.blue, 'center', 'bottom');
+    txt('電流計', ax, by+ar+6, 14, C.ink, 'center', 'top'); }
+  // あまった どう線（長さを そろえる）
+  if(S.st===3 && S.turns===100){ const ax=x1+u*0.02, ay=by-u*0.12; cx.strokeStyle=C.brown; cx.lineWidth=2.5;
+    for(let i=0;i<4;i++){ cx.beginPath(); cx.ellipse(ax+u*0.06,ay,u*0.05,u*0.025,0,0,Math.PI*2); cx.stroke(); }
+    txt('あまった どう線', ax+u*0.13, ay, 14, C.sub, 'left'); }
+  // 電流の 向き（スイッチ 入の とき）
+  if(S.on){ cx.fillStyle=C.blue; const ar=(x,y,a)=>{ cx.save(); cx.translate(x,y); cx.rotate(a); cx.beginPath(); cx.moveTo(9,0); cx.lineTo(-6,-7); cx.lineTo(-6,7); cx.closePath(); cx.fill(); cx.restore(); };
+    // dir>0：＋ が 右 → 右の どう線を 上へ → コイル → 左の どう線を 下へ
+    ar(x1, (cy+by)/2, S.dir>0?-Math.PI/2:Math.PI/2); ar(x0, (cy+by)/2, S.dir>0?Math.PI/2:-Math.PI/2); }
+  // 2 N極と S極：両はしの 方位じしんと きょく
+  if(S.st===2){
+    const or=u*0.075, gap=Math.min(64,Math.max(40,(pL[0]-2*or-8)*0.6)); compass(pR[0]+or+gap, cy, or); compass(pL[0]-or-gap, cy, or);
+    if(S.on){ const lp=EM.leftPole(S.dir), rp=lp==='N'?'S':'N';
+      for(const [p,x] of [[lp,pL[0]],[rp,pR[0]]]){ cx.fillStyle=p==='N'?C.n:C.blue; cx.beginPath(); cx.arc(x,cy,16,0,Math.PI*2); cx.fill(); txt(p,x,cy+1,20,C.bg); } }
+  }
+  // クリップ（1 つくる・3 強くする：左の はしに つながって ぶらさがる。1本に 4こまで）
+  const k=Math.floor(S.shown), HA=RE_ART.clipHanging, kk=u*0.085/HA.h, nc=Math.ceil(k/4), gapx=HA.w*kk*0.75;
+  for(let c=0;c<nc;c++){ let p=[pL[0]-c*gapx, cy+CA.h*kc*0.18];   // 左へ ならべる（どう線に かさならない）
+    for(let j=0;j<4 && c*4+j<k;j++){ reDraw('clipHanging', p[0], p[1], kk, 'hook'); p=rePt('clipHanging',p[0],p[1],kk,'hook','next'); } }
+  if(S.on && S.st===3) txt('クリップ '+EM.clips(S.turns,S.bat)+'こ', 12, H-12, 18, C.ink, 'left', 'bottom');
+}
+// 4 くらし：電磁石の クレーンで 鉄だけ つかむ
+function drawCrane(){
+  const u=U(), mx=W*0.5, top=Math.max(14,H*0.06);
+  // うで と ロープ
+  cx.strokeStyle=C.ink; cx.lineWidth=3; cx.fillStyle=C.accent;
+  cx.beginPath(); cx.roundRect(W*0.12,top,W*0.76,12,6); cx.fill(); cx.stroke();
+  // 電磁石（鉄しんに どう線を まいた もの を たてに）
+  const cw=u*0.09, ch=u*0.26, upY=top+12+u*0.05, poleY=upY+ch;
+  cx.beginPath(); cx.moveTo(mx,top+12); cx.lineTo(mx,upY); cx.stroke();
+  cx.fillStyle=C.gray; cx.beginPath(); cx.roundRect(mx-cw*0.32,upY,cw*0.64,ch,4); cx.fill(); cx.stroke();
+  cx.strokeStyle=C.accent2; cx.lineWidth=3.5;
+  for(let i=0;i<8;i++){ const yy=upY+ch*0.12+ch*0.76*i/7; cx.beginPath(); cx.ellipse(mx,yy,cw*0.55,cw*0.13,0,0,Math.PI*2); cx.stroke(); }
+  cx.strokeStyle=C.ink; cx.lineWidth=3;
+  txt('電磁石', mx-cw*0.55-10, upY+ch/2, 16, C.ink, 'right');
+  if(S.on){ const ax=mx+cw*0.55+10, ay=upY+ch/2; cx.fillStyle=C.blue; cx.beginPath(); cx.moveTo(ax,ay-8); cx.lineTo(ax+12,ay); cx.lineTo(ax,ay+8); cx.closePath(); cx.fill();
+    txt('電流', ax+18, ay, 15, C.blue, 'left'); }
+  // ゆか と もの
+  const floor=H-34, ih=u*0.2, n=EM.CRANE.length, e=S.lift*S.lift*(3-2*S.lift);
+  cx.strokeStyle=C.line; cx.lineWidth=2; cx.beginPath(); cx.moveTo(8,floor); cx.lineTo(W-8,floor); cx.stroke();
+  let gi=0;
+  EM.CRANE.forEach(([key,name,iron],i)=>{
+    const A=RE_ART[key], s=ih/A.h, w=A.w*s, fx=W*(0.14+0.72*i/(n-1)), fy=floor-ih;
+    let x=fx, y=fy;
+    if(iron){ const gx=mx+(gi-1)*u*0.1, gy=poleY+2; x=fx+(gx-fx)*e; y=fy+(gy-fy)*e; gi++; }
+    reDraw(key, x, y, s, [A.w/2,0]);
+    if(!(iron && e>0.02)) txt(name, fx, floor+6, 14, C.ink, 'center', 'top');
+  });
+}
+function draw(){
+  cx.clearRect(0,0,W,H);
+  if(S.st===4) drawCrane(); else drawCoil();
+}
+let last=performance.now();
+function tick(t){ requestAnimationFrame(tick); const dt=Math.min(0.1,(t-last)/1000); last=t; advance(dt); draw(); }
+if(window.RsTe) RsTe.bindButton($('rsTeBtn'),{hint:'人さし指を カメラに 見せてね'});   // 手で：ボタンの 上で 手を とめると おせる
+fit(); renderRec(); renderChk(); requestAnimationFrame(tick);
+window.em.draw=draw;
+</script>
+<!--rl-home--><script>
+/* 理科ラボ：どの へやにも 出す「もどる」ボタン（11-07）。決まりは ここ 1か所。
+   へやの 上の帯（.xx-top）の いちばん左に 44px の ⌂ を 足す。帯が ない へやは 左下に うかべる。
+   行き先：その へやが 入っている 部屋の ページ（理科ラボ/1_エネルギー.html など）。そこから ホームへも もどれる。
+   へやの 中の 字や クラス名には さわらない（クラス名は rlh- で はじめる）。 */
+(function(){
+  if(window.__rlHome) return; window.__rlHome=1;
+  // どの へやが どの 部屋に 入るか（mock/ の 下の 道 → 部屋の ページ）
+  var PAGE={energy:'1_エネルギー.html',ryushi:'2_粒子.html',seimei:'3_生命.html',chikyu:'4_地球.html'};
+  var EXTRA={teko:'energy','karada-mirror':'seimei',tentai:'chikyu','seiza-tsunagu':'chikyu'};
+  function room(p){
+    var m=/\/mock\/rika\/(energy|ryushi|seimei|chikyu)\//.exec(p); if(m) return m[1];
+    m=/\/mock\/([^\/]+)\//.exec(p); return m&&EXTRA[m[1]]||'';
+  }
+  function href(){
+    var p=decodeURIComponent(location.pathname), r=room(p), i=p.lastIndexOf('/mock/');
+    if(window.RL_HOME_URL) return window.RL_HOME_URL;          // 授業メイトの 中では 入れる側が 決める
+    if(!r||i<0) return '';
+    return 'file://'+encodeURI(p.slice(0,i)+'/理科ラボ/'+PAGE[r]);
+  }
+  function put(){
+    var to=href(); if(!to||document.querySelector('.rlh-home')) return;
+    var a=document.createElement('a'); a.className='rlh-home'; a.href=to; a.title='へやの 一らんに もどる';
+    a.setAttribute('aria-label','へやの 一らんに もどる');
+    a.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>';
+    var st=document.createElement('style');
+    st.textContent='.rlh-home{flex:0 0 44px;width:44px;height:44px;margin-right:8px;display:inline-flex;align-items:center;justify-content:center;border-radius:22px;background:var(--rl-bg,white);color:var(--rl-ink,black);border:1px solid currentColor;text-decoration:none;box-sizing:border-box}'+
+      '.rlh-home:hover{opacity:.8}.rlh-home:focus-visible{outline:3px solid currentColor;outline-offset:2px}'+
+      '.rlh-home.rlh-float{position:fixed;left:12px;bottom:12px;z-index:9999;margin:0}';
+    document.head.appendChild(st);
+    var bar=[].slice.call(document.querySelectorAll('[class$="-top"],[class*="-top "]')).filter(function(e){
+      var r=e.getBoundingClientRect(); return r.top<20&&r.height>=44&&getComputedStyle(e).display.indexOf('flex')>=0;})[0];
+    if(bar) bar.insertBefore(a,bar.firstChild); else { a.classList.add('rlh-float'); document.body.appendChild(a); }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',put); else put();
+})();
+</script><!--/rl-home-->
+</body>
+</html>

@@ -1,0 +1,494 @@
+<!doctype html>
+<!-- 生成物：直すときは src.html と ../kit/ を 直して python3 ../build.py（このファイルは 手で 直さない） -->
+<html lang="ja">
+<head><script>window.RL_HOME_URL="../../chikyu.html";</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>星の 動き</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* 理科ラボ／地球 の 部屋で つかう 共通の 形（色は 書かない：各部屋の :root の --rl-・--rc- を つかう）
+   各部屋の :root に 置く 名前
+     そろえる 5つ：--rl-bg（地）--rl-ink（字）--rl-accent（主の色）--rl-accent2（2番目の色）--rl-soft（うすい色・板）
+     そのほか   ：--rl-sub（2番目の字）--rl-line（線）--rc-stage（絵の 地）--rc-tagbg（札の 地）--rc-ng（まちがい・こまった 字）--rc-bigink（大きい ボタンの 字） */
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--rl-bg);color:var(--rl-ink);
+  font-family:"BIZ UDPGothic",sans-serif;font-size:16px;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+[hidden]{display:none!important}
+svg.rc-i{width:24px;height:24px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.rc-app{display:grid;grid-template-rows:auto 1fr;gap:8px;height:100vh;height:100dvh;padding:8px 12px 12px}
+.rc-top{display:flex;align-items:center;gap:8px;min-height:52px}
+.rc-top h1{margin:0;font-size:20px;white-space:nowrap}
+.rc-top .rc-path{font-size:14px;color:var(--rl-sub);white-space:nowrap}
+.rc-sp{flex:1}
+.rc-b{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;min-width:44px;padding:0 14px;
+  border:1px solid var(--rl-line);background:var(--rl-soft);border-radius:12px;font-size:16px;white-space:nowrap}
+.rc-b[aria-pressed="true"]{border:2px solid var(--rl-ink);font-weight:700}
+.rc-b .rc-ck{display:none}
+.rc-b[aria-pressed="true"] .rc-ck{display:block}
+.rc-main{display:flex;gap:8px;min-height:0}
+.rc-stage{position:relative;flex:1;min-width:0;border-radius:12px;overflow:hidden;background:var(--rc-stage);touch-action:none}
+.rc-stage>canvas{position:absolute;inset:0;width:100%;height:100%}
+.rc-pip{position:absolute;right:8px;bottom:8px;width:24%;max-width:240px;aspect-ratio:var(--rc-ar,16/9);border-radius:10px;overflow:hidden;
+  border:2px solid var(--rl-line);background:var(--rc-stage)}
+.rc-pip video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.rc-pip canvas{position:absolute;inset:0;width:100%;height:100%}
+.rc-msg{position:absolute;left:50%;top:10px;transform:translateX(-50%);padding:6px 16px;border-radius:20px;
+  background:var(--rc-tagbg);font-size:18px;font-weight:700;white-space:nowrap;pointer-events:none}
+.rc-msg:empty{display:none}
+.rc-start{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+  background:var(--rl-bg);padding:12px;text-align:center}
+.rc-start p{margin:0;font-size:18px;line-height:1.7}
+.rc-start svg{width:min(300px,60%);height:auto;max-height:42%}
+.rc-big{min-height:60px;padding:0 36px;font-size:22px;font-weight:700;border-radius:30px;border:0;background:var(--rl-accent);color:var(--rc-bigink)}
+.rc-big:disabled{opacity:.6}
+.rc-gorow{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.rc-big.rc-big-sub{background:var(--rl-soft);color:var(--rl-ink);border:2px solid var(--rl-line)}
+.rc-b:disabled{opacity:.45;cursor:default}
+.rc-err{color:var(--rc-ng);font-size:16px;max-width:80%}
+.rc-side{display:flex;flex-direction:column;gap:8px;flex:none;width:260px}
+.rc-pn{position:relative;flex:1;border:1px solid var(--rl-line);border-radius:12px;background:var(--rl-soft);overflow:hidden;min-height:0}
+.rc-pn>canvas{position:absolute;inset:0;width:100%;height:100%}
+.rc-cap{position:absolute;left:8px;top:6px;font-size:14px;font-weight:700;color:var(--rl-sub);pointer-events:none}
+rt{font-size:10px}
+</style>
+<style>
+/* 見本 v0.2（2026-11-08 北の空）理科ラボ／そらと大地／星の 動き（4年）
+   南の 空：かおを 東から 西へ むけると、その むきに オリオン座が 来る 時こくまで 夜空が 回る。
+   北の 空：かおを 左から 右へ むけると 夕方から 明け方へ。北斗七星が 北極星の まわりを 時計と 反対に 回る。 */
+:root{
+  --rl-bg:#0f1b3d; --rl-ink:#f3f5ff; --rl-accent:#ffd36b; --rl-accent2:#7cc4ff; --rl-soft:#1b2a55;
+  --rl-sub:#c3cbe8; --rl-line:#53639a;
+  --rc-stage:#08122e; --rc-tagbg:rgba(15,27,61,.88); --rc-ng:#ff9b9b; --rc-bigink:#1a1400;
+  --rc-star:#fff6d8; --rc-red:#ffb27a; --rc-blue:#cfe3ff; --rc-cline:#9fb4ff; --rc-path:#7a8ac4; --rc-ghost:#8a9ad0;
+  --rc-ground:#0b1a2a; --rc-look:rgba(124,196,255,.16); --rc-faint:#3a4a7a;
+}
+.rc-s-ink{stroke:var(--rl-ink)} .rc-s-acc{stroke:var(--rl-accent)} .rc-f-acc{fill:var(--rl-accent)} .rc-s-acc2{stroke:var(--rl-accent2)}
+.rc-s-path{stroke:var(--rc-path)}
+</style>
+</head>
+<body>
+<div class="rc-app">
+  <div class="rc-top">
+    <h1>星の 動き</h1><span class="rc-path">理科ラボ／そらと大地</span>
+    <span class="rc-sp"></span>
+    <button class="rc-b" id="rcSouth" type="button" aria-pressed="true"><svg class="rc-i rc-ck" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><ruby>南<rt>みなみ</rt></ruby>の 空</button>
+    <button class="rc-b" id="rcNorth" type="button" aria-pressed="false"><svg class="rc-i rc-ck" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><ruby>北<rt>きた</rt></ruby>の 空</button>
+    <button class="rc-b" id="rcClear" type="button"><svg class="rc-i" viewBox="0 0 24 24"><path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13"/></svg>あしあとを けす</button>
+  </div>
+  <div class="rc-main">
+    <div class="rc-stage" id="rcStage">
+      <canvas id="rcSky"></canvas>
+      <div class="rc-pip" id="rcPip" hidden><video id="rcVideo" playsinline muted></video></div>
+      <div class="rc-msg" id="rcMsg"></div>
+      <div class="rc-start" id="rcStart">
+        <svg viewBox="0 0 300 150" aria-hidden="true" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path class="rc-s-path" d="M30 130Q150 -10 270 130" stroke-width="2" stroke-dasharray="6 7"/>
+          <path class="rc-s-acc rc-f-acc" d="M60 70l3 6 6 1-5 4 1 6-5-3-5 3 1-6-5-4 6-1z"/>
+          <path class="rc-s-acc rc-f-acc" d="M150 22l3 6 6 1-5 4 1 6-5-3-5 3 1-6-5-4 6-1z"/>
+          <path class="rc-s-acc rc-f-acc" d="M240 70l3 6 6 1-5 4 1 6-5-3-5 3 1-6-5-4 6-1z"/>
+          <circle class="rc-s-ink" cx="150" cy="112" r="16"/>
+          <path class="rc-s-acc2" d="M120 112h-34M86 112l8-6M86 112l8 6M180 112h34M214 112l-8-6M214 112l-8 6"/>
+        </svg>
+        <p>かおを 東から 西へ ゆっくり むけよう。<br><ruby>星座<rt>せいざ</rt></ruby>が どう 動くかな。</p>
+        <div class="rc-gorow">
+          <button class="rc-big" id="rcGo" type="button">カメラで</button>
+          <button class="rc-big rc-big-sub" id="rcGo2" type="button">ゆびで</button>
+        </div>
+        <div class="rc-err" id="rcErr" hidden></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+/* ===== 手で おす（地球の 部屋で 共通） =====
+   もとは 生命の 部屋の mock/rika/seimei/_parts/rs-te.js（使い方は 同じ・window.RsTe）。
+   地球の 部屋は「色は :root だけ」の 決まりなので、色を CSS の 変数から 読むように 写した もの。
+   カメラの 手を 画面 ぜんたいの「わ」に うつす。ボタンの 上で 約1.1びょう とめると おせる。タップや マウスは そのまま。
+     RsTe.point(nx,ny,box) … カメラの 中の 位置（0〜1・かがみの むき）。null で けす
+     RsTe.startHand({onPoint,onLost,hint}) … 手の トラッキング（人さし指の 先）を はじめる
+     RsTe.stop() / RsTe.bindButton(btn,opt) / RsTe.errText(e) / RsTe.cur（画面の px）
+   使う 色：--rl-ink（わ）--rl-soft（わの ふち）--rl-accent2（たまる 円） */
+(function(){
+  const DWELL=1100, BOX=[0.1,0.1,0.9,0.9], SM=0.5;
+  const cv=document.createElement('canvas'); cv.className='rc-te'; cv.setAttribute('aria-hidden','true');
+  cv.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:60';
+  const tip=document.createElement('div'); tip.className='rc-te-tip'; tip.hidden=true;
+  const st=document.createElement('style');
+  st.textContent='.rc-te-tip{position:fixed;left:50%;top:8px;transform:translateX(-50%);z-index:61;pointer-events:none;background:var(--rl-soft);border:2px solid var(--rl-ink);border-radius:22px;padding:8px 16px;font-size:16px;font-weight:700;color:var(--rl-ink);white-space:nowrap}'
+    +'.rc-te-tip[hidden]{display:none}.rc-te-near{box-shadow:inset 0 0 0 4px var(--rl-accent2)!important}'
+    +'#rsTeBtn[aria-pressed="true"]{background:var(--rl-accent2);color:var(--rl-soft);border-color:var(--rl-accent2)}';
+  const g=cv.getContext('2d');
+  function size(){ const d=window.devicePixelRatio||1; cv.width=innerWidth*d; cv.height=innerHeight*d; g.setTransform(d,0,0,d,0,0); }
+  function mount(){ document.head.appendChild(st); document.body.appendChild(cv); document.body.appendChild(tip); size(); }
+  if(document.body) mount(); else document.addEventListener('DOMContentLoaded',mount);
+  addEventListener('resize',size);
+  const T={cur:null, el:null, t0:0, done:false, on:false, dwell:DWELL, clicks:0, box:BOX};
+  const cl=v=>Math.max(0,Math.min(1,v));
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  T.point=function(nx,ny,box){
+    if(nx==null){ T.cur=null; return null; }
+    const b=box||BOX, x=cl((nx-b[0])/(b[2]-b[0]))*innerWidth, y=cl((ny-b[1])/(b[3]-b[1]))*innerHeight;
+    if(!T.cur) T.cur={x,y}; else { T.cur.x+=(x-T.cur.x)*SM; T.cur.y+=(y-T.cur.y)*SM; }
+    return T.cur;
+  };
+  T.say=function(t){ tip.hidden=!t; if(t && tip.textContent!==t) tip.textContent=t; };
+  function target(){
+    const c=T.cur; if(!c) return null;
+    const e=document.elementFromPoint(c.x,c.y), b=e&&e.closest&&e.closest('button');
+    return b && !b.disabled && b.offsetParent && !b.closest('[hidden]') ? b : null;
+  }
+  function frame(now){
+    requestAnimationFrame(frame);
+    g.clearRect(0,0,innerWidth,innerHeight);
+    const c=T.cur, el=target();
+    if(el!==T.el){ if(T.el) T.el.classList.remove('rc-te-near'); T.el=el; T.t0=now; T.done=false; if(el) el.classList.add('rc-te-near'); }
+    let prog=0;
+    if(el && !T.done){ prog=Math.min(1,(now-T.t0)/T.dwell); if(prog>=1){ T.done=true; T.clicks++; el.click(); } }
+    if(!c) return;
+    const R=Math.max(20,Math.min(innerWidth,innerHeight)*0.035), ink=css('--rl-ink'), soft=css('--rl-soft'), acc=css('--rl-accent2');
+    g.lineWidth=7; g.strokeStyle=soft; g.beginPath(); g.arc(c.x,c.y,R,0,7); g.stroke();
+    g.lineWidth=3; g.strokeStyle=ink; g.beginPath(); g.arc(c.x,c.y,R,0,7); g.stroke();
+    g.fillStyle=ink; g.beginPath(); g.arc(c.x,c.y,4,0,7); g.fill();
+    // みちていく わ：こい ふち（11）の 上に 部屋の 色（6）。うすい 色でも 見える（生命の rs-te.js と 同じ 直し）
+    if(prog>0 && !T.done){ g.lineCap='round'; const a1=-Math.PI/2+prog*Math.PI*2;
+      g.lineWidth=11; g.strokeStyle=ink; g.beginPath(); g.arc(c.x,c.y,R+8,-Math.PI/2,a1); g.stroke();
+      g.lineWidth=6; g.strokeStyle=acc; g.beginPath(); g.arc(c.x,c.y,R+8,-Math.PI/2,a1); g.stroke(); }
+  }
+  requestAnimationFrame(frame);
+
+  /* ---- 手の トラッキング（人さし指の 先） ---- */
+  const VER='0.10.14';
+  let hands=null, video=null, stream=null, lastT=-1, onPoint=null, onLost=null, seen=0, hint='人さし指を カメラに 見せてね';
+  async function load(){
+    const vision=await import(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}`);
+    const fs=await vision.FilesetResolver.forVisionTasks(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}/wasm`);
+    const o=d=>({baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task',delegate:d},runningMode:'VIDEO',numHands:1});
+    try{ return await vision.HandLandmarker.createFromOptions(fs,o('GPU')); }
+    catch(e){ return await vision.HandLandmarker.createFromOptions(fs,o('CPU')); }
+  }
+  T.errText=function(e){
+    return e&&e.name==='NoCamPage' ? 'この ひらきかたでは カメラが つかえません。Chrome で ひらいてね。'
+      : e&&(e.name==='NotFoundError'||e.name==='NotReadableError') ? 'カメラが みつかりません。ほかの アプリで つかっていないか みてね。'
+      : e&&e.name==='NotAllowedError' ? 'カメラが つかえません。先生に カメラを ゆるして もらってね。'
+      : 'じゅんびが できませんでした。インターネットに つながっているか みてね。';
+  };
+  T.startHand=async function(opt){
+    opt=opt||{}; onPoint=opt.onPoint||null; onLost=opt.onLost||null; if(opt.hint!=null) hint=opt.hint;
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ const e=new Error(); e.name='NoCamPage'; throw e; }
+    if(!video){ video=document.createElement('video'); video.playsInline=true; video.muted=true; video.setAttribute('playsinline','');
+      video.style.cssText='position:fixed;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none'; document.body.appendChild(video); }
+    stream=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:960},height:{ideal:540},facingMode:'user'},audio:false});
+    video.srcObject=stream; await video.play();
+    hands=hands||await load();
+    T.on=true; T.video=video; seen=performance.now(); requestAnimationFrame(track);
+    return video;
+  };
+  function track(){
+    if(!T.on) return;
+    requestAnimationFrame(track);
+    if(!hands||video.readyState<2||video.currentTime===lastT) return;
+    lastT=video.currentTime;
+    const now=performance.now(), r=hands.detectForVideo(video,now), L=(r.landmarks||[])[0];
+    if(L){ seen=now; const c=T.point(1-L[8].x, L[8].y); T.say(''); if(onPoint) onPoint(c); }
+    else { T.point(null); if(onPoint) onPoint(null); if(now-seen>1200 && hint) T.say(hint); if(onLost) onLost(); }
+  }
+  T.stop=function(){ T.on=false; T.point(null); T.say(''); if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; } if(onPoint) onPoint(null); };
+  // ［手で］ボタン：おすと カメラの 手が はじまる。もう いちど おすと やめる
+  T.bindButton=function(btn,opt){
+    btn.setAttribute('aria-pressed','false');
+    btn.addEventListener('click',async()=>{
+      if(T.on){ T.stop(); btn.setAttribute('aria-pressed','false'); return; }
+      btn.disabled=true; T.say('じゅんびちゅう…');
+      try{ await T.startHand(opt); btn.setAttribute('aria-pressed','true'); T.say(''); }
+      catch(e){ T.say(T.errText(e)); setTimeout(()=>T.say(''),5000); }
+      finally{ btn.disabled=false; }
+    });
+  };
+  window.RsTe=T;
+})();
+</script>
+<script>
+/* 理科ラボ／地球 の 部屋で つかう 共通の 部品（カメラ・体の 読み・色・キャンバス）
+   うつした 映像は この 端末の 中だけで つかい、外へ 送らない。
+   ?test のときは カメラを つかわず、マウス（ゆび）で ためせる。 */
+(function(){
+const TEST=/[?&]test/.test(location.search);
+const VER='0.10.14';
+const MODEL={
+  pose:'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task',
+  hand:'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task'};
+
+// 色は :root の 変数から 読む（部屋の 中で 色を 書かない）
+function colors(names){ const g=getComputedStyle(document.documentElement), o={};
+  for(const n of names) o[n.replace(/^--(rl|rc)-/,'')]=g.getPropertyValue(n).trim(); return o; }
+
+// キャンバスを 見えている 大きさに 合わせる（にじまない）
+function fit(cv){ const d=window.devicePixelRatio||1, r=cv.getBoundingClientRect();
+  cv.width=Math.max(1,Math.round(r.width*d)); cv.height=Math.max(1,Math.round(r.height*d));
+  const c=cv.getContext('2d'); c.setTransform(d,0,0,d,0,0); return {c,w:r.width,h:r.height}; }
+
+// 字の 札（地を しいて 読みやすく）
+function tag(c,t,x,y,px,col,bg){ c.font=`700 ${px}px "BIZ UDPGothic",sans-serif`; c.textAlign='center'; c.textBaseline='middle';
+  const w=c.measureText(t).width+px*0.8; c.fillStyle=bg; c.beginPath(); c.roundRect(x-w/2,y-px*0.75,w,px*1.5,px*0.5); c.fill();
+  c.fillStyle=col; c.fillText(t,x,y+1); return w; }
+
+const ease=(a,b,k)=>a+(b-a)*k;
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const mirror=L=>L.map(p=>({x:1-p.x,y:p.y,v:p.visibility==null?1:p.visibility}));
+
+async function loadModel(kind){
+  const vision=await import(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}`);
+  const fs=await vision.FilesetResolver.forVisionTasks(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}/wasm`);
+  const K=kind==='hand'?vision.HandLandmarker:vision.PoseLandmarker;
+  const opts=d=>({baseOptions:{modelAssetPath:MODEL[kind],delegate:d},runningMode:'VIDEO',
+    ...(kind==='hand'?{numHands:2,minHandDetectionConfidence:0.5,minHandPresenceConfidence:0.5}:{numPoses:1,minPoseDetectionConfidence:0.5}),
+    minTrackingConfidence:0.5});
+  // Safari は GPU の じゅんびが 返らない ことが あるので はじめから CPU。ほかも 10びょうで CPU に
+  const safari=/Safari/.test(navigator.userAgent)&&!/Chrome|CriOS|Edg/.test(navigator.userAgent);
+  if(!safari){ try{ return await Promise.race([K.createFromOptions(fs,opts('GPU')),
+    new Promise((_,ng)=>setTimeout(()=>ng(new Error('gpu-timeout')),10000))]); }catch(e){} }
+  return await K.createFromOptions(fs,opts('CPU'));
+}
+
+/* camera({kind, go, go2, err, start, stage, pip, video, onStart(src), onFrame(点|null), onMouse(x,y,type,e)})
+   go＝［カメラで］、go2＝［ゆびで］（カメラなし。指や マウスで 動かす。onStart('mouse')）。
+   カメラの ときは、手の 人さし指（pose なら 上げた ほうの 手）で 画面の ボタンも おせる（rc-te.js の RsTe）
+   pose のとき onFrame には 体の 33点（かがみの むき）、hand のときは 手ごとの 21点の ならび */
+function camera(o){
+  let lm=null,lastT=-1,raf=0,stream=null,modelP=null,ptr=false;
+  // 指・マウスで 動かす（［ゆびで］と ?test）
+  const usePointer=()=>{ if(ptr) return; ptr=true;
+    const ev=e=>{ const r=o.stage.getBoundingClientRect(); o.onMouse&&o.onMouse((e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height,e.type,e); };
+    for(const t of ['pointerdown','pointermove','pointerup','pointercancel']) o.stage.addEventListener(t,ev); };
+  const byFinger=()=>{ o.start.hidden=true; usePointer(); o.onStart('mouse'); };
+  if(o.go2) o.go2.onclick=byFinger;
+  if(TEST){
+    o.go.textContent='マウスで ためす';
+    o.go.onclick=byFinger;
+    return {stop(){}};
+  }
+  modelP=loadModel(o.kind).catch(e=>{ modelP=null; throw e; }); modelP.catch(()=>{});
+  o.go.onclick=async()=>{
+    o.err.hidden=true; o.go.disabled=true; o.go.textContent='じゅんびちゅう…';
+    try{
+      if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ const e=new Error('nocam'); e.name='NoCamPage'; throw e; }
+      stream=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280},height:{ideal:720},facingMode:'user'},audio:false});
+      o.video.srcObject=stream; await o.video.play();
+      o.pip.style.setProperty('--rc-ar',(o.video.videoWidth||16)+'/'+(o.video.videoHeight||9));
+      lm=await Promise.race([(modelP||(modelP=loadModel(o.kind))),new Promise((_,ng)=>setTimeout(()=>ng(new Error('model-timeout')),45000))]);
+      o.start.hidden=true; o.pip.hidden=false; o.onStart('cam'); loop();
+    }catch(e){
+      o.go.disabled=false; o.go.textContent='もう いちど'; o.err.hidden=false;
+      o.err.textContent=(e&&e.name==='NoCamPage')?'この ひらきかたでは カメラが つかえません。Chrome で ひらいてね。'
+        :(e&&(e.name==='NotFoundError'||e.name==='NotReadableError'))?'カメラが みつかりません。ほかの アプリで つかっていないか みてね。'
+        :(e&&e.name==='NotAllowedError')?'カメラが つかえません。先生に カメラを ゆるして もらってね。'
+        :'じゅんびが できませんでした（'+(e&&(e.name||e.message)||'')+'）。インターネットに つながっているか みてね。';
+    }
+  };
+  function loop(){
+    raf=requestAnimationFrame(loop);
+    if(!lm||o.video.readyState<2||o.video.currentTime===lastT) return;
+    lastT=o.video.currentTime;
+    const res=o.kind==='hand'?lm.detectForVideo(o.video,performance.now()):lm.detectForVideo(o.video,performance.now());
+    const L=res.landmarks||[];
+    if(o.kind==='hand'){ const H=L.map(mirror); o.onFrame(H); point(H[0]&&H[0][8]); }
+    else { const B=L[0]?mirror(L[0]):null; o.onFrame(B);
+      // 上げた ほうの 手の 人さし指（pose の 19・20）で ボタンを おす
+      point(B&&[B[19],B[20]].filter(p=>p&&p.v>0.5).sort((a,b)=>a.y-b.y)[0]); }
+  }
+  function point(p){ if(window.RsTe) window.RsTe.point(p?p.x:null, p?p.y:null); }
+  return {stop(){ cancelAnimationFrame(raf); point(null); if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; } }};
+}
+
+// 体の 点の 番号（MediaPipe Pose）
+const P={nose:0,lEar:7,rEar:8,lSh:11,rSh:12,lWr:15,rWr:16};
+window.RC={TEST,colors,fit,tag,ease,clamp,camera,P};
+})();
+</script>
+<script>
+/* ===== 星の きまり（計算は ここ 1か所） =====
+   東京（北緯36度）・12月なかごろ。真夜中に オリオン座が 南に 来る。 */
+const SKY = {
+  LAT:36*Math.PI/180, LST0:5.6,            // 真夜中の 恒星時（時）
+  // オリオン座（赤経 時・赤緯 度）。col は 星の 色の 名前
+  STARS:[ {n:'ベテルギウス',ra:5.919,de:7.41,m:1,col:'red'}, {n:'ベラトリックス',ra:5.418,de:6.35,m:2},
+          {n:'ミンタカ',ra:5.533,de:-0.30,m:2}, {n:'アルニラム',ra:5.603,de:-1.20,m:2}, {n:'アルニタク',ra:5.679,de:-1.94,m:2},
+          {n:'サイフ',ra:5.796,de:-9.67,m:2}, {n:'リゲル',ra:5.242,de:-8.20,m:1,col:'blue'}, {n:'メイサ',ra:5.585,de:9.93,m:3} ],
+  LINES:[[7,0],[7,1],[0,1],[1,2],[0,4],[2,3],[3,4],[2,6],[4,5],[5,6]],
+  CENTER:3,                                 // まん中の 星（アルニラム）で 位置を はかる
+  // 北の 空：北斗七星（ドゥーベ・メラク・フェクダ・メグレズ・アリオト・ミザール・アルカイド）と 北極星
+  NSTARS:[ {n:'ドゥーベ',ra:11.062,de:61.75,m:2}, {n:'メラク',ra:11.031,de:56.38,m:2}, {n:'フェクダ',ra:11.897,de:53.69,m:2},
+           {n:'メグレズ',ra:12.257,de:57.03,m:3}, {n:'アリオト',ra:12.900,de:55.96,m:2}, {n:'ミザール',ra:13.399,de:54.93,m:2},
+           {n:'アルカイド',ra:13.792,de:49.31,m:2} ],
+  NLINES:[[0,1],[1,2],[2,3],[3,0],[3,4],[4,5],[5,6]],
+  POLARIS:{n:'北極星',ra:2.530,de:89.26,m:1},
+  NT0:-6, NT1:6,                            // 北の 空で 回す 時こく（午後6時〜午前6時）
+  // 時こく T（真夜中から 何時間。-6＝午後6時）での 方位（北0・東90・南180・西270）と 高さ（度）
+  altAz(ra,de,T){ const H=(SKY.LST0+T*1.0027-ra)*15*Math.PI/180, d=de*Math.PI/180, f=SKY.LAT;
+    const alt=Math.asin(Math.sin(f)*Math.sin(d)+Math.cos(f)*Math.cos(d)*Math.cos(H));
+    const As=Math.atan2(Math.sin(H), Math.cos(H)*Math.sin(f)-Math.tan(d)*Math.cos(f));
+    return {az:((As*180/Math.PI+180)%360+360)%360, alt:alt*180/Math.PI}; },
+  // 見える あいだの まん中の 星の 道（0.05時間 ごと）
+  path:null,
+  makePath(){ const a=[]; for(let T=-8;T<=8;T+=0.05){ const s=SKY.STARS[SKY.CENTER], p=SKY.altAz(s.ra,s.de,T); if(p.alt>0) a.push({T,...p}); } SKY.path=a; },
+  // かおの 方位 → その 方位に まん中の 星が 来る 時こく
+  timeForAz(az){ let b=SKY.path[0]; for(const p of SKY.path) if(Math.abs(p.az-az)<Math.abs(b.az-az)) b=p; return b.T; },
+  clock(T){ const m=Math.round(((T%24)+24)%24*6)*10, h=Math.floor(m/60)%24, mm=m%60;
+    return (h<12?'午前':'午後')+' '+(h%12)+'時'+(mm?mm+'分':''); },
+};
+SKY.makePath();
+
+/* ===== 部屋 ===== */
+const $=id=>document.getElementById(id);
+const R={ src:null, face:180, faceT:180, T:0, seen:new Set(), lostAt:0, view:'south', u:0.5, uT:0.5 };
+const AZ0=60, AZ1=300;                        // 画面の 左はし＝東より 北、右はし＝西より 北
+let C={}, cv=$('rcSky'), G=null;
+function fit(){ C=RC.colors(['--rl-ink','--rl-accent','--rl-accent2','--rl-sub','--rl-line','--rc-stage','--rc-tagbg','--rc-star','--rc-red','--rc-blue',
+  '--rc-cline','--rc-path','--rc-ghost','--rc-ground','--rc-look','--rc-faint']); G=RC.fit(cv); }
+window.addEventListener('resize',fit);
+const X=az=>(az-AZ0)/(AZ1-AZ0)*G.w, HY=()=>G.h*0.84, Y=alt=>HY()-alt/72*(HY()-G.h*0.06);
+const NA=75;                                  // 北の 空：画面の 左はし＝北から 西へ 75度、右はし＝東へ 75度
+const NX=az=>((((az+180)%360)+360)%360-180+NA)/(2*NA)*G.w;
+
+// かおの 向き（-1 東 … 0 南 … 1 西）を 受けとる
+function setFace(az){ R.faceT=RC.clamp(az, SKY.path[0].az, SKY.path[SKY.path.length-1].az); R.lostAt=0; }
+function setU(u){ R.uT=RC.clamp(u,0,1); R.lostAt=0; }   // 北の 空：左はし＝夕方 … 右はし＝明け方
+function feedPose(L){
+  if(!L){ if(!R.lostAt) R.lostAt=performance.now(); return; }
+  const n=L[RC.P.nose], a=L[RC.P.lEar], b=L[RC.P.rEar];
+  const w=Math.abs(a.x-b.x); if(w<0.01){ if(!R.lostAt) R.lostAt=performance.now(); return; }
+  const yaw=RC.clamp((n.x-(a.x+b.x)/2)/w,-0.6,0.6);       // 左（東）を むくと マイナス
+  if(R.view==='north') setU((yaw+0.6)/1.2); else setFace(180+yaw/0.6*95);
+}
+function step(){
+  R.face=RC.ease(R.face,R.faceT,0.25); R.u=RC.ease(R.u,R.uT,0.25);
+  R.T = R.view==='north' ? SKY.NT0+R.u*(SKY.NT1-SKY.NT0) : SKY.timeForAz(R.face);
+  const h=Math.round(R.T); if(Math.abs(R.T-h)<0.15 && (R.view!=='north'||h%2===0)) R.seen.add(h);   // ちょうどの 時こくを 通ったら あしあと（北の 空は 重なるので 2時間ごと）
+}
+
+function drawOrion(c,T,alpha,lines){
+  const P=SKY.STARS.map(s=>{ const q=SKY.altAz(s.ra,s.de,T); return {x:X(q.az),y:Y(q.alt),s}; });
+  c.globalAlpha=alpha;
+  if(lines){ c.strokeStyle=C.cline; c.lineWidth=2; for(const [i,j] of SKY.LINES){ c.beginPath(); c.moveTo(P[i].x,P[i].y); c.lineTo(P[j].x,P[j].y); c.stroke(); } }
+  for(const p of P){ const r=Math.max(3,G.h*(p.s.m===1?0.016:p.s.m===2?0.011:0.008));
+    c.fillStyle=p.s.col==='red'?C.red:p.s.col==='blue'?C.blue:C.star; c.beginPath(); c.arc(p.x,p.y,r,0,Math.PI*2); c.fill(); }
+  c.globalAlpha=1; return P;
+}
+// ふりがなつきの 札：parts＝[['オリオン'],['座','ざ']]（字の 上に 小さく よみ）
+function rtag(c,parts,x,y,px,col,bg){
+  const rp=Math.max(11,Math.round(px*0.62)); c.font=`700 ${px}px "BIZ UDPGothic",sans-serif`;
+  const ws=parts.map(q=>c.measureText(q[0]).width), tw=ws.reduce((a,b)=>a+b,0), pad=px*0.4, hh=px*1.5+rp;
+  c.fillStyle=bg; c.beginPath(); c.roundRect(x-tw/2-pad,y-px*0.75-rp,tw+pad*2,hh,px*0.5); c.fill();
+  let cx=x-tw/2; c.textBaseline='middle';
+  parts.forEach((q,i)=>{ c.textAlign='left'; c.fillStyle=col; c.font=`700 ${px}px "BIZ UDPGothic",sans-serif`; c.fillText(q[0],cx,y+1);
+    if(q[1]){ c.textAlign='center'; c.font=`400 ${rp}px "BIZ UDPGothic",sans-serif`; c.fillText(q[1],cx+ws[i]/2,y-px*0.5-rp*0.45); }
+    cx+=ws[i]; });
+}
+function drawDipper(c,T,alpha){
+  const P=SKY.NSTARS.map(s=>{ const q=SKY.altAz(s.ra,s.de,T); return {x:NX(q.az),y:Y(q.alt),alt:q.alt,s}; });
+  c.globalAlpha=alpha; c.strokeStyle=C.cline; c.lineWidth=2;
+  for(const [i,j] of SKY.NLINES){ c.beginPath(); c.moveTo(P[i].x,P[i].y); c.lineTo(P[j].x,P[j].y); c.stroke(); }
+  for(const p of P){ const r=Math.max(3,G.h*(p.s.m===2?0.011:0.008)); c.fillStyle=C.star; c.beginPath(); c.arc(p.x,p.y,r,0,Math.PI*2); c.fill(); }
+  c.globalAlpha=1; return P;
+}
+function drawNorth(c,w,h){
+  const po=SKY.altAz(SKY.POLARIS.ra,SKY.POLARIS.de,R.T), px=NX(po.az), py=Y(po.alt);
+  // 北極星を 中心に 回る 道（北斗七星の まん中 メグレズの 通り道）
+  const s3=SKY.NSTARS[3]; c.setLineDash([6,8]); c.strokeStyle=C.path; c.lineWidth=2; c.beginPath();
+  for(let k=0;k<=96;k++){ const q=SKY.altAz(s3.ra,s3.de,k/4); const x=NX(q.az), y=Y(q.alt); k?c.lineTo(x,y):c.moveTo(x,y); } c.stroke(); c.setLineDash([]);
+  for(const hT of R.seen){ if(Math.abs(hT-R.T)<0.6) continue; const P=drawDipper(c,hT,0.45);
+    const top=Math.min(...P.map(q=>q.y)); RC.tag(c,SKY.clock(hT).replace(/^(午前|午後) /,'$1'),P[3].x,top-16,14,C.sub,C.tagbg); }
+  if(R.src){ const fx=R.u*w, bw=w*0.12; c.fillStyle=C.look; c.fillRect(fx-bw/2,0,bw,HY()); }
+  const P=drawDipper(c,R.T,1);
+  c.fillStyle=C.accent; c.beginPath(); c.arc(px,py,Math.max(4,h*0.016),0,Math.PI*2); c.fill();
+  rtag(c,[['北極星','ほっきょくせい']],px,py+Math.max(h*0.075,38),15,C.accent,C.tagbg);
+  const cx=P.reduce((a,q)=>a+q.x,0)/7, cy=Math.min(...P.map(q=>q.y));
+  rtag(c,[['北斗七星','ほくとしちせい']],cx,cy-h*0.07,16,C.ink,C.tagbg);
+  return [[-45,'北西'],[0,'北'],[45,'北東']];
+}
+function draw(){
+  if(!G) return; const c=G.c, w=G.w, h=G.h;
+  c.clearRect(0,0,w,h);
+  let DIRS=[[90,'東'],[135,'南東'],[180,'南'],[225,'南西'],[270,'西']], DX=X;
+  if(R.view==='north'){ DIRS=drawNorth(c,w,h); DX=NX; } else {
+  // 星の 道（まん中の 星の 通り道）
+  c.setLineDash([6,8]); c.strokeStyle=C.path; c.lineWidth=2; c.beginPath();
+  SKY.path.forEach((p,i)=>{ const x=X(p.az), y=Y(p.alt); i?c.lineTo(x,y):c.moveTo(x,y); }); c.stroke(); c.setLineDash([]);
+  // あしあと（通った 時こくの 星座）
+  for(const hT of R.seen){ if(Math.abs(hT-R.T)<0.6) continue; const P=drawOrion(c,hT,0.45,true);
+    const top=Math.min(...P.map(q=>q.y)); RC.tag(c,SKY.clock(hT).replace(/^(午前|午後) /,'$1'),P[SKY.CENTER].x,top-16,14,C.sub,C.tagbg); }
+  // かおの むき
+  if(R.src){ const fx=X(R.face), bw=G.w*0.12; c.fillStyle=C.look; c.fillRect(fx-bw/2,0,bw,HY()); }
+  // 今の 星座
+  const P=drawOrion(c,R.T,1,true);
+  RC.tag(c,'ベテルギウス',P[0].x,P[0].y-G.h*0.05,14,C.red,C.tagbg);
+  RC.tag(c,'リゲル',P[6].x,P[6].y+G.h*0.05,14,C.blue,C.tagbg);
+  rtag(c,[['オリオン'],['座','ざ']],P[SKY.CENTER].x+G.h*0.2,P[SKY.CENTER].y,16,C.ink,C.tagbg);
+  }
+  // 地面と 方角
+  c.fillStyle=C.ground; c.strokeStyle=C.line; c.lineWidth=2; c.beginPath(); c.moveTo(0,h);
+  for(let i=0;i<=40;i++){ const x=i/40*w, y=HY()-Math.max(0,Math.sin(i*1.7)*h*0.02+Math.sin(i*0.6)*h*0.015)-(i%9===4?h*0.035:0); c.lineTo(x,y); }
+  c.lineTo(w,h); c.closePath(); c.fill(); c.stroke();
+  for(const [az,t] of DIRS) RC.tag(c,t,DX(az),HY()+(h-HY())/2,t.length>1?14:18,C.ink,C.tagbg);
+  if(R.src){ // かおの むきの しるし（地面の 上の 三角）
+    const fx=R.view==='north'?R.u*w:X(R.face); c.fillStyle=C.accent2; c.beginPath(); c.moveTo(fx,HY()-4); c.lineTo(fx-9,HY()+12); c.lineTo(fx+9,HY()+12); c.closePath(); c.fill(); }
+  // 時こく
+  RC.tag(c,SKY.clock(R.T),G.w*0.12,24,Math.max(18,Math.min(26,h*0.05)),C.accent,C.tagbg);
+  const lost=R.src==='cam'&&R.lostAt&&performance.now()-R.lostAt>700;
+  $('rcMsg').textContent=lost?'かおを カメラに むけてね':'';
+}
+let raf=0; function loop(){ raf=requestAnimationFrame(loop); step(); draw(); }
+function settle(){ R.face=R.faceT; R.u=R.uT; step(); draw(); }
+function setView(v){ R.view=v; R.seen.clear(); $('rcSouth').setAttribute('aria-pressed',String(v==='south')); $('rcNorth').setAttribute('aria-pressed',String(v==='north')); }
+$('rcSouth').onclick=()=>setView('south'); $('rcNorth').onclick=()=>setView('north');
+
+$('rcClear').onclick=()=>{ R.seen.clear(); };
+RC.camera({kind:'pose', go:$('rcGo'), go2:$('rcGo2'), err:$('rcErr'), start:$('rcStart'), stage:$('rcStage'), pip:$('rcPip'), video:$('rcVideo'),
+  onStart:src=>{ R.src=src; fit(); }, onFrame:feedPose,
+  onMouse:(x,y,type)=>{ if(R.src==='mouse'&&type!=='pointerup'){ if(R.view==='north') setU(x); else setFace(AZ0+x*(AZ1-AZ0)); } } });
+fit(); loop();
+window.R=R; window.SKY=SKY; window.NX=NX; window.G_=()=>G; Object.defineProperty(window,'G',{get:()=>G}); window.rcSettle=settle; window.rcFeedPose=feedPose; window.rcSetFace=setFace;
+</script>
+<!--rl-home--><script>
+/* 理科ラボ：どの へやにも 出す「もどる」ボタン（11-07）。決まりは ここ 1か所。
+   へやの 上の帯（.xx-top）の いちばん左に 44px の ⌂ を 足す。帯が ない へやは 左下に うかべる。
+   行き先：その へやが 入っている 部屋の ページ（理科ラボ/1_エネルギー.html など）。そこから ホームへも もどれる。
+   へやの 中の 字や クラス名には さわらない（クラス名は rlh- で はじめる）。 */
+(function(){
+  if(window.__rlHome) return; window.__rlHome=1;
+  // どの へやが どの 部屋に 入るか（mock/ の 下の 道 → 部屋の ページ）
+  var PAGE={energy:'1_エネルギー.html',ryushi:'2_粒子.html',seimei:'3_生命.html',chikyu:'4_地球.html'};
+  var EXTRA={teko:'energy','karada-mirror':'seimei',tentai:'chikyu','seiza-tsunagu':'chikyu'};
+  function room(p){
+    var m=/\/mock\/rika\/(energy|ryushi|seimei|chikyu)\//.exec(p); if(m) return m[1];
+    m=/\/mock\/([^\/]+)\//.exec(p); return m&&EXTRA[m[1]]||'';
+  }
+  function href(){
+    var p=decodeURIComponent(location.pathname), r=room(p), i=p.lastIndexOf('/mock/');
+    if(window.RL_HOME_URL) return window.RL_HOME_URL;          // 授業メイトの 中では 入れる側が 決める
+    if(!r||i<0) return '';
+    return 'file://'+encodeURI(p.slice(0,i)+'/理科ラボ/'+PAGE[r]);
+  }
+  function put(){
+    var to=href(); if(!to||document.querySelector('.rlh-home')) return;
+    var a=document.createElement('a'); a.className='rlh-home'; a.href=to; a.title='へやの 一らんに もどる';
+    a.setAttribute('aria-label','へやの 一らんに もどる');
+    a.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>';
+    var st=document.createElement('style');
+    st.textContent='.rlh-home{flex:0 0 44px;width:44px;height:44px;margin-right:8px;display:inline-flex;align-items:center;justify-content:center;border-radius:22px;background:var(--rl-bg,white);color:var(--rl-ink,black);border:1px solid currentColor;text-decoration:none;box-sizing:border-box}'+
+      '.rlh-home:hover{opacity:.8}.rlh-home:focus-visible{outline:3px solid currentColor;outline-offset:2px}'+
+      '.rlh-home.rlh-float{position:fixed;left:12px;bottom:12px;z-index:9999;margin:0}';
+    document.head.appendChild(st);
+    var bar=[].slice.call(document.querySelectorAll('[class$="-top"],[class*="-top "]')).filter(function(e){
+      var r=e.getBoundingClientRect(); return r.top<20&&r.height>=44&&getComputedStyle(e).display.indexOf('flex')>=0;})[0];
+    if(bar) bar.insertBefore(a,bar.firstChild); else { a.classList.add('rlh-float'); document.body.appendChild(a); }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',put); else put();
+})();
+</script><!--/rl-home-->
+</body>
+</html>

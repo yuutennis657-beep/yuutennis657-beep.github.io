@@ -1,0 +1,1682 @@
+<!doctype html>
+<html lang="ja">
+<head><script>window.RL_HOME_URL="../../seimei.html";</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>からだ ミラー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<style>
+:root{/* 生命の 部屋の 色（理科ラボで 名前を そろえる） */--rl-bg:#ffffff;--rl-ink:#1f2937;--rl-accent:#23784a;--rl-accent2:#a6d785;--rl-soft:#eaf6ec;
+  --kr-ink:var(--rl-ink);--kr-sub:#4b5563;--kr-line:#d1d5db;--kr-btn:var(--rl-soft);--kr-acc:var(--rl-accent);--kr-dash:#6b7280}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--rl-bg);color:var(--kr-ink);font-family:"BIZ UDPGothic",sans-serif;font-size:16px;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+rt{font-size:10px}
+.kr-app{display:grid;grid-template-columns:1fr 320px;gap:12px;height:100vh;padding:12px}
+.kr-left{display:flex;align-items:center;justify-content:center;min-width:0;min-height:0}
+.kr-stage{position:relative;width:100%;height:100%;border-radius:12px;overflow:hidden;background:var(--rl-soft)}
+.kr-stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.kr-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.kr-start{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#fff;text-align:center}
+.kr-start[hidden]{display:none!important}
+.kr-start p{margin:0;font-size:18px;line-height:1.7;color:var(--kr-sub)}
+.kr-big{min-height:64px;padding:0 36px;font-size:24px;font-weight:700;border-radius:32px;border:2px solid var(--kr-ink);background:#fff}
+.kr-small{min-height:44px;padding:0 20px;font-size:16px;border-radius:22px;border:1px solid var(--kr-line);background:#fff}
+.kr-err{color:#b91c1c;max-width:80%}
+.kr-err[hidden]{display:none!important}
+.kr-hint{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);background:rgba(255,255,255,.92);border:1px solid var(--kr-line);border-radius:20px;padding:8px 16px;font-size:16px;white-space:nowrap}
+.kr-hint[hidden]{display:none!important}
+.kr-full{position:absolute;top:10px;right:10px;min-height:44px;padding:0 14px 0 10px;display:flex;align-items:center;gap:6px;border:1px solid var(--kr-line);border-radius:22px;background:rgba(255,255,255,.92);font-size:15px}
+.kr-full svg{width:22px;height:22px;fill:none;stroke:var(--kr-ink);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.kr-full[hidden]{display:none!important}
+
+.kr-right{display:flex;flex-direction:column;gap:10px;min-height:0}
+.kr-mode{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.kr-mode button{min-height:52px;border:1px solid var(--kr-line);background:#fff;border-radius:14px;font-size:16px;line-height:1.25}
+.kr-mode button small{display:block;font-size:14px;color:var(--kr-sub)}
+.kr-mode button[aria-pressed="true"]{background:var(--rl-accent);color:#fff;border-color:var(--rl-accent);font-weight:700}
+.kr-mode button[aria-pressed="true"] small{color:#fff}
+.kr-card{flex:1;min-height:0;border:1px solid var(--kr-line);border-radius:20px 6px 20px 6px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;overflow:auto}
+.kr-card h2{margin:0;font-size:24px;line-height:1.5}
+.kr-card p{margin:0;font-size:16px;line-height:1.75}
+.kr-now{border-radius:12px;background:var(--rl-soft);padding:4px 10px;font-size:16px;line-height:1.7}
+.kr-ask{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.kr-ask[hidden]{display:none!important}
+.kr-ask button{min-height:44px;border:2px solid var(--kr-acc);background:#fff;border-radius:12px;font-size:17px;font-weight:700;color:var(--kr-acc)}
+.kr-facts{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:2px}
+.kr-facts li{font-size:14px;line-height:1.6}
+.kr-facts b{margin-right:.4em}
+.kr-toggles{display:grid;grid-template-columns:repeat(3,1fr) 1.25fr;gap:6px}
+.kr-toggles button{white-space:nowrap;padding:0}
+.kr-toggles button,.kr-organs button{min-height:44px;border:1px solid var(--kr-line);background:#fff;border-radius:10px;font-size:16px}
+.kr-toggles button[aria-pressed="true"]{background:var(--kr-btn);border:2px solid var(--kr-ink);font-weight:700}
+.kr-toggles button[data-k][aria-pressed="false"]{color:var(--kr-sub);text-decoration:line-through}
+.kr-organs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.kr-organs button{font-size:15px;padding:0 2px}
+.kr-organs button[aria-pressed="true"]{border:2px solid var(--kr-acc);background:var(--rl-soft);font-weight:700}
+.kr-flow{min-height:48px;border:2px solid var(--kr-ink);background:#fff;border-radius:12px;font-size:16px;font-weight:700}
+.kr-flow[aria-pressed="true"]{background:var(--kr-btn)}
+.kr-next{border-color:var(--kr-acc);color:var(--kr-acc)}
+.kr-next[hidden],.kr-flow[hidden],.kr-v3btn[hidden]{display:none!important}
+.kr-v3btn,.kr-acts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.kr-b3row .kr-flow{font-size:15px;line-height:1.25;padding:0 4px}
+.kr-toggles .kr-3d{font-size:15px;line-height:1.25;padding:0 2px;border:2px solid var(--kr-ink);background:#fff;font-weight:700}
+.kr-toggles .kr-3d[aria-pressed="true"]{background:var(--kr-btn)}
+.kr-b3on #krFacts,.kr-b3on #krSec,.kr-b3on #krChips,.kr-b3on #krAsk{display:none!important}
+.kr-acts .kr-flow{font-size:15px;line-height:1.3;padding:2px 4px}
+.kr-acts .kr-flow[aria-pressed="true"]{grid-column:1/-1}
+.kr-puzon .kr-stage{background:#fff}
+.kr-puzon .kr-stage video{opacity:.16}
+.kr-puzon #krCv{touch-action:none;cursor:grab}
+.kr-card p b.kr-good{color:var(--kr-acc)}
+.kr-res{display:block;font-size:17px;line-height:1.6;margin-bottom:2px}
+.kr-who{font-size:14px;color:var(--kr-sub);margin-right:6px}
+.kr-mk{display:inline-block;width:26px;height:26px;margin-right:6px;vertical-align:-6px}
+.kr-maru{border:5px solid var(--kr-acc);border-radius:50%}
+.kr-batsu{font-size:32px;line-height:24px;font-weight:700;text-align:center;color:var(--kr-ink)}
+.kr-sec{margin:0;font-size:16px;border-top:1px solid var(--kr-line);padding-top:6px}
+.kr-chips button{grid-column:4;grid-row:2;min-height:44px;padding:0;border:1px solid var(--kr-line);background:#fff;border-radius:22px;font-size:14px}
+.kr-chips{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.kr-chip{min-height:44px;display:flex;align-items:center;justify-content:center;gap:5px;border:1.5px dashed var(--kr-dash);border-radius:18px;font-size:15px;color:var(--kr-sub)}
+.kr-chip.kr-on{border:2px solid var(--kr-ink);color:var(--kr-ink);font-weight:700;background:var(--kr-btn)}
+.kr-chip.kr-on::before{content:"";width:5px;height:10px;border:solid var(--kr-acc);border-width:0 3px 3px 0;transform:translateY(-2px) rotate(45deg)}
+.kr-hide{display:none!important}
+.kr-anis{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.kr-anis button{min-height:44px;border:1px solid var(--kr-line);background:#fff;border-radius:10px;font-size:16px}
+.kr-anis button[aria-pressed="true"]{border:2px solid var(--kr-ink);background:var(--kr-btn);font-weight:700}
+.kr-ani{position:absolute;right:10px;top:62px;width:54%;margin:0;background:#fff;border:1px solid var(--kr-line);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px}
+.kr-ani[hidden],.kr-b3on .kr-ani{display:none!important}
+.kr-anib{position:relative;width:100%;aspect-ratio:3/2;flex:none}
+.kr-ani img{width:100%;height:100%;display:block}
+.kr-jl{position:absolute;transform:translate(-50%,-135%);background:#fff;border:1.5px solid var(--kr-ink);border-radius:8px;padding:0 5px;font-size:14px;line-height:1.5;white-space:nowrap;pointer-events:none}
+.kr-jl.kr-on{background:var(--rl-accent);border-color:var(--rl-accent);color:#fff;font-weight:700}
+.kr-ani figcaption{font-size:15px;line-height:1.6;padding:2px 4px}
+/* 4年 授業の ながれ（1〜4） */
+.kr-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+#krSteps,#krSteps6{grid-template-columns:repeat(5,1fr)}
+#krSteps button,#krSteps6 button{font-size:14px;padding:0;letter-spacing:-.06em;white-space:nowrap}
+#krCard6:not([data-st="5"]) #krAnis6{display:none!important}
+#krAnis6{grid-template-columns:1fr 1fr}
+#krSteps button{font-size:14px}
+.kr-steps button{min-height:46px;border:1px solid var(--kr-line);background:#fff;border-radius:10px;font-size:15px;line-height:1.2;padding:0 2px}
+.kr-steps button small{display:block;font-size:14px;color:var(--kr-sub)}
+.kr-steps button[aria-pressed="true"]{background:var(--rl-accent);color:#fff;border-color:var(--rl-accent);font-weight:700}
+.kr-steps button[aria-pressed="true"] small{color:#fff}
+.kr-mon{font-size:16px;line-height:1.65;font-weight:700;border:1.5px solid var(--kr-ink);border-radius:12px;padding:4px 10px 6px;background:#fff}
+.kr-mon rt{font-weight:400}
+.kr-monl{display:block;font-size:14px;line-height:1.5;color:var(--rl-accent);letter-spacing:.1em}
+/* やってみよう（1つずつ 行に わけ、線画を そえる） */
+.kr-todo{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.kr-todo li{display:flex;align-items:flex-start;gap:8px;padding:4px 0;font-size:15px;line-height:1.6;font-weight:400}
+.kr-todo li+li{border-top:1px dashed var(--kr-line)}
+.kr-ic{flex:none;width:30px;height:30px;border:1.5px solid var(--kr-ink);border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff;margin-top:1px}
+.kr-ic svg{width:20px;height:20px;fill:none;stroke:var(--kr-ink);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.kr-ic b{font-size:15px}
+.kr-now .kr-todo li{font-size:16px}
+#krOText{border:1px solid var(--kr-line);border-radius:12px;padding:4px 10px;background:#fff}
+.kr-cap .kr-todo{display:inline}
+.kr-cap .kr-todo li{display:inline;border:0;padding:0;margin-right:1em;font-size:inherit}
+.kr-cap .kr-ic{display:none}
+#krOName:empty{display:none}
+.kr-card h2#krOName{font-size:21px;line-height:1.4}
+.kr-v3on #krMon6,.kr-puzon #krMon6,.kr-named #krMon6{display:none}
+#krCard6 .kr-flow{min-height:44px}
+.kr-todo li{padding:3px 0}
+#krCard4:not([data-st="5"]) #krAnis{display:none!important}
+#krCard4:not([data-st="3"]) #krSec,#krCard4:not([data-st="3"]) #krChips{display:none!important}
+.kr-facts li[hidden]{display:none}
+/* 人体の 図かんの ような しあげ */
+.kr-sys{display:inline-block;margin-left:10px;padding:1px 10px;border:1.5px solid var(--kr-ink);border-radius:6px;font-size:14px;font-weight:700;line-height:1.7;vertical-align:4px;letter-spacing:.05em}
+.kr-sys rt{font-size:10px}
+.kr-organs button{position:relative;padding-left:14px!important}
+.kr-sw{position:absolute;left:6px;top:50%;width:9px;height:9px;margin-top:-4px;border-radius:50%;border:1px solid rgba(0,0,0,.35)}
+.kr-legend{display:block;margin-top:4px;font-size:14px;color:var(--kr-sub)}
+.kr-legend i{display:inline-block;width:18px;height:6px;border-radius:3px;margin:0 4px 0 2px;vertical-align:3px}
+.kr-legend>span{white-space:nowrap;margin-right:12px;display:inline-block}
+.kr-v3on .kr-stage{background-color:#fff;background-image:linear-gradient(var(--rl-soft) 1px,transparent 1px),linear-gradient(90deg,var(--rl-soft) 1px,transparent 1px);background-size:28px 28px}
+/* 3Dで みる */
+.kr-stage canvas.kr-v3{position:absolute;inset:0;width:100%;height:100%}
+.kr-stage canvas.kr-v3[hidden]{display:none}
+.kr-v3on .kr-stage{background:#fff}
+.kr-v3on .kr-stage video{opacity:.16}
+/* ならべて みる：左に じぶん（カメラ）、右に 動物の 3D */
+.kr-split .kr-stage video{opacity:1;transform:translateX(-25%) scaleX(-1)}
+.kr-split .kr-stage canvas.kr-v3{left:50%;width:50%;background:#fff;border-left:2px solid var(--kr-line)}
+.kr-split .kr-stage{background:#fff}
+.kr-v3on #krCv{cursor:grab;touch-action:none}
+/* 大きく：映像を 画面いっぱいに して、せつめいは 映像の 下に */
+.kr-cap{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);width:max-content;max-width:min(920px,calc(100% - 32px));background:rgba(255,255,255,.95);border:1px solid var(--kr-line);border-radius:16px;padding:8px 18px;font-size:20px;line-height:1.75;text-align:left}
+.kr-cap rt{font-size:11px}
+.kr-cap b.kr-capt{font-size:22px;margin-right:.6em}
+.kr-cap[hidden]{display:none!important}
+.kr-cap .kr-res{display:inline-block;white-space:nowrap;font-size:inherit;margin-right:1em}
+.kr-cap .kr-ot{display:block}
+.kr-cap .kr-nh{display:none}
+.kr-nh{color:var(--kr-sub)}
+.kr-cap .kr-mk{width:24px;height:24px}
+.kr-wide .kr-app{grid-template-columns:1fr;padding:0;gap:0}
+.kr-wide .kr-right{display:none}
+.kr-wide .kr-stage{border-radius:0;background:#fff}
+.kr-wide .kr-hint{left:16px;bottom:auto;top:12px;transform:none}
+</style>
+</head>
+<body>
+<div class="kr-app">
+  <div class="kr-left">
+    <div class="kr-stage" id="krStage">
+      <video id="krVideo" playsinline muted></video>
+      <canvas id="krV3" class="kr-v3" hidden></canvas>
+      <canvas id="krCv"></canvas>
+      <div class="kr-hint" id="krHint" hidden></div>
+      <div class="kr-cap" id="krCap" hidden></div>
+      <figure class="kr-ani" id="krAni" hidden><div class="kr-anib" id="krAniB"><img id="krAniImg" alt=""></div><figcaption id="krAniCap"></figcaption></figure>
+      <button class="kr-full" id="krFull" aria-label="がめんいっぱいに する">
+        <svg viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg><span id="krFullT">大きく</span>
+      </button>
+      <div class="kr-start" id="krStart">
+        <p>カメラの まえに たって、<br>じぶんの からだの なかを のぞいて みよう</p>
+        <button class="kr-big" id="krGo">はじめる</button>
+        <button class="kr-small" id="krDemo">カメラなしで ためす</button>
+        <div class="kr-err" id="krErr" hidden></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="kr-right">
+    <div class="kr-mode">
+      <button id="krM4" aria-pressed="true">ほね・きんにく<small>4年</small></button>
+      <button id="krM6" aria-pressed="false">からだの なか<small>6年</small></button>
+    </div>
+
+    <!-- 4年 -->
+    <div class="kr-card" id="krCard4" data-st="1">
+      <div class="kr-steps" id="krSteps"></div>
+      <div class="kr-mon" id="krMon"></div>
+      <div class="kr-toggles">
+        <button data-k="bone" aria-pressed="true">ほね</button>
+        <button data-k="muscle" aria-pressed="true">きんにく</button>
+        <button data-k="joint" aria-pressed="true">かんせつ</button>
+        <button id="krB3Btn" class="kr-3d" aria-pressed="false">3Dで みる</button>
+      </div>
+      <div class="kr-v3btn kr-b3row" id="krB3Row" hidden><button class="kr-flow" id="krB3Side">よこから みる</button><button class="kr-flow" id="krJ3Btn" aria-pressed="false">かんせつの つくり</button></div>
+      <div class="kr-now" id="krNow">うでを よこに だして、ひじを まげたり のばしたり しよう</div>
+      <div class="kr-anis" id="krAnis"></div>
+      <div class="kr-ask" id="krAsk" hidden>
+        <button data-a="in"><ruby>内側<rt>うちがわ</rt></ruby></button>
+        <button data-a="out"><ruby>外側<rt>そとがわ</rt></ruby></button>
+      </div>
+      <ul class="kr-facts" id="krFacts">
+        <li data-k="bone"><b>ほね</b>からだを ささえる。<ruby>脳<rt>のう</rt></ruby>や <ruby>心臓<rt>しんぞう</rt></ruby>・<ruby>肺<rt>はい</rt></ruby>を まもる。</li>
+        <li data-k="muscle"><b>きん<ruby>肉<rt>にく</rt></ruby></b>ちぢんだり ゆるんだり して、からだを うごかす。</li>
+        <li data-k="animal"><b><ruby>動物<rt>どうぶつ</rt></ruby></b>ウサギや ハトにも ほね・きん<ruby>肉<rt>にく</rt></ruby>・<ruby>関節<rt>かんせつ</rt></ruby>が あり、それらの はたらきで <ruby>体<rt>からだ</rt></ruby>を うごかす。</li>
+        <li data-k="joint"><b><ruby>関節<rt>かんせつ</rt></ruby></b>ほねと ほねの つなぎ<ruby>目<rt>め</rt></ruby>。ここで からだが まがる。</li>
+      </ul>
+      <h3 class="kr-sec" id="krSec">まがる ところ さがし</h3>
+      <div class="kr-chips" id="krChips"><button id="krReset">リセット</button></div>
+    </div>
+
+    <!-- 6年 -->
+    <div class="kr-card kr-hide" id="krCard6" data-st="1">
+      <div class="kr-steps" id="krSteps6"></div>
+      <div class="kr-mon" id="krMon6"></div>
+      <h2 id="krOName">てを かざして みよう</h2>
+      <p id="krOText">むねや おなかの ところに てを 1びょう かざすと、その なかに ある ものが わかるよ。うしろを むくと せなかがわも。</p>
+      <div class="kr-anis" id="krAnis6"></div>
+      <div class="kr-organs" id="krOrgans"></div>
+      <div class="kr-acts">
+        <button class="kr-flow" id="kr3D" aria-pressed="false">3Dで みる</button>
+        <button class="kr-flow" id="krPuz" aria-pressed="false">からだ パズル</button>
+        <button class="kr-flow" id="krFlow" aria-pressed="false">たべものの とおりみち</button>
+        <button class="kr-flow" id="krQuiz" aria-pressed="false">よそうクイズ</button>
+      </div>
+      <div class="kr-v3btn" id="krV3Btns" hidden><button class="kr-flow" id="krSpread" aria-pressed="false">ばらして みる</button><button class="kr-flow" id="krFront">まえから みる</button></div>
+      <button class="kr-flow kr-next" id="krNext" hidden>つぎの もんだい</button>
+    </div>
+  </div>
+</div>
+
+<script src="_parts/icons.js"></script>
+<script>
+/* ===== 中身の 決まり（ここ 1か所） ===== */
+// x：かたはば を 1 とした よこの いち（＋は 本人の 右。前むきの とき 画面の 右）
+// u：かたの まんなか(0) から こしの まんなか(1) までの たての いち
+// back:true は せなかがわ（前からは さわって えらばない）
+const KR_ORGANS = [
+  {k:'heart', sys:'<ruby>血液<rt>けつえき</rt></ruby>の じゅんかん', col:'#b8232b', label:'しんぞう', name:'<ruby>心臓<rt>しんぞう</rt></ruby>', x:-0.07, u:0.37, rx:0.13, ry:0.10,
+   text:'<ruby>血液<rt>けつえき</rt></ruby>を <ruby>全身<rt>ぜんしん</rt></ruby>に おくりだす ポンプ。むねに てを あてると うごきが わかるよ。'},
+  {k:'stomach', sys:'<ruby>消化<rt>しょうか</rt></ruby>', col:'#e9946c', label:'い', name:'<ruby>胃<rt>い</rt></ruby>', x:-0.15, u:0.58, rx:0.14, ry:0.10,
+   text:'<ruby>口<rt>くち</rt></ruby>から <ruby>食道<rt>しょくどう</rt></ruby>を とおって きた <ruby>食<rt>た</rt></ruby>べ<ruby>物<rt>もの</rt></ruby>を、<ruby>胃液<rt>いえき</rt></ruby>で <ruby>消化<rt>しょうか</rt></ruby>する。'},
+  {k:'liver', sys:'<ruby>消化<rt>しょうか</rt></ruby>', col:'#8a2b25', label:'かんぞう', name:'<ruby>肝臓<rt>かんぞう</rt></ruby>', x:0.13, u:0.54, rx:0.24, ry:0.09,
+   text:'<ruby>小腸<rt>しょうちょう</rt></ruby>で <ruby>吸収<rt>きゅうしゅう</rt></ruby>された <ruby>養分<rt>ようぶん</rt></ruby>の 一<ruby>部<rt>ぶ</rt></ruby>を たくわえ、ひつようなときに <ruby>全身<rt>ぜんしん</rt></ruby>に おくりだす。'},
+  {k:'small', sys:'<ruby>消化<rt>しょうか</rt></ruby>', col:'#efa184', label:'しょうちょう', name:'<ruby>小腸<rt>しょうちょう</rt></ruby>', x:0, u:0.83, rx:0.17, ry:0.12,
+   text:'<ruby>消化<rt>しょうか</rt></ruby>された <ruby>養分<rt>ようぶん</rt></ruby>を、<ruby>水<rt>みず</rt></ruby>と ともに <ruby>吸収<rt>きゅうしゅう</rt></ruby>する。'},
+  {k:'large', sys:'<ruby>消化<rt>しょうか</rt></ruby>', col:'#d6a273', label:'だいちょう', name:'<ruby>大腸<rt>だいちょう</rt></ruby>', x:0, u:0.80, rx:0.27, ry:0.19,
+   text:'<ruby>小腸<rt>しょうちょう</rt></ruby>で <ruby>吸収<rt>きゅうしゅう</rt></ruby>されなかった ものから、さらに <ruby>水分<rt>すいぶん</rt></ruby>を <ruby>吸収<rt>きゅうしゅう</rt></ruby>する。のこりは べんに なる。'},
+  {k:'lungs', sys:'<ruby>呼吸<rt>こきゅう</rt></ruby>', col:'#e88fa0', label:'はい', name:'<ruby>肺<rt>はい</rt></ruby>', x:0, u:0.28, rx:0.42, ry:0.22,
+   text:'すった <ruby>空気<rt>くうき</rt></ruby>から <ruby>酸素<rt>さんそ</rt></ruby>を <ruby>血液<rt>けつえき</rt></ruby>に とり<ruby>入<rt>い</rt></ruby>れ、<ruby>二酸化炭素<rt>にさんかたんそ</rt></ruby>を だす。'},
+  {k:'kidney', sys:'<ruby>排出<rt>はいしゅつ</rt></ruby>', col:'#93283e', label:'じんぞう', name:'<ruby>腎臓<rt>じんぞう</rt></ruby>', x:0, u:0.62, rx:0.28, ry:0.10, back:true,
+   text:'せなかがわに 2つ ある。<ruby>血液<rt>けつえき</rt></ruby>の 中から いらなく なった ものを こし<ruby>出<rt>だ</rt></ruby>して、にょうを つくる。にょうは ぼうこうに ためられてから <ruby>体<rt>からだ</rt></ruby>の <ruby>外<rt>そと</rt></ruby>に <ruby>出<rt>だ</rt></ruby>される。'},
+];
+// 食べ物の 通り道（口 → こう門）。organ は 光らせる もの、pts は とおる 点（x,u）。'MOUTH' は 口の 点
+const KR_FOOD = [
+  {name:'<ruby>口<rt>くち</rt></ruby>', label:'くち', pts:['MOUTH'], ms:2200,
+   text:'<ruby>歯<rt>は</rt></ruby>で かみくだき、だ<ruby>液<rt>えき</rt></ruby>と まぜる。だ<ruby>液<rt>えき</rt></ruby>は でんぷんを べつの ものに かえる。'},
+  {name:'<ruby>食道<rt>しょくどう</rt></ruby>', label:'しょくどう', pts:['MOUTH',[-0.02,-0.10],[-0.03,0.15],[-0.06,0.44],[-0.10,0.50]], ms:2200,
+   text:'<ruby>口<rt>くち</rt></ruby>から <ruby>胃<rt>い</rt></ruby>へ <ruby>食<rt>た</rt></ruby>べ<ruby>物<rt>もの</rt></ruby>を おくる <ruby>管<rt>くだ</rt></ruby>。'},
+  {organ:'stomach', pts:[[-0.10,0.50],[-0.20,0.56],[-0.16,0.64],[-0.04,0.63]], ms:2400},
+  {organ:'small', pts:[[-0.04,0.63],[0.10,0.74],[-0.10,0.78],[0.08,0.86],[-0.08,0.90],[0.03,0.82],[0.20,0.94]], ms:3000},
+  {organ:'large', pts:[[0.20,0.94],[0.23,0.99],[0.23,0.63],[-0.23,0.62],[-0.23,0.93],[-0.06,0.99]], ms:3000},
+  {name:'こう<ruby>門<rt>もん</rt></ruby>', label:'こうもん', pts:[[-0.06,0.99],[0,1.05]], ms:1800,
+   text:'のこりが べんと して <ruby>体<rt>からだ</rt></ruby>の <ruby>外<rt>そと</rt></ruby>に <ruby>出<rt>だ</rt></ruby>される。'},
+];
+const KR_FOOD_END = {name:'<ruby>消化管<rt>しょうかかん</rt></ruby>',
+  text:'<ruby>口<rt>くち</rt></ruby>から こう<ruby>門<rt>もん</rt></ruby>までの 1<ruby>本<rt>ぽん</rt></ruby>の <ruby>管<rt>くだ</rt></ruby>を <ruby>消化管<rt>しょうかかん</rt></ruby>と いう。<ruby>食<rt>た</rt></ruby>べ<ruby>物<rt>もの</rt></ruby>は ここを とおる あいだに <ruby>消化<rt>しょうか</rt></ruby>され、<ruby>養分<rt>ようぶん</rt></ruby>が <ruby>吸収<rt>きゅうしゅう</rt></ruby>される。'};
+// 曲がる ところ（4年）。tri＝[はし, まがる 点, はし] を 左右、deg＝この 角度だけ うごいたら「みつけた」
+const KR_JOINTS = [
+  {k:'kubi',  label:'くび'},     // くびは 鼻の うごきで みる
+  {k:'kata',  label:'かた',   tri:[[23,11,13],[24,12,14]], deg:40},
+  {k:'hiji',  label:'ひじ',   tri:[[11,13,15],[12,14,16]], deg:40},
+  {k:'tekubi',label:'てくび', tri:[[13,15,19],[14,16,20]], deg:30},
+  {k:'koshi', label:'こし',   tri:[[11,23,25],[12,24,26]], deg:25},
+  {k:'hiza',  label:'ひざ',   tri:[[23,25,27],[24,26,28]], deg:35},
+  {k:'ashikubi',label:'あしくび', tri:[[25,27,31],[26,28,32]], deg:25},
+];
+// 4年 授業の ながれ（東京書籍 4年「人の体のつくりと運動」の じゅん：うでの つくり → きん肉の うごき → 体ぜんたいの 関節 → まとめ）
+// show＝はじめに 見せる もの、facts＝下に 出す まとめ、msg＝やること（null は うでの うごきで かわる）。ことばは 教科書の 書き方（ほね・きん肉・関節）
+const KR_KIN='きん<ruby>肉<rt>にく</rt></ruby>', KR_HONE='ほね', KR_KAN='<ruby>関節<rt>かんせつ</rt></ruby>';
+const KR_MUSCLE_STEP=2;
+// やってみよう の 行：[[線画の 名前, 文], ...]（線画は _parts/icons.js。まだ なければ 番号）
+function krTodo(L){ const I=(typeof KR_ICONS!=='undefined')?KR_ICONS:{};
+  return '<ul class="kr-todo">'+L.map(([ic,t],i)=>'<li><span class="kr-ic">'+(I[ic]?'<svg viewBox="0 0 24 24" aria-hidden="true">'+I[ic]+'</svg>':'<b>'+(i+1)+'</b>')+'</span><span>'+t+'</span></li>').join('')+'</ul>'; }   // うでを まげて「内側／外側」を きく 時間
+const KR_STEPS = [
+  {label:'つくり', mon:'うでには、どのような つくりが あるのだろうか。', show:{bone:false,muscle:false,joint:false}, facts:['bone','muscle'],
+   msg:sh=>krTodo((sh.bone||sh.muscle) ? [['look','かたい ところに <b>'+KR_HONE+'</b>、やわらかい ところに <b>'+KR_KIN+'</b>が ある。']]
+     : [['touch','じぶんの うでを さわって みよう。'],['look','かたい ところと やわらかい ところが あるかな。'],['tap','よそうしたら［ほね］［きんにく］を おして たしかめよう。']])},
+  {label:'きんにく', mon:'うでを <ruby>曲<rt>ま</rt></ruby>げたり のばしたり すると、'+KR_KIN+'は どう なるのだろうか。', show:{bone:true,muscle:true,joint:true}, facts:['muscle'], msg:null},
+  {label:'かんせつ', mon:'<ruby>体<rt>からだ</rt></ruby>の いろいろな ところは、どこで <ruby>曲<rt>ま</rt></ruby>がるのだろうか。', show:{bone:true,muscle:false,joint:true}, facts:['joint'],
+   msg:()=>krTodo([['bend','<ruby>体<rt>からだ</rt></ruby>の いろいろな ところを <ruby>曲<rt>ま</rt></ruby>げて みよう。'],['look','<ruby>曲<rt>ま</rt></ruby>がった ところに しるしが つくよ。']])},
+  {label:'まとめ', mon:'ほね・'+KR_KIN+'・'+KR_KAN+'の ことばを つかって、うでが <ruby>曲<rt>ま</rt></ruby>がる しくみを せつめいしよう。', show:{bone:true,muscle:true,joint:true}, facts:['bone','muscle','joint'],
+   msg:()=>krTodo([['cube','［3Dで みる］で うでを <ruby>曲<rt>ま</rt></ruby>げて みよう。3Dの '+KR_KIN+'も ちぢむよ。'],['quiz','ほね・'+KR_KIN+'・'+KR_KAN+'の ことばで せつめいしよう。']])},
+  {label:'どうぶつ', mon:'ほかの <ruby>動物<rt>どうぶつ</rt></ruby>の <ruby>体<rt>からだ</rt></ruby>にも、ほね・'+KR_KIN+'・'+KR_KAN+'は あるのだろうか。', show:{bone:true,muscle:true,joint:true}, facts:['animal'], animal:true,
+   msg:()=>krTodo([['animal','［ウサギ］［ハト］を おして、人と くらべよう。'],['bend','じぶんの うでを <ruby>曲<rt>ま</rt></ruby>げて、おなじ ところに '+KR_KAN+'が あるか さがそう。']])},
+];
+// 6年 授業の ながれ（東京書籍 6年「人の体のつくりと働き」の じゅん：呼吸 → 消化と吸収 → 血液の じゅんかん → まとめ）
+// organs＝この 時間に 体に 出す 臓器、acts＝出す ボタン、name/text＝はじめの せつめい
+const KR_STEPS6 = [
+  {label:'こきゅう', mon:'人は、<ruby>呼吸<rt>こきゅう</rt></ruby>に よって、<ruby>空気<rt>くうき</rt></ruby>中の 何を 取り入れ、何を 出して いるのだろうか。', organs:['lungs'], acts:['kr3D'],
+   name:'<ruby>呼吸<rt>こきゅう</rt></ruby>', todo:[['hand','むねに 手を 1びょう かざして、<ruby>肺<rt>はい</rt></ruby>を 見つけよう。'],['look','すった <ruby>空気<rt>くうき</rt></ruby>は どこへ いくのかな。']]},
+  {label:'しょうか', mon:'食べ物は、口から 入った あと、どのように <ruby>変化<rt>へんか</rt></ruby>して、体に 取り入れられるのだろうか。', organs:['stomach','small','large','liver'], acts:['krFlow','kr3D'],
+   name:'<ruby>消化<rt>しょうか</rt></ruby>と <ruby>吸収<rt>きゅうしゅう</rt></ruby>', todo:[['path','［たべものの とおりみち］で、口から こう<ruby>門<rt>もん</rt></ruby>までを たどろう。'],['hand','おなかに 手を かざすと、それぞれの はたらきが わかるよ。']]},
+  {label:'けつえき', mon:'<ruby>血液<rt>けつえき</rt></ruby>は、体の 中を どのように めぐって、何を 運んで いるのだろうか。', organs:['heart','lungs','kidney'], acts:['kr3D'],
+   name:'<ruby>血液<rt>けつえき</rt></ruby>の じゅんかん', todo:[['hand','むねに 手を かざして <ruby>心臓<rt>しんぞう</rt></ruby>を 見つけよう。'],['cube','［3Dで みる］で 赤と 青の <ruby>血管<rt>けっかん</rt></ruby>を たしかめよう。'],['turn','うしろを むくと <ruby>腎臓<rt>じんぞう</rt></ruby>も 見えるよ。']]},
+  {label:'まとめ', mon:'体の 中の <ruby>臓器<rt>ぞうき</rt></ruby>は、どのように つながって はたらいて いるのだろうか。', organs:['lungs','heart','stomach','small','large','liver','kidney'], acts:['kr3D','krPuz','krFlow','krQuiz'],
+   name:'まとめ', todo:[['puzzle','［からだ パズル］で <ruby>臓器<rt>ぞうき</rt></ruby>を ただしい ばしょに 入れよう。']]},
+  {label:'どうぶつ', mon:'ほかの <ruby>動物<rt>どうぶつ</rt></ruby>は、どのように <ruby>呼吸<rt>こきゅう</rt></ruby>したり <ruby>消化<rt>しょうか</rt></ruby>したり して いるのだろうか。', organs:[], acts:[], animal:'sakana',
+   todo:[['animal','［魚の えら］［<ruby>消化管<rt>しょうかかん</rt></ruby>］を おして、人と くらべよう。']]},
+];
+// 4年 ほかの <ruby>動物<rt>どうぶつ</rt></ruby>（絵は Codex。joints は 絵の 中の 関節の いち 0〜1）
+const KR_ANIMALS6 = [
+  {k:'sakana', name:'<ruby>魚<rt>さかな</rt></ruby>の えら', img:'img/sakana.webp', note:'<ruby>魚<rt>さかな</rt></ruby>は、<ruby>水<rt>みず</rt></ruby>の 中の <ruby>酸素<rt>さんそ</rt></ruby>を えらで とり入れ、<ruby>二酸化炭素<rt>にさんかたんそ</rt></ruby>を <ruby>出<rt>だ</rt></ruby>して いる。えらは 人の <ruby>肺<rt>はい</rt></ruby>と おなじ はたらき。', joints:[]},
+  {k:'shokakan', name:'<ruby>消化管<rt>しょうかかん</rt></ruby>', img:'img/shokakan.webp', note:'人も イヌも <ruby>魚<rt>さかな</rt></ruby>も、口から こう<ruby>門<rt>もん</rt></ruby>まで 1<ruby>本<rt>ぽん</rt></ruby>の <ruby>消化管<rt>しょうかかん</rt></ruby>が ある。', joints:[]},
+];
+const KR_ANIMALS = [
+  {k:'hito', name:'人', img:'img/hito.webp', joints:[['かた',0.510,0.210],['ひじ',0.489,0.356],['てくび',0.391,0.354],['こし',0.500,0.487],['ひざ',0.490,0.680],['あしくび',0.504,0.917]], note:'人の うでや あしの ほね・'+KR_KIN+'・'+KR_KAN+'。じぶんの <ruby>体<rt>からだ</rt></ruby>と くらべよう。'},
+  {k:'usagi', name:'ウサギ', img:'img/usagi.webp', joints:[['かた',0.353,0.555],['ひじ',0.400,0.719],['てくび',0.316,0.885],['こし',0.752,0.575],['ひざ',0.626,0.705],['あしくび',0.758,0.867]], note:'<ruby>前<rt>まえ</rt></ruby>あしにも <ruby>後<rt>うし</rt></ruby>ろあしにも '+KR_KAN+'が あり、'+KR_KIN+'の はたらきで はねて <ruby>走<rt>はし</rt></ruby>る。'},
+  {k:'hato', name:'ハト', img:'img/hato.webp', joints:[['かた',0.368,0.382],['ひじ',0.486,0.211],['てくび',0.614,0.110],['ひざ',0.405,0.632],['あしくび',0.479,0.801]], note:'つばさは 人の うでと おなじように、かた・ひじ・<ruby>手首<rt>てくび</rt></ruby>の '+KR_KAN+'で <ruby>曲<rt>ま</rt></ruby>がる。'},
+];
+// 予想クイズ（6年）：出す じゅん は まいかい まぜる。食道は 臓器の 表に ないので ここで 形を きめる
+const KR_GULLET = {k:'gullet', label:'しょくどう', name:'<ruby>食道<rt>しょくどう</rt></ruby>', x:-0.03, u:0.17, rx:0.08, ry:0.30, text:KR_FOOD[1].text};
+const KR_QUIZ = ['heart','lungs','stomach','liver','gullet','small','large'];
+const KR_QUIZ_HOLD = 1200;   // 手を とめて おく 時間（ミリ秒）で「よそう」に なる
+const KR_QUIZ_OK = 1.15;     // 臓器の 大きさの 何ばいの 中までを ◯（せいかい）に するか（1＝ちょうど 中）
+const KR_QUIZ_NEAR = 2.2;    // ×でも ここまでなら「おしい」
+const KR_MAX_PEOPLE = 2;     // いっしょに うつせる 人数
+const KR_PUZ = ['lungs','heart','liver','stomach','small','large'];   // からだ パズルで いれる もの
+const KR_PUZ_OK = 1.3;       // パズル：ただしい ばしょの 何ばいの 中なら はまるか
+const KR_V3_GRAB = 600;      // 3D：手を この 時間 とめると つかむ（ミリ秒）
+const KR_BONE='#ffffff', KR_EDGE='#4b5563', KR_PINK=getComputedStyle(document.documentElement).getPropertyValue('--rl-accent').trim()||'#23784a';   // 強調の 色（もとは ピンク・名前は そのまま）
+const KR_PINK_A=a=>{ const h=KR_PINK.replace('#',''); return `rgba(${parseInt(h.slice(0,2),16)},${parseInt(h.slice(2,4),16)},${parseInt(h.slice(4,6),16)},${a})`; };
+</script>
+
+<script>
+/* ===== 画面 ===== */
+const $=id=>document.getElementById(id);
+const kr={mode:4, show:{bone:true,muscle:true,joint:true}, pick:null, dwellK:null, dwellT:0, P:{}, Fl:{}, src:null,
+  side:{l:1,r:-1,ll:1,lr:-1}, sideOK:{}, ar:4/3, back:false,
+  st:1, st6:1, q:0, qT:0, qMsg:'', found:{}, jr:{}, flash:null, flow:null, quiz:null, cur:0, fBest:null, fUp:false,
+  max:KR_MAX_PEOPLE, demo2:new URLSearchParams(location.search).has('futari')};
+// 1人ずつの 点と ようす。描く ときは krUse で kr.P などに つなぎかえる（ほかの 関数は 1人ぶんの まま 書ける）
+function krNewPerson(id){ return {id, P:{}, Fl:{}, side:{l:1,r:-1,ll:1,lr:-1}, sideOK:{}, back:false, jr:{}, dwellK:null, dwellT:0, c:null, seen:-1e9}; }
+kr.ppl=Array.from({length:KR_MAX_PEOPLE},(_,i)=>krNewPerson(i));
+function krUse(pp){ kr.cur=pp.id; kr.P=pp.P; kr.Fl=pp.Fl; kr.side=pp.side; kr.sideOK=pp.sideOK; kr.back=pp.back; kr.jr=pp.jr; kr.dwellK=pp.dwellK; kr.dwellT=pp.dwellT; }
+function krKeep(pp){ pp.back=kr.back; pp.jr=kr.jr; pp.dwellK=kr.dwellK; pp.dwellT=kr.dwellT; }
+const cv=$('krCv'), g=cv.getContext('2d');
+const DPR=()=>window.devicePixelRatio||1;
+
+function krMode(m){
+  kr.mode=m;
+  $('krM4').setAttribute('aria-pressed', m===4); $('krM6').setAttribute('aria-pressed', m===6);
+  $('krCard4').classList.toggle('kr-hide', m!==4); $('krCard6').classList.toggle('kr-hide', m!==6);
+  if(m!==6){ krFlowStop(); krQuizStop(); krV3Close(); krPuzStop(); }
+  if(m!==4) krB3Close();
+  krAnimal(m===4 ? (KR_STEPS[kr.st-1].animal?'usagi':null) : (KR_STEPS6[kr.st6-1].animal||null));
+}
+$('krM4').onclick=()=>krMode(4); $('krM6').onclick=()=>krMode(6);
+document.querySelectorAll('.kr-toggles button[data-k]').forEach(b=>b.onclick=()=>{
+  const k=b.dataset.k; kr.show[k]=!kr.show[k]; b.setAttribute('aria-pressed', kr.show[k]); if(krB3V()) krB3V().show(kr.show); krFacts4();
+  if(kr.b3pick){ const c=kr.b3pick==='joint'?'joint':kr.b3pick[0]==='m'?'muscle':'bone'; if(!kr.show[c]) krB3Pick(null); } });
+KR_ORGANS.forEach(o=>{ const b=document.createElement('button'); b.innerHTML=`<i class="kr-sw" style="background:${o.col}"></i>${o.name}`; b.dataset.k=o.k;
+  b.onclick=()=>{ krFlowStop(); krQuizStop(); krPuzStop(); if(kr.v3 && kr.pick===o.k) krPickNone(); else krPick(o.k); }; $('krOrgans').appendChild(b); });
+function krCard6(name,text){ $('krOName').innerHTML=name; $('krOText').innerHTML=text; $('krCard6').classList.toggle('kr-named',!!name); }   // 名前が 出て いる あいだは もんだいを たたむ
+function krPickNone(){
+  kr.pick=null; [...$('krOrgans').children].forEach(b=>b.setAttribute('aria-pressed', false));
+  if(kr.v3){ window.krV3&&window.krV3.pick(null); krCard6('3Dで みる',KR_V3_TEXT()); }
+}
+function krPick(k){
+  kr.pick=k; const o=KR_ORGANS.find(o=>o.k===k);
+  if(o) krCard6(o.name+`<span class="kr-sys">${o.sys}</span>`, o.text+(kr.v3&&o.k==='heart'?KR_V3_BLOOD:''));
+  if(kr.v3 && window.krV3) window.krV3.pick(k);
+  [...$('krOrgans').children].forEach(b=>b.setAttribute('aria-pressed', b.dataset.k===k));
+}
+
+/* ---- 6年：授業の ながれ ---- */
+const krOn6=k=>KR_STEPS6[kr.st6-1].organs.includes(k);
+{ // 時間ごとに かくす ボタン（決まりは KR_STEPS6 だけ）
+  const ACT=['kr3D','krPuz','krFlow','krQuiz']; let css='';
+  KR_STEPS6.forEach((S,i)=>{ const sel=`#krCard6[data-st="${i+1}"]`;
+    const hide=[...KR_ORGANS.filter(o=>!S.organs.includes(o.k)).map(o=>`${sel} #krOrgans button[data-k="${o.k}"]`), ...ACT.filter(a=>!S.acts.includes(a)).map(a=>`${sel} #${a}`)];
+    if(hide.length) css+=hide.join(',')+'{display:none!important}'; });
+  const st=document.createElement('style'); st.textContent=css; document.head.appendChild(st); }
+KR_STEPS6.forEach((S,i)=>{ const b=document.createElement('button'); b.innerHTML='<small>'+(i+1)+'</small>'+S.label; b.onclick=()=>krStep6(i+1); $('krSteps6').appendChild(b); });
+function krStep6(n){
+  krFlowStop(); krQuizStop(); krPuzStop(); krV3Close(); krPickNone();
+  kr.st6=n; const S=KR_STEPS6[n-1]; $('krCard6').dataset.st=n;
+  [...$('krSteps6').children].forEach((b,i)=>b.setAttribute('aria-pressed', i+1===n));
+  $('krMon6').innerHTML='<span class="kr-monl">もんだい</span>'+S.mon;
+  krCard6('', krTodo(S.todo)); krAnimal(S.animal||null);
+}
+krStep6(1);
+/* ---- 4年：授業の ながれ ---- */
+KR_STEPS.forEach((S,i)=>{ const b=document.createElement('button'); b.innerHTML='<small>'+(i+1)+'</small>'+S.label; b.onclick=()=>krStep(i+1); $('krSteps').appendChild(b); });
+function krFacts4(){ const S=KR_STEPS[kr.st-1];
+  $('krFacts').querySelectorAll('li').forEach(li=>{ const k=li.dataset.k; li.hidden = !S.facts.includes(k) || (kr.st===1 && !kr.show[k]); }); }
+KR_ANIMALS6.forEach(a=>{ const b=document.createElement('button'); b.innerHTML=a.name; b.dataset.k=a.k; b.onclick=()=>krAnimal(a.k); $('krAnis6').appendChild(b); });
+KR_ANIMALS.forEach(a=>{ const b=document.createElement('button'); b.textContent=a.name; b.dataset.k=a.k; b.onclick=()=>krAnimal(a.k); $('krAnis').appendChild(b); });
+function krAnimal(k){ const re=kr.b3 && kr.ani!==k && KR_STEPS[kr.st-1].animal; kr.ani=k||null; if(re){ krB3Close(); krB3Open(); } const a=[...KR_ANIMALS,...KR_ANIMALS6].find(a=>a.k===k);
+  [...$('krAnis').children,...$('krAnis6').children].forEach(b=>b.setAttribute('aria-pressed', b.dataset.k===k));
+  $('krAni').hidden=!a; if(!a) return; $('krAniImg').src=a.img; $('krAniImg').alt=a.name+'の ほね・きん肉・関節の 図'; $('krAniCap').innerHTML='<b>'+a.name+'</b>　'+a.note;
+  $('krAniB').querySelectorAll('.kr-jl').forEach(e=>e.remove());
+  (a.joints||[]).forEach(([n,x,y])=>{ const e=document.createElement('span'); e.className='kr-jl'; e.dataset.j=n; e.textContent=n; e.style.left=(x*100)+'%'; e.style.top=(y*100)+'%'; $('krAniB').appendChild(e); }); }
+function krStep(n){
+  krB3Close(); kr.st=n; const S=KR_STEPS[n-1]; $('krCard4').dataset.st=n;
+  [...$('krSteps').children].forEach((b,i)=>b.setAttribute('aria-pressed', i+1===n));
+  $('krMon').innerHTML='<span class="kr-monl">もんだい</span>'+S.mon;
+  kr.show=Object.assign({},S.show); document.querySelectorAll('.kr-toggles button[data-k]').forEach(b=>b.setAttribute('aria-pressed', kr.show[b.dataset.k]));
+  kr.q=0; kr.qMsg='';
+  krFacts4(); $('krNow').dataset.m='';
+  krAnimal(KR_STEPS[n-1].animal ? 'usagi' : null);
+}
+krStep(1);
+/* ---- 4年：まがる ところ さがし・さわって たしかめる ---- */
+KR_JOINTS.forEach(j=>{ const d=document.createElement('div'); d.className='kr-chip'; d.dataset.k=j.k; d.textContent=j.label; $('krChips').insertBefore(d,$('krReset')); });
+function krFound(k){
+  if(kr.found[k]) return; kr.found[k]=performance.now(); kr.flash={k,t:kr.found[k],who:kr.cur};
+  $('krChips').querySelector(`[data-k="${k}"]`).classList.add('kr-on');
+}
+$('krReset').onclick=()=>{ kr.found={}; kr.jr={}; kr.ppl.forEach(p=>p.jr={}); kr.flash=null; kr.q=0; kr.qMsg='';
+  $('krChips').querySelectorAll('.kr-chip').forEach(c=>c.classList.remove('kr-on')); };
+$('krAsk').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  if(b.dataset.a==='in'){ kr.q=2; kr.qT=performance.now(); kr.qMsg=''; }
+  else kr.qMsg='もう いちど <ruby>内側<rt>うちがわ</rt></ruby>と <ruby>外側<rt>そとがわ</rt></ruby>を さわって くらべて みよう。';
+});
+
+/* ---- 6年：食べ物の 通り道 ---- */
+function krFlowStop(){ kr.flow=null; $('krFlow').setAttribute('aria-pressed',false); $('krFlow').textContent='たべものの とおりみち'; }
+$('krFlow').onclick=()=>{
+  if(kr.flow){ krFlowStop(); return; }
+  krQuizStop(); krV3Close(); krPuzStop();
+  kr.pick=null; [...$('krOrgans').children].forEach(b=>b.setAttribute('aria-pressed', false));
+  kr.flow={t0:performance.now(), step:-1};
+  $('krFlow').setAttribute('aria-pressed',true); $('krFlow').textContent='とめる';
+};
+
+/* ---- 6年：予想して さわる クイズ ---- */
+const krQTarget=k=>k==='gullet'?KR_GULLET:KR_ORGANS.find(o=>o.k===k);
+function krQuizStop(){
+  if(!kr.quiz) return; kr.quiz=null;
+  $('krOrgans').classList.remove('kr-hide'); $('krFlow').classList.remove('kr-hide'); $('kr3D').classList.remove('kr-hide'); $('krPuz').classList.remove('kr-hide');
+  $('krQuiz').setAttribute('aria-pressed',false); $('krQuiz').textContent='よそうクイズ'; $('krNext').hidden=true;
+  krCard6('てを かざして みよう','むねや おなかの ところに てを 1びょう かざすと、その なかに ある ものが わかるよ。うしろを むくと せなかがわも。');
+}
+function krQuizStart(){
+  krV3Close(); krPuzStop();
+  krFlowStop(); kr.pick=null; kr.dwellK=null; kr.ppl.forEach(p=>p.dwellK=null); [...$('krOrgans').children].forEach(b=>b.setAttribute('aria-pressed', false));
+  const list=KR_QUIZ.slice(); for(let i=list.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [list[i],list[j]]=[list[j],list[i]]; }
+  kr.quiz={list, i:0, phase:'ask', me:{}, wait:false, raiseT:0};
+  $('krOrgans').classList.add('kr-hide'); $('krFlow').classList.add('kr-hide'); $('kr3D').classList.add('kr-hide'); $('krPuz').classList.add('kr-hide');   // クイズの あいだは 答えが 見える ボタンを しまう   // me：1人ずつの よそう（人の 番号ごと）
+  $('krQuiz').setAttribute('aria-pressed',true); $('krQuiz').textContent='クイズを やめる';
+  krQuizCard();
+}
+function krQuizNext(){
+  const Q=kr.quiz; if(!Q) return;
+  Q.i++; Q.me={}; Q.wait=false; Q.raiseT=0; Q.phase = Q.i>=Q.list.length ? 'end' : 'ask'; krQuizCard();
+}
+// ◯×の しるし（字も そえる。色だけに しない）
+function krQuizMark(m){
+  return m.ok ? '<span class="kr-mk kr-maru" aria-hidden="true"></span><b class="kr-good">せいかい！</b>'
+    : '<span class="kr-mk kr-batsu" aria-hidden="true">×</span><b>'+(m.r<=KR_QUIZ_NEAR?'おしい！':'ほんとうは ここ。')+'</b> '+m.dir;
+}
+function krQuizCard(){
+  const Q=kr.quiz, n=`<small style="font-size:16px;font-weight:400;color:#4b5563"> ${Math.min(Q.i+1,Q.list.length)}／${Q.list.length}</small>`;
+  $('krNext').hidden = Q.phase!=='show';
+  if(Q.phase==='end'){ $('krQuiz').textContent='もう いちど'; $('krQuiz').setAttribute('aria-pressed',false);
+    krCard6('おしまい','おもって いた ばしょと ちがった ものは あった？ おどろいた ことを ノートに かこう。'); return; }
+  const o=krQTarget(Q.list[Q.i]);
+  if(Q.phase==='ask'){ krCard6(o.name+'は どこ？'+n, 'ここだと おもう ところに 手を 1びょう とめよう。'+(Q.wait?'<br><b>もう ひとりを まってね。</b>':'')); return; }
+  const R=Object.values(Q.me).filter(m=>m.P).sort((a,b)=>a.sx-b.sx);
+  const res=R.map((m,i)=>'<span class="kr-res">'+(R.length>1?`<span class="kr-who">${i?'みぎ':'ひだり'}の 人</span>`:'')+krQuizMark(m)+'</span>').join('');
+  krCard6(o.name+n, `${res}<span class="kr-ot">${o.text}</span><span class="kr-nh"><br>手を あたまの 上に あげると つぎへ</span>`);
+}
+$('krQuiz').onclick=()=>{ if(kr.quiz && kr.quiz.phase!=='end') krQuizStop(); else krQuizStart(); };
+$('krNext').onclick=krQuizNext;
+
+/* ---- 3Dで みる（Blender で 作った 臓器を 手で つかんで まわす） ---- */
+const KR_V3_BLOOD='<span class="kr-legend"><span><i style="background:#cf2f2f"></i>赤＝<ruby>酸素<rt>さんそ</rt></ruby>が 多い <ruby>血液<rt>けつえき</rt></ruby></span><span><i style="background:#3b5bd0"></i>青＝<ruby>二酸化炭素<rt>にさんかたんそ</rt></ruby>が 多い <ruby>血液<rt>けつえき</rt></ruby></span></span>';
+const KR_V3_TEXT=()=>krTodo([['tap','<b>タップ</b>すると その ものを とりだせる。もう いちど タップで もどる。'],['hand','手を むねの 高さで とめると つかめる。うごかすと まわる。'],['look','ゆび 2本で ひろげると 大きく なる。']]);
+function krV3Open(){
+  krFlowStop(); krQuizStop(); krPuzStop(); kr.v3=true; kr.grab=null;
+  document.body.classList.add('kr-v3on'); $('krV3').hidden=false;
+  $('kr3D').setAttribute('aria-pressed',true); $('kr3D').textContent='3Dを とじる';
+  $('krV3Btns').hidden=false; $('krFlow').hidden=true; $('krQuiz').hidden=true; $('krPuz').hidden=true;
+  krCard6('3Dで みる', 'じゅんびちゅう…');
+  window.krV3Ready.then(v=>v.open()).then(()=>{ if(!kr.v3) return; if(kr.pick) krPick(kr.pick); else krCard6('3Dで みる',KR_V3_TEXT()); })
+    .catch(e=>krCard6('3Dで みる','3Dが ひらけませんでした。インターネットに つながっているか みてね。'));
+}
+function krV3Close(){
+  if(!kr.v3) return; kr.v3=false; kr.grab=null;
+  document.body.classList.remove('kr-v3on'); $('krV3').hidden=true;
+  $('kr3D').setAttribute('aria-pressed',false); $('kr3D').textContent='3Dで みる';
+  $('krV3Btns').hidden=true; $('krSpread').setAttribute('aria-pressed',false); $('krFlow').hidden=false; $('krQuiz').hidden=false; $('krPuz').hidden=false;
+  if(window.krV3) window.krV3.close();
+  krCard6('てを かざして みよう','むねや おなかの ところに てを 1びょう かざすと、その なかに ある ものが わかるよ。うしろを むくと せなかがわも。');
+}
+$('kr3D').onclick=()=>{ if(kr.v3) krV3Close(); else krV3Open(); };
+$('krFront').onclick=()=>{ window.krV3&&window.krV3.front(); };
+$('krSpread').onclick=()=>{ const on=$('krSpread').getAttribute('aria-pressed')!=='true'; $('krSpread').setAttribute('aria-pressed',on); window.krV3&&window.krV3.spread(on); };
+/* ===== 4年 3Dで みる（ほね・筋肉・関節。ひじを まげると 3Dの うでも まがる） ===== */
+const RB=(k,r)=>`<ruby>${k}<rt>${r}</rt></ruby>`;
+const KR_B3_PARTS={   // 部分の 名前と せつめい（ここ 1か所）
+  jaw:['あごの '+RB('骨','ほね'), '口を あけると 下あごが さがる。耳の 前に ある '+RB('関節','かんせつ')+'で うごく。'],
+  eye:[RB('目','め'), RB('頭','あたま')+'の '+RB('骨','ほね')+'の くぼみに おさまって まもられて いる。目の まわりの '+RB('筋肉','きんにく')+'で むきを かえる。'],
+  skull:[RB('頭','あたま')+'の '+RB('骨','ほね'), 'のうを まもって いる。いくつもの '+RB('骨','ほね')+'が くっついて できて いる。'],
+  spine:['せぼね', '小さな '+RB('骨','ほね')+'が たくさん つながって、からだを ささえる。つなぎ目が あるので こしを まげられる。'],
+  ribs:['むねの '+RB('骨','ほね'), 'かごの ような 形で、'+RB('心臓','しんぞう')+'や '+RB('肺','はい')+'を まもる。'],
+  pelvis:['こしの '+RB('骨','ほね'), '上の からだを ささえ、あしの '+RB('骨','ほね')+'と つながる。'],
+  shoulder:['かたの '+RB('骨','ほね'), 'うでの '+RB('骨','ほね')+'と むねを つなぐ。'],
+  arm:['上うでの '+RB('骨','ほね'), '太い '+RB('骨','ほね')+'が 1本。ひじの '+RB('関節','かんせつ')+'で 前うでと つながる。'],
+  fore:['前うでの '+RB('骨','ほね'), RB('骨','ほね')+'が 2本 ある。ひじの '+RB('関節','かんせつ')+'で まがる。'],
+  hand:['手の '+RB('骨','ほね'), '小さな '+RB('骨','ほね')+'が たくさん あるので、指を こまかく うごかせる。'],
+  leg:['ももの '+RB('骨','ほね'), 'からだで いちばん 長い '+RB('骨','ほね')+'。ひざの '+RB('関節','かんせつ')+'で すねと つながる。'],
+  shin:['すねの '+RB('骨','ほね'), RB('骨','ほね')+'が 2本 ある。'],
+  foot:['足の '+RB('骨','ほね'), '小さな '+RB('骨','ほね')+'が 集まって、からだの 重さを ささえる。'],
+  min:['うでの '+RB('内側','うちがわ')+'の '+RB('筋肉','きんにく'), 'うでを まげると ちぢんで かたく なる。'],
+  mout:['うでの '+RB('外側','そとがわ')+'の '+RB('筋肉','きんにく'), 'うでを のばすと ちぢむ。まげると ゆるむ。'],
+  mthf:['ももの 前の '+RB('筋肉','きんにく'), 'ひざを のばすと ちぢむ。'],
+  mthb:['ももの うしろの '+RB('筋肉','きんにく'), 'ひざを まげると ちぢむ。'],
+  mcalf:['ふくらはぎの '+RB('筋肉','きんにく'), 'つまさきで 立つと ちぢむ。'],
+  joint:[RB('関節','かんせつ'), RB('骨','ほね')+'と '+RB('骨','ほね')+'の つなぎ目。ここで からだが まがる。'],
+  hinge:['ひじの '+RB('関節','かんせつ'), 'ドアの ちょうつがいの ように、1つの むきに だけ まがる。'],
+  ball:['かたの '+RB('関節','かんせつ'), 'まるい '+RB('骨','ほね')+'の 先が くぼみに はまって いるので、ぐるっと いろいろな むきに うごく。'],
+  cart:['なんこつ', RB('骨','ほね')+'の はしを おおう、なめらかで やわらかい もの。'+RB('骨','ほね')+'どうしが こすれないように する。'],
+};
+const KR_B3_TEXT=krTodo([['bend','うでを よこに だして、ひじを まげて みよう。3Dの うでも まがるよ。'],['tap','ほねや '+KR_KIN+'に さわると 名前が でる。ひっぱると まわる。'],['look','ゆび 2本で ひろげると 大きく なる。']]);
+// ほかの 動物の 3D（4年「5 どうぶつ」）：人と ちがう ところだけ ことばを かえる
+const KK=KR_KIN, KH='ほね', KJ=RB('関節','かんせつ');
+const KR_A3_PARTS={
+  usagi:{skull:['あたまの '+KH,'のうを まもって いる。前歯は ずっと のびつづける。'], spine:['せぼね','人と おなじように 小さな '+KH+'が つながって いる。しっぽの '+KH+'も ある。'],
+    shoulder:['かたの '+KH,'前あしと むねを つなぐ。'], arm:['前あしの '+KH+'（上）','人の 上うでに あたる '+KH+'。'], fore:['前あしの '+KH+'（下）','人の 前うでに あたる。ひじの '+KJ+'で '+RB('曲','ま')+'がる。'],
+    hand:['前あしの '+KH+'（先）','人の 手に あたる '+KH+'。'], leg:['うしろあしの '+KH+'（上）','人の ももに あたる。'], shin:['うしろあしの '+KH+'（下）','人の すねに あたる。長くて じょうぶ。'],
+    foot:['うしろあしの '+KH+'（先）','かかとから つまさきまで 長い。これで 強く ける。'], min:['前あしの '+KK,'ひじを '+RB('曲','ま')+'げると ちぢむ。'], mout:['前あしの '+KK+'（うしろ）','ひじを のばすと ちぢむ。'],
+    mthf:['ももの '+KK,'大きくて 強い '+KK+'。はねる ときに はたらく。'], mcalf:['うしろあしの '+KK+'（下）','かかとを ひいて 地面を ける。']},
+  hato:{skull:['あたまの '+KH,'くちばしも '+KH+'で できて いる。'], spine:['せぼね','くびの '+KH+'が 多く、くびを よく '+RB('曲','ま')+'げられる。'],
+    ribs:['むねの '+KH,'むねの まん中に りゅうこつと いう 大きな '+KH+'の いたが ある。'], shoulder:['かたの '+KH,'つばさと むねを つなぐ。'],
+    arm:['つばさの '+KH+'（上）','人の 上うでに あたる '+KH+'。'], fore:['つばさの '+KH+'（なか）','人の 前うでと おなじく '+KH+'が 2本。ひじの '+KJ+'で '+RB('曲','ま')+'がる。'],
+    hand:['つばさの '+KH+'（先）','人の 手に あたる '+KH+'。ここに 長い はねが つく。'], leg:['あしの '+KH+'（上）','人の ももに あたる。からだの 中に かくれて いる。'], shin:['あしの '+KH+'（なか）','人の すねに あたる。'],
+    foot:['あしの '+KH+'（先）','ゆびは 前に 3本、うしろに 1本。'], min:['つばさの '+KK,'つばさを '+RB('曲','ま')+'げると ちぢむ。'], mout:['つばさの '+KK+'（うしろ）','つばさを のばすと ちぢむ。'],
+    mchest:['むねの '+KK,'つばさを ふりおろす 大きな '+KK+'。りゅうこつに ついて いる。'], mthf:['ももの '+KK,'あしを うごかす。'], mcalf:['あしの '+KK+'（下）','ゆびを にぎって えだに つかまる。']},
+};
+const krParts=()=>kr.a3?Object.assign({},KR_B3_PARTS,KR_A3_PARTS[kr.a3]):KR_B3_PARTS;
+const krA3Ready={}; window.krA3={};
+function krA3Get(k){ return krA3Ready[k]||(krA3Ready[k]=window.krA3Load(k).then(v=>(window.krA3[k]=v)).catch(e=>{ krA3Ready[k]=null; throw e; })); }
+const krB3V=()=>kr.a3?window.krA3[kr.a3]:kr.j3?window.krJ3:window.krB3;
+const KR_J3_TEXT=krTodo([['look','ひじは 1つの むきに だけ まがる。かたは いろいろな むきに うごく。'],['bend','じぶんの 左の ひじを まげたり、右の うでを まわしたり して みよう。']]);
+function krJ3Set(on){
+  kr.j3=on; kr.b3pick=null; $('krJ3Btn').setAttribute('aria-pressed',on); $('krB3Side').textContent='よこから みる'; $('krNow').dataset.m='';
+  const P=on?window.krJ3Ready:window.krB3Ready;
+  P.then(v=>{ if(!kr.b3 || kr.j3!==on) return; v.pick(null); v.open(); v.show(kr.show); })
+   .catch(e=>{ $('krNow').innerHTML='3Dが ひらけませんでした。インターネットに つながっているか みてね。'; });
+}
+$('krJ3Btn').onclick=()=>krJ3Set(!kr.j3);
+function krB3Open(){
+  kr.b3=true; kr.j3=false; $('krJ3Btn').setAttribute('aria-pressed',false); kr.b3pick=null; kr.b3L=kr.b3R=0; document.body.classList.add('kr-v3on','kr-b3on'); $('krV3').hidden=false;
+  $('krB3Btn').setAttribute('aria-pressed',true); $('krB3Btn').textContent='3Dを とじる'; $('krB3Row').hidden=false;
+  $('krNow').innerHTML='じゅんびちゅう…'; $('krNow').dataset.m='';
+  kr.a3 = (KR_STEPS[kr.st-1].animal && ['usagi','hato'].includes(kr.ani)) ? kr.ani : null; $('krJ3Btn').hidden=!!kr.a3;
+  const a3=kr.a3; document.body.classList.toggle('kr-split',!!a3);
+  (a3?krA3Get(a3):window.krB3Ready).then(v=>{ if(!kr.b3 || kr.a3!==a3) return; v.open(); v.show(kr.show); })
+    .catch(e=>{ $('krNow').innerHTML='3Dが ひらけませんでした。インターネットに つながっているか みてね。'; });
+}
+function krB3Close(){
+  if(!kr.b3) return; kr.b3=false; document.body.classList.remove('kr-v3on','kr-b3on'); $('krV3').hidden=true;
+  $('krB3Btn').setAttribute('aria-pressed',false); $('krB3Btn').textContent='3Dで みる'; $('krB3Row').hidden=true; $('krB3Side').textContent='よこから みる';
+  if(window.krB3) window.krB3.close(); if(window.krJ3) window.krJ3.close(); for(const k in window.krA3) window.krA3[k].close(); kr.a3=null; document.body.classList.remove('kr-split'); $('krJ3Btn').hidden=false; kr.j3=false; $('krJ3Btn').setAttribute('aria-pressed',false); $('krNow').dataset.m='';
+}
+$('krB3Btn').onclick=()=>{ if(kr.b3) krB3Close(); else krB3Open(); };
+$('krB3Side').onclick=()=>{ const V=krB3V(); if(!V) return; const sd=$('krB3Side').textContent.startsWith('よこ');
+  if(sd) V.side(); else V.front(); $('krB3Side').textContent=sd?'まえから みる':'よこから みる'; };
+function krB3Pick(k){ kr.b3pick = (k && k!==kr.b3pick && krParts()[k]) ? k : null; const V=krB3V(); if(!V) return; V.pick(kr.b3pick);
+  if(['skull','jaw','eye'].includes(kr.b3pick)) V.focus('skull',0.3);   // 頭は 大きく して 口と 目を 見せる
+}
+// 1人ぶん：うでの まがりを はかる（3D では 2D の 絵は 描かない）
+function krB3Person(F){
+  const A=krLimb(11,13,15,'l'), B=krLimb(12,14,16,'r');   // 11＝本人の 左かた
+  if(A) kr.b3L=Math.max(kr.b3L,A.bend); if(B) kr.b3R=Math.max(kr.b3R,B.bend);
+  if(A||B) kr.b3Seen=true;
+  // かたの むき（上うでの むき。0＝よこ、＋＝上）：右うで、なければ 左うでを かがみに して
+  if(kr.b3Sh==null){ if(B) kr.b3Sh=Math.atan2(-B.a.y,B.a.x); else if(A) kr.b3Sh=Math.atan2(-A.a.y,-A.a.x); }
+}
+function krB3Step(L,t){
+  const v=krB3V(), s=DPR();
+  if(v){ v.bend(kr.b3L,kr.b3R); if(kr.j3 && kr.b3Sh!=null) v.sh(kr.b3Sh); }
+  // 顔：カメラの ときは 顔の トラッキング、人形の ときは ゆっくり うごかして 見せる
+  const f = kr.src==='demo' ? {jaw:Math.max(0,Math.sin(t/900))*0.9, h:Math.sin(t/1500), v:0.5*Math.sin(t/2100)}
+          : (kr.face && t-kr.face.t<700 ? kr.face : null);
+  if(v && !kr.j3) v.face(f);
+  const IN=RB('内側','うちがわ'), OUT=RB('外側','そとがわ'), KIN=KR_KIN, mx=Math.max(kr.b3L,kr.b3R);
+  let msg=kr.a3?krTodo([['bend','じぶんの ひじを '+RB('曲','ま')+'げて みよう。'+(kr.a3==='hato'?'ハトの つばさ':'ウサギの 前あし')+'も ひじで '+RB('曲','ま')+'がるよ。'],['tap','ほねや '+KR_KIN+'に さわると 名前が でる。ひっぱると まわる。']]):KR_B3_TEXT, tags=null;
+  if(kr.b3pick){ const p=krParts()[kr.b3pick]; msg='<b>'+p[0]+'</b>　'+p[1]; }
+  else if(kr.j3) msg=KR_J3_TEXT;
+  else if(kr.a3){}
+  else if(f && f.jaw>0.45 && kr.src!=='demo') msg='口を あけると、下あごの ほねが さがる。耳の 前の '+RB('関節','かんせつ')+'で うごくよ。'
+  else if(kr.b3Seen && mx>0.45){ msg='うでを <b>まげる</b>と、'+IN+'の '+KIN+'が ちぢみ、'+OUT+'の '+KIN+'が ゆるむ。'; tags=['ちぢむ','ゆるむ']; }
+  else if(kr.b3Seen && mx<0.2){ msg='うでを <b>のばす</b>と、'+OUT+'の '+KIN+'が ちぢみ、'+IN+'の '+KIN+'が ゆるむ。'; tags=['ゆるむ','ちぢむ']; }
+  if(!v) msg='じゅんびちゅう…';
+  else if(msg.indexOf('kr-todo')<0) msg=krTodo([[kr.b3pick?'tap':'bend',msg]]);
+  if($('krNow').dataset.m!==msg){ $('krNow').innerHTML=msg; $('krNow').dataset.m=msg; }
+  if(!v) return;
+  // ふだ：まげた ほうの うでの 筋肉に「ちぢむ／ゆるむ」
+  if(kr.j3 && !kr.b3pick) [['hinge','ひじ：1つの むき'],['ball','かた：いろいろな むき']].forEach(([k,lab])=>{ const q=v.where(k); if(q) krTag(q.x*s, Math.max(30*s,q.y*s-90*s), lab, '#1f2937'); });
+  if(tags && kr.show.muscle && !kr.j3 && !kr.a3){ const sd=kr.b3R>=kr.b3L?1:-1;
+    [['min',tags[0],-1],['mout',tags[1],1]].forEach(([k,lab,dy])=>{ const q=v.where(k,sd); if(!q) return;
+      const x=q.x*s, y=q.y*s, ly=y+dy*70*s; g.strokeStyle='#1f2937'; g.lineWidth=2*s; g.beginPath(); g.moveTo(x,y); g.lineTo(x,ly); g.stroke();
+      g.fillStyle='#1f2937'; g.beginPath(); g.arc(x,y,5*s,0,Math.PI*2); g.fill(); krTag(x, ly, lab, KR_PINK); }); }
+  if(kr.a3 && !kr.b3pick && mx>0.3 && kr.show.joint){ const q=v.where('joint','joint__e1');   // 動物の ひじにも「ひじ」
+    if(q) krTag(q.x*s+cv.width/2, Math.max(30*s,q.y*s-44*s), 'ひじ', KR_PINK); }
+  if(kr.b3pick){ const q=v.where(kr.b3pick, ['skull','spine','ribs','pelvis','shoulder'].includes(kr.b3pick)?null:'near');
+    if(q){ const x=q.x*s+(kr.a3?cv.width/2:0), y=q.y*s, lx=kr.a3?Math.max(cv.width*0.62,Math.min(cv.width*0.88,x)):x+(x<cv.width*0.62?1:-1)*120*s, p=krParts()[kr.b3pick][0].replace(/<rt>.*?<\/rt>|<[^>]+>/g,'');
+      g.strokeStyle='#1f2937'; g.lineWidth=2*s; g.beginPath(); g.moveTo(x,y); g.lineTo(lx,y-40*s); g.stroke();
+      g.fillStyle='#1f2937'; g.beginPath(); g.arc(x,y,5*s,0,Math.PI*2); g.fill(); krTag(lx, y-40*s, p, KR_PINK); } }
+}
+// マウス・ゆびで ひっぱっても まわる
+{ let d=null, d0=null, pin=null; const P=new Map();
+  const V=()=>kr.b3?krB3V():kr.v3?window.krV3:null;
+  const rel=(x,y)=>{ const r=$('krV3').getBoundingClientRect(); return [x-r.left,y-r.top]; };   // 3Dの キャンバスの 中の 点（ならべて みる ときは 右半分）
+  cv.addEventListener('pointerdown',e=>{ if(!kr.v3 && !kr.b3) return; P.set(e.pointerId,{x:e.clientX,y:e.clientY}); try{ cv.setPointerCapture(e.pointerId); }catch(_){}
+    if(P.size===1) d=d0={x:e.clientX,y:e.clientY};
+    else { d=d0=null; const [p,q]=[...P.values()]; pin=Math.hypot(p.x-q.x,p.y-q.y)||1; } });
+  cv.addEventListener('pointermove',e=>{
+    if(!P.size && e.pointerType==='mouse'){ const v=V(); cv.style.cursor = v && v.hit(...rel(e.clientX,e.clientY)) ? 'pointer' : ''; return; }   // とりだせる ものの 上では ゆびの 形
+    if(!P.has(e.pointerId)) return; P.set(e.pointerId,{x:e.clientX,y:e.clientY}); const v=V(); if(!v) return;
+    if(P.size>=2 && pin){ const [p,q]=[...P.values()], nd=Math.hypot(p.x-q.x,p.y-q.y)||1; v.zoom(pin/nd,...rel((p.x+q.x)/2,(p.y+q.y)/2)); pin=nd; return; }
+    if(!d) return; const r=cv.getBoundingClientRect();
+    v.turn((e.clientX-d.x)/r.width*Math.PI*2,(e.clientY-d.y)/r.height*Math.PI*1.2); d={x:e.clientX,y:e.clientY}; });
+  cv.addEventListener('pointerup',e=>{ const tap = d0 && P.size===1 && Math.hypot(e.clientX-d0.x,e.clientY-d0.y)<8;
+    P.delete(e.pointerId); if(P.size<2) pin=null; if(!P.size) d=null;
+    if(tap && kr.b3 && krB3V()){ const [x,y]=rel(e.clientX,e.clientY); if(x>=0) krB3Pick(krB3V().hit(x,y)); }
+    else if(tap && kr.v3 && window.krV3){   // うごかさずに はなした＝タップ
+      const r=cv.getBoundingClientRect(), k=window.krV3.hit(e.clientX-r.left,e.clientY-r.top);
+      if(k==='gullet'){ krPickNone(); kr.pick='gullet'; window.krV3.pick('gullet'); krCard6(KR_GULLET.name+'<span class="kr-sys"><ruby>消化<rt>しょうか</rt></ruby></span>', KR_GULLET.text); }
+      else if(k && k!==kr.pick && KR_ORGANS.find(o=>o.k===k)) krPick(k); else krPickNone(); }
+    d0=null; });
+  cv.addEventListener('pointercancel',e=>{ P.delete(e.pointerId); pin=null; d=d0=null; });
+  cv.addEventListener('wheel',e=>{ const v=V(); if(!v) return; e.preventDefault();
+    v.zoom(Math.exp(e.deltaY*(e.ctrlKey?0.012:0.0015)),...rel(e.clientX,e.clientY)); },{passive:false}); }
+// 手：むねの 高さで とめる → つかむ → うごかすと まわる → 下ろすと はなす
+function krV3Hand(L,t){
+  const s=DPR(), G=kr.grab||(kr.grab={on:false});
+  const tips=[];
+  for(const e of L){ krUse(e.pp);
+    for(const [ti,wi] of [[19,15],[20,16]]){ const p=pt(ti)||pt(wi); if(!p) continue; const b=krBody(e.F,p);
+      tips.push({p, up:b.u<0.9 && b.u>-0.6, id:e.pp.id+':'+wi, w:e.F.w}); }
+    krKeep(e.pp); }
+  if(G.on){
+    const h=tips.find(x=>x.id===G.id);
+    if(!h||!h.up){ kr.grab={on:false}; }
+    else { window.krV3 && window.krV3.turn((h.p.x-G.p.x)/cv.width*Math.PI*2.2,(h.p.y-G.p.y)/cv.height*Math.PI*1.4); G.p={x:h.p.x,y:h.p.y}; }
+  }else{
+    const h=tips.find(x=>x.up);
+    if(!h){ G.hold=null; }
+    else{
+      if(!G.hold || G.hid!==h.id || len(sub(h.p,G.hold))>h.w*0.10){ G.hold={x:h.p.x,y:h.p.y}; G.hid=h.id; G.holdT=t; }
+      const prog=Math.min(1,(t-G.holdT)/KR_V3_GRAB);
+      g.lineWidth=7*s; g.strokeStyle=KR_PINK; g.beginPath(); g.arc(h.p.x,h.p.y,26*s,-Math.PI/2,-Math.PI/2+prog*Math.PI*2); g.stroke();
+      if(prog>=1){ kr.grab={on:true,id:h.id,p:{x:h.p.x,y:h.p.y}}; }
+    }
+  }
+  for(const h of tips){ const on=kr.grab.on && kr.grab.id===h.id;
+    g.lineWidth=5*s; g.strokeStyle=on?KR_PINK:'#1f2937'; g.fillStyle=on?KR_PINK_A(.85):'rgba(255,255,255,.85)';
+    g.beginPath(); g.arc(h.p.x,h.p.y,(on?20:16)*s,0,Math.PI*2); g.fill(); g.stroke();
+    if(on) krTag(h.p.x, h.p.y-44*s, 'つかんでいる', KR_PINK); }
+  // えらんだ ものの 名前（立体の 上の いちに）
+  if(kr.pick && window.krV3){ const q=window.krV3.where(kr.pick), o=kr.pick==='gullet'?KR_GULLET:KR_ORGANS.find(o=>o.k===kr.pick);
+    if(q && o){ const x=q.x*s, y=q.y*s, lx=x+(x<cv.width*0.62?1:-1)*120*s;
+      g.strokeStyle='#1f2937'; g.lineWidth=2*s; g.beginPath(); g.moveTo(x,y); g.lineTo(lx,y-40*s); g.stroke();
+      g.fillStyle='#1f2937'; g.beginPath(); g.arc(x,y,5*s,0,Math.PI*2); g.fill();
+      krTag(lx, y-40*s, o.label, KR_PINK); } }
+}
+
+/* ---- からだ パズル（臓器を からだの ただしい ばしょに いれる） ---- */
+const KR_PUZ_TEXT='まわりの ものを つかんで、からだの ただしい ばしょに いれよう。<br>手を ものの 上で とめると つかめる。ちがう ところで とまると もどるよ（マウスや ゆびでも できる）。';
+function krPuzFrame(){ const W=cv.width, H=cv.height, T=H*0.40, w=T/1.35; return {S:{x:W/2,y:H*0.30},ex:{x:1,y:0},ey:{x:0,y:1},w,T,hs:1,back:false,ang:0}; }
+const krPx=f=>({x:f.x*cv.width, y:f.y*cv.height}), krFx=p=>({x:p.x/cv.width, y:p.y/cv.height});
+function krPuzStart(){
+  krFlowStop(); krQuizStop(); krV3Close(); krPickNone();
+  const list=KR_PUZ.slice(); for(let i=list.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [list[i],list[j]]=[list[j],list[i]]; }
+  const slot=i=>({x:i<3?0.14:0.86, y:0.20+(i%3)*0.28});
+  kr.puz={pc:list.map((k,i)=>({k, home:slot(i), f:slot(i), done:false, miss:0})), drag:null, hold:null, t0:0, end:0, msg:'', okT:0, okK:null};
+  document.body.classList.add('kr-puzon'); $('krPuz').setAttribute('aria-pressed',true); $('krPuz').textContent='パズルを やめる';
+  $('krOrgans').classList.add('kr-hide'); for(const id of ['kr3D','krFlow','krQuiz']) $(id).hidden=true;
+  krCard6('からだ パズル', KR_PUZ_TEXT);
+}
+function krPuzStop(){
+  if(!kr.puz) return; kr.puz=null; document.body.classList.remove('kr-puzon');
+  $('krPuz').setAttribute('aria-pressed',false); $('krPuz').textContent='からだ パズル';
+  $('krOrgans').classList.remove('kr-hide'); for(const id of ['kr3D','krFlow','krQuiz']) $(id).hidden=false;
+  krCard6('てを かざして みよう','むねや おなかの ところに てを 1びょう かざすと、その なかに ある ものが わかるよ。うしろを むくと せなかがわも。');
+}
+$('krPuz').onclick=()=>{ if(kr.puz && !kr.puz.end) krPuzStop(); else krPuzStart(); };
+// その ものの まんなかが p に なるように 描く
+function krPuzShape(o,F,p,t){ const c=at(F,o.x,o.u); krShape(o,{...F,S:{x:F.S.x+p.x-c.x,y:F.S.y+p.y-c.y}},t,false); }
+function krPuzAt(p){   // p に ある まだの もの（上に 描いた もの から）
+  const Z=kr.puz, F=krPuzFrame();
+  for(let i=Z.pc.length-1;i>=0;i--){ const c=Z.pc[i]; if(c.done) continue; const o=KR_ORGANS.find(o=>o.k===c.k), q=krPx(c.f);
+    if(Math.abs(p.x-q.x)<Math.max(o.rx*F.w,24*DPR())*1.05 && Math.abs(p.y-q.y)<Math.max(o.ry*F.T,24*DPR())*1.2) return c; }
+  return null;
+}
+function krPuzDrop(c,tryOnly){   // ただしい ばしょなら はめる。tryOnly の ときは はまらなければ もたせた まま
+  const Z=kr.puz, F=krPuzFrame(), o=KR_ORGANS.find(o=>o.k===c.k), P=krBody(F,krPx(c.f)), r=Math.hypot((P.x-o.x)/o.rx,(P.u-o.u)/o.ry);
+  if(r<=KR_PUZ_OK){ c.done=true; c.f=krFx(at(F,o.x,o.u)); Z.drag=null; Z.okT=performance.now(); Z.okK=c.k; Z.msg='';
+    krCard6(o.name+'<span class="kr-sys">'+o.sys+'</span>', '<span class="kr-res"><span class="kr-mk kr-maru" aria-hidden="true"></span><b class="kr-good">ぴったり！</b></span>'+o.text);
+    if(Z.pc.every(c=>c.done)){ Z.end=performance.now(); const sec=Math.round((Z.end-Z.t0)/1000);
+      $('krPuz').textContent='もう いちど'; $('krPuz').setAttribute('aria-pressed',false);
+      $('krOrgans').classList.remove('kr-hide'); for(const id of ['kr3D','krFlow','krQuiz']) $(id).hidden=false;   // ほかの 学びへも すすめる
+      krCard6('かんせい！', `${sec}びょうで からだが かんせいしたよ。<br>どの ものが どこに あったか、となりの 人と たしかめよう。`); }
+    return true; }
+  if(tryOnly) return false;
+  const dx=o.x-P.x, du=o.u-P.u; c.miss++; c.f={...c.home}; Z.drag=null;
+  Z.msg = Math.abs(du)*1.5>Math.abs(dx) ? (du>0?'もう少し 下だよ。':'もう少し 上だよ。') : (dx>0?'もう少し からだの 右がわだよ。':'もう少し からだの 左がわだよ。');
+  krCard6('からだ パズル', '<span class="kr-res"><span class="kr-mk kr-batsu" aria-hidden="true">×</span><b>'+o.name+'</b> '+Z.msg+'</span>'+KR_PUZ_TEXT);
+  return false;
+}
+// マウス・ゆびで ひっぱる
+cv.addEventListener('pointerdown',e=>{ if(!kr.puz||kr.puz.end) return; const r=cv.getBoundingClientRect(), p={x:(e.clientX-r.left)*DPR(),y:(e.clientY-r.top)*DPR()};
+  const c=krPuzAt(p); if(!c) return; kr.puz.drag={c,by:'ptr',dx:krPx(c.f).x-p.x,dy:krPx(c.f).y-p.y}; if(!kr.puz.t0) kr.puz.t0=performance.now(); cv.setPointerCapture(e.pointerId); });
+cv.addEventListener('pointermove',e=>{ const Z=kr.puz; if(!Z||!Z.drag||Z.drag.by!=='ptr') return; const r=cv.getBoundingClientRect();
+  Z.drag.c.f=krFx({x:(e.clientX-r.left)*DPR()+Z.drag.dx, y:(e.clientY-r.top)*DPR()+Z.drag.dy}); });
+cv.addEventListener('pointerup',()=>{ const Z=kr.puz; if(!Z||!Z.drag||Z.drag.by!=='ptr') return; krPuzDrop(Z.drag.c,false); });
+function krPuzDraw(L,t){
+  const Z=kr.puz, F=krPuzFrame(), s=DPR();
+  // からだ（かげ）と せぼね
+  g.save(); g.fillStyle='#ffffff'; g.strokeStyle='rgba(75,85,99,.55)'; g.lineWidth=2*s;
+  const B=[[-0.62,0.02],[0.62,0.02],[0.52,0.55],[0.58,1.08],[-0.58,1.08],[-0.52,0.55]].map(([x,u])=>at(F,x,u));
+  g.beginPath(); B.forEach((p,i)=>i?g.lineTo(p.x,p.y):g.moveTo(p.x,p.y)); g.closePath(); g.fill(); g.stroke();
+  const hd=at(F,0,-0.42); g.beginPath(); g.ellipse(hd.x,hd.y,F.w*0.30,F.w*0.36,0,0,Math.PI*2); g.fill(); g.stroke();
+  g.globalAlpha=0.35; krSpine(F); g.restore();
+  // 何度も まちがえた ものは、もって いる あいだ 正しい ばしょを 点線で
+  if(Z.drag && Z.drag.c.miss>=2){ const o=KR_ORGANS.find(o=>o.k===Z.drag.c.k), c=at(F,o.x,o.u);
+    g.save(); g.setLineDash([8*s,6*s]); g.strokeStyle=KR_PINK; g.lineWidth=3*s; g.beginPath(); g.ellipse(c.x,c.y,o.rx*F.w,o.ry*F.T,0,0,Math.PI*2); g.stroke(); g.restore(); }
+  // はまった もの（からだの じゅんに）→ まだの もの → もって いる もの
+  const ord=['large','small','liver','stomach','lungs','heart'];
+  const keep=kr.pick; kr.dwellK=null;
+  for(const k of ord){ const c=Z.pc.find(c=>c.k===k); if(c&&c.done){ kr.pick=(Z.okK===k&&t-Z.okT<900)?k:null; krPuzShape(KR_ORGANS.find(o=>o.k===k),F,krPx(c.f),t); } }
+  for(const c of Z.pc) if(!c.done && (!Z.drag||Z.drag.c!==c)){ kr.pick=null; krPuzShape(KR_ORGANS.find(o=>o.k===c.k),F,krPx(c.f),t);
+    const o=KR_ORGANS.find(o=>o.k===c.k), q=krPx(c.f); krTag(q.x, q.y+o.ry*F.T+22*s, o.label, '#1f2937'); }
+  if(Z.drag){ kr.pick=Z.drag.c.k; krPuzShape(KR_ORGANS.find(o=>o.k===Z.drag.c.k),F,krPx(Z.drag.c.f),t); }
+  kr.pick=keep;
+  // はまった ときの ◯
+  if(Z.okK && t-Z.okT<900){ const c=Z.pc.find(c=>c.k===Z.okK), q=krPx(c.f), R=(26+16*Math.min(1,(t-Z.okT)/250))*s;
+    for(const [w,col] of [[14*s,'#fff'],[8*s,KR_PINK]]){ g.lineWidth=w; g.strokeStyle=col; g.beginPath(); g.arc(q.x,q.y,R,0,Math.PI*2); g.stroke(); } }
+  // じかん
+  if(Z.t0){ const sec=Math.floor(((Z.end||t)-Z.t0)/1000); krTag(70*s, 34*s, sec+' びょう', '#1f2937'); }
+  if(Z.end){ krTag(cv.width/2, 34*s, 'かんせい！', KR_PINK); }
+  // 手で つかむ：ものの 上で とめる → もつ → ただしい ばしょで はまる・手を 下ろすと もどる
+  const tips=[];
+  for(const e of L){ krUse(e.pp); for(const [ti,wi] of [[19,15],[20,16]]){ const p=pt(ti)||pt(wi); if(p) tips.push({p,id:e.pp.id+':'+wi}); } krKeep(e.pp); }
+  if(!Z.end){
+    if(Z.drag && Z.drag.by==='hand'){ const h=tips.find(x=>x.id===Z.drag.id);
+      if(!h){ Z.drag.c.f={...Z.drag.c.home}; Z.drag=null; }
+      else { Z.drag.c.f=krFx(h.p);
+        if(!krPuzDrop(Z.drag.c,true)){   // ちがう ところで 1.5びょう とまったら もどして ヒント
+          const D=Z.drag; if(!D.still||len(sub(h.p,D.still))>cv.width*0.03){ D.still={x:h.p.x,y:h.p.y}; D.stillT=t; }
+          else if(t-D.stillT>1500) krPuzDrop(D.c,false); } } }
+    else if(!Z.drag){ let hit=null; for(const h of tips){ const c=krPuzAt(h.p); if(c){ hit={h,c}; break; } }
+      if(!hit){ Z.hold=null; }
+      else { if(!Z.hold||Z.hold.id!==hit.h.id||Z.hold.k!==hit.c.k){ Z.hold={id:hit.h.id,k:hit.c.k,t}; }
+        const prog=Math.min(1,(t-Z.hold.t)/KR_V3_GRAB);
+        g.lineWidth=7*s; g.strokeStyle=KR_PINK; g.beginPath(); g.arc(hit.h.p.x,hit.h.p.y,26*s,-Math.PI/2,-Math.PI/2+prog*Math.PI*2); g.stroke();
+        if(prog>=1){ Z.drag={c:hit.c,by:'hand',id:hit.h.id}; Z.hold=null; if(!Z.t0) Z.t0=t; } } }
+  }
+  for(const h of tips){ const on=Z.drag&&Z.drag.by==='hand'&&Z.drag.id===h.id;
+    g.lineWidth=5*s; g.strokeStyle=on?KR_PINK:'#1f2937'; g.fillStyle=on?KR_PINK_A(.85):'rgba(255,255,255,.85)';
+    g.beginPath(); g.arc(h.p.x,h.p.y,(on?20:16)*s,0,Math.PI*2); g.fill(); g.stroke(); }
+}
+
+/* ---- 大きく（映像だけを がめん いっぱいに） ---- */
+function krWide(on){
+  document.body.classList.toggle('kr-wide',on); $('krFullT').textContent=on?'もどす':'大きく';
+  $('krCap').hidden=!on; kr.capH=''; krResize();
+}
+$('krFull').onclick=()=>{
+  const on=!document.body.classList.contains('kr-wide');
+  if(document.fullscreenEnabled){ if(on) document.documentElement.requestFullscreen().catch(()=>{}); else if(document.fullscreenElement) document.exitFullscreen().catch(()=>{}); }
+  krWide(on);
+};
+document.addEventListener('fullscreenchange',()=>{ if(!document.fullscreenElement && document.body.classList.contains('kr-wide')) krWide(false); else krResize(); });
+// 映像の 下の せつめい（右の 欄と おなじ 中身）
+function krCapSync(){
+  if($('krCap').hidden) return;
+  const h = kr.mode===4 ? $('krNow').innerHTML : '<b class="kr-capt">'+$('krOName').innerHTML+'</b>'+$('krOText').innerHTML;
+  if(h!==kr.capH){ kr.capH=h; $('krCap').innerHTML=h; }
+}
+
+// 映像の たて横の わりあいの まま、左の あいた ところに めいっぱい（点が 体と ずれないように）
+function krResize(){
+  const st=$('krStage'), box=st.parentElement.getBoundingClientRect(), ar=kr.ar||4/3;
+  let w=box.width, h=w/ar; if(h>box.height){ h=box.height; w=h*ar; }
+  st.style.width=Math.floor(w)+'px'; st.style.height=Math.floor(h)+'px';
+  const d=DPR(); cv.width=Math.round(Math.floor(w)*d); cv.height=Math.round(Math.floor(h)*d); kr.ppl=kr.ppl.map(p=>krNewPerson(p.id));
+}
+krResize();
+window.addEventListener('resize', krResize);
+
+/* ---- 点の あつかい ---- */
+// ふるえを おさえる（ゆっくりの ときは つよく、はやい ときは よわく）
+const KR_OE={min:1.4, beta:4.0, d:1.0};
+function krOE(st,v,dt){
+  const a=c=>{ const tau=1/(2*Math.PI*c); return 1/(1+tau/dt); };
+  if(!st.i){ st.i=1; st.v=v; st.dv=0; return v; }
+  const dv=(v-st.v)/dt; st.dv+=a(KR_OE.d)*(dv-st.dv);
+  st.v+=a(KR_OE.min+KR_OE.beta*Math.abs(st.dv))*(v-st.v); return st.v;
+}
+// 生の 点（0〜1・カメラの向き）を なめらかにして 画面の 点に（かがみなので x を はんてん）
+function krFeedOne(pp,lms,now){
+  const W=cv.width, H=cv.height;
+  for(let i=0;i<lms.length;i++){
+    const l=lms[i], v=(l.visibility==null?1:l.visibility);
+    const f=pp.Fl[i]||(pp.Fl[i]={x:{},y:{},t:now}); const dt=Math.max(0.008,Math.min(0.2,(now-f.t)/1000)); f.t=now;
+    const nx=krOE(f.x,1-l.x,dt), ny=krOE(f.y,l.y,dt), p=pp.P[i];
+    pp.P[i]={x:nx*W, y:ny*H, v: p ? p.v*0.5+v*0.5 : v};
+  }
+}
+// うつった 人（何人でも）を、まえの こまで いちばん 近かった 人の わくへ。いなく なった わくは 見えない あつかい
+function krFeedAll(list,tms){
+  const now=tms||performance.now(); list=(list||[]).slice(0,kr.ppl.length);
+  const C=list.map(l=>({x:1-(l[11].x+l[12].x)/2, y:(l[11].y+l[12].y)/2}));
+  const pairs=[]; C.forEach((c,i)=>kr.ppl.forEach(p=>{ if(p.c && now-p.seen<800) pairs.push([Math.hypot(c.x-p.c.x,c.y-p.c.y),i,p]); }));
+  pairs.sort((a,b)=>a[0]-b[0]);
+  const asg=[], used=new Set();
+  for(const [d,i,p] of pairs){ if(asg[i]||used.has(p.id)||d>0.35) continue; asg[i]=p; used.add(p.id); }
+  list.forEach((l,i)=>{ if(asg[i]) return; const p=kr.ppl.find(p=>!used.has(p.id)); if(!p) return;
+    Object.assign(p, krNewPerson(p.id)); asg[i]=p; used.add(p.id); });   // あたらしく 来た 人は まっさらな わくで
+  list.forEach((l,i)=>{ const p=asg[i]; if(!p) return; p.c=C[i]; p.seen=now; krFeedOne(p,l,now); });
+  for(const p of kr.ppl) if(!used.has(p.id)) for(const k in p.P) p.P[k].v=0;
+}
+function krFeed(lms,tms){ krFeedAll(lms?[lms]:[],tms); }
+const pt=i=>{ const p=kr.P[i]; return p && p.v>0.5 ? p : null; };
+const mid=(a,b)=>({x:(a.x+b.x)/2,y:(a.y+b.y)/2});
+const sub=(a,b)=>({x:a.x-b.x,y:a.y-b.y});
+const len=a=>Math.hypot(a.x,a.y);
+function ang3(a,b,c){ const u=sub(a,b), v=sub(c,b), lu=len(u), lv=len(v); if(lu<3||lv<3) return null;
+  return Math.acos(Math.max(-1,Math.min(1,(u.x*v.x+u.y*v.y)/(lu*lv))))*180/Math.PI; }
+
+// からだの ものさし：かたの まんなか S、よこ ex（画面の 右むき）、した ey、かたはば w、どうの 長さ T
+// hs：本人の 右が 画面の 右なら 1（前むき）、左なら -1（うしろむき）
+function krFrame(){
+  const ls=pt(11), rs=pt(12); if(!ls||!rs) return null;
+  const raw=sub(rs,ls), w=len(raw); if(w<10) return null;
+  const r=raw.x/w; if(!kr.back && r<-0.3) kr.back=true; else if(kr.back && r>0.3) kr.back=false;
+  const hs=kr.back?-1:1, d={x:raw.x*hs,y:raw.y*hs};
+  const S=mid(ls,rs), ex={x:d.x/w,y:d.y/w}, ey={x:-ex.y,y:ex.x};
+  const lh=pt(23), rh=pt(24);
+  let T = (lh&&rh) ? len(sub(mid(lh,rh),S)) : w*1.35;
+  T=Math.max(w*1.0, Math.min(T, w*1.8));
+  return {S,ex,ey,w,T,hs,back:kr.back,ang:Math.atan2(ex.y,ex.x)};
+}
+const at=(F,x,u)=>({x:F.S.x+F.ex.x*x*F.hs*F.w+F.ey.x*u*F.T, y:F.S.y+F.ex.y*x*F.hs*F.w+F.ey.y*u*F.T});
+
+/* ---- 字の ふだ ---- */
+function krTag(x,y,txt,col){
+  const s=DPR(); g.save();
+  g.font=`700 ${Math.round(17*s)}px "BIZ UDPGothic",sans-serif`;
+  const tw=g.measureText(txt).width, h=30*s, pad=10*s;
+  g.fillStyle='rgba(255,255,255,.96)'; g.strokeStyle=col||KR_EDGE; g.lineWidth=1.6*s;
+  g.beginPath(); g.roundRect(x-tw/2-pad, y-h/2, tw+pad*2, h, 6*s); g.fill(); g.stroke();
+  g.fillStyle=col||'#1f2937'; g.textAlign='center'; g.textBaseline='middle'; g.fillText(txt,x,y+1*s);
+  g.restore();
+}
+function seg(a,b,wid,col,edge){
+  g.lineCap='round'; g.strokeStyle=edge; g.lineWidth=wid+4*DPR();
+  g.beginPath(); g.moveTo(a.x,a.y); g.lineTo(b.x,b.y); g.stroke();
+  g.strokeStyle=col; g.lineWidth=wid; g.beginPath(); g.moveTo(a.x,a.y); g.lineTo(b.x,b.y); g.stroke();
+}
+
+/* ---- 理科の 図の ような ほね ---- */
+const KR_BONE_HI='#fffaf0', KR_BONE_LO='#dccaa3', KR_BONE_LINE='#6b5a3e', KR_CART='#dfeaf1';
+// ながい ほね（りょうはしが ふくらんだ 形）
+function krBone(a,b,w,kA=1,kB=1){
+  const d=sub(b,a), L=len(d); if(L<2) return; const n={x:-d.y/L,y:d.x/L}, S=DPR();
+  const P=(t,o)=>({x:a.x+d.x*t+n.x*o, y:a.y+d.y*t+n.y*o}), sw=w*0.30, r=w*0.36;
+  g.beginPath();
+  let p=P(0,sw*1.3), q=P(0.5,sw), e=P(1,sw*1.3); g.moveTo(p.x,p.y); g.quadraticCurveTo(q.x,q.y,e.x,e.y);
+  p=P(1,-sw*1.3); q=P(0.5,-sw); e=P(0,-sw*1.3); g.lineTo(p.x,p.y); g.quadraticCurveTo(q.x,q.y,e.x,e.y); g.closePath();
+  for(const [t,k] of [[0,kA],[1,kB]]) if(k) for(const o of [-1,1]){ const c=P(t,o*r*0.5), rr=r*0.7*k; g.moveTo(c.x+rr,c.y); g.arc(c.x,c.y,rr,0,Math.PI*2); }
+  const m=P(0.5,0), gr=g.createLinearGradient(m.x-n.x*w*0.5,m.y-n.y*w*0.5,m.x+n.x*w*0.5,m.y+n.y*w*0.5);
+  gr.addColorStop(0,KR_BONE_LO); gr.addColorStop(0.4,KR_BONE_HI); gr.addColorStop(1,KR_BONE_LO);
+  g.lineJoin='round'; g.strokeStyle=KR_BONE_LINE; g.lineWidth=2.5*S; g.stroke(); g.fillStyle=gr; g.fill();
+}
+// まがった ほそい ほね（ろっこつ・さこつ）や なんこつ
+function krCurve(P,w,col){
+  const S=DPR(); g.lineCap='round'; g.lineJoin='round';
+  for(const [lw,c] of [[w+3*S,KR_BONE_LINE],[w,col||'#f7efdc']]){ g.strokeStyle=c; g.lineWidth=lw; g.beginPath(); g.moveTo(P[0].x,P[0].y);
+    if(P.length===3) g.quadraticCurveTo(P[1].x,P[1].y,P[2].x,P[2].y); else for(let i=1;i<P.length;i++) g.lineTo(P[i].x,P[i].y); g.stroke(); }
+}
+function krSkull(F){
+  const ea=pt(7), eb=pt(8); if(!ea||!eb) return;
+  const S=DPR(), c=mid(ea,eb), r=len(sub(ea,eb))*0.62;
+  g.save(); g.translate(c.x,c.y); g.rotate(F.ang);
+  const gr=g.createRadialGradient(-r*0.3,-r*0.8,r*0.1,0,-r*0.2,r*1.4); gr.addColorStop(0,KR_BONE_HI); gr.addColorStop(1,KR_BONE_LO);
+  g.beginPath(); g.ellipse(0,-r*0.45,r*0.92,r*0.98,0,0,Math.PI*2);
+  g.moveTo(-r*0.74,-r*0.1); g.quadraticCurveTo(-r*0.78,r*0.6,-r*0.42,r*0.95); g.quadraticCurveTo(0,r*1.12,r*0.42,r*0.95); g.quadraticCurveTo(r*0.78,r*0.6,r*0.74,-r*0.1); g.closePath();
+  g.strokeStyle=KR_BONE_LINE; g.lineWidth=2.5*S; g.stroke(); g.fillStyle=gr; g.fill();
+  g.fillStyle='rgba(74,63,48,.8)';
+  for(const sx of [-1,1]){ g.beginPath(); g.ellipse(sx*r*0.32,-r*0.1,r*0.17,r*0.16,0,0,Math.PI*2); g.fill(); }   // 目の あな
+  g.beginPath(); g.moveTo(0,r*0.12); g.lineTo(-r*0.09,r*0.36); g.lineTo(r*0.09,r*0.36); g.closePath(); g.fill();   // 鼻
+  g.strokeStyle=KR_BONE_LINE; g.lineWidth=1.5*S; g.beginPath(); g.moveTo(-r*0.32,r*0.66); g.lineTo(r*0.32,r*0.66);  // 歯
+  for(let i=-3;i<=3;i++){ g.moveTo(i*r*0.09,r*0.56); g.lineTo(i*r*0.09,r*0.76); } g.stroke();
+  g.restore();
+}
+// せぼね（小さな ほねが つみかさなる）
+function krSpine(F){
+  const S=DPR();
+  g.save();
+  for(let i=0;i<17;i++){ const u=-0.16+i*0.062, c=at(F,0,u), wv=F.w*(0.07+0.035*i/16), hv=F.T*0.042;
+    g.save(); g.translate(c.x,c.y); g.rotate(F.ang); g.beginPath(); g.roundRect(-wv/2,-hv/2,wv,hv,hv*0.35);
+    g.fillStyle=i%2?'#efe3c8':'#f7efdc'; g.strokeStyle=KR_BONE_LINE; g.lineWidth=1.8*S; g.fill(); g.stroke(); g.restore(); }
+  g.restore();
+}
+function krSkeleton(F,arms,bw){
+  const S=DPR();
+  krSkull(F);
+  krSpine(F);
+  // こし（こつばん）
+  const lh=pt(23), rh=pt(24);
+  if(lh&&rh){ const A=krBody(F,lh), B=krBody(F,rh), hx=(Math.abs(A.x)+Math.abs(B.x))/2, hu=(A.u+B.u)/2;
+    const gr=g.createLinearGradient(at(F,0,hu-0.25).x,at(F,0,hu-0.25).y,at(F,0,hu+0.12).x,at(F,0,hu+0.12).y);
+    gr.addColorStop(0,KR_BONE_HI); gr.addColorStop(1,KR_BONE_LO);
+    g.beginPath();
+    for(const sx of [-1,1]){ const A=(x,u)=>at(F,sx*x,hu+u), mv=(x,u)=>{const p=A(x,u); g.moveTo(p.x,p.y);}, ln=(x,u)=>{const p=A(x,u); g.lineTo(p.x,p.y);},
+        qc=(a,b,c,d)=>{const p=A(a,b),q=A(c,d); g.quadraticCurveTo(p.x,p.y,q.x,q.y);}, bz=(a,b,c,d,e,f)=>{const p=A(a,b),q=A(c,d),r=A(e,f); g.bezierCurveTo(p.x,p.y,q.x,q.y,r.x,r.y);};
+      mv(0.08,-0.22); bz(0.18,-0.38,hx+0.20,-0.36,hx+0.15,-0.15); qc(hx+0.12,-0.05,hx+0.04,-0.01);
+      ln(hx-0.01,0.13); qc(hx*0.5,0.16,0.03,0.07); qc(hx*0.55,-0.02,0.10,-0.04); g.closePath(); }
+    const sac=[[-0.08,-0.22],[0.08,-0.22],[0.03,0.04],[-0.03,0.04]].map(([x,u])=>at(F,x,hu+u));   // せんこつ
+    g.moveTo(sac[0].x,sac[0].y); sac.forEach(p=>g.lineTo(p.x,p.y)); g.closePath();
+    g.lineJoin='round'; g.strokeStyle=KR_BONE_LINE; g.lineWidth=2.5*S; g.stroke(); g.fillStyle=gr; g.fill();
+    g.fillStyle='rgba(74,63,48,.75)';
+    for(const sx of [-1,1]){ const c=at(F,sx*(hx-0.05),hu+0.065); g.beginPath(); g.ellipse(c.x,c.y,F.w*0.045,F.T*0.035,F.ang,0,Math.PI*2); g.fill(); }
+    // あし：だいたいこつ・しつがいこつ・すねの 2本の ほね・足
+    for(const [h,k,a,f,heel] of [[23,25,27,31,29],[24,26,28,32,30]]){ const H=pt(h),K=pt(k),Ak=pt(a),Ft=pt(f),He=pt(heel);
+      if(!H||!K) continue; krBone(H,K,bw*1.25);
+      if(Ak){ const d=sub(Ak,K), L=len(d)||1, n={x:-d.y/L*bw*0.32,y:d.x/L*bw*0.32}, out=(h===23?1:-1)*F.hs;
+        krBone({x:K.x+n.x*out,y:K.y+n.y*out},{x:Ak.x+n.x*out,y:Ak.y+n.y*out},bw*0.45);
+        krBone({x:K.x-n.x*out*0.4,y:K.y-n.y*out*0.4},{x:Ak.x-n.x*out*0.4,y:Ak.y-n.y*out*0.4},bw*0.85);
+        if(Ft) krBone(Ak,Ft,bw*0.5,1,0); if(He) krBone(Ak,He,bw*0.45,0,1); }
+      g.beginPath(); g.ellipse(K.x,K.y,bw*0.42,bw*0.5,F.ang,0,Math.PI*2); g.fillStyle='#f7efdc'; g.strokeStyle=KR_BONE_LINE; g.lineWidth=2*S; g.fill(); g.stroke(); }
+  }
+  // ろっこつ（せぼねから まわって、なんこつで むねの ほねに つく）
+  const HW=[0.30,0.37,0.41,0.43,0.43,0.41,0.37];
+  for(let i=0;i<7;i++){ const u=0.05+i*0.072, hw=HW[i];
+    for(const sx of [-1,1]){
+      const fe=at(F,sx*(0.11+0.025*i),u+0.13+i*0.012);
+      krCurve([at(F,sx*0.03,u), at(F,sx*hw*0.85,u-0.05), at(F,sx*hw,u+0.05)], bw*0.30);
+      krCurve([at(F,sx*hw,u+0.05), at(F,sx*hw*1.02,u+0.13), fe], bw*0.30);
+      if(i<6) krCurve([fe, at(F,sx*0.05,Math.min(0.42,u+0.10+i*0.01))], bw*0.24, KR_CART); } }
+  // むねの ほね
+  { const P=[[-0.05,0.02],[0.05,0.02],[0.045,0.38],[0,0.46],[-0.045,0.38]].map(([x,u])=>at(F,x,u));
+    g.beginPath(); P.forEach((p,i)=>i?g.lineTo(p.x,p.y):g.moveTo(p.x,p.y)); g.closePath(); g.lineJoin='round';
+    g.strokeStyle=KR_BONE_LINE; g.lineWidth=2.5*S; g.stroke(); g.fillStyle='#f7efdc'; g.fill(); }
+  // さこつ
+  for(const sx of [-1,1]) krCurve([at(F,sx*0.05,0.0), at(F,sx*0.28,0.06), at(F,sx*0.50,-0.02)], bw*0.42);
+  // うで：じょうわんこつ・前うでの 2本・手
+  for(const A of arms){
+    krBone(A.s,A.e,bw*1.1);
+    const b=sub(A.w,A.e), lb=len(b)||1, n={x:-b.y/lb*bw*0.30,y:b.x/lb*bw*0.30};
+    krBone({x:A.e.x+n.x,y:A.e.y+n.y},{x:A.w.x+n.x,y:A.w.y+n.y},bw*0.55);
+    krBone({x:A.e.x-n.x,y:A.e.y-n.y},{x:A.w.x-n.x,y:A.w.y-n.y},bw*0.50);
+    const fi=(A.w===pt(15))?[17,19,21]:[18,20,22];
+    for(const i of fi){ const f=pt(i); if(f && len(sub(f,A.w))>4) krBone(A.w,f,bw*0.32,1,0.6); }
+  }
+}
+
+/* ===== 4年：ほね・きんにく・かんせつ ===== */
+// うで（かた・ひじ・手首）にも あし（こし・ひざ・足首）にも つかう
+function krLimb(si,ei,wi,key){
+  const s=pt(si), e=pt(ei), w=pt(wi); if(!s||!e||!w) return null;
+  const a=sub(e,s), b=sub(w,e), la=len(a), lb=len(b); if(la<5||lb<5) return null;
+  const cos=-(a.x*b.x+a.y*b.y)/(la*lb);           // まがる 点の 角度
+  const deg=Math.acos(Math.max(-1,Math.min(1,cos)))*180/Math.PI;
+  const bend=Math.max(0,Math.min(1,(170-deg)/120)); // 0＝のびてる 1＝まがってる
+  const cr=a.x*b.y-a.y*b.x;
+  if(Math.abs(cr)/(la*lb)>0.25){ kr.side[key]=Math.sign(cr); kr.sideOK[key]=true; }   // 内側（さきの ある がわ）は まげた ときに 決まる
+  return {s,e,w,a,la,lb,bend,side:kr.side[key],known:!!kr.sideOK[key]};
+}
+function krMuscle(A, inner){
+  const {s,e,w,a,la,bend,side}=A, sg=inner?side:-side, S=DPR();
+  const n={x:-a.y/la*sg, y:a.x/la*sg}, ux={x:a.x/la,y:a.y/la};
+  const ch = inner ? bend : 1-bend;               // ちぢみぐあい
+  const t0=0.20+0.07*ch, t1=0.80-0.07*ch, h=la*(0.065+0.075*ch), off=la*0.05+h*0.55;
+  const P=t=>({x:s.x+a.x*t+n.x*off, y:s.y+a.y*t+n.y*off});
+  const c=P((t0+t1)/2), hl=la*(t1-t0)/2;
+  // けん（ほねに つく ところ）
+  const b=sub(w,e), lb=len(b)||1;
+  const org={x:s.x+a.x*0.06+n.x*la*0.03, y:s.y+a.y*0.06+n.y*la*0.03};
+  const ins= inner ? {x:e.x+b.x/lb*la*0.18+n.x*la*0.02, y:e.y+b.y/lb*la*0.18+n.y*la*0.02}
+                   : {x:e.x+n.x*la*0.06+ux.x*la*0.02, y:e.y+n.y*la*0.06+ux.y*la*0.02};
+  for(const [lw,col] of [[5*S,'#8a7b5c'],[3*S,'#f3ede0']]){ g.strokeStyle=col; g.lineWidth=lw; g.lineCap='round';
+    const p0=P(t0), p1=P(t1); g.beginPath(); g.moveTo(org.x,org.y); g.lineTo(p0.x,p0.y); g.moveTo(p1.x,p1.y); g.lineTo(ins.x,ins.y); g.stroke(); }
+  g.save(); g.translate(c.x,c.y); g.rotate(Math.atan2(ux.y,ux.x));
+  const sp=()=>{ g.beginPath(); g.moveTo(-hl,0); g.bezierCurveTo(-hl*0.45,-h*1.2,hl*0.45,-h*1.2,hl,0); g.bezierCurveTo(hl*0.45,h*1.2,-hl*0.45,h*1.2,-hl,0); };
+  const gr=g.createLinearGradient(0,-h,0,h);
+  const mid = ch>0.5 ? '#d43d52' : '#ec8d98';
+  gr.addColorStop(0,'#8f1d2c'); gr.addColorStop(0.45,mid); gr.addColorStop(1,'#8f1d2c');
+  sp(); g.globalAlpha=0.93; g.fillStyle=gr; g.fill(); g.globalAlpha=1;
+  g.strokeStyle='#6b1220'; g.lineWidth=2.2*S; g.stroke();
+  // すじ（筋せんい）
+  g.save(); sp(); g.clip(); g.strokeStyle='rgba(255,225,228,.55)'; g.lineWidth=1.2*S;
+  for(let k=-3;k<=3;k++){ g.beginPath(); g.moveTo(-hl,0); g.quadraticCurveTo(0,k*h*0.36*1.6,hl,0); g.stroke(); }
+  g.restore();
+  g.restore();
+  return {c,n,ch,ry:h,ux,la};
+}
+// 関節が どれだけ うごいたかを ためて、こえたら「みつけた」
+function krJointWatch(F){
+  for(const j of KR_JOINTS){
+    if(kr.found[j.k]) continue;
+    if(j.k==='kubi'){ const no=pt(0); if(!F||!no) continue;
+      const d=sub(no,F.S), vx=(d.x*F.ex.x+d.y*F.ex.y)/F.w, vy=(d.x*F.ey.x+d.y*F.ey.y)/F.w;
+      for(const [key,v,lim] of [['kx',vx,0.22],['ky',vy,0.18]]){ const r=kr.jr[key]||(kr.jr[key]={lo:v,hi:v});
+        r.lo=Math.min(r.lo,v); r.hi=Math.max(r.hi,v); if(r.hi-r.lo>lim) krFound('kubi'); }
+      continue; }
+    j.tri.forEach((tr,si)=>{ const A=pt(tr[0]),B=pt(tr[1]),C=pt(tr[2]); if(!A||!B||!C) return;
+      const v=ang3(A,B,C); if(v==null) return; const key=j.k+si, r=kr.jr[key]||(kr.jr[key]={lo:v,hi:v});
+      r.lo=Math.min(r.lo,v); r.hi=Math.max(r.hi,v); if(r.hi-r.lo>j.deg) krFound(j.k); });
+  }
+}
+function krJointPts(F,k){
+  if(k==='kubi') return F?[at(F,0,-0.12)]:[];
+  const j=KR_JOINTS.find(j=>j.k===k); return j.tri.map(tr=>pt(tr[1])).filter(Boolean);
+}
+function krDraw4(F,t){
+  const s=DPR(), bw=Math.max(8, (F?F.w:200)*0.06);
+  const arms=[krLimb(11,13,15,'l'), krLimb(12,14,16,'r')].filter(Boolean);
+  const legs=[krLimb(23,25,27,'ll'), krLimb(24,26,28,'lr')].filter(Boolean);
+  krJointWatch(F);
+  if(kr.show.bone && F) krSkeleton(F,arms,bw);
+  // きんにく：いちど まげて 内側が わかった うでの うち、いちばん まがっている うで
+  let best=null; for(const A of arms) if(A.known && (!best || A.bend>best.bend)) best=A;
+  if(best && best.bend>0.55 && kr.q===0 && kr.st===KR_MUSCLE_STEP) kr.q=1;        // はじめて まげたら「さわって みよう」
+  if(kr.show.muscle){
+    for(const L of legs){ krMuscle(L,true); krMuscle(L,false); }   // ふともも（ひざを まげると うらがわが ちぢむ）
+    for(const A of arms){
+      const I=krMuscle(A,true), O=krMuscle(A,false);
+      if(A===best && kr.q===2){
+        // 内側の ふだは 前うでと かさならないよう、かた寄りに ずらす
+        const tag=(M,label,back)=>krTag(M.c.x+M.n.x*(M.ry+30*s)-M.ux.x*M.la*back, M.c.y+M.n.y*(M.ry+30*s)-M.ux.y*M.la*back, label, KR_PINK);
+        if(A.bend>0.45){ tag(I,'ちぢむ',0.35); tag(O,'ゆるむ',0); }
+        else if(A.bend<0.2){ tag(I,'ゆるむ',0); tag(O,'ちぢむ',0); }
+      }
+    }
+  }
+  if(kr.show.joint){
+    const r=Math.max(9*s,bw*0.75);
+    for(const j of KR_JOINTS){ const on=!!kr.found[j.k];
+      for(const p of krJointPts(F,j.k)){
+        if(on){ g.strokeStyle=KR_PINK; g.lineWidth=4*s; g.beginPath(); g.arc(p.x,p.y,r+6*s,0,Math.PI*2); g.stroke(); }
+        g.fillStyle='#ffffff'; g.strokeStyle='#1f2937'; g.lineWidth=3*s;
+        g.beginPath(); g.arc(p.x,p.y,r,0,Math.PI*2); g.fill(); g.stroke();
+        g.fillStyle=on?KR_PINK:'#1f2937'; g.beginPath(); g.arc(p.x,p.y,r*0.42,0,Math.PI*2); g.fill(); } }
+    if(best && best.bend>0.3){ const e=best.e, u={x:best.a.x/best.la,y:best.a.y/best.la}, d=r+52*s;
+      krTag(e.x+u.x*d, e.y+u.y*d, kr.a3?'ひじ':'かんせつ', kr.a3?KR_PINK:'#1f2937'); }   // ひじの さき（上うでの のびる むき）に
+  }
+  // みつけた ところを 少しの あいだ 字で
+  if(kr.flash && kr.flash.who===kr.cur && t-kr.flash.t<1800){ const j=KR_JOINTS.find(j=>j.k===kr.flash.k), p=krJointPts(F,j.k)[0];
+    if(p) krTag(p.x, p.y-Math.max(9*s,bw*0.75)-30*s, j.label+'で まがる', KR_PINK); }
+  if(best && (!kr.fBest || best.bend>kr.fBest.bend)) kr.fBest=best;   // 右の ことばは うつった 人の うち いちばん まげている うで
+}
+// 右の ことば（4年・こまごとに 1かい）
+function krCard4(t){
+  const best=kr.fBest;
+  const IN='<b><ruby>内側<rt>うちがわ</rt></ruby></b>', OUT='<b><ruby>外側<rt>そとがわ</rt></ruby></b>', KIN=KR_KIN;
+  const S=KR_STEPS[kr.st-1];
+  let msg='うでを よこに だして、ひじを まげたり のばしたり しよう';
+  if(S.msg) msg=S.msg(kr.show);
+  else if(kr.q===1) msg = kr.qMsg || 'まげた まま <b>上うで</b>を さわろう。かたく なったのは どっち？';
+  else if(kr.q===2 && t-kr.qT<4000) msg='そのとおり！ '+IN+'の '+KIN+'が ちぢんで かたく なる。';
+  else if(kr.q===2 && best){ if(best.bend>0.45) msg='うでを <b>まげる</b>と、'+IN+'の '+KIN+'が ちぢみ、'+OUT+'の '+KIN+'が ゆるむ。';
+    else if(best.bend<0.2) msg='うでを <b>のばす</b>と、'+OUT+'の '+KIN+'が ちぢみ、'+IN+'の '+KIN+'が ゆるむ。'; }
+  if(S.animal){ const on=!!(best && best.bend>0.45); $('krAniB').querySelectorAll('.kr-jl[data-j="ひじ"]').forEach(e=>e.classList.toggle('kr-on',on)); }
+  if(!S.msg) msg=krTodo([[kr.q===1?'touch':'bend',msg]]);
+  if($('krNow').dataset.m!==msg){ $('krNow').innerHTML=msg; $('krNow').dataset.m=msg; }
+  const ask=kr.q===1 && kr.st===KR_MUSCLE_STEP; if($('krAsk').hidden===ask) $('krAsk').hidden=!ask;
+}
+
+/* ===== 6年：からだの なか ===== */
+// 理科の 図の ような 臓器（どれも まんなか 0,0・rx,ry の 中に 描く。+x は 本人の 右）
+function krRG(x,y,r,c1,c2){ const gr=g.createRadialGradient(x-r*0.35,y-r*0.4,r*0.1,x,y,r*1.15); gr.addColorStop(0,c1); gr.addColorStop(1,c2); return gr; }
+function krTube(P,w,fill,edge,hi){   // くだ（ふちどり → 中 → ひかり）
+  const S=DPR(); g.lineCap='round'; g.lineJoin='round';
+  const path=()=>{ g.beginPath(); P.forEach((p,i)=>i?g.lineTo(p.x,p.y):g.moveTo(p.x,p.y)); };
+  path(); g.strokeStyle=edge; g.lineWidth=w+3*S; g.stroke();
+  path(); g.strokeStyle=fill; g.lineWidth=w; g.stroke();
+  if(hi){ g.save(); g.translate(-w*0.18,-w*0.18); path(); g.strokeStyle=hi; g.lineWidth=w*0.25; g.stroke(); g.restore(); }
+}
+function krShape(o,F,t,dim){
+  const c=at(F,o.x,o.u), rx=o.rx*F.w, ry=o.ry*F.T, s=DPR();
+  const on = kr.pick===o.k || kr.dwellK===o.k || (kr.flow && kr.flow.organ===o.k);
+  const edge = on?'#1f2937':'rgba(60,30,30,.85)', ew=(on?5:2)*s;
+  const out=()=>{ g.lineWidth=ew; g.strokeStyle=edge; g.stroke(); };
+  g.save(); g.translate(c.x,c.y); g.rotate(F.ang); g.scale(F.hs,1);   // うしろむきの ときは 左右を いれかえる
+  if(dim){ g.globalAlpha=0.55; g.setLineDash([8*s,6*s]); }
+  if(o.k==='lungs'){
+    const br=1+0.05*Math.sin(t/1600*Math.PI*2);  // いきの ふくらみ
+    for(const m of [-1,1]){
+      const X=v=>m*v*rx*br, Y=v=>v*ry*br;
+      g.beginPath(); g.moveTo(X(0.13),Y(-0.72));
+      g.bezierCurveTo(X(0.15),Y(-1.18),X(0.47),Y(-1.15),X(0.6),Y(-0.7));
+      g.bezierCurveTo(X(0.84),Y(-0.2),X(0.9),Y(0.6),X(0.84),Y(1.05));
+      g.quadraticCurveTo(X(0.5),Y(0.78),X(0.15),Y(1.0));
+      if(m<0){ g.quadraticCurveTo(X(0.38),Y(0.72),X(0.30),Y(0.42)); g.quadraticCurveTo(X(0.2),Y(0.15),X(0.12),Y(0.05)); }   // 心臓の くぼみ
+      g.closePath();
+      g.fillStyle=krRG(X(0.5),Y(-0.1),rx*0.55,'#fbc9d0','#e27c90'); g.fill(); out();
+      // はいの しきり（葉）
+      g.strokeStyle='rgba(120,40,60,.55)'; g.lineWidth=1.6*s; g.beginPath();
+      g.moveTo(X(0.45),Y(-0.8)); g.quadraticCurveTo(X(0.55),Y(0.2),X(0.7),Y(0.95));
+      if(m>0){ g.moveTo(X(0.16),Y(-0.05)); g.quadraticCurveTo(X(0.5),Y(-0.1),X(0.86),Y(0.0)); }
+      g.stroke();
+      // 気管支（えだわかれ）
+      g.strokeStyle='rgba(255,248,240,.95)'; g.lineWidth=4*s; g.lineCap='round'; g.beginPath(); g.moveTo(0,Y(-0.45)); g.lineTo(X(0.3),Y(-0.15)); g.stroke();
+      g.lineWidth=2.4*s; g.beginPath();
+      for(const [ex,ey] of [[0.5,-0.55],[0.6,0.15],[0.45,0.6],[0.25,0.55]]){ g.moveTo(X(0.3),Y(-0.15)); g.lineTo(X(ex),Y(ey));
+        g.moveTo(X(ex),Y(ey)); g.lineTo(X(ex+0.1),Y(ey-0.15)); g.moveTo(X(ex),Y(ey)); g.lineTo(X(ex+0.08),Y(ey+0.12)); }
+      g.stroke();
+    }
+    // 気管（わっかの なんこつ）
+    g.fillStyle='#f6ece4'; g.beginPath(); g.roundRect(-rx*0.055,-ry*1.38,rx*0.11,ry*0.95,rx*0.03); g.fill(); g.lineWidth=2*s; g.strokeStyle=edge; g.stroke();
+    g.strokeStyle='rgba(120,90,80,.7)'; g.lineWidth=1.4*s; g.beginPath();
+    for(let k=0;k<7;k++){ const y=-ry*1.3+k*ry*0.12; g.moveTo(-rx*0.055,y); g.lineTo(rx*0.055,y); } g.stroke();
+  }else if(o.k==='heart'){
+    const b=1+0.07*Math.max(0,Math.sin(t/850*Math.PI*2));   // どきどき
+    // 太い 血管（赤＝動脈・青＝静脈）
+    krTube([{x:rx*0.55,y:-ry*0.4},{x:rx*0.55,y:-ry*1.9}], rx*0.26, '#4c6ef5', '#233a8c');                     // 大静脈
+    krTube([{x:-rx*0.15,y:-ry*0.5},{x:-rx*0.45,y:-ry*1.15},{x:-rx*0.85,y:-ry*1.25}], rx*0.24, '#748ffc', '#233a8c'); // 肺動脈
+    krTube([{x:rx*0.08,y:-ry*0.5},{x:rx*0.1,y:-ry*1.55},{x:-rx*0.2,y:-ry*1.9},{x:-rx*0.55,y:-ry*1.65},{x:-rx*0.6,y:-ry*1.0}], rx*0.28, '#e03131', '#7a1414');   // 大動脈
+    g.scale(b,b);
+    g.beginPath(); g.moveTo(rx*0.72,-ry*0.5);
+    g.bezierCurveTo(rx*1.05,ry*0.35,rx*0.35,ry*1.0,-rx*0.72,ry*0.98);
+    g.bezierCurveTo(-rx*1.08,ry*0.6,-rx*1.02,-ry*0.4,-rx*0.5,-ry*0.72);
+    g.quadraticCurveTo(rx*0.1,-ry*0.98,rx*0.72,-ry*0.5); g.closePath();
+    g.fillStyle=krRG(-rx*0.1,-ry*0.1,rx*1.0,'#f06b6b','#a51d24'); g.fill(); out();
+    g.strokeStyle='rgba(255,212,120,.85)'; g.lineWidth=2.4*s; g.beginPath(); g.moveTo(-rx*0.05,-ry*0.62); g.bezierCurveTo(-rx*0.15,ry*0.0,-rx*0.3,ry*0.5,-rx*0.55,ry*0.85); g.stroke();   // かんじょう 動脈
+  }else if(o.k==='liver'){
+    g.beginPath(); g.moveTo(-rx*1.0,-ry*0.3);
+    g.bezierCurveTo(-rx*0.5,-ry*1.25,rx*0.6,-ry*1.35,rx*1.0,-ry*0.6);
+    g.bezierCurveTo(rx*1.15,ry*0.2,rx*0.9,ry*1.1,rx*0.55,ry*1.15);
+    g.bezierCurveTo(rx*0.1,ry*1.0,-rx*0.5,ry*0.4,-rx*1.0,-ry*0.3); g.closePath();
+    g.fillStyle=krRG(rx*0.2,-ry*0.3,rx*0.9,'#c4574a','#6e1f1b'); g.fill(); out();
+    g.strokeStyle='rgba(255,220,210,.5)'; g.lineWidth=1.6*s; g.beginPath(); g.moveTo(-rx*0.05,-ry*1.05); g.quadraticCurveTo(-rx*0.05,ry*0.1,-rx*0.15,ry*0.55); g.stroke();
+    g.beginPath(); g.ellipse(rx*0.38,ry*0.95,rx*0.12,ry*0.38,0.3,0,Math.PI*2); g.fillStyle='#7fa843'; g.fill(); g.lineWidth=1.6*s; g.strokeStyle='#3d5a1c'; g.stroke();   // たんのう
+  }else if(o.k==='stomach'){
+    krTube([{x:rx*1.05,y:ry*0.3},{x:rx*1.45,y:ry*0.55},{x:rx*1.4,y:ry*1.25}], ry*0.28, '#f2b08f', 'rgba(60,30,30,.85)');   // 十二指腸
+    g.beginPath(); g.moveTo(rx*0.48,-ry*0.78);
+    g.bezierCurveTo(rx*0.35,-ry*0.1,rx*0.6,ry*0.32,rx*1.05,ry*0.12);
+    g.lineTo(rx*1.12,ry*0.48);
+    g.bezierCurveTo(rx*0.6,ry*1.25,-rx*0.9,ry*1.2,-rx*1.0,ry*0.0);
+    g.bezierCurveTo(-rx*1.05,-ry*0.95,-rx*0.15,-ry*1.38,rx*0.22,-ry*0.88); g.closePath();
+    g.fillStyle=krRG(-rx*0.3,-ry*0.2,rx*1.0,'#fbc49f','#d9714a'); g.fill(); out();
+    g.save(); g.clip(); g.strokeStyle='rgba(150,60,30,.45)'; g.lineWidth=1.8*s;   // ひだ
+    for(let k=0;k<4;k++){ g.beginPath(); for(let i=0;i<=20;i++){ const x=-rx*0.85+i/20*rx*1.6, y=-ry*0.35+k*ry*0.28+Math.sin(i*1.3+k)*ry*0.06+(x/rx)*(x/rx)*ry*0.25; i?g.lineTo(x,y):g.moveTo(x,y); } g.stroke(); }
+    g.restore();
+  }else if(o.k==='large'){
+    const pts=[[0.85,1.0],[0.85,-0.6],[0.78,-0.9],[0.6,-1.0],[-0.6,-1.0],[-0.78,-0.9],[-0.85,-0.6],[-0.85,0.6],[-0.7,0.95],[-0.45,0.85],[-0.25,1.0],[-0.12,1.3]].map(([x,y])=>({x:x*rx,y:y*ry}));
+    const tw=ry*0.40;
+    krTube([{x:rx*0.82,y:ry*1.05},{x:rx*0.7,y:ry*1.3}], tw*0.22, '#e6b58a', edge);   // ちゅうすい
+    krTube(pts, tw, '#e2b083', on?'#1f2937':'rgba(90,50,25,.9)', 'rgba(255,240,220,.6)');
+    // ふくろの くびれ（大腸の しるし）
+    g.strokeStyle='rgba(120,70,35,.7)'; g.lineWidth=1.8*s;
+    for(let i=0;i<pts.length-1;i++){ const a=pts[i], b=pts[i+1], d=sub(b,a), L=len(d), n={x:-d.y/L,y:d.x/L};
+      for(let q=tw*0.9;q<L-tw*0.3;q+=tw*0.9){ const p={x:a.x+d.x*q/L,y:a.y+d.y*q/L};
+        g.beginPath(); g.moveTo(p.x+n.x*tw*0.45,p.y+n.y*tw*0.45); g.quadraticCurveTo(p.x+d.x/L*tw*0.25,p.y+d.y/L*tw*0.25,p.x-n.x*tw*0.45,p.y-n.y*tw*0.45); g.stroke(); } }
+  }else if(o.k==='small'){
+    g.beginPath(); g.ellipse(0,0,rx,ry,0,0,Math.PI*2); g.fillStyle='rgba(246,200,180,.55)'; g.fill(); out();
+    g.save(); g.beginPath(); g.ellipse(0,0,rx*0.98,ry*0.98,0,0,Math.PI*2); g.clip();
+    const P=[], rows=6, tw=ry*0.27;   // くねくね おりたたまれた 長い くだ
+    for(let k=0;k<rows;k++){ const y=-ry*0.80+k*ry*0.32, hw=rx*0.88*Math.sqrt(Math.max(0.08,1-(y/ry)*(y/ry))), dir=k%2?-1:1;
+      for(let i=0;i<=16;i++){ const f=i/16, x=dir*(-hw+2*hw*f); P.push({x, y:y+Math.sin(f*Math.PI*3+k)*ry*0.05}); } }
+    krTube(P, tw, '#f4a98e', 'rgba(140,60,40,.85)', 'rgba(255,235,225,.75)');
+    g.restore();
+  }else if(o.k==='kidney'){
+    // 2つの そらまめ形 ＋ 血管 ＋ にょう管 ＋ ぼうこう（右の じんぞうは 肝臓が あるので 少し 下）
+    const B={x:0,y:(1.0-o.u)*F.T};
+    krTube([{x:-rx*0.07,y:-ry*2.2},{x:-rx*0.07,y:B.y-ry*0.8}], rx*0.07, '#e03131', '#7a1414');   // 大動脈
+    krTube([{x:rx*0.07,y:-ry*2.2},{x:rx*0.07,y:B.y-ry*0.8}], rx*0.08, '#4c6ef5', '#233a8c');    // 大静脈
+    for(const sx of [-1,1]){ const cy=sx>0?ry*0.3:-ry*0.1, hx=sx*rx*0.45;
+      krTube([{x:-rx*0.07,y:cy-ry*0.15},{x:hx,y:cy-ry*0.15}], rx*0.035, '#e03131', '#7a1414');
+      krTube([{x:rx*0.07,y:cy+ry*0.1},{x:hx,y:cy+ry*0.1}], rx*0.04, '#4c6ef5', '#233a8c');
+      krTube([{x:hx,y:cy+ry*0.3},{x:sx*rx*0.30,y:B.y*0.6},{x:sx*rx*0.10,y:B.y-ry*0.4}], rx*0.03, '#f2d36b', '#8a6d10');   // にょう管
+    }
+    g.beginPath(); g.ellipse(0,B.y,rx*0.30,ry*0.6,0,0,Math.PI*2); g.fillStyle=krRG(0,B.y,rx*0.3,'#fbe7a0','#d9b23f'); g.fill(); out();   // ぼうこう
+    for(const sx of [-1,1]){ const cy=sx>0?ry*0.3:-ry*0.1, cx=sx*rx*0.64, w=rx*0.2, h=ry*1.05, m=sx;
+      g.beginPath(); g.moveTo(cx,cy-h);
+      g.bezierCurveTo(cx+m*w*1.35,cy-h, cx+m*w*1.35,cy+h, cx,cy+h);
+      g.bezierCurveTo(cx-m*w*1.0,cy+h, cx-m*w*1.0,cy+h*0.35, cx-m*w*0.55,cy+h*0.2);
+      g.quadraticCurveTo(cx-m*w*0.25,cy, cx-m*w*0.55,cy-h*0.2);
+      g.bezierCurveTo(cx-m*w*1.0,cy-h*0.35, cx-m*w*1.0,cy-h, cx,cy-h); g.closePath();
+      g.fillStyle=krRG(cx,cy,w*1.1,'#c45a6c','#7d2235'); g.fill(); out(); }
+  }
+  g.restore();
+  return c;
+}
+function krGullet(F,M,hi){   // 食道（口から 胃まで）
+  const s=DPR(), P=[M,at(F,-0.02,-0.10),at(F,-0.03,0.15),at(F,-0.06,0.44),at(F,-0.10,0.50)];
+  const on = hi || (kr.flow && kr.flow.step===1);
+  g.save(); krTube(P, F.w*0.06, '#eba597', on?'#1f2937':'rgba(60,30,30,.7)', 'rgba(255,235,228,.7)'); g.restore();
+}
+// ゆびさきが その ものの 中に あるか
+function krHit(o,F,p){
+  const c=at(F,o.x,o.u), d=sub(p,c);
+  const lx=d.x*F.ex.x+d.y*F.ex.y, ly=d.x*F.ey.x+d.y*F.ey.y;
+  let rx=o.rx*F.w, ry=o.ry*F.T; if(o.k==='large'){ rx*=1.05; ry*=1.1; }
+  return (lx*lx)/(rx*rx)+(ly*ly)/(ry*ry) <= 1;
+}
+function krMouth(F){ const a=pt(9), b=pt(10); if(a&&b) return mid(a,b); const n=pt(0); return n?{x:n.x,y:n.y+F.w*0.12}:at(F,0,-0.30); }
+// 食べ物の 通り道：いま どこに あるか
+function krFlowAt(F,M,t){
+  let e=t-kr.flow.t0;
+  for(let i=0;i<KR_FOOD.length;i++){ const st=KR_FOOD[i];
+    if(e<st.ms || i===KR_FOOD.length-1){
+      const P=st.pts.map(q=>q==='MOUTH'?M:at(F,q[0],q[1])), f=Math.min(1,e/st.ms);
+      let L=[0]; for(let k=1;k<P.length;k++) L.push(L[k-1]+len(sub(P[k],P[k-1])));
+      const goal=L[L.length-1]*f; let k=1; while(k<P.length-1 && L[k]<goal) k++;
+      const p = P.length===1 ? P[0] : (()=>{ const a=P[k-1], b=P[k], q=(goal-L[k-1])/Math.max(1e-6,L[k]-L[k-1]); return {x:a.x+(b.x-a.x)*q, y:a.y+(b.y-a.y)*q}; })();
+      return {i, p, done: i===KR_FOOD.length-1 && e>=st.ms};
+    }
+    e-=st.ms;
+  }
+}
+// 画面の 点 → からだの いち（x：本人の 右が ＋、u：かた0〜こし1）
+function krBody(F,p){ const d=sub(p,F.S); return {x:(d.x*F.ex.x+d.y*F.ex.y)/F.w*F.hs, u:(d.x*F.ey.x+d.y*F.ey.y)/F.T}; }
+// クイズ：1人ずつ 描く（よそうは Q.me[人の 番号] に）
+function krDrawQuiz(F,t){
+  const Q=kr.quiz, s=DPR(), M=krMouth(F), me=Q.me[kr.cur]||(Q.me[kr.cur]={});
+  kr.dwellK=null;
+  const drawAll=(hiK,alpha)=>{
+    for(const k of ['large','small','liver','stomach','gullet','lungs','heart']){
+      const on=k===hiK; g.save(); g.globalAlpha=on?1:alpha;
+      if(k==='gullet') krGullet(F,M,on); else { const o=KR_ORGANS.find(o=>o.k===k), keep=kr.pick; kr.pick=on?k:null; krShape(o,F,t,false); kr.pick=keep; }
+      g.restore(); } };
+  if(F.back){ const h=at(F,0,-0.75); krTag(h.x, Math.max(80*s,h.y), 'まえを むいてね', '#1f2937'); return; }
+  if(Q.phase==='end'){ drawAll(null,1); return; }
+  const o=krQTarget(Q.list[Q.i]);
+  if(Q.phase==='ask'){
+    if(me.P){ krQuizPin(F,me,null,t); return; }   // きまった 人は もう ひとりを まつ
+    // むね・おなかの あたりで とまっている 手を さがす
+    const tips=[pt(19)||pt(15), pt(20)||pt(16)].filter(Boolean);
+    let tip=null; for(const p of tips){ const b=krBody(F,p); if(Math.abs(b.x)<0.7 && b.u>-0.3 && b.u<1.15){ tip=p; break; } }
+    for(const p of tips){ g.lineWidth=5*s; g.strokeStyle='#1f2937'; g.fillStyle='rgba(255,255,255,.85)';
+      g.beginPath(); g.arc(p.x,p.y,16*s,0,Math.PI*2); g.fill(); g.stroke(); }
+    if(!tip){ me.holdP=null; return; }
+    if(!me.holdP || len(sub(tip,me.holdP))>F.w*0.10){ me.holdP={x:tip.x,y:tip.y}; me.holdT=t; }
+    const prog=Math.min(1,(t-me.holdT)/KR_QUIZ_HOLD);
+    g.lineWidth=7*s; g.strokeStyle=KR_PINK; g.beginPath(); g.arc(tip.x,tip.y,24*s,-Math.PI/2,-Math.PI/2+prog*Math.PI*2); g.stroke();
+    if(prog>=1){
+      const P=krBody(F,tip), r=Math.hypot((P.x-o.x)/o.rx,(P.u-o.u)/o.ry), dx=o.x-P.x, du=o.u-P.u;
+      Object.assign(me,{P, r, ok:r<=KR_QUIZ_OK, sx:F.S.x,
+        dir: r<=KR_QUIZ_OK ? '' : Math.abs(du)*1.5>Math.abs(dx) ? (du>0?'もう少し 下に あるよ。':'もう少し 上に あるよ。')
+                                 : (dx>0?'もう少し からだの 右がわに あるよ。':'もう少し からだの 左がわに あるよ。')});
+    }
+    return;
+  }
+  // こたえ：ほんものを 出して、よそうした ところに ◯か×
+  drawAll(o.k,0.28);
+  const c=at(F,o.x,o.u);
+  if(me.P){ const p=at(F,me.P.x,me.P.u);
+    if(!me.ok){ g.save(); g.setLineDash([8*s,6*s]); g.strokeStyle='#1f2937'; g.lineWidth=3*s; g.beginPath(); g.moveTo(p.x,p.y); g.lineTo(c.x,c.y); g.stroke(); g.restore(); }
+    krQuizPin(F,me,Q.showT,t); }
+  const sd=(o.x>=0?1:-1)*F.hs; krTag(c.x+F.ex.x*(o.rx*F.w+44*s)*sd, c.y+F.ex.y*(o.rx*F.w+44*s)*sd, o.label, KR_PINK);
+  // 手を あたまの 上に あげる → つぎへ（だれか ひとりで よい）
+  const no=pt(0); if([pt(15),pt(16)].filter(Boolean).some(w=>no && w.y < no.y-F.w*0.4)) kr.fUp=true;
+}
+// よそうの しるし：まだ（白い 点）／せいかい（◯）／ちがう（×）
+function krQuizPin(F,me,t0,t){
+  const s=DPR(), p=at(F,me.P.x,me.P.u);
+  if(t0==null){ g.fillStyle='#fff'; g.strokeStyle='#1f2937'; g.lineWidth=4*s; g.beginPath(); g.arc(p.x,p.y,12*s,0,Math.PI*2); g.fill(); g.stroke();
+    krTag(p.x, p.y+34*s, 'よそう', '#1f2937'); return; }
+  const k=Math.min(1,(t-t0)/250), R=(22+14*k)*s;     // ぽんと 大きく なる
+  g.save(); g.lineCap='round';
+  if(me.ok){ for(const [w,col] of [[14*s,'#fff'],[8*s,KR_PINK]]){ g.lineWidth=w; g.strokeStyle=col; g.beginPath(); g.arc(p.x,p.y,R,0,Math.PI*2); g.stroke(); } }
+  else { const d=R*0.62; for(const [w,col] of [[14*s,'#fff'],[8*s,'#1f2937']]){ g.lineWidth=w; g.strokeStyle=col; g.beginPath();
+      g.moveTo(p.x-d,p.y-d); g.lineTo(p.x+d,p.y+d); g.moveTo(p.x+d,p.y-d); g.lineTo(p.x-d,p.y+d); g.stroke(); } }
+  g.restore();
+  krTag(p.x, p.y+R+24*s, me.ok?'せいかい！':(me.r<=KR_QUIZ_NEAR?'おしい！':'よそう'), me.ok?KR_PINK:'#1f2937');
+}
+// クイズの すすみ（こまごとに 1かい・みんなの ぶんを 見て）
+function krQuizStep(L,t){
+  const Q=kr.quiz, s=DPR();
+  if(Q.phase==='ask'){
+    const o=krQTarget(Q.list[Q.i]);
+    krTag(cv.width/2, 40*s, '「'+o.label+'」は どこ？', KR_PINK);
+    const front=L.filter(e=>!e.F.back), any=Object.values(Q.me).some(m=>m.P);
+    if(any && front.every(e=>Q.me[e.pp.id] && Q.me[e.pp.id].P)){ Q.phase='show'; Q.showT=t; Q.raiseT=0; krQuizCard(); }
+    else if(any!==Q.wait){ Q.wait=any; krQuizCard(); }
+  }else if(Q.phase==='show'){
+    if(kr.fUp && t-Q.showT>1000){ if(!Q.raiseT) Q.raiseT=t; if(t-Q.raiseT>800) krQuizNext(); } else Q.raiseT=0;
+  }
+}
+function krDraw6(F,t){
+  if(!F) return;
+  const s=DPR(), pos={};
+  if(F.back){   // うしろむき：せなかがわの じんぞう
+    const o=KR_ORGANS.find(o=>o.k==='kidney');
+    krSpine(F);
+    if(krOn6('kidney')){ pos.kidney=krShape(o,F,t,false);
+    if(kr.pick!=='kidney') krPick('kidney'); }
+    krTag(at(F,0,-0.25).x, at(F,0,-0.25).y, 'せなかがわ', '#1f2937');
+    kr.dwellK=null;
+  }else{
+    if(kr.pick==='kidney') pos.kidney=krShape(KR_ORGANS.find(o=>o.k==='kidney'),F,t,true);   // 前から 見ると おくに ある
+    const M=krMouth(F);
+    for(const k of ['large','small','liver','stomach']) if(krOn6(k)){ pos[k]=krShape(KR_ORGANS.find(o=>o.k===k),F,t,false); }
+    if(krOn6('stomach')) krGullet(F,M);
+    for(const k of ['lungs','heart']) if(krOn6(k)){ pos[k]=krShape(KR_ORGANS.find(o=>o.k===k),F,t,false); }
+    if(kr.flow){
+      const r=krFlowAt(F,M,t), st=KR_FOOD[r.i];
+      if(r.i!==kr.flow.step){ kr.flow.step=r.i; kr.flow.organ=st.organ||null;
+        const o=st.organ&&KR_ORGANS.find(o=>o.k===st.organ);
+        krCard6((o?o.name:st.name)+'<small style="font-size:16px;font-weight:400;color:#4b5563"> '+(r.i+1)+'／'+KR_FOOD.length+'</small>', o?o.text:st.text); }
+      if(r.done){ krCard6(KR_FOOD_END.name, KR_FOOD_END.text); krFlowStop(); return; }   // おわったら まとめを 出して、もう いちど おせる
+      if(!r.done){
+        g.fillStyle='rgba(234,179,8,.95)'; g.strokeStyle='#1f2937'; g.lineWidth=3*s;
+        g.beginPath(); g.arc(r.p.x,r.p.y,11*s,0,Math.PI*2); g.fill(); g.stroke();
+        const o=st.organ&&KR_ORGANS.find(o=>o.k===st.organ);
+        krTag(r.p.x+F.ex.x*(70*s)*-1, r.p.y+F.ex.y*(70*s)*-1, o?o.label:st.label, KR_PINK);
+      }
+    }else{
+      // ゆびさき（左右の 人さしゆび → 手首）
+      const tips=[pt(19)||pt(15), pt(20)||pt(16)].filter(Boolean);
+      let hitK=null, hitP=null;
+      for(const p of tips){ for(const o of KR_ORGANS){ if(!o.back && krOn6(o.k) && krHit(o,F,p)){ hitK=o.k; hitP=p; break; } } if(hitK) break; }
+      if(hitK!==kr.dwellK){ kr.dwellK=hitK; kr.dwellT=t; }
+      for(const p of tips){
+        g.lineWidth=5*s; g.strokeStyle='#1f2937'; g.fillStyle='rgba(255,255,255,.85)';
+        g.beginPath(); g.arc(p.x,p.y,16*s,0,Math.PI*2); g.fill(); g.stroke(); }
+      if(hitK && hitP){
+        const prog=Math.min(1,(t-kr.dwellT)/900);
+        g.lineWidth=7*s; g.strokeStyle=KR_PINK; g.beginPath(); g.arc(hitP.x,hitP.y,24*s,-Math.PI/2,-Math.PI/2+prog*Math.PI*2); g.stroke();
+        if(prog>=1 && kr.pick!==hitK) krPick(hitK);
+      }
+    }
+  }
+  // えらんだ ものの 名前
+  if(kr.pick && pos[kr.pick] && !kr.flow){ const o=KR_ORGANS.find(o=>o.k===kr.pick), c=pos[o.k], sd=(o.x>=0?1:-1)*F.hs;
+    krTag(c.x + F.ex.x*(o.rx*F.w+40*s)*sd, c.y + F.ex.y*(o.rx*F.w+40*s)*sd, o.label+(o.back&&!F.back?'（せなかがわ）':''), KR_PINK); }
+}
+
+/* ===== まいかい 描く ===== */
+function krRender(){
+  requestAnimationFrame(krRender);
+  if(!kr.src) return;
+  const t=performance.now();
+  if(kr.src==='demo') krFeedAll(krDemoAll(t),t);
+  krPaint(t);
+}
+function krPaint(t){
+  g.clearRect(0,0,cv.width,cv.height);
+  // うつって いる 人ごとに ものさしを つくる（画面の 左から じゅんに）
+  const L=[];
+  for(const pp of kr.ppl){ krUse(pp); const F=krFrame(); const hip=!!(pt(23)&&pt(24)); krKeep(pp); if(F) L.push({pp,F,hip}); }
+  L.sort((a,b)=>a.F.S.x-b.F.S.x);
+  let hint='';
+  if(!L.length && !kr.puz && !kr.v3 && !kr.b3) hint='からだが うつるように カメラから はなれてね';
+  else if(kr.mode===6 && !kr.v3 && !kr.puz && L.some(e=>!e.hip)) hint='おなかまで うつると もっと よく わかるよ';
+  $('krHint').hidden=!hint; if(hint && $('krHint').textContent!==hint) $('krHint').textContent=hint;
+  kr.fBest=null; kr.fUp=false; kr.b3L=kr.b3R=0; kr.b3Seen=false; kr.b3Sh=null;
+  for(const e of L){ krUse(e.pp);
+    if(kr.mode===6 && kr.src==='demo' && !kr.v3 && !kr.puz) krDemoBody(e.F);
+    if(kr.mode===4){ if(kr.b3) krB3Person(e.F); if(kr.b3 && kr.a3){ g.save(); g.beginPath(); g.rect(0,0,cv.width/2,cv.height); g.clip(); g.translate(-cv.width/4,0); krDraw4(e.F,t); g.restore(); } else if(!kr.b3) krDraw4(e.F,t); } else if(kr.v3||kr.puz){} else if(kr.quiz) krDrawQuiz(e.F,t); else krDraw6(e.F,t);
+    krKeep(e.pp); }
+  if(kr.mode===4){ if(kr.b3) krB3Step(L,t); else krCard4(t); }
+  else if(kr.v3) krV3Hand(L,t);
+  else if(kr.puz) krPuzDraw(L,t);
+  else if(kr.quiz) krQuizStep(L,t);
+  krCapSync();
+}
+requestAnimationFrame(krRender);
+
+/* ===== カメラなしで ためす（うごく 人形） ===== */
+// 6年で 人形の ときだけ、うすい からだの かげを 出す（カメラの ときは 本人が うつる）
+function krDemoBody(F){
+  const s=DPR(), ea=pt(7), eb=pt(8);
+  g.save(); g.fillStyle='rgba(255,255,255,.85)'; g.strokeStyle='rgba(75,85,99,.45)'; g.lineWidth=2*s;
+  const P=[[-0.62,0.02],[0.62,0.02],[0.50,0.55],[0.55,1.05],[-0.55,1.05],[-0.50,0.55]].map(([x,u])=>at(F,x,u));
+  g.beginPath(); P.forEach((p,i)=>i?g.lineTo(p.x,p.y):g.moveTo(p.x,p.y)); g.closePath(); g.fill(); g.stroke();
+  if(ea&&eb){ const c=mid(ea,eb), r=len(sub(ea,eb))*0.62; g.beginPath(); g.ellipse(c.x,c.y-r*0.3,r,r*1.2,F.ang,0,Math.PI*2); g.fill(); g.stroke(); }
+  g.lineCap='round'; g.lineJoin='round';
+  for(const ch of [[11,13,15],[12,14,16],[23,25,27],[24,26,28]]){ const Q=ch.map(pt); if(Q.some(q=>!q)) continue;
+    for(const [w,col] of [[F.w*0.22+4*s,'rgba(75,85,99,.45)'],[F.w*0.22,'rgba(255,255,255,.85)']]){
+      g.strokeStyle=col; g.lineWidth=w; g.beginPath(); Q.forEach((q,i)=>i?g.lineTo(q.x,q.y):g.moveTo(q.x,q.y)); g.stroke(); } }
+  g.restore();
+}
+// 人形の 大きさ：かた y=0.27、こし y=0.58、かたはば 0.2（画面の よこ）
+const KR_DM={sy:0.27, hy:0.58, w:0.2};
+const krRaw=(x,u)=>[0.5-KR_DM.w*x, KR_DM.sy+(KR_DM.hy-KR_DM.sy)*u];   // からだの いち → カメラの 点
+// ?futari を つけて ひらくと 人形が 2人（左右に 小さく ならべる）
+function krDemoAll(t){
+  if(!kr.demo2) return [krDemoPose(t,0)];
+  const fit=(L,c)=>L.map(p=>({x:c+(p.x-0.5)*0.62, y:0.5+(p.y-0.5)*0.78, visibility:p.visibility}));
+  return [fit(krDemoPose(t,0),0.29), fit(krDemoPose(t+1300,1),0.71)];
+}
+function krDemoPose(t,who=0){
+  const L=[]; for(let i=0;i<33;i++) L.push({x:0.5,y:0.5,visibility:0});
+  const set=(i,x,y)=>{ L[i]={x,y,visibility:1}; };
+  const tilt=0.035*Math.sin(t/2300);                 // くびを かしげる
+  set(0,0.5+tilt,0.15); set(7,0.556+tilt*0.6,0.14); set(8,0.444+tilt*0.6,0.14); set(9,0.515+tilt,0.18); set(10,0.485+tilt,0.18);
+  set(11,0.60,0.27); set(12,0.40,0.27); set(23,0.575,0.58); set(24,0.425,0.58);
+  set(25,0.58,0.76); set(26,0.42,0.76); set(27,0.585,0.93); set(28,0.415,0.93); set(31,0.60,0.965); set(32,0.40,0.965);
+  // 本人の 左うで（画面では 左）を よこに だして、ひじから 先を 上へ まげたり のばしたり。かたも 少し 上げ下げ
+  // th：前うでの むき（0＝まっすぐ よこ、0.7π＝かたの ほうへ まげる）。画面は 4:3 なので よこを 3/4 に
+  const b=(Math.sin(t/1400)+1)/2, th=0.05*Math.PI + b*0.68*Math.PI;
+  const sh=Math.sin(t/3100)*0.6;                     // かたの 上げ下げ
+  const ex=0.60+0.15*Math.cos(sh), ey=0.27+0.20*Math.sin(sh)*0.75+0.02; set(13,ex,ey);
+  const wx=ex+0.12*Math.cos(th+sh*0.3), wy=ey-0.16*Math.sin(th+sh*0.3); set(15,wx,wy);
+  const tw=th+sh*0.3+0.35+0.35*Math.sin(t/900);            // てくびも まげる
+  set(19, wx+0.03*Math.cos(tw), wy-0.04*Math.sin(tw));
+  // 本人の 右うで：6年では からだの 上を さがす、4年では のばした まま
+  if(kr.mode===6 && kr.quiz){   // クイズ：すこし ずれた ところを よそうして、こたえを 見たら 手を あげる
+    const Q=kr.quiz, o=Q.phase==='end'?null:krQTarget(Q.list[Q.i]);
+    if(o && Q.phase==='show' && t-Q.showT>2500){ set(14,0.36,0.14); set(16,0.35,0.02); set(20,0.35,0.0); }
+    else if(o){ const off=(Q.i+who)%2 ? [0.30,0.30] : [0.02,0.02];   // ◯の ときと ×の ときを かわりばんこに
+      const [hx,hy]=krRaw(o.x+off[0], o.u+off[1]); set(14,0.33,0.45); set(16,hx,hy); set(20,hx,hy); }
+    else { set(14,0.36,0.42); set(16,0.33,0.56); set(20,0.33,0.58); }
+    return L;
+  }
+  if(kr.mode===6){
+    const k=Math.floor(t/2600)%7;
+    if(k===6){ for(const p of L) p.x=1-p.x; L[0].visibility=0; for(const i of [9,10,15,16,19,20]) L[i].visibility=0; return L; }   // うしろを むく
+    const o=[['lungs',0.23,0.30],['heart',-0.07,0.37],['liver',0.25,0.54],['stomach',-0.15,0.58],['small',0,0.80],['large',-0.23,0.85]][k];
+    const [hx,hy]=krRaw(o[1],o[2]);
+    set(14,0.33,0.45); set(16,hx,hy); set(20,hx,hy);
+  }else{ set(14,0.36,0.42); set(16,0.33,0.56); set(20,0.33,0.58); }
+  return L;
+}
+$('krDemo').onclick=()=>{ $('krStart').hidden=true; kr.src='demo'; krResize(); };
+</script>
+
+<script type="module">
+/* ===== カメラと からだの トラッキング ===== */
+const $=id=>document.getElementById(id);
+const VER='0.10.14', video=$('krVideo');
+let pose=null, lastT=-1, modelP=null;
+async function loadModel(){
+  const vision=await import(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}`);
+  const fs=await vision.FilesetResolver.forVisionTasks(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}/wasm`);
+  const opts=d=>({baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task',delegate:d},
+    runningMode:'VIDEO',numPoses:(window.kr&&window.kr.max)||1});
+  try{ return await vision.PoseLandmarker.createFromOptions(fs,opts('GPU')); }
+  catch(e){ return await vision.PoseLandmarker.createFromOptions(fs,opts('CPU')); }
+}
+// ひらいたら すぐ 裏で 読みこむ
+modelP=loadModel().catch(e=>{ modelP=null; throw e; }); modelP.catch(()=>{});
+
+async function start(){
+  const err=$('krErr'); err.hidden=true; $('krGo').disabled=true; $('krGo').textContent='じゅんびちゅう…';
+  try{
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ const e=new Error(); e.name='NoCamPage'; throw e; }
+    const st=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:960},height:{ideal:720},aspectRatio:{ideal:4/3},facingMode:'user'},audio:false});
+    video.srcObject=st; await video.play();
+    window.kr.ar=(video.videoWidth||4)/(video.videoHeight||3);
+    pose=await (modelP||(modelP=loadModel()));
+    $('krStart').hidden=true; window.kr.src='cam';
+    requestAnimationFrame(()=>window.dispatchEvent(new Event('resize')));
+    loop();
+  }catch(e){
+    $('krGo').disabled=false; $('krGo').textContent='もう いちど'; err.hidden=false;
+    err.textContent = e&&e.name==='NoCamPage' ? 'この ひらきかたでは カメラが つかえません。Chrome で ひらいてね。'
+      : e&&(e.name==='NotFoundError'||e.name==='NotReadableError') ? 'カメラが みつかりません。ほかの アプリで つかっていないか みてね。'
+      : e&&e.name==='NotAllowedError' ? 'カメラが つかえません。先生に カメラを ゆるして もらってね。'
+      : 'じゅんびが できませんでした（'+(e&&(e.name||e.message)||'')+'）。インターネットに つながっているか みてね。';
+  }
+}
+$('krGo').onclick=start;
+function loop(){
+  requestAnimationFrame(loop);
+  if(!pose||video.readyState<2||video.currentTime===lastT) return;
+  lastT=video.currentTime;
+  const now=performance.now(), r=pose.detectForVideo(video,now);
+  window.krFeedAll(r.landmarks||[],now);
+  const K=window.kr;
+  if(K.b3 && !K.j3){ if(!faceP) faceP=loadFace().then(f=>face=f).catch(()=>{ faceP=null; });
+    if(face && (++faceN%2===0)){ const fr=face.detectForVideo(video,now), b=fr.faceBlendshapes&&fr.faceBlendshapes[0];
+      if(b){ const c={}; b.categories.forEach(x=>c[x.categoryName]=x.score);
+        // 名前は 本人から 見た 左右。h＋＝本人の 左を 見る、v＋＝上を 見る
+        K.face={t:now, jaw:(c.jawOpen||0)*1.4,
+          h:((c.eyeLookOutLeft||0)+(c.eyeLookInRight||0)-(c.eyeLookInLeft||0)-(c.eyeLookOutRight||0))*0.9,
+          v:((c.eyeLookUpLeft||0)+(c.eyeLookUpRight||0)-(c.eyeLookDownLeft||0)-(c.eyeLookDownRight||0))*0.8}; } } }
+}
+let face=null, faceP=null, faceN=0;
+async function loadFace(){
+  const vision=await import(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}`);
+  const fs=await vision.FilesetResolver.forVisionTasks(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}/wasm`);
+  const opts=d=>({baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',delegate:d},
+    runningMode:'VIDEO',numFaces:1,outputFaceBlendshapes:true});
+  try{ return await vision.FaceLandmarker.createFromOptions(fs,opts('GPU')); }
+  catch(e){ return await vision.FaceLandmarker.createFromOptions(fs,opts('CPU')); }
+}
+</script>
+<script type="module">
+/* ===== 3Dで みる（three.js・立体は Blender で 作った organs_glb.js／bones_glb.js） ===== */
+// 1つの キャンバスと 光を 2つの 立体（6年の 臓器・4年の ほねと 筋肉）で つかう
+let krBase=null;
+async function krV3Base(){
+  if(krBase) return krBase;
+  const THREE=await import('three'), {GLTFLoader}=await import('three/addons/loaders/GLTFLoader.js'),
+        {DRACOLoader}=await import('three/addons/loaders/DRACOLoader.js'), {RoomEnvironment}=await import('three/addons/environments/RoomEnvironment.js');
+  const cvs=document.getElementById('krV3');
+  const R=new THREE.WebGLRenderer({canvas:cvs,antialias:true,alpha:true});
+  R.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5)); R.outputColorSpace=THREE.SRGBColorSpace;
+  R.toneMapping=THREE.ACESFilmicToneMapping; R.toneMappingExposure=1.05;
+  const scene=new THREE.Scene(), cam=new THREE.PerspectiveCamera(28,1,0.05,20);
+  // 光：まわりの 映りこみ（ぬれた つや）＋ 上からの 光 ＋ うしろの ふちの 光
+  const pm=new THREE.PMREMGenerator(R); scene.environment=pm.fromScene(new RoomEnvironment(R),0.04).texture; pm.dispose();
+  scene.add(new THREE.HemisphereLight(0xffffff,0x9a8f88,0.55));
+  const L1=new THREE.DirectionalLight(0xfffaf4,2.0); L1.position.set(0.6,1.3,1.5); scene.add(L1);
+  const L2=new THREE.DirectionalLight(0xe8f0ff,0.9); L2.position.set(-1.3,0.4,-1.0); scene.add(L2);
+  const ld=new GLTFLoader(), dr=new DRACOLoader(); dr.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/'); ld.setDRACOLoader(dr);
+  async function glb(file,key){
+    if(!window[key]) await new Promise((ok,ng)=>{ const sc=document.createElement('script'); sc.src=file; sc.onload=ok; sc.onerror=ng; document.head.appendChild(sc); });
+    const bin=atob(window[key]), buf=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) buf[i]=bin.charCodeAt(i);
+    return (await new Promise((ok,ng)=>ld.parse(buf.buffer,'',ok,ng))).scene;
+  }
+  // ぬれた つや（ほねは つや なし）
+  function skin(n,wet,sheen){ const a=n.material;
+    n.material=new THREE.MeshPhysicalMaterial({color:a.color, roughness:wet?Math.max(0.3,a.roughness*0.9):0.7, metalness:0, vertexColors:!!n.geometry.attributes.color,
+      clearcoat:wet?0.55:0.08, clearcoatRoughness:0.32, sheen:sheen?0.6:0, sheenRoughness:0.5, sheenColor:new THREE.Color(0xffd6dc), envMapIntensity:wet?0.55:0.4, transparent:true});
+    return n.material; }
+  let live=null;     // いま 見せて いる 立体
+  return krBase={THREE,R,scene,cam,cvs,glb,skin,get live(){return live;},set live(v){live=v;}};
+}
+// 立体を 1つ つくる（kind: organs／bones）
+async function krV3Make(kind){
+  const B=await krV3Base(), {THREE,R,scene,cam,cvs}=B;
+  const FILE={organs:['organs_glb.js','KR_GLB'],bones:['bones_glb.js','KR_BONES_GLB'],joints:['joints_glb.js','KR_JOINT_GLB'],usagi:['usagi_glb.js','KR_USAGI_GLB'],hato:['hato_glb.js','KR_HATO_GLB']}[kind];
+  const m=await B.glb(FILE[0],FILE[1]);
+  const root=new THREE.Group(); root.visible=false; scene.add(root);
+  const box=new THREE.Box3().setFromObject(m), C=box.getCenter(new THREE.Vector3()), Z=box.getSize(new THREE.Vector3()); m.position.sub(C); root.add(m);
+  const G={}; let shell=null, SPREAD={};
+  const partOf = kind==='organs' ? (n=>n) : (n=>n.split('__')[0]);
+  if(kind==='organs'){
+    // からだの かげ（すきとおった どう）
+    shell=new THREE.Mesh(new THREE.CapsuleGeometry(0.15,0.40,8,32), new THREE.MeshStandardMaterial({color:0xd9e1ea,transparent:true,opacity:0.16,depthWrite:false,roughness:0.9}));
+    shell.scale.set(1.3,1,0.62); shell.position.set(0,-0.25-C.y,0.0-C.z); root.add(shell);
+    // ばらす ときの うごき（x 右・y 上・z 前）
+    SPREAD={lungs:[0,0.16,0],heart:[0,0.06,0.24],gullet:[0,0.26,0.10],liver:[0.20,0.02,0.12],stomach:[-0.20,0.0,0.14],
+            small:[0,-0.14,0.26],large:[0,-0.10,0.06],kidney:[0,-0.30,-0.10],spine:[0,0,-0.30]};
+    for(const o of m.children){ const k=o.name, mats=[];
+      o.traverse(n=>{ if(n.isMesh) mats.push(B.skin(n,k!=='spine',k==='lungs')); });
+      G[k]={o:[o],base:[o.position.clone()],mats,off:new THREE.Vector3(...(SPREAD[k]||[0,0,0])),pull:0}; }
+  }else{
+    // ほね・筋肉・関節：名前「部分__わけ」で まとめる。前うで（fore）は ひじで まわす
+    const nodes=[]; m.traverse(n=>{ if(n!==m && /__/.test(n.name) && !/^Mesh/.test(n.name)) nodes.push(n); });
+    for(const P of nodes){ const k=partOf(P.name), sd=/__-1$/.test(P.name)?-1:/__1$/.test(P.name)?1:0;
+      const g=G[k]||(G[k]={o:[],base:[],mats:[],off:new THREE.Vector3(),pull:0});
+      P.userData.part=k; P.userData.side=sd; P.userData.s0=P.scale.clone(); g.o.push(P); g.base.push(P.position.clone());
+      (function walk(n){ if(n.isMesh) g.mats.push(B.skin(n,k[0]==='m'||k==='eye',false)); n.children.forEach(c=>{ if(!nodes.includes(c)) walk(c); }); })(P); }
+  }
+  let yaw=0, pitch=0, sp=0, spT=0, pick=null, open=false, raf=0, bendL=0, bendR=0, bL=0, bR=0, shT=-0.3, shA=-0.3, fc={jaw:0,h:0,v:0}, fa={jaw:0,h:0,v:0}, vis={bone:true,muscle:true,joint:true};
+  const Y0=kind==='joints'?0.45:0, P0=kind==='joints'?0.22:0;   // 関節は ななめから
+  const ray=new THREE.Raycaster(), inv=new THREE.Quaternion(), out=new THREE.Vector3();
+  let D=1, zm=1, zmT=1, tx=0, ty=0, txT=0, tyT=0;
+  const unzoom=(now)=>{ zmT=1; txT=tyT=0; if(now){ zm=1; tx=ty=0; } };
+  const cls=k=> kind==='organs' ? 'organ' : k==='joint' ? 'joint' : k[0]==='m' ? 'muscle' : 'bone';
+  function size(){ const w=cvs.clientWidth, h=cvs.clientHeight; if(!w||!h) return;
+    if(cvs.width!==Math.round(w*R.getPixelRatio())||cvs.height!==Math.round(h*R.getPixelRatio())){ R.setSize(w,h,false); }
+    cam.aspect=w/h; const t=Math.tan(cam.fov*Math.PI/360);
+    const nh = kind==='organs'?0.82:Z.y*1.06, nw = kind==='organs'?0.82:Math.max(Z.x,Z.z)*(kind==='usagi'||kind==='hato'?1.08:1.04);
+    D=Math.max(nh/2/t, nw/2/t/cam.aspect)*(1+0.55*sp);
+    zm+=(zmT-zm)*0.2; tx+=(txT-tx)*0.2; ty+=(tyT-ty)*0.2;          // 大きく する（ゆび 2本・ホイール）
+    cam.position.set(tx,ty,D*zm); cam.lookAt(tx,ty,0); cam.updateProjectionMatrix(); }
+  function clampPan(){ const t=Math.tan(cam.fov*Math.PI/360), Ly=D*t*(1-zmT)*1.05, Lx=Ly*cam.aspect;
+    txT=Math.max(-Lx,Math.min(Lx,txT)); tyT=Math.max(-Ly,Math.min(Ly,tyT)); }
+  function frame(){ if(!open) return; raf=requestAnimationFrame(frame); size();
+    sp+=(spT-sp)*0.12; root.rotation.set(pitch,yaw,0);
+    inv.copy(root.quaternion).invert(); out.set(0,0,kind==='organs'?0.34:0.12).applyQuaternion(inv);   // えらんだ ものは 見て いる 人の ほうへ とりだす
+    bL+=(bendL-bL)*0.25; bR+=(bendR-bR)*0.25;
+    for(const k in G){ const g=G[k]; g.pull+=((k===pick?1:0)-g.pull)*0.14;
+      const c=cls(k), shown = c==='organ' || vis[c];
+      g.o.forEach((o,i)=>{ if(o.parent.userData.part) return;   // 手と 手くびの わは 前うでに ついて うごく
+        o.position.copy(g.base[i]).addScaledVector(g.off,sp).addScaledVector(out,g.pull); });
+      const dim = pick && k!==pick && k!=='spine'; const lit = pick && k===pick;
+      for(const mt of g.mats){ mt.visible=shown; mt.opacity=dim?(kind==='organs'?0.14:0.18):1; mt.depthWrite=!dim; mt.emissive&&mt.emissive.setHex(lit?0x2a0a0a:0x000000); } }
+    if(kind==='joints'){ shA+=(shT-shA)*0.25;
+      for(const k in G) for(const o of G[k].o){ if(o.name==='hinge__f') o.rotation.z=-bL*2.2; else if(o.name==='ball__h') o.rotation.z=shA; } }
+    if(kind==='bones'){ for(const q in fa) fa[q]+=(fc[q]-fa[q])*0.3;     // 口と 目（顔の うごき）
+      if(G.jaw) G.jaw.o.forEach(o=>o.rotation.x=fa.jaw*0.42);
+      if(G.eye) G.eye.o.forEach(o=>{ o.rotation.y=-fa.h*0.45; o.rotation.x=-fa.v*0.35; }); }
+    if(kind==='usagi'||kind==='hato'){ const v=Math.max(bL,bR), amp=kind==='hato'?2.2:1.9;   // こどもの ひじに あわせて 前あし・つばさを まげる
+      for(const k of ['fore','min']) if(G[k]) G[k].o.forEach(o=>{ if(o.userData.part!==k) return;
+        if(k==='fore') o.rotation.z=-v*amp; else o.scale.setScalar(1+0.18*v); }); }
+    if(kind==='bones') for(const [k,b] of [['fore',0],['min',0],['mout',0]]) if(G[k]) G[k].o.forEach(o=>{ if(o.userData.part!==k) return;
+      const s=o.userData.side, v=s>0?bR:bL;          // 1＝本人の 右（画面の 右）
+      if(k==='fore') o.rotation.z = s*v*2.2;                                              // ひじで 前うでが 上へ まがる（約125°）
+      else if(k==='min') o.scale.set(o.userData.s0.x*(1-0.20*v), o.userData.s0.y*(1+0.45*v), o.userData.s0.z*(1+0.35*v));  // ちぢんで ふくらむ
+      else o.scale.set(o.userData.s0.x*(1+0.04*v), o.userData.s0.y*(1-0.22*v), o.userData.s0.z*(1-0.15*v)); });          // のびて ほそく
+    if(shell) shell.material.opacity = pick ? 0.08 : 0.16;
+    R.render(scene,cam); }
+  const api={
+    open(){ if(B.live && B.live!==api) B.live.close(); B.live=api; open=true; root.visible=true; yaw=Y0; pitch=P0; unzoom(true); cancelAnimationFrame(raf); frame(); },
+    front(){ yaw=0; pitch=0; unzoom(); },
+    side(){ yaw=-Math.PI/2; pitch=0; unzoom(); },
+    // f<1 で 大きく。px,py（キャンバスの 中の 点）を 中心に
+    zoom(f,px,py){ const w=cvs.clientWidth, h=cvs.clientHeight, t=Math.tan(cam.fov*Math.PI/360), nz=Math.max(0.22,Math.min(1,zmT*f));
+      if(px!=null && w && h){ const sx=px/w*2-1, sy=-(py/h*2-1), h0=D*zmT*t, h1=D*nz*t;
+        const wx=txT+sx*h0*cam.aspect, wy=tyT+sy*h0; txT=wx-sx*h1*cam.aspect; tyT=wy-sy*h1; }
+      zmT=nz; if(zmT>=0.999){ txT=tyT=0; } clampPan(); },
+    focus(k,z){ const g=G[k]; if(!g||!open) return; const b=new THREE.Box3(); g.o.forEach(o=>b.expandByObject(o)); if(b.isEmpty()) return;
+      const c=b.getCenter(new THREE.Vector3()); zmT=z; txT=c.x; tyT=c.y; clampPan(); },
+    zoomed(){ return zmT<0.98; },
+    close(){ open=false; root.visible=false; cancelAnimationFrame(raf); if(B.live===api) B.live=null; },
+    turn(dx,dy){ yaw+=dx; pitch=Math.max(-1.1,Math.min(1.1,pitch+dy)); },
+    pick(k){ pick=G[k]?k:null; },
+    bend(l,r){ bendL=l; bendR=r; },
+    face(f){ fc=f?{jaw:Math.max(0,Math.min(1,f.jaw)),h:Math.max(-1,Math.min(1,f.h)),v:Math.max(-1,Math.min(1,f.v))}:{jaw:0,h:0,v:0}; },
+    sh(a){ shT=Math.max(-1.5,Math.min(2.4,a)); },
+    show(v){ vis=Object.assign({},vis,v); },
+    hit(x,y){ if(!open) return null; ray.setFromCamera(new THREE.Vector2(x/cvs.clientWidth*2-1,-(y/cvs.clientHeight*2-1)),cam);
+      const list=[]; for(const k in G) if(k!=='spine'||kind!=='organs') G[k].o.forEach(o=>o.traverse(n=>{ if(n.isMesh && n.material.visible && !(pick && k!==pick && n.material.opacity<0.5)) list.push(n); }));
+      const h=ray.intersectObjects(list,false)[0]; if(!h) return null;
+      if(kind!=='organs'){ let o=h.object; while(o && !o.userData.part) o=o.parent; return o?o.userData.part:null; }
+      let o=h.object; while(o && !G[o.name]) o=o.parent; return o?o.name:null; },
+    spread(on){ spT=on?1:0; },
+    where(k,side){ const g=G[k]; if(!g||!open) return null; const b=new THREE.Box3();
+      let objs=g.o;
+      if(side==='near'){ let best=null, bz=1e9; const w=new THREE.Vector3();   // カメラに いちばん ちかい ほう
+        for(const o of g.o){ if(o.parent.userData.part==='fore' && k!=='hand' && k!=='joint') continue; o.getWorldPosition(w); const d=w.distanceTo(cam.position); if(d<bz){ bz=d; best=o; } }
+        objs=best?[best]:[]; }
+      else if(typeof side==='string') objs=g.o.filter(o=>o.name===side);   // ふしの 名前で 1つ
+      else if(side!=null) objs=g.o.filter(o=>o.userData.side===side);
+      objs.forEach(o=>b.expandByObject(o)); if(b.isEmpty()) return null;
+      const v=b.getCenter(new THREE.Vector3()).project(cam);
+      return {x:(v.x+1)/2*cvs.clientWidth, y:(1-v.y)/2*cvs.clientHeight}; },
+  };
+  return api;
+}
+window.krV3Load=()=>krV3Make('organs');
+window.krB3Load=()=>krV3Make('bones');
+window.krJ3Load=()=>krV3Make('joints');
+window.krA3Load=k=>krV3Make(k);
+</script>
+<script>window.kr=kr; window.krFeed=krFeed; window.krFeedAll=krFeedAll;
+// 3D は ボタンを おした ときに はじめて 読みこむ（ふだんは 軽い まま）
+let krV3P=null; Object.defineProperty(window,'krV3Ready',{get(){ return krV3P||(krV3P=window.krV3Load().then(v=>(window.krV3=v)).catch(e=>{ krV3P=null; throw e; })); }});
+let krJ3P=null; Object.defineProperty(window,'krJ3Ready',{get(){ return krJ3P||(krJ3P=window.krJ3Load().then(v=>(window.krJ3=v)).catch(e=>{ krJ3P=null; throw e; })); }});
+let krB3P=null; Object.defineProperty(window,'krB3Ready',{get(){ return krB3P||(krB3P=window.krB3Load().then(v=>(window.krB3=v)).catch(e=>{ krB3P=null; throw e; })); }});
+</script>
+<!--rl-home--><script>
+/* 理科ラボ：どの へやにも 出す「もどる」ボタン（11-07）。決まりは ここ 1か所。
+   へやの 上の帯（.xx-top）の いちばん左に 44px の ⌂ を 足す。帯が ない へやは 左下に うかべる。
+   行き先：その へやが 入っている 部屋の ページ（理科ラボ/1_エネルギー.html など）。そこから ホームへも もどれる。
+   へやの 中の 字や クラス名には さわらない（クラス名は rlh- で はじめる）。 */
+(function(){
+  if(window.__rlHome) return; window.__rlHome=1;
+  // どの へやが どの 部屋に 入るか（mock/ の 下の 道 → 部屋の ページ）
+  var PAGE={energy:'1_エネルギー.html',ryushi:'2_粒子.html',seimei:'3_生命.html',chikyu:'4_地球.html'};
+  var EXTRA={teko:'energy','karada-mirror':'seimei',tentai:'chikyu','seiza-tsunagu':'chikyu'};
+  function room(p){
+    var m=/\/mock\/rika\/(energy|ryushi|seimei|chikyu)\//.exec(p); if(m) return m[1];
+    m=/\/mock\/([^\/]+)\//.exec(p); return m&&EXTRA[m[1]]||'';
+  }
+  function href(){
+    var p=decodeURIComponent(location.pathname), r=room(p), i=p.lastIndexOf('/mock/');
+    if(window.RL_HOME_URL) return window.RL_HOME_URL;          // 授業メイトの 中では 入れる側が 決める
+    if(!r||i<0) return '';
+    return 'file://'+encodeURI(p.slice(0,i)+'/理科ラボ/'+PAGE[r]);
+  }
+  function put(){
+    var to=href(); if(!to||document.querySelector('.rlh-home')) return;
+    var a=document.createElement('a'); a.className='rlh-home'; a.href=to; a.title='へやの 一らんに もどる';
+    a.setAttribute('aria-label','へやの 一らんに もどる');
+    a.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>';
+    var st=document.createElement('style');
+    st.textContent='.rlh-home{flex:0 0 44px;width:44px;height:44px;margin-right:8px;display:inline-flex;align-items:center;justify-content:center;border-radius:22px;background:var(--rl-bg,white);color:var(--rl-ink,black);border:1px solid currentColor;text-decoration:none;box-sizing:border-box}'+
+      '.rlh-home:hover{opacity:.8}.rlh-home:focus-visible{outline:3px solid currentColor;outline-offset:2px}'+
+      '.rlh-home.rlh-float{position:fixed;left:12px;bottom:12px;z-index:9999;margin:0}';
+    document.head.appendChild(st);
+    var bar=[].slice.call(document.querySelectorAll('[class$="-top"],[class*="-top "]')).filter(function(e){
+      var r=e.getBoundingClientRect(); return r.top<20&&r.height>=44&&getComputedStyle(e).display.indexOf('flex')>=0;})[0];
+    if(bar) bar.insertBefore(a,bar.firstChild); else { a.classList.add('rlh-float'); document.body.appendChild(a); }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',put); else put();
+})();
+</script><!--/rl-home-->
+</body>
+</html>

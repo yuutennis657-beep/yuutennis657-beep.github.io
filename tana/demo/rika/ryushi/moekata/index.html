@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="ja">
+<head><script>window.RL_HOME_URL="../../ryushi.html";</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ものの燃え方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* 見本 v0.1（2026-11-07）理科ラボ／粒子／6年 ものの燃え方。タッチ：ふた・すき間を さわって かえる／びんの 中の 気体を えらぶ */
+:root{
+  /* 理科ラボ 粒子の 部屋の 色（4つの 部屋で 同じ 名前）。色は ここだけに 書く */
+  --rl-bg:#ffffff; --rl-ink:#1f2937; --rl-accent:#2ba3d9; --rl-accent2:#7fd1ee; --rl-soft:#e6f6fc;
+  /* この 部屋の 意味の 色 */
+  --rp-sub:#4b5563; --rp-mute:#6b7280; --rp-line:#d1d5db; --rp-btn:#f3f4f6; --rp-deep:#0b6e99;
+  --rp-ok:#1b7f3b; --rp-warn:#b45309; --rp-warn2:#d97706; --rp-hot:#c2410c; --rp-hot2:#fb923c; --rp-cold:#1d4ed8;
+  --rp-red:#dc2626; --rp-err:#b91c1c; --rp-flame:#fde68a; --rp-clay:#e7d3b0; --rp-brown:#78350f; --rp-alum:#7c3aed;
+  --rp-t2:#93c5fd; --rp-t4:#f97316;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--rl-bg);color:var(--rl-ink);
+  font-family:"BIZ UDPGothic",sans-serif;font-size:16px;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+.rp-app{display:grid;grid-template-rows:auto 1fr;gap:8px;height:100vh;height:100dvh;padding:8px 12px 12px}
+.rp-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:52px}
+.rp-tabs{display:flex;border:1px solid var(--rp-line);border-radius:12px;overflow:hidden}
+.rp-tabs button{min-height:44px;min-width:44px;padding:0 12px;border:0;background:var(--rl-bg);font-size:16px;display:flex;align-items:center;gap:6px}
+.rp-tabs button+button{border-left:1px solid var(--rp-line)}
+.rp-tabs button[aria-pressed="true"]{background:var(--rl-accent);color:var(--rl-ink);font-weight:700}
+.rp-tabs svg,.rp-b svg{width:22px;height:22px;flex:none}
+.rp-tabs[hidden]{display:none!important}
+.rp-b{min-height:44px;min-width:44px;padding:0 12px;border:1px solid var(--rp-line);background:var(--rp-btn);border-radius:12px;
+  font-size:16px;display:flex;align-items:center;justify-content:center;gap:6px}
+.rp-fire{background:var(--rl-accent);color:var(--rl-ink);border-color:var(--rp-deep);font-weight:700;font-size:18px;min-height:50px}
+.rp-sp{flex:1}
+.rp-main{display:grid;grid-template-columns:1fr 240px;gap:10px;min-height:0}
+.rp-stage{position:relative;border-radius:12px;overflow:hidden;background:var(--rl-soft);min-height:0;touch-action:manipulation}
+.rp-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.rp-hit{position:absolute;min-width:44px;min-height:44px;border:0;background:transparent;padding:0}
+.rp-hit:focus-visible{outline:3px solid var(--rp-cold);outline-offset:-3px;border-radius:8px}
+.rp-hit[hidden]{display:none!important}
+.rp-side{display:flex;flex-direction:column;gap:8px;min-height:0}
+.rp-gas{border:1px solid var(--rp-line);border-radius:12px;padding:6px 10px}
+.rp-gas h2{margin:0 0 4px;font-size:16px}
+.rp-stack{display:flex;height:26px;border:2px solid var(--rl-ink);border-radius:6px;overflow:hidden}
+.rp-stack i{display:block;height:100%}
+.rp-stack .rp-sn{background:repeating-linear-gradient(90deg,var(--rp-line) 0 6px,var(--rp-btn) 6px 12px)}
+.rp-stack .rp-so{background:var(--rp-cold)}
+.rp-stack .rp-sc{background:repeating-linear-gradient(135deg,var(--rp-hot) 0 4px,var(--rp-hot2) 4px 8px)}
+.rp-gas div.rp-line2{display:flex;justify-content:space-between;align-items:baseline;font-size:15px;min-height:26px}
+.rp-gas b{font-size:20px;font-variant-numeric:tabular-nums}
+.rp-mk{display:inline-block;width:14px;height:14px;border:1.5px solid var(--rl-ink);vertical-align:-2px;margin-right:4px}
+.rp-say{word-break:keep-all;min-height:48px;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:12px;
+  font-size:17px;font-weight:700;padding:4px 6px;border:2px solid var(--rp-line)}
+.rp-say[data-k="ok"]{border-color:var(--rp-ok);color:var(--rp-ok)}
+.rp-say[data-k="out"]{border-color:var(--rp-hot);color:var(--rp-hot)}
+.rp-row{display:flex;gap:6px}
+.rp-row .rp-b{flex:1}
+@media (max-width:860px){
+  .rp-main{grid-template-columns:1fr 200px}
+  .rp-tabs button{padding:0 7px}
+  .rp-side{gap:5px}
+  .rp-gas{padding:4px 8px}
+  .rp-gas div.rp-line2{min-height:22px}
+  .rp-gas b{font-size:17px}
+  .rp-say{font-size:15px;min-height:44px}
+  .rp-fire{min-height:44px;font-size:16px}
+  .rp-gas h2{display:none}
+}
+html #rsTeBtn[aria-pressed="true"]{background:var(--rl-accent);color:var(--rl-ink);border-color:var(--rl-ink)}   /* 手で：おしている ときも 字は こい色 */
+</style>
+</head>
+<body>
+<div class="rp-app">
+  <div class="rp-top">
+    <div class="rp-tabs" role="group" aria-label="しらべる こと" id="rpMode">
+      <button type="button" data-v="open" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M7 4h10M8 4v16M16 4v16M5 20h5M14 20h5"/></svg>ふたと すき間</button>
+      <button type="button" data-v="gas" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 3h8M9 3v4l-4 6v7h14v-7l-4-6V3"/><circle cx="10" cy="15" r="1.3"/><circle cx="14" cy="17" r="1.3"/></svg>びんの 中の 気体</button>
+    </div>
+    <div class="rp-tabs" role="group" aria-label="気体" id="rpGasSel" hidden>
+      <button type="button" data-v="air" aria-pressed="true">空気</button>
+      <button type="button" data-v="o2" aria-pressed="false">酸素</button>
+      <button type="button" data-v="n2" aria-pressed="false">ちっ素</button>
+      <button type="button" data-v="co2" aria-pressed="false">二酸化炭素</button>
+    </div>
+    <span class="rp-sp"></span>
+    <button class="rp-b" type="button" id="rsTeBtn" aria-label="手で うごかす"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V11M11 10V4a1.5 1.5 0 0 1 3 0v6M14 10V5.5a1.5 1.5 0 0 1 3 0V13"/><path d="M8 12.5 6.6 11a1.6 1.6 0 0 0-2.4 2.1L8 18.5A6 6 0 0 0 13 21h0a5 5 0 0 0 5-5v-3"/></svg>手で</button>
+    <button class="rp-b" type="button" id="rpReset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.7"/><path d="M4 4v4h4"/></svg>さいしょから</button>
+  </div>
+  <div class="rp-main">
+    <div class="rp-stage" id="rpStage">
+      <canvas id="rpCanvas"></canvas>
+      <button class="rp-hit" type="button" id="rpLidHit" aria-label="ふた"></button>
+      <button class="rp-hit" type="button" id="rpGapHit" aria-label="下の すき間"></button>
+    </div>
+    <div class="rp-side">
+      <button class="rp-b rp-fire" type="button" id="rpFire">火を つける</button>
+      <div class="rp-gas" aria-label="びんの 中の 気体の 体積の わりあい">
+        <h2>びんの 中の 気体</h2>
+        <div class="rp-stack"><i class="rp-sn" id="rpBn"></i><i class="rp-so" id="rpBo"></i><i class="rp-sc" id="rpBc"></i></div>
+        <div class="rp-line2"><span><span class="rp-mk" style="background:var(--rp-cold)"></span>酸素</span><b id="rpO">21%</b></div>
+        <div class="rp-line2"><span><span class="rp-mk" style="background:var(--rp-hot)"></span>二酸化炭素</span><b id="rpC">0.04%</b></div>
+        <div class="rp-line2"><span><span class="rp-mk" style="background:var(--rp-line)"></span>ちっ素</span><b id="rpN">78%</b></div>
+      </div>
+      <div class="rp-say" id="rpSay">火を つけてみよう</div>
+      <div class="rp-row"><button class="rp-b" type="button" id="rpLime"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 3h8M9 3v6l-3 10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2L15 9V3"/><path d="M7 15h10"/></svg>石灰水</button></div>
+    </div>
+  </div>
+</div>
+
+<script>/* 手で おす（生命の 部屋の 部品 seimei/_parts/rs-te.js を tools_parts.py で 中に 入れる） */
+/*RS-TE*/
+/* ===== 手で おす（生命の 部屋で 共通） =====
+   カメラの 手を 画面 ぜんたいの「しるし（わ）」に うつす。ボタンの 上で 手を とめると、わが みちて おせる。
+   星ざ・社会地図の「とめて おす」と 同じ 考え。タップや マウスは そのまま つかえる（どっちでも できる）。
+   つかい方：
+     RsTe.point(nx,ny,box)  … カメラの 中の 位置（0〜1・かがみの むき）。null で しるしを けす
+     RsTe.startHand({onPoint, onLost}) … カメラと 手の トラッキングを はじめる（人さし指の 先＝しるし）
+     RsTe.stop()            … 手を やめる
+     RsTe.cur               … いまの しるしの 位置（画面の px）
+*/
+(function(){
+  const DWELL=1100;                 // とめて おすまでの 時間（ミリ秒）
+  const BOX=[0.1,0.1,0.9,0.9];      // カメラの この はんいを 画面 ぜんたいに 広げる（はしまで とどくように）
+  const SM=0.5;
+  const cv=document.createElement('canvas'); cv.className='rs-te'; cv.setAttribute('aria-hidden','true');
+  cv.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:60';
+  const tip=document.createElement('div'); tip.className='rs-te-tip'; tip.hidden=true;
+  tip.style.cssText='position:fixed;left:50%;top:8px;transform:translateX(-50%);z-index:61;pointer-events:none;background:#fff;border:2px solid var(--rl-ink,#1f2937);border-radius:22px;padding:8px 16px;font-size:16px;font-weight:700;color:var(--rl-ink,#1f2937);white-space:nowrap';
+  const st=document.createElement('style');
+  st.textContent='.rs-te-near{box-shadow:inset 0 0 0 4px var(--rl-accent,#23784a)!important}#rsTeBtn[aria-pressed="true"]{background:var(--rl-accent,#23784a);color:#fff;border-color:var(--rl-accent,#23784a)}';
+  const g=cv.getContext('2d');
+  function size(){ const d=window.devicePixelRatio||1; cv.width=innerWidth*d; cv.height=innerHeight*d; g.setTransform(d,0,0,d,0,0); }
+  function mount(){ document.head.appendChild(st); document.body.appendChild(cv); document.body.appendChild(tip); size(); }
+  if(document.body) mount(); else document.addEventListener('DOMContentLoaded',mount);
+  addEventListener('resize',size);
+  const T={cur:null, el:null, t0:0, done:false, on:false, dwell:DWELL, clicks:0};
+  const cl=v=>Math.max(0,Math.min(1,v));
+  T.point=function(nx,ny,box){
+    if(nx==null){ T.cur=null; return null; }
+    const b=box||BOX, x=cl((nx-b[0])/(b[2]-b[0]))*innerWidth, y=cl((ny-b[1])/(b[3]-b[1]))*innerHeight;
+    if(!T.cur) T.cur={x,y}; else { T.cur.x+=(x-T.cur.x)*SM; T.cur.y+=(y-T.cur.y)*SM; }
+    return T.cur;
+  };
+  T.say=function(t){ tip.hidden=!t; if(t && tip.textContent!==t) tip.textContent=t; };
+  function target(){
+    const c=T.cur; if(!c) return null;
+    const e=document.elementFromPoint(c.x,c.y), b=e&&e.closest&&e.closest('button');
+    return b && !b.disabled && b.offsetParent && !b.closest('[hidden]') ? b : null;
+  }
+  function frame(now){
+    requestAnimationFrame(frame);
+    g.clearRect(0,0,innerWidth,innerHeight);
+    const c=T.cur, el=target();
+    if(el!==T.el){ if(T.el) T.el.classList.remove('rs-te-near'); T.el=el; T.t0=now; T.done=false; if(el) el.classList.add('rs-te-near'); }
+    let prog=0;
+    if(el && !T.done){ prog=Math.min(1,(now-T.t0)/T.dwell); if(prog>=1){ T.done=true; T.clicks++; el.click(); } }
+    if(!c) return;
+    const R=Math.max(20,Math.min(innerWidth,innerHeight)*0.035);
+    const ink=getComputedStyle(document.documentElement).getPropertyValue('--rl-ink').trim()||'#1f2937';
+    const acc=getComputedStyle(document.documentElement).getPropertyValue('--rl-accent').trim()||'#23784a';
+    g.lineWidth=7; g.strokeStyle='#fff'; g.beginPath(); g.arc(c.x,c.y,R,0,7); g.stroke();
+    g.lineWidth=3; g.strokeStyle=ink; g.beginPath(); g.arc(c.x,c.y,R,0,7); g.stroke();
+    g.fillStyle=ink; g.beginPath(); g.arc(c.x,c.y,4,0,7); g.fill();
+    // みちる わ：こい ふちの 上に 部屋の 色（黄など うすい 色でも 白地で 見える）
+    if(prog>0 && !T.done){ g.lineCap='round'; const a1=-Math.PI/2+prog*Math.PI*2;
+      g.lineWidth=11; g.strokeStyle=ink; g.beginPath(); g.arc(c.x,c.y,R+8,-Math.PI/2,a1); g.stroke();
+      g.lineWidth=6; g.strokeStyle=acc; g.beginPath(); g.arc(c.x,c.y,R+8,-Math.PI/2,a1); g.stroke(); }
+  }
+  requestAnimationFrame(frame);
+
+  /* ---- 手の トラッキング（人さし指の 先） ---- */
+  const VER='0.10.14';
+  let hands=null, video=null, stream=null, lastT=-1, onPoint=null, onLost=null, seen=0;
+  async function load(){
+    const vision=await import(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}`);
+    const fs=await vision.FilesetResolver.forVisionTasks(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}/wasm`);
+    const o=d=>({baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task',delegate:d},runningMode:'VIDEO',numHands:1});
+    try{ return await vision.HandLandmarker.createFromOptions(fs,o('GPU')); }
+    catch(e){ return await vision.HandLandmarker.createFromOptions(fs,o('CPU')); }
+  }
+  T.errText=function(e){
+    return e&&e.name==='NoCamPage' ? 'この ひらきかたでは カメラが つかえません。Chrome で ひらいてね。'
+      : e&&(e.name==='NotFoundError'||e.name==='NotReadableError') ? 'カメラが みつかりません。ほかの アプリで つかっていないか みてね。'
+      : e&&e.name==='NotAllowedError' ? 'カメラが つかえません。先生に カメラを ゆるして もらってね。'
+      : 'じゅんびが できませんでした。インターネットに つながっているか みてね。';
+  };
+  T.startHand=async function(opt){
+    opt=opt||{}; onPoint=opt.onPoint||null; onLost=opt.onLost||null; opt_hint=opt.hint!=null?opt.hint:'人さし指を カメラに 見せてね';
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ const e=new Error(); e.name='NoCamPage'; throw e; }
+    if(!video){ video=document.createElement('video'); video.playsInline=true; video.muted=true; video.setAttribute('playsinline','');
+      video.style.cssText='position:fixed;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none'; document.body.appendChild(video); }
+    stream=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:960},height:{ideal:540},facingMode:'user'},audio:false});
+    video.srcObject=stream; await video.play();
+    hands=hands||await load();
+    T.on=true; T.video=video; seen=performance.now(); requestAnimationFrame(track);
+    return video;
+  };
+  function track(){
+    if(!T.on) return;
+    requestAnimationFrame(track);
+    if(!hands||video.readyState<2||video.currentTime===lastT) return;
+    lastT=video.currentTime;
+    const now=performance.now(), r=hands.detectForVideo(video,now), L=(r.landmarks||[])[0];
+    if(L){ seen=now; const c=T.point(1-L[8].x, L[8].y); T.say(''); if(onPoint) onPoint(c); }
+    else { T.point(null); if(onPoint) onPoint(null); if(now-seen>1200 && opt_hint) T.say(opt_hint); if(onLost) onLost(); }
+  }
+  let opt_hint='人さし指を カメラに 見せてね';
+  T.stop=function(){ T.on=false; T.point(null); T.say(''); if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; } if(onPoint) onPoint(null); };
+  // 「手で」ボタン：おすと カメラの 手が はじまる。もう いちど おすと やめる
+  T.bindButton=function(btn,opt){
+    btn.setAttribute('aria-pressed','false');
+    btn.addEventListener('click',async()=>{
+      if(T.on){ T.stop(); btn.setAttribute('aria-pressed','false'); return; }
+      btn.disabled=true; T.say('じゅんびちゅう…');
+      try{ await T.startHand(opt); btn.setAttribute('aria-pressed','true'); T.say(''); }
+      catch(e){ T.say(T.errText(e)); setTimeout(()=>T.say(''),5000); }
+      finally{ btn.disabled=false; }
+    });
+  };
+  window.RsTe=T;
+})();
+/*RS-TE-END*/
+</script>
+<script>
+/* 色は :root から 読む（K＝そのまま、KA＝すきとおらせる） */
+const RL_CS=getComputedStyle(document.documentElement), RL_C={};
+const K=n=>RL_C[n]||(RL_C[n]=RL_CS.getPropertyValue('--'+n).trim());
+const KA=(n,a)=>{ const h=K(n).replace('#',''); return `rgba(${parseInt(h.slice(0,2),16)},${parseInt(h.slice(2,4),16)},${parseInt(h.slice(4,6),16)},${a})`; };
+/*RP-PARTS*/
+const RP_PARTS={bottle:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMjAiIGhlaWdodD0iMzYwIiB2aWV3Qm94PSIwIDAgMjIwIDM2MCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJvdHRsZS1nbGFzcyIgeDE9IjAiIHgyPSIxIj4KICAgICAgPHN0b3Agc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIwLjc1Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMC40NSIgc3RvcC1jb2xvcj0iI2U2ZjZmYyIgc3RvcC1vcGFjaXR5PSIwLjIiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjN2ZkMWVlIiBzdG9wLW9wYWNpdHk9IjAuMyIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPGcgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj4KICAgIDxwYXRoIGQ9Ik03NCAzMEgxNDZDMTU0IDQzIDIwMCAzMyAyMDAgNjBWMzYwSDIwVjYwQzIwIDMzIDY2IDQzIDc0IDMwWiIgZmlsbD0iI2U2ZjZmYyIgZmlsbC1vcGFjaXR5PSIwLjE2Ii8+CiAgICA8cGF0aCBkPSJNMTQgMzYwVjYwQzE0IDI1IDY5IDM4IDY5IDI3VjlINjdWMkg3NVYyN0M3NSA0NCAyMCAzMSAyMCA2MFYzNjBaIE0yMDAgMzYwVjYwQzIwMCAzMSAxNDUgNDQgMTQ1IDI3VjJIMTUzVjlIMTUxVjI3QzE1MSAzOCAyMDYgMjUgMjA2IDYwVjM2MFoiIGZpbGw9InVybCgjYm90dGxlLWdsYXNzKSIvPgogICAgPHBhdGggZD0iTTE0IDM1OVY2MEMxNCAyNSA2OSAzOCA2OSAyN1Y5SDY3VjJINzVWMjdDNzUgNDQgMjAgMzEgMjAgNjBWMzU5TTIwMCAzNTlWNjBDMjAwIDMxIDE0NSA0NCAxNDUgMjdWMkgxNTNWOUgxNTFWMjdDMTUxIDM4IDIwNiAyNSAyMDYgNjBWMzU5IiBmaWxsPSJub25lIiBzdHJva2U9IiMxZjI5MzciIHN0cm9rZS1vcGFjaXR5PSIwLjgzIiBzdHJva2Utd2lkdGg9IjEuOCIvPgogICAgPHBhdGggZD0iTTE3IDcyVjM0OE03MiAxMlYyNiIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utb3BhY2l0eT0iMC43NSIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICAgIDxwYXRoIGQ9Ik0yMDMgNjZWMzUzTTE0OCAxMlYyNiIgc3Ryb2tlPSIjMmJhM2Q5IiBzdHJva2Utb3BhY2l0eT0iMC4xMyIgc3Ryb2tlLXdpZHRoPSIzIi8+CiAgICA8cGF0aCBkPSJNMTkgNTRDMjcgMzUgNjAgNDIgNzIgMzEiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLW9wYWNpdHk9IjAuNyIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPC9nPgo8L3N2Zz4=',
+candle:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSIyMDAiIHZpZXdCb3g9IjAgMCA2MCAyMDAiPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJjYW5kbGUtd2F4IiB4MT0iMCIgeDI9IjEiPgogICAgICA8c3RvcCBzdG9wLWNvbG9yPSIjZTdkM2IwIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMC4xOCIgc3RvcC1jb2xvcj0iI2Y4ZjVlZSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjAuNiIgc3RvcC1jb2xvcj0iI2Y4ZjVlZSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNlN2QzYjAiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxnIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+CiAgICA8cGF0aCBkPSJNMTAgMzlRMTAgMzQgMTcgMzRRMzAgMzggNDMgMzRRNTAgMzQgNTAgMzlWMTk0UTUwIDIwMCA0NCAyMDBIMTZRMTAgMjAwIDEwIDE5NFoiIGZpbGw9InVybCgjY2FuZGxlLXdheCkiLz4KICAgIDxwYXRoIGQ9Ik0xMCAzOVExMCAzNCAxNyAzNFEzMCAzOCA0MyAzNFE1MCAzNCA1MCAzOVYxOTRRNTAgMTk5IDQ0IDE5OUgxNlExMCAxOTkgMTAgMTk0WiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNzgzNTBmIiBzdHJva2Utb3BhY2l0eT0iMC42NSIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICAgIDxwYXRoIGQ9Ik0xMSAzOVExOCA0MiAyMSA0NFEyOSA1MCAzOCA0M1E0NSA0MCA0OSAzOVE0MyAzMyAzNiAzNlEzMCA0MCAyNCAzNlExNiAzMiAxMSAzOVoiIGZpbGw9IiNmOGY1ZWUiIHN0cm9rZT0iI2M5YTk3OCIgc3Ryb2tlLXdpZHRoPSIxIi8+CiAgICA8cGF0aCBkPSJNMjIgMzlRMzAgNDQgMzggMzkiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2M5YTk3OCIgc3Ryb2tlLW9wYWNpdHk9IjAuNyIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICAgIDxwYXRoIGQ9Ik0zMCAzNlYxNSIgc3Ryb2tlPSIjMWYyOTM3IiBzdHJva2Utd2lkdGg9IjIiLz4KICAgIDxwYXRoIGQ9Ik0xNSA1MVYxODUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLW9wYWNpdHk9IjAuNyIgc3Ryb2tlLXdpZHRoPSIzIi8+CiAgICA8cGF0aCBkPSJNNDYgNTBWMTkwUTQ2IDE5NSA0MSAxOTUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2M5YTk3OCIgc3Ryb2tlLW9wYWNpdHk9IjAuMyIgc3Ryb2tlLXdpZHRoPSIzIi8+CiAgICA8cGF0aCBkPSJNMTQgNDJWNTRRMTQgNjEgMTggNjBRMjEgNTkgMjAgNTNWNDYiIGZpbGw9IiNmOGY1ZWUiIHN0cm9rZT0iI2U3ZDNiMCIgc3Ryb2tlLXdpZHRoPSIxIi8+CiAgPC9nPgo8L3N2Zz4=',
+clay:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA0MDAgNjAiPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJjbGF5LWJvZHkiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgICAgPHN0b3Agc3RvcC1jb2xvcj0iI2U3ZDNiMCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjAuNDUiIHN0b3AtY29sb3I9IiNlN2QzYjAiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjYzlhOTc4Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8ZyBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbGluZWNhcD0icm91bmQiPgogICAgPHBhdGggZD0iTTUgMzFRNSAxNyAyMiAxM1EzNiA4IDU4IDEwUTc5IDYgMTAwIDlRMTI2IDYgMTUxIDlRMTc3IDUgMjAxIDhRMjI1IDYgMjQ5IDlRMjc5IDUgMzAxIDlRMzI3IDYgMzQ4IDExUTM3NSA4IDM4OCAyMVEzOTcgMjggMzk1IDM4UTM5NCA1MCAzNzUgNTJRMzQ3IDU2IDMyMiA1M1EyOTQgNTcgMjY4IDU0UTIzNiA1NyAyMDkgNTRRMTgxIDU3IDE1NCA1NFExMjYgNTcgOTkgNTRRNzIgNTcgNDkgNTNRMjQgNTUgMTMgNDhRNCA0MyA1IDMxWiIgZmlsbD0idXJsKCNjbGF5LWJvZHkpIiBzdHJva2U9IiM3ODM1MGYiIHN0cm9rZS1vcGFjaXR5PSIwLjY1IiBzdHJva2Utd2lkdGg9IjEuOCIvPgogICAgPHBhdGggZD0iTTEwIDI3UTIzIDE1IDQ4IDE3UTcxIDEyIDk1IDE1UTEyMSAxMSAxNDcgMTVRMTc2IDEwIDIwMSAxNFEyMjcgMTEgMjUxIDE1UTI3OSAxMCAzMDUgMTVRMzMxIDExIDM1MiAxN1EzNzYgMTUgMzg3IDI2IiBmaWxsPSJub25lIiBzdHJva2U9IiNmOGY1ZWUiIHN0cm9rZS1vcGFjaXR5PSIwLjY1IiBzdHJva2Utd2lkdGg9IjMiLz4KICAgIDxwYXRoIGQ9Ik0xMiA0MFEyNyA0OCA1MSA0NlE3NyA1MSAxMDEgNDhRMTI4IDUxIDE1NCA0OFExODMgNTEgMjEwIDQ4UTI0MSA1MSAyNjggNDhRMjk3IDUxIDMyMiA0OFEzNTAgNTEgMzc0IDQ2UTM4NSA0NCAzODkgMzciIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzc4MzUwZiIgc3Ryb2tlLW9wYWNpdHk9IjAuMTIiIHN0cm9rZS13aWR0aD0iNCIvPgogICAgPHBhdGggZD0iTTUwIDI2UTY1IDIxIDc5IDI1TTEzMiAzMlExNDYgMzYgMTU4IDMxTTIyNSAyM1EyMzggMTkgMjUxIDIzTTMwMiAzM1EzMjAgMzggMzM0IDMyTTM2MSAyNFEzNzIgMjUgMzc2IDMwIiBmaWxsPSJub25lIiBzdHJva2U9IiNjOWE5NzgiIHN0cm9rZS1vcGFjaXR5PSIwLjY1IiBzdHJva2Utd2lkdGg9IjEuNiIvPgogICAgPHBhdGggZD0iTTUyIDI4UTY1IDI0IDc3IDI3TTIyNyAyNVEyMzggMjIgMjQ5IDI1TTMwNCAzNlEzMjAgNDAgMzMyIDM1IiBmaWxsPSJub25lIiBzdHJva2U9IiNmOGY1ZWUiIHN0cm9rZS1vcGFjaXR5PSIwLjM1IiBzdHJva2Utd2lkdGg9IjEuMiIvPgogIDwvZz4KPC9zdmc+'};
+/*RP-PARTS-END*/
+/* Codex で 作った 部品の 絵（parts/*.svg を tools_parts.py で 中に 入れる）。読めない ときは 前の 線の 絵 */
+const PIMG={}; for(const k in RP_PARTS){ if(k==='start') continue; const im=new Image(); im.onload=()=>{ try{ draw(); }catch(e){} }; im.src=RP_PARTS[k]; PIMG[k]=im; }
+const ok=k=>!!(PIMG[k] && PIMG[k].complete && PIMG[k].naturalWidth>0);
+if(RP_PARTS.start){ const sv=document.querySelector('.rp-start svg'); if(sv){ const im=new Image(); im.src=RP_PARTS.start; im.alt=''; im.className='rp-startimg'; sv.replaceWith(im); } }
+
+/* ===== きまり（1か所） ===== */
+// 体積の わりあい（%）。空気は ちっ素 約78・酸素 約21・二酸化炭素 約0.04（のこりは その他）。
+// 燃えると 酸素が へり 二酸化炭素が ふえる（びんの 中で 消えた あとは 酸素 約17・二酸化炭素 約3 が 教科書の 目安）。
+const RP = {
+  AIR:{n:78, o:21, c:0.04},
+  GAS:{ air:{n:78,o:21,c:0.04}, o2:{n:0,o:100,c:0}, n2:{n:100,o:0,c:0}, co2:{n:0,o:0,c:100} },
+  OUT:17,           // 酸素が これより 少なく なると 火が 消える（東京書籍 6年：燃えたあと 酸素 約17%・二酸化炭素 約3%）
+  R:1.24,           // 燃える 速さ
+  CO2_PER_O:0.75,   // 酸素が 1 へると 二酸化炭素が 0.75 ふえる（教科書の 21→17、0.04→3 に 合わせた 目安）
+  // 入れかわる 速さ：上と 下が あいていると よく 入れかわる
+  ex(lid,gap){ return !lid && gap ? 1.0 : (!lid || gap) ? 0.02 : 0; },
+  flame(o){ return Math.max(0, Math.min(2.5, (o-16.5)/4.5)); },
+  step(s,dt){        // s={n,o,c,lit,lid,gap}
+    if(s.lit){
+      const f=RP.flame(s.o); const d=Math.min(s.o, RP.R*f*dt);
+      s.o-=d; s.c+=d*RP.CO2_PER_O;
+      if(s.o<RP.OUT) s.lit=false;
+    }
+    const k=RP.ex(s.lid,s.gap)*dt;
+    s.o+=(RP.AIR.o-s.o)*k; s.c+=(RP.AIR.c-s.c)*k; s.n+=(RP.AIR.n-s.n)*k;
+    return s;
+  },
+  lime(s){ return s.c>=1; },   // 石灰水が 白く にごる
+};
+window.RP = RP;
+const $ = id => document.getElementById(id);
+const rp = { mode:'open', gas:'air', s:null, t:0, smoke:[], said:'', lime:null, everLit:false };
+window.rp = rp;
+function reset(){
+  const g=RP.GAS[rp.mode==='gas'?rp.gas:'air'];
+  rp.s={n:g.n, o:g.o, c:g.c, lit:false, lid: rp.mode==='gas', gap: rp.mode==='open' ? true : false};
+  rp.smoke=[]; rp.lime=null; rp.everLit=false; rp.outAt=null;
+  show();
+}
+
+/* ===== えがく ===== */
+const cv=$('rpCanvas'), cx=cv.getContext('2d');
+let W=0,H=0;
+function fit(){ const r=$('rpStage').getBoundingClientRect(), d=window.devicePixelRatio||1;
+  W=r.width; H=r.height; cv.width=Math.round(W*d); cv.height=Math.round(H*d); cx.setTransform(d,0,0,d,0,0); place(); }
+window.addEventListener('resize', ()=>{ fit(); draw(); });
+// 集気びんの 絵（parts/bottle.svg 220×360）は 中の場所が x20〜200・口が x75〜145（たて＝よこ×2）
+function geo(){ let h=H*0.66, w=h/2; if(w>W*0.36){ w=W*0.36; h=w*2; } const x=(W-w)/2, y=H*0.18; return {x,y,w,h, sc:w/180, gapH:Math.max(14,h*0.06)}; }
+window.rpGeo=geo;
+function place(){   // さわる 所（ふた・すき間）
+  const g=geo(), L=$('rpLidHit'), G=$('rpGapHit');
+  Object.assign(L.style,{left:(g.x-10)+'px', top:(g.y-48)+'px', width:(g.w+20)+'px', height:'56px'});
+  Object.assign(G.style,{left:(g.x-30)+'px', top:(g.y+g.h-10)+'px', width:(g.w+60)+'px', height:Math.max(44,g.gapH+30)+'px'});
+  L.hidden = G.hidden = rp.mode!=='open';
+}
+function draw(){
+  cx.clearRect(0,0,W,H);
+  const g=geo(), s=rp.s, base=g.y+g.h+(s.gap?g.gapH:0);
+  // ねん土（台）
+  cx.fillStyle=K('rp-clay'); cx.strokeStyle=K('rp-brown'); cx.lineWidth=2;
+  const by=g.y+g.h+g.gapH;
+  if(ok('clay')) cx.drawImage(PIMG.clay, g.x-40, by-4, g.w+80, H*0.09); else { cx.fillRect(g.x-40, by, g.w+80, H*0.08); cx.strokeRect(g.x-40, by, g.w+80, H*0.08); }
+  if(!s.gap){ cx.fillRect(g.x-10, g.y+g.h, g.w+20, g.gapH); cx.strokeRect(g.x-10, g.y+g.h, g.w+20, g.gapH); }
+  else { // すき間を つくる 小さな ねん土
+    cx.fillRect(g.x-10, g.y+g.h, 16, g.gapH); cx.fillRect(g.x+g.w-6, g.y+g.h, 16, g.gapH); }
+  // びんの 中の 気体（酸素が へると うすく なる）
+  const tint=Math.max(0,Math.min(1,(s.o-15)/6));
+  const q=g.sc; cx.save(); cx.beginPath();   // びんの 中の 形（口・かた・どう）
+  cx.moveTo(g.x+55*q,g.y); cx.lineTo(g.x+125*q,g.y); cx.lineTo(g.x+125*q,g.y+30*q); cx.lineTo(g.x+g.w,g.y+62*q); cx.lineTo(g.x+g.w,g.y+g.h);
+  cx.lineTo(g.x,g.y+g.h); cx.lineTo(g.x,g.y+62*q); cx.lineTo(g.x+55*q,g.y+30*q); cx.closePath(); cx.clip();
+  cx.fillStyle=KA('rl-bg',.85); cx.fillRect(g.x, g.y, g.w, g.h); cx.fillStyle=KA('rl-accent2',.18); cx.fillRect(g.x, g.y, g.w, g.h);
+  cx.fillStyle=KA('rp-flame',.45*(1-tint));   // 酸素が へると 少し 黄みが かる
+  cx.fillRect(g.x, g.y, g.w, g.h); cx.restore();
+  // ろうそく
+  const cw=g.w*0.16, ccx=g.x+g.w/2; let cy0;
+  if(ok('candle')){ const k=cw/40; cx.drawImage(PIMG.candle, ccx-30*k, by-200*k, 60*k, 200*k); cy0=by-186*k+8; }   // しんの 上の はし＝cy0-8
+  else { const ch=g.h*0.3; cy0=by-ch; cx.fillStyle=K('rl-bg'); cx.strokeStyle=K('rl-ink'); cx.lineWidth=2.5; cx.fillRect(ccx-cw/2,cy0,cw,ch); cx.strokeRect(ccx-cw/2,cy0,cw,ch);
+    cx.beginPath(); cx.moveTo(ccx,cy0); cx.lineTo(ccx,cy0-8); cx.stroke(); }
+  if(s.lit){ const f=RP.flame(s.o), fh=(18+28*f)*(1+0.06*Math.sin(rp.t*20)), fw=6+5*f;
+    cx.fillStyle=K('rp-flame'); cx.strokeStyle=K('rp-hot'); cx.lineWidth=3;
+    cx.beginPath(); cx.moveTo(ccx,cy0-8-fh); cx.bezierCurveTo(ccx+fw*1.6,cy0-8-fh*0.4,ccx+fw,cy0-4,ccx,cy0-4); cx.bezierCurveTo(ccx-fw,cy0-4,ccx-fw*1.6,cy0-8-fh*0.4,ccx,cy0-8-fh); cx.fill(); cx.stroke(); }
+  else if(rp.outAt!=null && rp.t-rp.outAt<3){ // 消えた あとの けむり
+    cx.strokeStyle=KA('rp-sub',.7); cx.lineWidth=3; cx.beginPath();
+    for(let i=0;i<8;i++){ const yy=cy0-10-i*8, xx=ccx+Math.sin(i+rp.t*3)*5; i?cx.lineTo(xx,yy):cx.moveTo(xx,yy); } cx.stroke(); }
+  // せんこうの けむり（空気の 流れ）
+  if(rp.mode==='open' && s.lit){
+    const k=RP.ex(s.lid,s.gap);
+    if(k>0.5 && Math.random()<0.5) rp.smoke.push({x:g.x-30, y:g.y+g.h+g.gapH/2, p:0});
+  }
+  rp.smoke=rp.smoke.filter(q=>{ q.p+=0.012;
+    // 下の すき間から 入って ろうそくの 上を 通り、上の 口から 出る
+    const pts=[[g.x-30,g.y+g.h+g.gapH/2],[g.x+g.w*0.3,g.y+g.h+g.gapH/2],[ccx,cy0-30],[ccx,g.y+10],[ccx+20,g.y-50]];
+    const n=pts.length-1, u=Math.min(0.999,q.p)*n, i=Math.floor(u), f=u-i;
+    const x=pts[i][0]+(pts[i+1][0]-pts[i][0])*f, y=pts[i][1]+(pts[i+1][1]-pts[i][1])*f;
+    cx.fillStyle=KA('rp-sub',.45); cx.beginPath(); cx.arc(x+Math.sin(q.p*30)*3,y,4,0,6.28); cx.fill();
+    return q.p<1; });
+  // びん（口が 上）
+  const neck=ok('bottle') ? 70*g.sc : g.w*0.32;
+  if(ok('bottle')) cx.drawImage(PIMG.bottle, g.x-20*g.sc, g.y, 220*g.sc, 360*g.sc);
+  else { cx.strokeStyle=K('rl-ink'); cx.lineWidth=4; cx.lineJoin='round';
+  cx.beginPath(); cx.moveTo(g.x,g.y+g.h); cx.lineTo(g.x,g.y+g.h*0.12); cx.quadraticCurveTo(g.x,g.y,g.x+g.w/2-neck/2,g.y);
+  cx.moveTo(g.x+g.w,g.y+g.h); cx.lineTo(g.x+g.w,g.y+g.h*0.12); cx.quadraticCurveTo(g.x+g.w,g.y,g.x+g.w/2+neck/2,g.y); cx.stroke(); }
+  cx.strokeStyle=K('rl-ink'); cx.lineWidth=3;
+  // ふた
+  if(s.lid){ cx.fillStyle=K('rp-mute'); cx.fillRect(g.x+g.w/2-neck*0.8, g.y-12, neck*1.6, 12); cx.strokeRect(g.x+g.w/2-neck*0.8, g.y-12, neck*1.6, 12); }
+  // ことば（ふた・すき間）
+  if(rp.mode==='open'){
+    cx.fillStyle=K('rl-ink'); cx.font='700 16px "BIZ UDPGothic",sans-serif'; cx.textBaseline='middle';
+    cx.textAlign='left'; cx.fillText(s.lid?'ふた あり':'ふた なし', g.x+g.w/2+neck+10, g.y-14);
+    cx.textAlign='right'; cx.fillText(s.gap?'すき間 あり':'すき間 なし', g.x-36, g.y+g.h+g.gapH/2);
+    // さわれる しるし（点線の わく）
+    cx.setLineDash([5,5]); cx.strokeStyle=K('rp-mute'); cx.lineWidth=2;
+    cx.strokeRect(g.x+g.w/2-neck, g.y-30, neck*2, 34); cx.strokeRect(g.x-26, g.y+g.h-4, g.w+52, g.gapH+8); cx.setLineDash([]);
+  }
+  show();
+}
+function show(){
+  const s=rp.s, sum=s.n+s.o+s.c, pc=v=>v<1&&v>0 ? (Math.round(v*100)/100)+'%' : Math.round(v)+'%';
+  // 空気は のこり 約1% が その他。わりあいの 帯は 3つで 100 に
+  $('rpBn').style.width=(s.n/sum*100)+'%'; $('rpBo').style.width=(s.o/sum*100)+'%'; $('rpBc').style.width=(s.c/sum*100)+'%';
+  $('rpO').textContent=pc(s.o); $('rpC').textContent=pc(s.c); $('rpN').textContent=pc(s.n);
+  let k='', t='火を つけてみよう';
+  if(rp.lime!=null){ t = rp.lime ? '石灰水が 白く にごった' : '石灰水は かわらない'; }
+  else if(s.lit){ const f=RP.flame(s.o); k='ok'; t = f>1.5 ? 'はげしく 燃える' : RP.ex(s.lid,s.gap)>0.5 ? '燃え続ける' : '燃えている'; }
+  else if(rp.everLit){ k='out'; t = rp.quick ? 'すぐに 消えた' : '火が 消えた'; }
+  const el=$('rpSay'); if(el.textContent!==t){ el.textContent=t; el.dataset.k=k; }
+  $('rpFire').textContent = rp.mode==='gas' ? 'ろうそくを 入れる' : '火を つける';
+}
+let prev=0;
+function tick(dt){ const was=rp.s.lit; RP.step(rp.s,dt); rp.t+=dt; if(was && !rp.s.lit){ rp.outAt=rp.t; rp.quick = rp.t-rp.litAt<1; } }
+function loop(now){ requestAnimationFrame(loop); const dt=Math.min(0.05,(now-(prev||now))/1000); prev=now; if(!rp.pause) tick(dt); draw(); }
+
+/* ===== さわる ===== */
+$('rpLidHit').onclick=()=>{ rp.s.lid=!rp.s.lid; rp.lime=null; draw(); };
+$('rpGapHit').onclick=()=>{ rp.s.gap=!rp.s.gap; rp.lime=null; draw(); };
+$('rpFire').onclick=()=>{
+  if(rp.mode==='gas' && rp.everLit) reset();        // 気体を しらべる ときは 1回ずつ 新しい びんで
+  rp.s.lit=true; rp.everLit=true; rp.lime=null; rp.litAt=rp.t; rp.outAt=null;
+  if(rp.s.o<RP.OUT){ rp.s.lit=false; rp.outAt=rp.t; rp.quick=true; }
+  draw(); };
+$('rpLime').onclick=()=>{ rp.lime=RP.lime(rp.s); draw(); };
+$('rpReset').onclick=()=>{ reset(); draw(); };
+document.querySelectorAll('#rpMode button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#rpMode button').forEach(x=>x.setAttribute('aria-pressed', x===b?'true':'false'));
+  rp.mode=b.dataset.v; $('rpGasSel').hidden = rp.mode!=='gas'; reset(); fit(); draw(); });
+document.querySelectorAll('#rpGasSel button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#rpGasSel button').forEach(x=>x.setAttribute('aria-pressed', x===b?'true':'false'));
+  rp.gas=b.dataset.v; reset(); draw(); });
+
+reset(); fit(); draw(); requestAnimationFrame(loop);
+window.rpRun=(sec)=>{ for(let t=0;t<sec;t+=1/30) tick(1/30); draw(); };
+window.rpDraw=draw;
+RsTe.bindButton($('rsTeBtn'));   // 手で：ふた・すき間・ボタンの 上で 手を とめると おせる
+</script>
+<!--rl-home--><script>
+/* 理科ラボ：どの へやにも 出す「もどる」ボタン（11-07）。決まりは ここ 1か所。
+   へやの 上の帯（.xx-top）の いちばん左に 44px の ⌂ を 足す。帯が ない へやは 左下に うかべる。
+   行き先：その へやが 入っている 部屋の ページ（理科ラボ/1_エネルギー.html など）。そこから ホームへも もどれる。
+   へやの 中の 字や クラス名には さわらない（クラス名は rlh- で はじめる）。 */
+(function(){
+  if(window.__rlHome) return; window.__rlHome=1;
+  // どの へやが どの 部屋に 入るか（mock/ の 下の 道 → 部屋の ページ）
+  var PAGE={energy:'1_エネルギー.html',ryushi:'2_粒子.html',seimei:'3_生命.html',chikyu:'4_地球.html'};
+  var EXTRA={teko:'energy','karada-mirror':'seimei',tentai:'chikyu','seiza-tsunagu':'chikyu'};
+  function room(p){
+    var m=/\/mock\/rika\/(energy|ryushi|seimei|chikyu)\//.exec(p); if(m) return m[1];
+    m=/\/mock\/([^\/]+)\//.exec(p); return m&&EXTRA[m[1]]||'';
+  }
+  function href(){
+    var p=decodeURIComponent(location.pathname), r=room(p), i=p.lastIndexOf('/mock/');
+    if(window.RL_HOME_URL) return window.RL_HOME_URL;          // 授業メイトの 中では 入れる側が 決める
+    if(!r||i<0) return '';
+    return 'file://'+encodeURI(p.slice(0,i)+'/理科ラボ/'+PAGE[r]);
+  }
+  function put(){
+    var to=href(); if(!to||document.querySelector('.rlh-home')) return;
+    var a=document.createElement('a'); a.className='rlh-home'; a.href=to; a.title='へやの 一らんに もどる';
+    a.setAttribute('aria-label','へやの 一らんに もどる');
+    a.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>';
+    var st=document.createElement('style');
+    st.textContent='.rlh-home{flex:0 0 44px;width:44px;height:44px;margin-right:8px;display:inline-flex;align-items:center;justify-content:center;border-radius:22px;background:var(--rl-bg,white);color:var(--rl-ink,black);border:1px solid currentColor;text-decoration:none;box-sizing:border-box}'+
+      '.rlh-home:hover{opacity:.8}.rlh-home:focus-visible{outline:3px solid currentColor;outline-offset:2px}'+
+      '.rlh-home.rlh-float{position:fixed;left:12px;bottom:12px;z-index:9999;margin:0}';
+    document.head.appendChild(st);
+    var bar=[].slice.call(document.querySelectorAll('[class$="-top"],[class*="-top "]')).filter(function(e){
+      var r=e.getBoundingClientRect(); return r.top<20&&r.height>=44&&getComputedStyle(e).display.indexOf('flex')>=0;})[0];
+    if(bar) bar.insertBefore(a,bar.firstChild); else { a.classList.add('rlh-float'); document.body.appendChild(a); }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',put); else put();
+})();
+</script><!--/rl-home-->
+</body>
+</html>

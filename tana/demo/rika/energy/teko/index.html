@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="ja">
+<head><script>window.RL_HOME_URL="../../energy.html";</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>てこの つりあい</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* 見本 v0.4（2026-11-07）6年 理科 てこの つりあい。タッチだけ。指導要領 A(3)：［ぼう］支点・力点・作用点と手ごたえ／［じっけん］［おだい］つりあいのきまり／［どうぐ］身の回りの道具／［はかり］てんびんばかり（ものづくりの代わりに試す） */
+:root{
+  /* エネルギーの 部屋：ポップ・黄と 赤（4つの 部屋で 名前を そろえる 5つ） */
+  --rl-bg:#ffffff; --rl-ink:#1f2937; --rl-accent:#f5b700; --rl-accent2:#e0442b; --rl-soft:#fff6d6;
+  --rl-blue:#1d4ed8; --rl-bluebg:#dbe6ff; --rl-bluesh:rgba(29,78,216,.25); --rl-brown:#b45309; --rl-err:#b91c1c; --rl-ink2:#374151; --rl-line:#e2cf8e; --rl-mute:#9ca3af; --rl-ok:#1b7f3b; --rl-okbg:#ecfdf3; --rl-rule:#f3e8c4; --rl-shine:rgba(255,255,255,.28); --rl-stage:#fffbeb; --rl-sub:#4b5563; --rl-veil:rgba(255,255,255,.92); --rl-wood:#f3e6c8; --rl-wood2:#8a6d3b; --rl-wood3:#5b4a2a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--rl-bg);color:var(--rl-ink);
+  font-family:"BIZ UDPGothic",sans-serif;font-size:16px;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+.tk-app{display:grid;grid-template-rows:auto 1fr;gap:8px;height:100vh;height:100dvh;padding:8px 12px 12px}
+.tk-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:52px}
+.tk-tabs{display:flex;border:1px solid var(--rl-line);border-radius:12px;overflow:hidden}
+.tk-tabs button{min-height:44px;padding:0 16px;border:0;background:var(--rl-bg);font-size:16px;display:flex;align-items:center;gap:6px}
+.tk-tabs button+button{border-left:1px solid var(--rl-line)}
+.tk-tabs button[aria-pressed="true"]{background:var(--rl-accent);color:var(--rl-ink);box-shadow:inset 0 0 0 2px var(--rl-ink);font-weight:700}
+.tk-tabs svg,.tk-b svg{width:22px;height:22px;flex:none}
+.tk-b{min-height:44px;min-width:44px;padding:0 14px;border:1px solid var(--rl-line);background:var(--rl-soft);border-radius:12px;
+  font-size:16px;display:flex;align-items:center;gap:6px}
+.tk-b[aria-pressed="true"]{background:var(--rl-accent);border:2px solid var(--rl-ink);font-weight:700}
+.tk-b[hidden]{display:none!important}
+.tk-next{background:var(--rl-ok);border-color:var(--rl-ok);color:var(--rl-bg);font-weight:700}
+.tk-sp{flex:1}
+.tk-main{display:grid;grid-template-columns:1fr 240px;gap:10px;min-height:0}
+.tk-stage{position:relative;border-radius:12px;overflow:hidden;background:var(--rl-stage);min-height:0;touch-action:none}
+.tk-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.tk-msg{position:absolute;left:50%;top:10px;transform:translateX(-50%);padding:6px 16px;border-radius:20px;
+  background:var(--rl-veil);font-size:18px;font-weight:700;white-space:nowrap;pointer-events:none;max-width:94%;overflow:hidden;text-overflow:ellipsis}
+.tk-msg:empty{display:none}
+.tk-msg[data-k="err"]{color:var(--rl-err);white-space:normal;text-align:center}
+.tk-rec{display:flex;flex-direction:column;border:1px solid var(--rl-line);border-radius:12px;min-height:0;background:var(--rl-bg)}
+.tk-rec h2{margin:0;padding:10px 12px 6px;font-size:16px;display:flex;align-items:center;gap:6px}
+.tk-rec h2 svg{width:22px;height:22px}
+.tk-rec ol{list-style:none;margin:0;padding:0 8px 8px;overflow:auto;flex:1;min-height:0}
+.tk-rec li{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:6px 4px;border-top:1px solid var(--rl-rule);font-size:15px;line-height:1.45}
+.tk-rec li span:last-child{text-align:right}
+.tk-rec li em{grid-column:1/-1;font-style:normal;color:var(--rl-sub);font-size:14px;text-align:center}
+.tk-rec-h{display:grid;grid-template-columns:1fr 1fr;padding:0 12px 4px;color:var(--rl-sub);font-size:14px}
+.tk-rec-h span:last-child{text-align:right}
+.tk-rec-none{color:var(--rl-sub);font-size:14px;padding:8px 12px}
+.tk-rec-none[hidden]{display:none!important}
+.tk-rec[hidden]{display:none!important}
+.tk-note{overflow:auto}
+.tk-note dl{margin:0;padding:0 12px 4px}
+.tk-note dt{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px;margin-top:8px}
+.tk-note dt svg{width:22px;height:22px;flex:none}
+.tk-note dd{margin:2px 0 0 30px;font-size:14px;color:var(--rl-sub);line-height:1.5}
+.tk-note p{margin:8px 12px 10px;padding:8px 10px;border-radius:10px;background:var(--rl-okbg);font-size:15px;line-height:1.55}
+.tk-note p:empty{display:none}
+.tk-note dl[hidden],.tk-hkrec[hidden]{display:none!important}
+.tk-hkrec{list-style:none;margin:0;padding:0 12px 8px}
+.tk-hkrec li{display:flex;justify-content:space-between;padding:6px 2px;border-top:1px solid var(--rl-rule);font-size:15px}
+.tk-hkrec li b{font-weight:700}
+@media (max-width:720px){
+  .tk-main{grid-template-columns:1fr;grid-template-rows:1fr 110px}
+}
+</style>
+</head>
+<body>
+<div class="tk-app">
+  <div class="tk-top">
+    <div class="tk-tabs" role="group" aria-label="あそびかた">
+      <button type="button" id="tkBou" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 10l20 4"/><path d="M9 11.5l-2.5 6h5z"/><path d="M19 5v6M16.5 8.5L19 11l2.5-2.5"/></svg>ぼう</button>
+      <button type="button" id="tkFree" aria-pressed="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 9h18M12 9v10M8 19h8"/><path d="M5 9v4M19 9v4"/></svg>じっけん</button>
+      <button type="button" id="tkOdai" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .8-1 1.5v.5"/><path d="M12 17h.01"/></svg>おだい</button>
+      <button type="button" id="tkDougu" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.5 7.5L21 17M8.5 16.5L21 7"/></svg>どうぐ</button>
+      <button type="button" id="tkHakari" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M8 20h8M4 7h16"/><path d="M4 7l-2.5 6h5zM20 7l-2.5 6h5z"/></svg>はかり</button>
+    </div>
+    <button class="tk-b" type="button" id="tkCalc" aria-pressed="false" title="重さ × きょり を 出す">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>かけ算</button>
+    <button class="tk-b tk-next" type="button" id="tkNext" hidden>つぎの おだい</button>
+    <span class="tk-sp"></span>
+    <button class="tk-b" type="button" id="tkClear" title="おもりを ぜんぶ はずす">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.7"/><path d="M4 4v4h4"/></svg>はずす</button>
+  </div>
+  <div class="tk-main">
+    <div class="tk-stage" id="tkStage">
+      <canvas id="tkCanvas"></canvas>
+      <div class="tk-msg" id="tkMsg"></div>
+    </div>
+    <section class="tk-rec" id="tkRecBox" aria-label="つりあった くみあわせ">
+      <h2><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="stroke:var(--rl-ok)"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16.5 9"/></svg>つりあった</h2>
+      <div class="tk-rec-h"><span>ひだり</span><span>みぎ</span></div>
+      <div class="tk-rec-none" id="tkRecNone">まだ ありません</div>
+      <ol id="tkRec"></ol>
+    </section>
+    <section class="tk-rec tk-note" id="tkNote" aria-label="てこの ことば" hidden>
+      <dl id="tkTerms">
+        <dt><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l8 15H4z" style="fill:var(--rl-accent);stroke:var(--rl-ink)" stroke-width="2" stroke-linejoin="round"/></svg>支点</dt><dd>ぼうを ささえる 所</dd>
+        <dt><svg viewBox="0 0 24 24" fill="none" aria-hidden="true" style="stroke:var(--rl-ink)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v16M6 13l6 6 6-6"/></svg>力点</dt><dd>力を くわえる 所</dd>
+        <dt><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2" style="fill:var(--rl-blue);stroke:var(--rl-ink)" stroke-width="2"/></svg>作用点</dt><dd>ものに 力が はたらく 所</dd>
+      </dl>
+      <p id="tkNoteMsg"></p>
+      <ol class="tk-hkrec" id="tkHkRec" aria-label="はかった 重さ" hidden></ol>
+    </section>
+  </div>
+</div>
+
+<script>
+/* 色は :root の --rl- から 読む（ここに 色を 書かない） */
+const C = new Proxy({}, {get:(o,k)=>o[k]||(o[k]=getComputedStyle(document.documentElement).getPropertyValue('--rl-'+k).trim())});
+
+/* ===== きまり（てこの 計算と おだい）＝ここ1か所 ===== */
+const TK = (()=>{
+  const N=6, CAP=6, G=10;                 // あな 1〜6、1つのあなに 6こまで、おもり 1こ 10g
+  const empty = () => Array(N+1).fill(0); // [0] は つかわない
+  const torque = side => side.reduce((a,n,i)=>a+n*G*i,0);   // 重さ × きょり の 合計
+  const total  = side => side.reduce((a,n)=>a+n,0);
+  const lean   = (L,R) => Math.sign(torque(R)-torque(L));     // -1 ひだりが 下、+1 みぎが 下、0 つりあう
+  const balanced = (L,R) => torque(L)===torque(R) && total(L)+total(R)>0;
+  // おだい：ひだりは 先生が つるした形（動かせない）。みぎに つるして つりあわせる
+  const ODAI = [
+    [[2,3]], [[3,2]], [[4,1]], [[1,6]], [[6,2]], [[2,4]], [[3,4]], [[5,2]],
+    [[1,2],[3,1]], [[2,2],[4,1]], [[1,3],[5,1]], [[2,1],[4,2]]
+  ].map(list=>{ const L=empty(); list.forEach(([i,n])=>L[i]+=n); return L; });
+  // みぎ 1つの あなで つりあう 答えが あるか（おだいの 点検用）
+  const answers = L => { const t=torque(L)/G, out=[]; for(let i=1;i<=N;i++) if(t%i===0 && t/i>=1 && t/i<=CAP) out.push([i,t/i]); return out; };
+  const fmtSide = (side, calc) => {
+    const parts=[]; for(let i=1;i<=N;i++) if(side[i]) parts.push(calc ? `${side[i]*G}g×${i}` : `${i}に ${side[i]*G}g`);
+    if(!parts.length) return 'なし';
+    return parts.join('＋') + (calc ? `＝${torque(side)}` : '');
+  };
+  const key = (L,R) => L.join('')+'|'+R.join('');
+  // ぼう（棒てこ）：目もり 0〜12。作用点（すなぶくろ）は 0 に 固定。支点 f・力点 p を 動かす
+  const BOU = {steps:12, a:0, fMin:1, fMax:8};
+  const tegotae = (f,p) => (f-BOU.a)/(p-f);           // 力点に いる 力（すなぶくろの 重さを 1 と した とき）
+  const LEVEL = ['とても かるい','かるい','ふつう','おもい','とても おもい'];
+  const level = r => r<=0.3?0:r<=0.7?1:r<=1.5?2:r<=3?3:4;
+  // どうぐ：点の 場所は 絵の 箱の 中の 0〜1。ask の 順に たずねる
+  const DOUGU = [
+    {id:'kuginuki', name:'くぎぬき', shiten:[0.25,0.82], rikiten:[0.90,0.14], sayouten:[0.17,0.56],
+     msg:'支点から 力点までが 長いので、小さな 力で くぎが ぬける。'},
+    {id:'sennuki', name:'せんぬき', shiten:[0.13,0.45], rikiten:[0.88,0.45], sayouten:[0.33,0.60],
+     msg:'作用点が まん中。支点から 力点までが 長いので、小さな 力で あく。'},
+    {id:'pinset', name:'ピンセット', shiten:[0.08,0.50], rikiten:[0.50,0.38], sayouten:[0.90,0.50],
+     msg:'力点が まん中。大きな 力は いるが、小さな ものを そっと つまめる。'},
+    {id:'hasami', name:'はさみ', shiten:[0.50,0.50], rikiten:[0.12,0.26], sayouten:[0.80,0.45], lab:{shiten:'b'},
+     msg:'支点が まん中。あつい 紙は 支点の 近くで 切ると 小さな 力で 切れる。'}
+  ];
+  const ASK = ['shiten','rikiten','sayouten'], ASKNAME = {shiten:'支点',rikiten:'力点',sayouten:'作用点'};
+  // はかり（てんびんばかり）：左の 皿に もの、右の 皿に 10g・5g の おもり。支点から 同じ きょり
+  const HK_CAP = 9;                                   // 右の 皿に のせられるのは 10g なら 9こ ぶん まで
+  const HAKARI = [
+    {id:'keshigomu', name:'けしゴム', g:20, w:0.55, h:0.32},
+    {id:'denchi',    name:'かん電池', g:25, w:0.30, h:0.60},
+    {id:'nori',      name:'のり',     g:35, w:0.34, h:0.70},
+    {id:'hasami',    name:'はさみ',   g:55, w:0.80, h:0.30},
+    {id:'note',      name:'ノート',   g:80, w:0.85, h:0.18}
+  ];
+  return {HK_CAP,HAKARI,N,CAP,G,empty,torque,total,lean,balanced,ODAI,answers,fmtSide,key,BOU,tegotae,LEVEL,level,DOUGU,ASK,ASKNAME};
+})();
+window.TK = TK;
+</script>
+
+<script>
+/* ===== 画面 ===== */
+const $ = id => document.getElementById(id);
+const stage=$('tkStage'), cv=$('tkCanvas'), cx=cv.getContext('2d');
+const S = {
+  mode:'free', L:TK.empty(), R:TK.empty(), lockL:false,
+  ang:0, vel:0, calc:false, rec:[], recKeys:new Set(), odai:0, solved:false,
+  carry:new Map(),   // つまんでいる おもり（マウス・指 ごと）
+  W:0, H:0, wasBal:false,
+  bou:{f:6,p:12}, bouDrag:null, dg:{k:0,step:0,miss:null},
+  hk:{k:0,R:[],ang:0,vel:0,carry:null,done:false,rec:[]}
+};
+const MAXA = 12*Math.PI/180;
+
+function fit(){
+  const r=stage.getBoundingClientRect(), d=window.devicePixelRatio||1;
+  S.W=r.width; S.H=r.height; cv.width=Math.round(r.width*d); cv.height=Math.round(r.height*d);
+  cx.setTransform(d,0,0,d,0,0);
+}
+new ResizeObserver(fit).observe(stage);
+
+// 形（えがく所と さわる所で 同じものを 使う）
+function geo(){
+  const W=S.W, H=S.H;
+  const px=W/2, py=Math.max(70, H*0.27);
+  const Lh=Math.min(W*0.45, H*1.05), sp=Lh/6.6;
+  const wh=Math.max(16, Math.min(sp*0.5, (H*0.78-py)/7.4)), ww=Math.min(sp*0.7, 46);
+  const ty=H*0.82, th=Math.max(Math.min(H*0.16, 80), wh+36), tw=Math.max(sp*2.6, 150);
+  return {W,H,px,py,Lh,sp,wh,ww,tray:{x:px-tw/2,y:Math.min(ty,H-th-6),w:tw,h:th}};
+}
+function holePos(s,i,g=geo()){ // s: -1 ひだり +1 みぎ
+  const c=Math.cos(S.ang), sn=Math.sin(S.ang), d=s*i*g.sp;
+  return {x:g.px+d*c, y:g.py+d*sn};
+}
+function stackBox(s,i,g=geo()){
+  const h=holePos(s,i,g), n=(s<0?S.L:S.R)[i], hook=g.wh*0.55;
+  return {x:h.x-g.ww/2, y:h.y, w:g.ww, h:hook+Math.max(1,n)*(g.wh+2), top:h.y+hook};
+}
+function inTray(x,y,g=geo()){ const t=g.tray; return x>=t.x-8&&x<=t.x+t.w+8&&y>=t.y-8&&y<=t.y+t.h+8; }
+function nearestHole(x,y,g=geo()){
+  let best=null, bd=Infinity;
+  for(const s of [-1,1]) for(let i=1;i<=TK.N;i++){
+    if(s<0 && S.lockL) continue;
+    const b=stackBox(s,i,g), cxh=b.x+b.w/2, cyh=b.top+g.wh;
+    const dx=Math.abs(x-cxh); if(dx>g.sp*0.55) continue;
+    if(y<b.y-g.sp*1.2 || y>b.y+g.wh*7.5) continue;
+    const dd=dx+Math.abs(y-cyh)*0.15; if(dd<bd){bd=dd;best={s,i};}
+  }
+  return best;
+}
+const side = s => s<0?S.L:S.R;
+
+// つまむ・うごかす・はなす（マウス・指で 同じ 道）
+function grab(id,x,y){
+  if(S.carry.has(id)) return;
+  const g=geo();
+  if(inTray(x,y,g)){ S.carry.set(id,{x,y,from:null,to:null}); return; }
+  for(const s of [-1,1]) for(let i=1;i<=TK.N;i++){
+    if(!side(s)[i] || (s<0&&S.lockL)) continue;
+    const b=stackBox(s,i,g);
+    if(x>=b.x-6&&x<=b.x+b.w+6&&y>=b.y-6&&y<=b.y+b.h+6){
+      side(s)[i]--; S.carry.set(id,{x,y,from:{s,i},to:null}); changed(false); return;
+    }
+  }
+}
+function move(id,x,y){ const c=S.carry.get(id); if(!c) return; c.x=x; c.y=y; c.to=nearestHole(x,y); }
+function drop(id){
+  const c=S.carry.get(id); if(!c) return; S.carry.delete(id);
+  if(c.to && side(c.to.s)[c.to.i]<TK.CAP){ side(c.to.s)[c.to.i]++; changed(true); }
+  else changed(c.from!=null);
+}
+function put(s,i,n=1){ side(s)[i]=Math.min(TK.CAP, side(s)[i]+n); changed(true); }   // ためし用
+
+function changed(placed){
+  const bal=TK.balanced(S.L,S.R) && (S.mode==='free' || TK.total(S.R)>0);
+  if(bal && placed){
+    const k=TK.key(S.L,S.R);
+    if(!S.recKeys.has(k)){ S.recKeys.add(k); S.rec.unshift({L:S.L.slice(),R:S.R.slice()}); renderRec(); }
+    if(S.mode==='odai' && !S.solved){ S.solved=true; $('tkNext').hidden=false; }
+  }
+  S.wasBal=bal;
+}
+function renderRec(){
+  const ol=$('tkRec'); ol.textContent='';
+  $('tkRecNone').hidden=S.rec.length>0;
+  for(const r of S.rec){
+    const li=document.createElement('li');
+    const a=document.createElement('span'), b=document.createElement('span');
+    a.textContent=TK.fmtSide(r.L,S.calc); b.textContent=TK.fmtSide(r.R,S.calc);
+    li.append(a,b); ol.append(li);
+  }
+}
+function setMode(m){
+  S.mode=m;
+  for(const [id,k] of [['tkBou','bou'],['tkFree','free'],['tkOdai','odai'],['tkDougu','dougu'],['tkHakari','hakari']]) $(id).setAttribute('aria-pressed',m===k);
+  S.carry.clear(); S.bouDrag=null; say('');
+  const weights = m==='free'||m==='odai';
+  $('tkCalc').hidden=!weights; $('tkClear').hidden=!weights; $('tkRecBox').hidden=!weights; $('tkNote').hidden=weights;
+  $('tkNoteMsg').textContent=''; $('tkTerms').hidden=m==='hakari'; $('tkHkRec').hidden=m!=='hakari';
+  if(m==='odai') loadOdai(S.odai);
+  else { S.lockL=false; S.L=TK.empty(); S.R=TK.empty(); $('tkNext').hidden=true; }
+  if(m==='dougu') loadDougu(S.dg.k);
+  if(m==='bou') bouNote();
+  if(m==='hakari') loadHakari(S.hk.k);
+  S.wasBal=false;
+}
+function say(t,k){ const e=$('tkMsg'); e.textContent=t; if(k) e.dataset.k=k; else delete e.dataset.k; }
+function loadOdai(k){
+  S.odai=((k%TK.ODAI.length)+TK.ODAI.length)%TK.ODAI.length;
+  S.L=TK.ODAI[S.odai].slice(); S.R=TK.empty(); S.lockL=true; S.solved=false; $('tkNext').hidden=true;
+  $('tkNext').textContent='つぎの おだい';
+}
+
+/* ===== ぼう（棒てこ） ===== */
+function bouGeo(){
+  const W=S.W, H=S.H, x0=W*0.08, x1=W*0.92, y=Math.max(110, H*0.46), th=Math.max(12,Math.min(18,H*0.03));
+  return {W,H,x0,x1,y,th,st:(x1-x0)/TK.BOU.steps};
+}
+const bouX = (k,g=bouGeo()) => g.x0+k*g.st;
+function bouNote(){
+  const r=TK.tegotae(S.bou.f,S.bou.p);
+  $('tkNoteMsg').textContent = r<1 ? '支点から 力点が 遠いほど、作用点が 近いほど、小さな 力で もち上がる。'
+                                   : '支点や 力点の 場所を 動かして、手ごたえを くらべよう。';
+}
+function bouDown(id,x,y){
+  const g=bouGeo(), fx=bouX(S.bou.f,g), px=bouX(S.bou.p,g), hit=Math.max(26,g.st*0.5);
+  if(Math.abs(x-px)<hit && y<g.y+g.th && y>g.y-110) S.bouDrag={id,what:'p'};
+  else if(Math.abs(x-fx)<hit && y>g.y-10 && y<g.y+80) S.bouDrag={id,what:'f'};
+}
+function bouMove(id,x){
+  const d=S.bouDrag; if(!d||d.id!==id) return;
+  const g=bouGeo(), k=Math.round((x-g.x0)/g.st), B=TK.BOU;
+  if(d.what==='f') S.bou.f=Math.max(B.fMin, Math.min(B.fMax, Math.min(S.bou.p-1, k)));
+  else S.bou.p=Math.max(S.bou.f+1, Math.min(B.steps, k));
+  bouNote();
+}
+
+/* ===== はかり（てんびんばかり） ===== */
+function hkGeo(){
+  const W=S.W, H=S.H, px=W/2, py=Math.max(100,H*0.24), L=Math.min(W*0.32,H*0.8), d=L*0.85;
+  const sl=Math.max(56,H*0.2), pw=Math.max(132,Math.min(160,W*0.2));
+  const c=Math.cos(S.hk.ang), sn=Math.sin(S.hk.ang);
+  const lh={x:px-d*c, y:py-d*sn}, rh={x:px+d*c, y:py+d*sn};
+  const th=Math.max(72,Math.min(92,H*0.2)), tw=Math.max(220,Math.min(300,W*0.4)), ty=H-th-8;
+  return {W,H,px,py,L,d,sl,pw,lh,rh,lp:{x:lh.x,y:lh.y+sl}, rp:{x:rh.x,y:rh.y+sl},
+    tray:{x:px-tw/2,y:ty,w:tw,h:th}, t10:{x:px-tw/4,y:ty+th*0.62}, t5:{x:px+tw/4,y:ty+th*0.62}};
+}
+const hkSum = () => S.hk.R.reduce((a,b)=>a+b,0);
+function loadHakari(k){
+  const n=TK.HAKARI.length; S.hk.k=((k%n)+n)%n; S.hk.R=[]; S.hk.carry=null; S.hk.done=false;
+  $('tkNext').hidden=true; $('tkNoteMsg').textContent='ものと 同じ きょりに おもりを のせて、水平に なる 重さを さがそう。';
+  say(`${TK.HAKARI[S.hk.k].name}の 重さは？`); hkRenderRec();
+}
+function hkPut(v){ if(S.hk.R.length>=TK.HK_CAP+3 || hkSum()+v>TK.HK_CAP*10) return; S.hk.R.push(v); hkChanged(); }
+function hkChanged(){
+  const o=TK.HAKARI[S.hk.k];
+  if(hkSum()!==o.g){ if(S.hk.done){ S.hk.done=false; $('tkNext').hidden=true; say(`${o.name}の 重さは？`); } return; }
+  if(!S.hk.done){
+    S.hk.done=true;
+    if(!S.hk.rec.some(r=>r.id===o.id)){ S.hk.rec.push({id:o.id,name:o.name,g:o.g}); hkRenderRec(); }
+    say(`つりあった：${o.name}は ${o.g}g`);
+    $('tkNoteMsg').textContent='支点から 同じ きょりで 水平に なったら、左と 右の 重さは 同じ。';
+    $('tkNext').textContent='つぎの もの'; $('tkNext').hidden=false;
+  }
+}
+function hkRenderRec(){ const ol=$('tkHkRec'); ol.textContent='';
+  for(const r of S.hk.rec){ const li=document.createElement('li'), a=document.createElement('span'), b=document.createElement('b');
+    a.textContent=r.name; b.textContent=r.g+'g'; li.append(a,b); ol.append(li); } }
+function hkNear(x,y,q,rx,ry){ return Math.abs(x-q.x)<rx && Math.abs(y-q.y)<ry; }
+function hkDown(id,x,y){
+  const g=hkGeo();
+  if(hkNear(x,y,g.t10,g.tray.w/4,g.tray.h/2)) S.hk.carry={id,v:10,x,y};
+  else if(hkNear(x,y,g.t5,g.tray.w/4,g.tray.h/2)) S.hk.carry={id,v:5,x,y};
+  else if(S.hk.R.length && x>g.rp.x-g.pw/2-10 && x<g.rp.x+g.pw/2+10 && y>g.rp.y-90 && y<g.rp.y+16){
+    S.hk.carry={id,v:S.hk.R.pop(),x,y}; S.hk.done=false; $('tkNext').hidden=true; say(`${TK.HAKARI[S.hk.k].name}の 重さは？`);
+  }
+}
+function hkMove(id,x,y){ const c=S.hk.carry; if(c&&c.id===id){ c.x=x; c.y=y; } }
+function hkUp(id){ const c=S.hk.carry; if(!c||c.id!==id) return; S.hk.carry=null;
+  const g=hkGeo(); if(c.x>g.rp.x-g.pw/2-20 && c.x<g.rp.x+g.pw/2+20 && c.y>g.rp.y-120 && c.y<g.rp.y+30) hkPut(c.v);
+  else hkChanged(); }
+
+/* ===== どうぐ（身の回りの 道具） ===== */
+function dgBox(){ const W=S.W, H=S.H, bw=Math.min(W*0.84, H*1.9), bh=Math.min(H*0.66, bw*0.6);
+  return {x:(W-bw)/2, y:H*0.22, w:bw, h:bh}; }
+function dgPts(){ const b=dgBox(), d=TK.DOUGU[S.dg.k], o={};
+  for(const k of TK.ASK) o[k]=[b.x+d[k][0]*b.w, b.y+d[k][1]*b.h]; return o; }
+function dgMinGap(){ let m=Infinity; for(const d of TK.DOUGU){ const b=dgBox(), q=TK.ASK.map(k=>[d[k][0]*b.w,d[k][1]*b.h]);
+  for(let i=0;i<3;i++) for(let j=i+1;j<3;j++) m=Math.min(m,Math.hypot(q[i][0]-q[j][0],q[i][1]-q[j][1])); } return m; }
+function loadDougu(k){
+  S.dg={k:((k%TK.DOUGU.length)+TK.DOUGU.length)%TK.DOUGU.length, step:0, miss:null};
+  $('tkNext').hidden=true; $('tkNoteMsg').textContent=''; dgAsk();
+}
+function dgAsk(){ const d=TK.DOUGU[S.dg.k]; say(`${d.name}の ${TK.ASKNAME[TK.ASK[S.dg.step]]}は どこ？`); }
+function dgTap(x,y){
+  if(S.dg.step>=3) return;
+  const P=dgPts(), want=TK.ASK[S.dg.step];
+  let best=null, bd=Infinity; for(const k of TK.ASK){ const dd=Math.hypot(P[k][0]-x,P[k][1]-y); if(dd<bd){bd=dd;best=k;} }
+  if(best===want && bd<40){
+    S.dg.step++; S.dg.miss=null;
+    if(S.dg.step>=3){ const d=TK.DOUGU[S.dg.k]; say(`${d.name}：ぜんぶ 見つけた`); $('tkNoteMsg').textContent=d.msg;
+      $('tkNext').textContent='つぎの どうぐ'; $('tkNext').hidden=false; }
+    else dgAsk();
+  } else {
+    S.dg.miss={x,y,t:performance.now()};
+    say(`ちがうよ。${TK.ASKNAME[want]}を さがそう`,'err');
+  }
+}
+$('tkFree').onclick=()=>setMode('free');
+$('tkOdai').onclick=()=>setMode('odai');
+$('tkNext').onclick=()=>{ if(S.mode==='dougu') loadDougu(S.dg.k+1); else if(S.mode==='hakari') loadHakari(S.hk.k+1); else loadOdai(S.odai+1); };
+$('tkHakari').onclick=()=>setMode('hakari');
+$('tkBou').onclick=()=>setMode('bou');
+$('tkDougu').onclick=()=>setMode('dougu');
+$('tkClear').onclick=()=>{ S.carry.clear(); S.R=TK.empty(); if(!S.lockL) S.L=TK.empty(); S.wasBal=false; };
+$('tkCalc').onclick=()=>{ S.calc=!S.calc; $('tkCalc').setAttribute('aria-pressed',S.calc); renderRec(); };
+
+// マウス・指（いつでも つかえる）
+const pt = e => { const r=stage.getBoundingClientRect(); return [e.clientX-r.left, e.clientY-r.top]; };
+stage.addEventListener('pointerdown',e=>{ stage.setPointerCapture(e.pointerId); const [x,y]=pt(e), id='p'+e.pointerId;
+  if(S.mode==='bou') bouDown(id,x,y); else if(S.mode==='dougu') dgTap(x,y); else if(S.mode==='hakari') hkDown(id,x,y); else { grab(id,x,y); move(id,x,y); } });
+stage.addEventListener('pointermove',e=>{ const [x,y]=pt(e), id='p'+e.pointerId; if(S.mode==='bou') bouMove(id,x); else if(S.mode==='hakari') hkMove(id,x,y); else move(id,x,y); });
+stage.addEventListener('pointerup',e=>{ if(S.mode==='bou') S.bouDrag=null; else if(S.mode==='hakari') hkUp('p'+e.pointerId); else drop('p'+e.pointerId); });
+stage.addEventListener('pointercancel',e=>{ S.bouDrag=null; S.hk.carry=null; S.carry.delete('p'+e.pointerId); changed(false); });
+
+
+// えがく
+function rr(x,y,w,h,r){ cx.beginPath(); cx.roundRect ? cx.roundRect(x,y,w,h,r) : cx.rect(x,y,w,h); }
+function weight(x,y,g,locked,ghost){
+  cx.globalAlpha=ghost?0.45:1;
+  rr(x-g.ww/2,y,g.ww,g.wh,5); cx.fillStyle=locked?C.bluebg:C.accent2; cx.fill();
+  cx.lineWidth=2; cx.strokeStyle=locked?C.blue:C.ink2; cx.stroke();
+  cx.fillStyle=locked?C.bluesh:C.shine; rr(x-g.ww/2+3,y+3,g.ww-6,Math.max(3,g.wh*0.22),3); cx.fill();
+  cx.globalAlpha=1;
+}
+function lockMark(x,y,c){ cx.save(); cx.strokeStyle=c; cx.fillStyle=C.bg; cx.lineWidth=2.5;
+  cx.beginPath(); cx.arc(x,y-5,5,Math.PI,0); cx.stroke(); rr(x-8,y-5,16,12,3); cx.fill(); cx.stroke(); cx.restore(); }
+function text(t,x,y,size,col,al='center',w=700){ cx.font=`${w} ${size}px "BIZ UDPGothic",sans-serif`; cx.fillStyle=col; cx.textAlign=al; cx.textBaseline='middle'; cx.fillText(t,x,y); }
+
+// しるし（右の 欄と 同じ 形：支点▲・力点↓・作用点■）
+function mkShiten(x,y,r=12){ cx.beginPath(); cx.moveTo(x,y); cx.lineTo(x-r,y+r*1.8); cx.lineTo(x+r,y+r*1.8); cx.closePath();
+  cx.fillStyle=C.accent; cx.fill(); cx.lineWidth=2; cx.strokeStyle=C.ink; cx.lineJoin='round'; cx.stroke(); }
+function mkRikiten(x,y,len=40){ cx.save(); cx.strokeStyle=C.ink; cx.lineWidth=5; cx.lineCap='round'; cx.lineJoin='round';
+  cx.beginPath(); cx.moveTo(x,y-len); cx.lineTo(x,y-3); cx.moveTo(x-9,y-13); cx.lineTo(x,y-3); cx.lineTo(x+9,y-13); cx.stroke(); cx.restore(); }
+function mkSayou(x,y,r=9){ rr(x-r,y-r,r*2,r*2,3); cx.fillStyle=C.blue; cx.fill(); cx.lineWidth=2; cx.strokeStyle=C.ink; cx.stroke(); }
+
+function drawBou(){
+  const g=bouGeo(), f=S.bou.f, p=S.bou.p, fx=bouX(f,g), px=bouX(p,g), ax=bouX(TK.BOU.a,g);
+  const r=TK.tegotae(f,p), lv=TK.level(r);
+  // 目もり つきの ぼう
+  rr(g.x0-8,g.y-g.th/2,g.x1-g.x0+16,g.th,g.th/2); cx.fillStyle=C.wood; cx.fill(); cx.lineWidth=2; cx.strokeStyle=C.wood2; cx.stroke();
+  for(let k=0;k<=TK.BOU.steps;k++){ cx.fillStyle=C.wood3; cx.fillRect(bouX(k,g)-1,g.y-g.th/2+2,2,g.th-4); }
+  // 作用点：すなぶくろ
+  const sw=Math.max(34,g.st*0.9), sh=sw*0.8;
+  cx.strokeStyle=C.ink2; cx.lineWidth=2; cx.beginPath(); cx.moveTo(ax,g.y+g.th/2); cx.lineTo(ax,g.y+g.th/2+14); cx.stroke();
+  rr(ax-sw/2,g.y+g.th/2+14,sw,sh,sw*0.3); cx.fillStyle=C.wood; cx.fill(); cx.lineWidth=2; cx.strokeStyle=C.wood2; cx.stroke();
+  text('すな', ax, g.y+g.th/2+14+sh/2, 14, C.ink2);
+  mkSayou(ax, g.y, 8);
+  text('作用点', ax+2, g.y+g.th/2+14+sh+14, 16, C.ink, 'left');
+  // 支点：台
+  const fr=Math.max(14,Math.min(20,g.st*0.4)), fly=g.y+g.th/2+fr*1.8+16;
+  mkShiten(fx, g.y+g.th/2, fr);
+  text('支点', fx, fly, 16, C.ink);
+  // 力点：手で おす（いる 力が 大きいほど 矢じるしが 長い）
+  const len=Math.max(26, Math.min(g.y-60, 24+r*28));
+  mkRikiten(px, g.y-g.th/2, len);
+  text('力点', px, g.y-g.th/2-len-14, 16, C.ink);
+  // きょり
+  const yy=Math.max(fly+30, g.y+g.H*0.2);
+  const dim=(a,b,lab,num)=>{ if(b-a<24) return; if(lab.length*15+12>b-a-6) lab=String(num); cx.strokeStyle=C.sub; cx.lineWidth=1.5; cx.beginPath(); cx.moveTo(a,yy); cx.lineTo(b,yy);
+    cx.moveTo(a,yy-6); cx.lineTo(a,yy+6); cx.moveTo(b,yy-6); cx.lineTo(b,yy+6); cx.stroke();
+    cx.fillStyle=C.bg; const w=lab.length*15+12; rr((a+b)/2-w/2,yy-12,w,24,8); cx.fill(); text(lab,(a+b)/2,yy,15,C.ink2); };
+  dim(ax,fx,`支点まで ${f-TK.BOU.a}`,f-TK.BOU.a); dim(fx,px,`力点まで ${p-f}`,p-f);
+  // 手ごたえ（5だん。いくつ ぬれたかと ことばで しめす）
+  const gx=14, gy=Math.min(g.H-40, yy+34), cw=Math.max(26,Math.min(40,(g.W*0.4)/5));
+  text('手ごたえ', gx, gy+12, 16, C.ink, 'left');
+  const bx=gx+80;
+  for(let i=0;i<5;i++){ rr(bx+i*(cw+4), gy+12-6-i*2, cw, 12+i*4, 3); cx.fillStyle=i<=lv?C.accent2:C.bg; cx.fill(); cx.lineWidth=1.5; cx.strokeStyle=C.ink2; cx.stroke(); }
+  text(TK.LEVEL[lv], bx+5*(cw+4)+8, gy+12, 18, C.ink, 'left');
+}
+
+const DGDRAW = {
+  kuginuki(b,P){ // 板と くぎ、L字の くぎぬき
+    rr(b.x, P(0,0.84)[1], b.w*0.55, b.h*0.12, 4); cx.fillStyle=C.wood; cx.fill(); cx.strokeStyle=C.wood2; cx.lineWidth=2; cx.stroke();
+    line([P(0.17,0.52),P(0.17,0.86)],4,C.ink2); line([P(0.13,0.52),P(0.21,0.52)],5,C.ink2);
+    cx.beginPath(); cx.moveTo(...P(0.92,0.12)); cx.lineTo(...P(0.31,0.77)); cx.quadraticCurveTo(...P(0.22,0.90),...P(0.15,0.60));
+    cx.lineWidth=11; cx.strokeStyle=C.sub; cx.lineCap='round'; cx.stroke(); },
+  sennuki(b,P){ // びんと せんぬき
+    cx.beginPath(); cx.moveTo(...P(0.13,1.0)); cx.lineTo(...P(0.13,0.70)); cx.lineTo(...P(0.17,0.60)); cx.lineTo(...P(0.27,0.60)); cx.lineTo(...P(0.31,0.70)); cx.lineTo(...P(0.31,1.0));
+    cx.fillStyle=C.soft; cx.fill(); cx.lineWidth=2; cx.strokeStyle=C.ink2; cx.stroke();
+    rr(...P(0.14,0.50), b.w*0.18, b.h*0.10, 3); cx.fillStyle=C.mute; cx.fill(); cx.stroke();
+    line([P(0.11,0.45),P(0.92,0.45)],12,C.sub); line([P(0.30,0.45),P(0.35,0.62),P(0.31,0.64)],6,C.sub); },
+  pinset(b,P){ // ピンセットと 小さな たま
+    line([P(0.07,0.50),P(0.92,0.44)],8,C.sub); line([P(0.07,0.50),P(0.92,0.56)],8,C.sub);
+    cx.beginPath(); cx.arc(...P(0.955,0.50), Math.max(6,b.h*0.04), 0, Math.PI*2); cx.fillStyle=C.accent2; cx.fill(); },
+  hasami(b,P){ // はさみと 紙
+    rr(...P(0.70,0.20), b.w*0.28, b.h*0.25, 3); cx.fillStyle=C.bg; cx.fill(); cx.lineWidth=2; cx.strokeStyle=C.mute; cx.stroke();
+    line([P(0.50,0.50),P(0.97,0.36)],9,C.sub); line([P(0.50,0.50),P(0.97,0.64)],9,C.sub);
+    line([P(0.50,0.50),P(0.20,0.30)],9,C.sub); line([P(0.50,0.50),P(0.20,0.70)],9,C.sub);
+    for(const q of [P(0.12,0.26),P(0.12,0.74)]){ cx.beginPath(); cx.ellipse(q[0],q[1],b.w*0.07,b.h*0.10,0,0,Math.PI*2); cx.lineWidth=8; cx.strokeStyle=C.sub; cx.stroke(); } }
+};
+function line(pts,w,col){ cx.beginPath(); cx.moveTo(...pts[0]); for(const q of pts.slice(1)) cx.lineTo(...q); cx.lineWidth=w; cx.strokeStyle=col; cx.lineCap='round'; cx.lineJoin='round'; cx.stroke(); }
+function drawDougu(){
+  const b=dgBox(), d=TK.DOUGU[S.dg.k], P=(u,v)=>[b.x+u*b.w, b.y+v*b.h];
+  text(d.name, b.x, b.y-14, 20, C.ink, 'left');
+  DGDRAW[d.id](b,P);
+  const pts=dgPts();
+  TK.ASK.forEach((k,i)=>{ const [x,y]=pts[k];
+    if(i<S.dg.step){ // 見つけた：しるしと 名前
+      cx.beginPath(); cx.arc(x,y,20,0,Math.PI*2); cx.fillStyle=C.veil; cx.fill(); cx.lineWidth=3; cx.strokeStyle=C.ok; cx.stroke();
+      if(k==='shiten') mkShiten(x,y-11,10); else if(k==='rikiten') mkRikiten(x,y+12,26); else mkSayou(x,y,8);
+      const side=(d.lab&&d.lab[k]) || (x>b.x+b.w*0.6?'l':'r'), tw=TK.ASKNAME[k].length*17+10;
+      const bx = side==='b' ? x-tw/2 : side==='l' ? x-26-tw : x+26, by = side==='b' ? y+24 : y-13;
+      cx.fillStyle=C.veil; rr(bx, by, tw, 26, 8); cx.fill();
+      text(TK.ASKNAME[k], bx+tw/2, by+13, 17, C.ink);
+    } else { // まだ：点線の まる
+      cx.save(); cx.setLineDash([5,4]); cx.beginPath(); cx.arc(x,y,20,0,Math.PI*2); cx.lineWidth=2.5; cx.strokeStyle=C.ink2; cx.stroke(); cx.restore();
+    }
+  });
+  const m=S.dg.miss; if(m && performance.now()-m.t<900){ // ちがう：× を 少し 出す
+    cx.save(); cx.strokeStyle=C.err; cx.lineWidth=4; cx.lineCap='round'; cx.beginPath();
+    cx.moveTo(m.x-9,m.y-9); cx.lineTo(m.x+9,m.y+9); cx.moveTo(m.x+9,m.y-9); cx.lineTo(m.x-9,m.y+9); cx.stroke(); cx.restore(); }
+}
+
+function hkPiece(x,y,v,k=1){ // 下の まん中が (x,y)。10g は 大きく、5g は 小さく、字でも しめす
+  const w=(v===10?44:34)*k, h=(v===10?26:22)*k;
+  rr(x-w/2,y-h,w,h,5); cx.fillStyle=C.accent; cx.fill(); cx.lineWidth=2; cx.strokeStyle=C.ink2; cx.stroke();
+  text(v+'g', x, y-h/2+1, 14, C.ink); return w; }
+function hkPan(cxp,y,g){ cx.strokeStyle=C.ink2; cx.lineWidth=2; cx.beginPath();
+  cx.moveTo(cxp,y-g.sl); cx.lineTo(cxp-g.pw/2+6,y); cx.moveTo(cxp,y-g.sl); cx.lineTo(cxp+g.pw/2-6,y); cx.stroke();
+  rr(cxp-g.pw/2,y,g.pw,8,4); cx.fillStyle=C.sub; cx.fill(); }
+function tag(t,x,y,size){ cx.font=`700 ${size}px "BIZ UDPGothic",sans-serif`; const w=cx.measureText(t).width+10;
+  rr(x-w/2,y-size*0.7,w,size*1.4,6); cx.fillStyle=C.veil; cx.fill(); text(t,x,y,size,C.ink); }
+function drawHakari(){
+  const g=hkGeo(), o=TK.HAKARI[S.hk.k];
+  // 台
+  cx.fillStyle=C.mute; cx.fillRect(g.px-5,g.py,10,g.tray.y-g.py-6);
+  cx.beginPath(); cx.moveTo(g.px,g.py-4); cx.lineTo(g.px-16,g.py+26); cx.lineTo(g.px+16,g.py+26); cx.closePath(); cx.fillStyle=C.sub; cx.fill();
+  // うで
+  cx.save(); cx.translate(g.px,g.py); cx.rotate(S.hk.ang); rr(-g.L,-7,g.L*2,14,7); cx.fillStyle=C.wood; cx.fill(); cx.lineWidth=2; cx.strokeStyle=C.wood2; cx.stroke();
+  for(const sx of [-g.d,g.d]){ cx.beginPath(); cx.arc(sx,0,4,0,Math.PI*2); cx.fillStyle=C.wood3; cx.fill(); }
+  cx.restore();
+  cx.beginPath(); cx.arc(g.px,g.py,6,0,Math.PI*2); cx.fillStyle=C.bg; cx.fill(); cx.lineWidth=3; cx.strokeStyle=C.ink; cx.stroke();
+  // 同じ きょり の しるし
+  const dy=g.py-26; cx.strokeStyle=C.sub; cx.lineWidth=1.5; cx.beginPath();
+  for(const [a,b] of [[g.px-g.d,g.px],[g.px,g.px+g.d]]){ cx.moveTo(a,dy); cx.lineTo(b,dy); cx.moveTo(a,dy-5); cx.lineTo(a,dy+5); cx.moveTo(b,dy-5); cx.lineTo(b,dy+5); }
+  cx.stroke(); tag('同じ きょり', g.px-g.d/2, dy-14, 15); tag('同じ きょり', g.px+g.d/2, dy-14, 15);
+  // 左の 皿：もの
+  hkPan(g.lp.x,g.lp.y,g);
+  const ow=g.pw*o.w, oh=Math.max(30,70*o.h);
+  rr(g.lp.x-ow/2,g.lp.y-oh,ow,oh,8); cx.fillStyle=C.bluebg; cx.fill(); cx.lineWidth=2; cx.strokeStyle=C.blue; cx.stroke();
+  tag(o.name, g.lp.x, g.lp.y-oh-14, 16);
+  text('？g', g.lp.x, g.lp.y-oh/2, 15, C.ink);
+  // 右の 皿：おもり（4こ ずつ 上に つむ）
+  hkPan(g.rp.x,g.rp.y,g);
+  S.hk.R.forEach((v,i)=>{ const col=i%4, row=Math.floor(i/4); hkPiece(g.rp.x+(col-1.5)*35, g.rp.y-row*23, v, 0.75); });
+  // おもり 置き場
+  const t=g.tray; rr(t.x,t.y,t.w,t.h,10); cx.fillStyle=C.bg; cx.fill(); cx.lineWidth=2; cx.strokeStyle=C.mute; cx.stroke();
+  cx.beginPath(); cx.moveTo(g.px,t.y+8); cx.lineTo(g.px,t.y+t.h-8); cx.stroke();
+  hkPiece(g.t10.x-24,g.t10.y+14,10); hkPiece(g.t10.x+24,g.t10.y+14,10);
+  hkPiece(g.t5.x-20,g.t5.y+12,5); hkPiece(g.t5.x+20,g.t5.y+12,5);
+  // 右の 皿の 合計
+  text(`右の 皿 ${hkSum()}g`, t.x+t.w+12, t.y+t.h/2, 16, C.ink, 'left');
+  // もっている おもり
+  const c=S.hk.carry; if(c) hkPiece(c.x,c.y+12,c.v);
+}
+function hkStep(){
+  const target=Math.sign(hkSum()-TK.HAKARI[S.hk.k].g)*MAXA*0.8;
+  S.hk.vel += (target-S.hk.ang)*0.06; S.hk.vel*=0.80; S.hk.ang+=S.hk.vel;
+}
+
+function step(){
+  const target = TK.lean(S.L,S.R)*MAXA;
+  S.vel += (target-S.ang)*0.06; S.vel*=0.80; S.ang+=S.vel;
+  if(Math.abs(S.ang)>MAXA){ S.ang=Math.sign(S.ang)*MAXA; S.vel*=-0.3; }
+}
+function draw(){
+  const g=geo(); cx.clearRect(0,0,g.W,g.H);
+  if(S.mode==='bou') return drawBou();
+  if(S.mode==='dougu') return drawDougu();
+  if(S.mode==='hakari') return drawHakari();
+  // 台
+  cx.fillStyle=C.mute; cx.fillRect(g.px-5,g.py,10,g.tray.y-g.py-4);
+  cx.beginPath(); cx.moveTo(g.px,g.py-4); cx.lineTo(g.px-16,g.py+26); cx.lineTo(g.px+16,g.py+26); cx.closePath(); cx.fillStyle=C.sub; cx.fill();
+  // うで
+  cx.save(); cx.translate(g.px,g.py); cx.rotate(S.ang);
+  const th=Math.max(12,g.sp*0.26);
+  rr(-g.Lh,-th/2,g.Lh*2,th,th/2); cx.fillStyle=C.wood; cx.fill(); cx.lineWidth=2; cx.strokeStyle=C.wood2; cx.stroke();
+  for(const s of [-1,1]) for(let i=1;i<=TK.N;i++){
+    cx.beginPath(); cx.arc(s*i*g.sp,0,3.5,0,Math.PI*2); cx.fillStyle=C.wood3; cx.fill();
+    text(String(i), s*i*g.sp, -th/2-12, Math.max(14,Math.min(18,g.sp*0.34)), C.ink2);
+  }
+  cx.restore();
+  cx.beginPath(); cx.arc(g.px,g.py,6,0,Math.PI*2); cx.fillStyle=C.bg; cx.fill(); cx.lineWidth=3; cx.strokeStyle=C.ink; cx.stroke();
+  // ねらっている あな（内がわに 光る）
+  const targets=[...S.carry.values()].map(c=>c.to).filter(Boolean);
+  for(const t of targets){ const b=stackBox(t.s,t.i,g); const full=side(t.s)[t.i]>=TK.CAP;
+    const n=side(t.s)[t.i], top=b.top+n*(g.wh+2);
+    cx.save(); cx.setLineDash([5,4]); cx.lineWidth=2.5; cx.strokeStyle=full?C.brown:C.ok;
+    rr(b.x+1,top+1,g.ww-2,g.wh-2,5); cx.stroke(); cx.restore(); }
+  // つるした おもり
+  for(const s of [-1,1]) for(let i=1;i<=TK.N;i++){
+    const n=side(s)[i]; if(!n) continue;
+    const h=holePos(s,i,g), hook=g.wh*0.55, locked=s<0&&S.lockL;
+    cx.strokeStyle=C.ink2; cx.lineWidth=2; cx.beginPath(); cx.moveTo(h.x,h.y); cx.lineTo(h.x,h.y+hook); cx.stroke();
+    for(let k=0;k<n;k++) weight(h.x, h.y+hook+k*(g.wh+2), g, locked);
+    if(locked) lockMark(h.x+g.ww/2+12, h.y+hook+8, C.blue);
+  }
+  // おもり 置き場
+  const t=g.tray; rr(t.x,t.y,t.w,t.h,10); cx.fillStyle=C.bg; cx.fill(); cx.lineWidth=2; cx.strokeStyle=C.mute; cx.stroke();
+  const per=Math.max(2,Math.floor((t.w-16)/(g.ww+6)));
+  for(let k=0;k<per;k++) weight(t.x+12+g.ww/2+k*(g.ww+6), t.y+t.h-g.wh-8, g, false);
+  text('10g', t.x+t.w/2, t.y+Math.min(16,(t.h-g.wh-8)/2+2), 16, C.ink2);
+  // かけ算
+  if(S.calc){
+    const tl=TK.torque(S.L), tr=TK.torque(S.R), fs=Math.max(16,Math.min(22,g.H*0.04));
+    text(TK.fmtSide(S.L,true), 14, 20, fs, C.ink,'left'); text(TK.fmtSide(S.R,true), g.W-14, 20, fs, C.ink,'right');
+    const mark = tl===tr ? '＝' : (tl>tr ? '＞' : '＜');
+    if((tl||tr) && tl!==tr) text(mark, g.px, 22, fs+4, C.ink);
+  }
+  // つりあった（上の まん中。かけ算の「＝」の かわりにも なる）
+  const bal=TK.balanced(S.L,S.R) && (S.mode==='free'||TK.total(S.R)>0) && Math.abs(S.ang)<0.01 && !S.carry.size;
+  if(bal){
+    const y=26;
+    cx.save(); cx.translate(g.px,y);
+    rr(-78,-20,156,40,20); cx.fillStyle=C.okbg; cx.fill(); cx.lineWidth=2; cx.strokeStyle=C.ok; cx.stroke();
+    cx.strokeStyle=C.ok; cx.lineWidth=3.5; cx.lineCap='round'; cx.beginPath(); cx.moveTo(-58,0); cx.lineTo(-51,7); cx.lineTo(-38,-8); cx.stroke();
+    text('つりあった', 12, 1, 20, C.ok); cx.restore();
+  }
+  // つまんでいる おもり
+  for(const c of S.carry.values()) weight(c.x, c.y-g.wh/2, g, false, false);
+}
+function frame(){ step(); if(S.mode==='hakari') hkStep(); draw(); requestAnimationFrame(frame); }
+fit(); renderRec(); requestAnimationFrame(frame);
+
+window.tk = {S,geo,holePos,stackBox,grab,move,drop,put,setMode,loadOdai,changed,bouGeo,bouX,dgPts,dgMinGap,hkGeo,hkPut,hkChanged,
+  settle(){ for(let k=0;k<400;k++){ step(); hkStep(); } draw(); }};
+</script>
+<!--rl-home--><script>
+/* 理科ラボ：どの へやにも 出す「もどる」ボタン（11-07）。決まりは ここ 1か所。
+   へやの 上の帯（.xx-top）の いちばん左に 44px の ⌂ を 足す。帯が ない へやは 左下に うかべる。
+   行き先：その へやが 入っている 部屋の ページ（理科ラボ/1_エネルギー.html など）。そこから ホームへも もどれる。
+   へやの 中の 字や クラス名には さわらない（クラス名は rlh- で はじめる）。 */
+(function(){
+  if(window.__rlHome) return; window.__rlHome=1;
+  // どの へやが どの 部屋に 入るか（mock/ の 下の 道 → 部屋の ページ）
+  var PAGE={energy:'1_エネルギー.html',ryushi:'2_粒子.html',seimei:'3_生命.html',chikyu:'4_地球.html'};
+  var EXTRA={teko:'energy','karada-mirror':'seimei',tentai:'chikyu','seiza-tsunagu':'chikyu'};
+  function room(p){
+    var m=/\/mock\/rika\/(energy|ryushi|seimei|chikyu)\//.exec(p); if(m) return m[1];
+    m=/\/mock\/([^\/]+)\//.exec(p); return m&&EXTRA[m[1]]||'';
+  }
+  function href(){
+    var p=decodeURIComponent(location.pathname), r=room(p), i=p.lastIndexOf('/mock/');
+    if(window.RL_HOME_URL) return window.RL_HOME_URL;          // 授業メイトの 中では 入れる側が 決める
+    if(!r||i<0) return '';
+    return 'file://'+encodeURI(p.slice(0,i)+'/理科ラボ/'+PAGE[r]);
+  }
+  function put(){
+    var to=href(); if(!to||document.querySelector('.rlh-home')) return;
+    var a=document.createElement('a'); a.className='rlh-home'; a.href=to; a.title='へやの 一らんに もどる';
+    a.setAttribute('aria-label','へやの 一らんに もどる');
+    a.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>';
+    var st=document.createElement('style');
+    st.textContent='.rlh-home{flex:0 0 44px;width:44px;height:44px;margin-right:8px;display:inline-flex;align-items:center;justify-content:center;border-radius:22px;background:var(--rl-bg,white);color:var(--rl-ink,black);border:1px solid currentColor;text-decoration:none;box-sizing:border-box}'+
+      '.rlh-home:hover{opacity:.8}.rlh-home:focus-visible{outline:3px solid currentColor;outline-offset:2px}'+
+      '.rlh-home.rlh-float{position:fixed;left:12px;bottom:12px;z-index:9999;margin:0}';
+    document.head.appendChild(st);
+    var bar=[].slice.call(document.querySelectorAll('[class$="-top"],[class*="-top "]')).filter(function(e){
+      var r=e.getBoundingClientRect(); return r.top<20&&r.height>=44&&getComputedStyle(e).display.indexOf('flex')>=0;})[0];
+    if(bar) bar.insertBefore(a,bar.firstChild); else { a.classList.add('rlh-float'); document.body.appendChild(a); }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',put); else put();
+})();
+</script><!--/rl-home-->
+</body>
+</html>

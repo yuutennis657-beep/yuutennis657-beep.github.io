@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="ja">
+<head><script>window.RL_HOME_URL="../../energy.html";</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ふりこの きまり</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* 見本 v0.1（2026-11-07）5年 理科 ふりこの きまり（理科ラボ エネルギー）
+   ［つまんで はなす］カメラで おもりを つまんで 引き、はなすと ふれる（ささえは 上に とめる）
+   ［くらべる］長さ・おもりの 重さ・ふれはばを 1つずつ 変えて 10往復を はかる（タッチ） */
+:root{
+  /* エネルギーの 部屋：ポップ・黄と 赤（4つの 部屋で 名前を そろえる 5つ） */
+  --rl-bg:#ffffff; --rl-ink:#1f2937; --rl-accent:#f5b700; --rl-accent2:#e0442b; --rl-soft:#fff6d6;
+  --rl-err:#b91c1c; --rl-line:#e2cf8e; --rl-mute:#9ca3af; --rl-mute2:#6b7280; --rl-rule:#f3e8c4; --rl-stage:#fffbeb; --rl-sub:#4b5563; --rl-veil:rgba(255,255,255,.92); --rl-veil2:rgba(255,255,255,.6);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--rl-bg);color:var(--rl-ink);
+  font-family:"BIZ UDPGothic",sans-serif;font-size:16px;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+.re-app{display:grid;grid-template-rows:auto 1fr;gap:8px;height:100vh;height:100dvh;padding:8px 12px 12px}
+.re-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:52px}
+.re-tabs{display:flex;border:1px solid var(--rl-line);border-radius:12px;overflow:hidden}
+.re-tabs button{min-height:44px;padding:0 16px;border:0;background:var(--rl-bg);font-size:16px;display:flex;align-items:center;gap:6px}
+.re-tabs button+button{border-left:1px solid var(--rl-line)}
+.re-tabs button[aria-pressed="true"]{background:var(--rl-accent);color:var(--rl-ink);box-shadow:inset 0 0 0 2px var(--rl-ink);font-weight:700}
+.re-tabs svg,.re-b svg{width:22px;height:22px;flex:none}
+.re-b{min-height:44px;min-width:44px;padding:0 14px;border:1px solid var(--rl-line);background:var(--rl-soft);border-radius:12px;
+  font-size:16px;display:flex;align-items:center;justify-content:center;gap:6px}
+.re-b:disabled{opacity:.45;cursor:default}
+.re-b[hidden]{display:none!important}
+.re-go{background:var(--rl-accent);color:var(--rl-ink);box-shadow:inset 0 0 0 2px var(--rl-ink);font-weight:700}
+.re-sp{flex:1}
+.re-main{display:grid;grid-template-columns:1fr 300px;gap:10px;min-height:0}
+.re-stage{position:relative;border-radius:12px;overflow:hidden;background:var(--rl-stage);min-height:0;touch-action:none}
+.re-stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.re-veil{position:absolute;inset:0;background:var(--rl-veil2)}
+.re-veil[hidden],.re-stage video[hidden]{display:none!important}
+.re-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.re-msg{position:absolute;left:50%;top:10px;transform:translateX(-50%);padding:6px 16px;border-radius:20px;
+  background:var(--rl-veil);font-size:18px;font-weight:700;white-space:nowrap;pointer-events:none;max-width:94%;overflow:hidden;text-overflow:ellipsis}
+.re-msg:empty{display:none}
+.re-start{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:var(--rl-bg);padding:16px;text-align:center}
+.re-start[hidden]{display:none!important}
+.re-start p{margin:0;font-size:18px;line-height:1.7}
+.re-start svg{width:min(220px,40%);height:auto}
+.re-big{min-height:56px;padding:0 36px;font-size:22px;font-weight:700;border-radius:28px;border:0;background:var(--rl-accent);color:var(--rl-ink);box-shadow:inset 0 0 0 2px var(--rl-ink)}
+.re-big:disabled{opacity:.6}
+.re-gos{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}.re-big{display:inline-flex;align-items:center;gap:8px}.re-big .re-ic{width:28px;height:28px;flex:none}.re-big.re-sub{background:var(--rl-bg)}
+.re-err{color:var(--rl-err);font-size:16px;max-width:90%}
+.re-err[hidden]{display:none!important}
+.re-side{display:flex;flex-direction:column;gap:8px;border:1px solid var(--rl-line);border-radius:12px;padding:8px;min-height:0;background:var(--rl-bg)}
+.re-side[hidden]{display:none!important}
+.re-row{display:flex;align-items:center;gap:6px}
+.re-row>span{width:64px;flex:none;font-size:15px;color:var(--rl-sub)}
+.re-seg{display:flex;flex:1;border:1px solid var(--rl-line);border-radius:10px;overflow:hidden}
+.re-seg button{flex:1;min-height:44px;min-width:44px;border:0;background:var(--rl-bg);font-size:16px;padding:0 4px}
+.re-seg button+button{border-left:1px solid var(--rl-line)}
+.re-seg button[aria-pressed="true"]{background:var(--rl-accent);color:var(--rl-ink);box-shadow:inset 0 0 0 2px var(--rl-ink);font-weight:700}
+.re-seg button:disabled{cursor:default}
+.re-seg button:disabled:not([aria-pressed="true"]){opacity:.5}
+.re-rec{display:flex;flex-direction:column;min-height:0;flex:1;border-top:1px solid var(--rl-line)}
+.re-rec-h,.re-rec li{display:grid;grid-template-columns:1fr 1fr 1fr 1.3fr;gap:2px;align-items:center;text-align:center}
+.re-rec-h{color:var(--rl-sub);font-size:14px;padding:6px 0 2px}
+.re-rec ol{list-style:none;margin:0;padding:0;overflow:auto;flex:1;min-height:0}
+.re-rec li{padding:5px 0;border-top:1px solid var(--rl-rule);font-size:15px}
+.re-rec li b{font-size:16px}
+.re-rec li .re-chg{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px;font-weight:700}
+.re-none{color:var(--rl-sub);font-size:14px;padding:6px 2px}
+.re-none[hidden]{display:none!important}
+.re-big-num{font-size:40px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.re-arm{display:flex;flex-direction:column;gap:6px;padding:4px}
+.re-arm .re-lab{font-size:15px;color:var(--rl-sub)}
+.re-arm .re-unit{font-size:18px;font-weight:700;margin-left:4px}
+@media (max-height:420px){ .re-arm{gap:0;padding:0} .re-arm .re-big-num{font-size:26px} .re-arm .re-lab{font-size:14px} }
+@media (max-width:720px){ .re-main{grid-template-columns:1fr 250px} .re-row>span{width:52px} }
+</style>
+</head>
+<body>
+<div class="re-app">
+  <div class="re-top">
+    <div class="re-tabs" role="group" aria-label="あそびかた">
+      <button type="button" id="reArmTab" aria-pressed="true">
+        <svg data-ic="arm"></svg>つまんで はなす</button>
+      <button type="button" id="reCmpTab" aria-pressed="false">
+        <svg data-ic="compare"></svg>くらべる</button>
+    </div>
+      <button class="re-b re-go" type="button" id="reRun" hidden>
+        <svg data-ic="timer"></svg><span>10往復を はかる</span></button>
+    <span class="re-sp"></span>
+    <button class="re-b" type="button" id="reClear" title="記録を けす" hidden>
+      <svg data-ic="reset"></svg>記録を けす</button>
+  </div>
+  <div class="re-main">
+    <div class="re-stage" id="reStage">
+      <video id="reVideo" playsinline muted hidden></video>
+      <div class="re-veil" id="reVeil" hidden></div>
+      <canvas id="reCanvas"></canvas>
+      <div class="re-msg" id="reMsg"></div>
+      <div class="re-start" id="reStart">
+        <svg viewBox="0 0 200 140" fill="none" stroke-width="4" stroke-linecap="round" aria-hidden="true" style="stroke:var(--rl-ink)">
+          <path d="M20 12h160"/><path d="M100 12L64 110"/><circle cx="60" cy="120" r="14" style="fill:var(--rl-bg)"/>
+          <path d="M100 12l36 98" stroke-dasharray="6 8" style="stroke:var(--rl-mute)"/><circle cx="140" cy="120" r="14" stroke-dasharray="6 6" style="stroke:var(--rl-mute)"/>
+          <path d="M70 70q30 22 60 0" style="stroke:var(--rl-accent2)"/><path d="M124 64l6 6-8 3" style="stroke:var(--rl-accent2)"/>
+        </svg>
+        <p>おもりを つまんで（ゆびなら おさえて）<br>横へ 引いて、はなそう。</p>
+        <div class="re-gos"><button class="re-big" id="reGo" type="button"><svg class="re-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h4l2-3h6l2 3h4v11H3z"/><circle cx="12" cy="13" r="3.5"/></svg>カメラで</button><button class="re-big re-sub" id="reTap" type="button"><svg class="re-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 12V5.5a1.8 1.8 0 0 1 3.6 0V12l3.6.8a2 2 0 0 1 1.5 2.3L18 21h-8l-3.3-4.6a1.6 1.6 0 0 1 2.4-2.1L10 15"/><path d="M6.5 6.5a5.5 5.5 0 0 1 10.5-1"/></svg>ゆびで</button></div>
+        <div class="re-err" id="reErr" hidden></div>
+      </div>
+    </div>
+
+    <!-- つまんで はなす -->
+    <section class="re-side" id="reArmSide" aria-label="うでの ふりこ">
+      <div class="re-row"><span>長さ</span><div class="re-seg" id="reArmLen"></div></div>
+      <div class="re-arm">
+        <span class="re-lab">ふりこの 1往復</span>
+        <div><span class="re-big-num" id="reArmP">－</span><span class="re-unit">秒</span></div>
+        <span class="re-lab">ふれはば</span>
+        <div><span class="re-big-num" id="reArmA">0</span><span class="re-unit">°</span></div>
+      </div>
+    </section>
+
+    <!-- くらべる -->
+    <section class="re-side" id="reCmpSide" aria-label="じょうけんを 変えて くらべる" hidden>
+      <div class="re-row"><span>長さ</span><div class="re-seg" id="reLen"></div></div>
+      <div class="re-row"><span>重さ</span><div class="re-seg" id="reW"></div></div>
+      <div class="re-row"><span>ふれはば</span><div class="re-seg" id="reAmp"></div></div>
+      <div class="re-rec">
+        <div class="re-rec-h"><span>長さ</span><span>重さ</span><span>ふれはば</span><span>1往復(秒)</span></div>
+        <div class="re-none" id="reNone">まだ 記録は ありません</div>
+        <ol id="reRec"></ol>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script src="../../seimei/_parts/rs-te.js"></script>
+<!--RE_PARTS--><script>
+/* 部品（mock/rika/energy/_parts から inline.py で 入れた もの。ここは 手で 直さない） */
+const RE_ICONS={"arm": "<circle cx=\"12\" cy=\"4\" r=\"2\"/><path d=\"M12 8v7M4 9l4 3 4-4 4 4 4-3M12 15l-4 6M12 15l4 6\"/>", "compare": "<path d=\"M3 4h18M8 4 5 16M16 4l3 12\"/><circle cx=\"5\" cy=\"18\" r=\"2\"/><circle cx=\"19\" cy=\"18\" r=\"2\"/>", "reset": "<path d=\"M4 11a8 8 0 1 1 1 6M4 4v7h7\"/>", "timer": "<circle cx=\"12\" cy=\"14\" r=\"7\"/><path d=\"M10 2h4M12 2v5M18 6l2 2M12 10v4l2 1\"/>"};
+const RE_ART={"bob":{"w":64,"h":76,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"64\" height=\"76\" viewBox=\"0 0 64 76\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"32\" cy=\"12\" r=\"6\" fill=\"{bg}\"/><circle cx=\"32\" cy=\"42\" r=\"24\" fill=\"{accent}\"/><path d=\"M20 37a13 13 0 0 1 10-8\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/></g></svg>","pts":{"tie":[32,6],"center":[32,42]}}};
+function reIc(n){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(RE_ICONS[n]||'')+'</svg>'; }
+document.querySelectorAll('svg[data-ic]').forEach(e=>{ e.outerHTML=reIc(e.dataset.ic); });
+const reImg={};
+function reArt(n){ if(reImg[n]) return reImg[n]; const a=RE_ART[n], im=new Image();
+  im.onload=()=>{ if(typeof draw==='function' && typeof cx!=='undefined') try{ draw(); }catch(e){} };   // 絵が 来たら 描き直す
+  im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(a.svg.replace(/\{(\w+)\}/g,(m,k)=>C[k])); return reImg[n]=im; }
+document.addEventListener('DOMContentLoaded',()=>Object.keys(RE_ART).forEach(n=>{ try{ reArt(n); }catch(e){} }));   // 先に 読んで おく（C が できてから）
+// 絵 n の 点 at（名前・[x,y]・なしは まん中）が (x,y) に 来るように s 倍で 描く。ang で 回す
+function reDraw(n,x,y,s,at,ang){ const a=RE_ART[n], im=reArt(n); if(!im.complete||!im.naturalWidth) return false;
+  const p=at?(Array.isArray(at)?at:a.pts[at]):[a.w/2,a.h/2];
+  cx.save(); cx.translate(x,y); if(ang) cx.rotate(ang); cx.scale(s,s); cx.drawImage(im,-p[0],-p[1],a.w,a.h); cx.restore(); return true; }
+// 上と 同じ 置き方の ときの 点 k の 場所
+function rePt(n,x,y,s,at,k){ const a=RE_ART[n], p=at?(Array.isArray(at)?at:a.pts[at]):[a.w/2,a.h/2], q=a.pts[k]; return [x+(q[0]-p[0])*s, y+(q[1]-p[1])*s]; }
+</script><!--/RE_PARTS-->
+<script>
+/* 色は :root の --rl- から 読む（ここに 色を 書かない） */
+const C = new Proxy({}, {get:(o,k)=>o[k]||(o[k]=getComputedStyle(document.documentElement).getPropertyValue('--rl-'+k).trim())});
+
+/* ===== ふりこの きまり（ここ 1か所） ===== */
+const G = 9.8;
+const FR = {
+  LENS:[25,50,100], WS:[10,20,30], AMPS:[10,20,30],
+  // 1往復の 時間（びょう）。重さ・ふれはばには よらない（小さい ふれはばの きまり）
+  period(lenCm){ return 2*Math.PI*Math.sqrt(lenCm/100/G); },
+  lenFromPeriod(T){ return G*Math.pow(T/(2*Math.PI),2)*100; },
+  fmt2(x){ return (Math.round(x*100)/100).toFixed(2); },
+  // うでの ふりを 読む：x（0〜1）を 時こくと 入れると、1往復の 時間を 返す
+  Swing(){
+    const hist=[], ups=[]; let side=0, last=null;
+    return {
+      feed(x,t){                       // t は びょう
+        hist.push([t,x]); while(hist.length && hist[0][0]<t-2.5) hist.shift();
+        let lo=Infinity,hi=-Infinity,sum=0; for(const [,v] of hist){ lo=Math.min(lo,v); hi=Math.max(hi,v); sum+=v; }
+        const mid=sum/hist.length, amp=(hi-lo)/2, th=Math.max(0.005, amp*0.3);
+        if(amp<0.008){ side=0; return {T:last, still:true}; }
+        const d=x-mid;
+        if(d>th && side<=0){ if(side<0){ ups.push(t); while(ups.length>5) ups.shift(); } side=1; }
+        else if(d<-th && side>=0){ side=-1; }
+        const per=[]; for(let i=1;i<ups.length;i++){ const p=ups[i]-ups[i-1]; if(p>0.4&&p<5) per.push(p); }
+        if(per.length){ const s=per.slice(-3).sort((a,b)=>a-b); last=s[Math.floor(s.length/2)]; }
+        return {T:last, still:false, lastUp:ups[ups.length-1]};
+      },
+      reset(){ hist.length=0; ups.length=0; side=0; last=null; }
+    };
+  }
+};
+window.FR = FR;
+
+/* ===== 画面 ===== */
+const $ = id => document.getElementById(id);
+const cv=$('reCanvas'), cx=cv.getContext('2d');
+let W=0,H=0;
+const S = { mode:'arm', len:50, w:10, amp:20, run:false, t:0, rec:[], src:'',
+  hand:null, armT:null, armUp:0, armTime:0, swing:FR.Swing(),
+  alen:50, piv:null, tgt:null, bob:null, pbob:null, angs:[], clamp:false };
+window.fr = { S };
+
+function fit(){
+  const r=$('reStage').getBoundingClientRect(), d=window.devicePixelRatio||1;
+  W=r.width; H=r.height; cv.width=Math.round(W*d); cv.height=Math.round(H*d); cx.setTransform(d,0,0,d,0,0);
+}
+window.addEventListener('resize', ()=>{ fit(); draw(); });
+function setMsg(t){ const el=$('reMsg'); if(el.textContent!==t) el.textContent=t; }
+
+function seg(id, list, unit, key){
+  $(id).innerHTML=list.map(v=>`<button type="button" data-v="${v}" aria-pressed="${S[key]===v}">${v}${unit}</button>`).join('');
+  $(id).onclick=e=>{ const b=e.target.closest('button'); if(!b||S.run) return; S[key]=+b.dataset.v;
+    [...$(id).children].forEach(c=>c.setAttribute('aria-pressed', String(+c.dataset.v===S[key]))); S.t=0; draw(); };
+}
+seg('reLen', FR.LENS, 'cm', 'len'); seg('reArmLen', FR.LENS, 'cm', 'alen'); seg('reW', FR.WS, 'g', 'w'); seg('reAmp', FR.AMPS, '°', 'amp');
+
+function setMode(m){
+  S.mode=m; stopRun();
+  $('reArmTab').setAttribute('aria-pressed', String(m==='arm')); $('reCmpTab').setAttribute('aria-pressed', String(m==='cmp'));
+  $('reArmSide').hidden = m!=='arm'; $('reCmpSide').hidden = m!=='cmp'; $('reClear').hidden = m!=='cmp'; $('reRun').hidden = m!=='cmp';
+  $('reStart').hidden = m!=='arm' || !!S.src;
+  const cam = m==='arm' && S.src==='cam';
+  $('reVideo').hidden = !cam; $('reVeil').hidden = !cam;
+  setMsg(''); S.t=0; draw();
+}
+$('reArmTab').onclick=()=>setMode('arm');
+$('reCmpTab').onclick=()=>setMode('cmp');
+
+/* ----- くらべる：10往復を はかる ----- */
+function startRun(){ S.run=true; S.t=0; lockBtns(true); $('reRun').lastElementChild.textContent='とめる'; }
+function stopRun(){ S.run=false; lockBtns(false); $('reRun').lastElementChild.textContent='10往復を はかる'; }
+function lockBtns(on){ document.querySelectorAll('#reCmpSide .re-seg button').forEach(b=>b.disabled=on); $('reArmTab').disabled=on; }
+$('reRun').onclick=()=>{ if(S.run){ stopRun(); S.t=0; setMsg(''); draw(); } else startRun(); };
+function finish(){
+  const T=FR.period(S.len), ten=T*10;
+  stopRun();
+  const prev=S.rec[S.rec.length-1];
+  S.rec.push({len:S.len, w:S.w, amp:S.amp, ten, one:T,
+    chg: prev ? {len:prev.len!==S.len, w:prev.w!==S.w, amp:prev.amp!==S.amp} : {} });
+  renderRec(); setMsg('10往復 '+FR.fmt2(ten)+' 秒');
+}
+function renderRec(){
+  $('reNone').hidden = S.rec.length>0;
+  $('reRec').innerHTML = S.rec.map(r=>`<li><span class="${r.chg.len?'re-chg':''}">${r.len}cm</span><span class="${r.chg.w?'re-chg':''}">${r.w}g</span><span class="${r.chg.amp?'re-chg':''}">${r.amp}°</span><b>${FR.fmt2(r.one)}</b></li>`).join('');
+  const ol=$('reRec'); ol.scrollTop=ol.scrollHeight;
+}
+$('reClear').onclick=()=>{ S.rec=[]; renderRec(); setMsg(''); };
+// 時間を すすめる（rAF とテストの 両方から）
+function advance(dt){
+  if(!S.run) return;
+  S.t+=dt; const T=FR.period(S.len);
+  if(S.t>=T*10){ S.t=T*10; finish(); }
+}
+window.fr.advance=advance; window.fr.start=startRun; window.fr.renderRec=renderRec;
+
+/* ----- おもりを つまんで 引いて、はなす（ささえは 上に とめる） ----- */
+// 画面の 1m が 何px か（100cm が 板に 入る）
+function pxm(){ return Math.max(60,(H-120)*0.8); }
+function pivPx(){ return {x:W/2, y:76}; }
+// p: {x,y} 0〜1（つまむ 指の 間）か null、pinch: つまんで いるか
+function onHand(p, tSec, pinch){
+  S.hand = p ? {x:p.x, y:p.y, pinch:!!pinch} : null;
+  if(!p){ S.grab=false; setMsg('手を 見せてね'); return; }
+  const k=pxm(), pv=pivPx(), hx=p.x*W, hy=p.y*H;
+  if(!pinch){ if(S.grab) setMsg(''); S.grab=false;
+    if(!S.amax || S.amax<2) setMsg('おもりを つまんで 横へ 引こう'); return; }
+  if(!S.grab && S.bob){   // おもりの 近くで つまむと つかむ
+    const bx=S.bob.x*k, by=S.bob.y*k; if(Math.hypot(hx-bx,hy-by)<Math.max(60,H*0.12)) S.grab=true; }
+  if(!S.grab){ setMsg('おもりの 所で つまもう'); return; }
+  // つかんで いる間：手の 方へ ひもを のばした 所に おもり（はなすと 止まった 所から ふれる）
+  let a=Math.atan2(hx-pv.x, Math.max(1,hy-pv.y)); a=Math.max(-1.3,Math.min(1.3,a));
+  const L=S.alen/100;
+  S.bob={x:pv.x/k+L*Math.sin(a), y:pv.y/k+L*Math.cos(a)}; S.pbob={...S.bob};
+  setMsg('指を はなすと ふれるよ');
+}
+window.fr.onHand=onHand;
+// ふりこの 動き。dt びょう すすめる
+function step(dt){
+  if(!W) return; const k=pxm(), L=S.alen/100, pv=pivPx();
+  S.piv={x:pv.x/k, y:pv.y/k};
+  if(!S.bob){ S.bob={x:S.piv.x, y:S.piv.y+L}; S.pbob={...S.bob}; }
+  if(!S.grab){
+    const n=Math.max(1,Math.ceil(dt/0.004)), h=dt/n, q=S.piv;
+    for(let i=1;i<=n;i++){
+      const b=S.bob, pb=S.pbob, damp=1-0.03*h;
+      const nx=b.x+(b.x-pb.x)*damp, ny=b.y+(b.y-pb.y)*damp+G*h*h;
+      S.pbob={x:b.x,y:b.y};
+      const dx=nx-q.x, dy=ny-q.y, d=Math.hypot(dx,dy)||1;
+      S.bob={x:q.x+dx/d*L, y:q.y+dy/d*L};
+    }
+  } else { const dx=S.bob.x-S.piv.x, dy=S.bob.y-S.piv.y, d=Math.hypot(dx,dy)||1; S.bob={x:S.piv.x+dx/d*L, y:S.piv.y+dy/d*L}; S.pbob={...S.bob}; }
+  // ふれはば（さいごの 1往復ぶんで 一番 大きい かたむき）
+  const ang=Math.atan2(S.bob.x-S.piv.x, S.bob.y-S.piv.y)*180/Math.PI;
+  S.t2=(S.t2||0)+dt; S.angs.push([S.t2,ang]);
+  const keep=FR.period(S.alen)*1.1; while(S.angs.length && S.angs[0][0]<S.t2-keep) S.angs.shift();
+  let mx=0; for(const [,v] of S.angs) mx=Math.max(mx,Math.abs(v));
+  S.amax=mx;
+  const aEl=$('reArmA'), at=String(Math.round(mx)); if(aEl.textContent!==at) aEl.textContent=at;
+  const pEl=$('reArmP'), pt=FR.fmt2(FR.period(S.alen)); if(pEl.textContent!==pt) pEl.textContent=pt;
+}
+window.fr.step=step;
+
+/* ----- 絵 ----- */
+function drawPendulum(lenCm, angDeg, wg, maxCm, opt={}){
+  const top=30, sc=(H-top-(opt.wlabel?84:50))/maxCm, px=W/2, py=top;
+  const L=lenCm*sc, a=angDeg*Math.PI/180, bx=px+L*Math.sin(a), by=py+L*Math.cos(a);
+  const r=[0,13,16,19][FR.WS.indexOf(wg)+1]||14;
+  // ささえ
+  cx.lineWidth=3; cx.strokeStyle=C.ink; cx.lineCap='round'; cx.fillStyle=C.accent;
+  cx.beginPath(); cx.roundRect(px-92,py-18,184,12,6); cx.fill(); cx.stroke();
+  cx.beginPath(); cx.moveTo(px,py-6); cx.lineTo(px,py); cx.stroke();
+  cx.fillStyle=C.bg; cx.beginPath(); cx.arc(px,py,4,0,Math.PI*2); cx.fill(); cx.stroke();
+  // ふれはばの 目じるし
+  if(opt.amp){ cx.setLineDash([6,8]); cx.lineWidth=2; cx.strokeStyle=C.mute2;
+    for(const s of [-1,1]){ const aa=s*opt.amp*Math.PI/180; cx.beginPath(); cx.moveTo(px,py); cx.lineTo(px+L*Math.sin(aa), py+L*Math.cos(aa)); cx.stroke(); }
+    cx.beginPath(); cx.moveTo(px,py); cx.lineTo(px,py+L); cx.stroke(); cx.setLineDash([]); }
+  // 糸と おもり
+  const tx=bx-Math.sin(a)*r*1.5, ty=by-Math.cos(a)*r*1.5;   // おもりの つり輪
+  cx.lineWidth=2.5; cx.strokeStyle=C.ink; cx.beginPath(); cx.moveTo(px,py); cx.lineTo(tx,ty); cx.stroke();
+  if(!reDraw('bob', bx, by, r/24, 'center', -a)){ cx.fillStyle=C.accent; cx.lineWidth=3; cx.beginPath(); cx.arc(bx,by,r,0,Math.PI*2); cx.fill(); cx.stroke(); }
+  cx.fillStyle=C.ink; cx.font='700 14px "BIZ UDPGothic",sans-serif'; cx.textAlign='center'; cx.textBaseline='middle';
+  if(opt.wlabel) cx.fillText(wg+'g', bx, by+r+14);
+  // 長さの ものさし
+  const rx=px-110; cx.lineWidth=2; cx.strokeStyle=opt.col||C.accent2;
+  cx.beginPath(); cx.moveTo(rx,py); cx.lineTo(rx,py+L); cx.moveTo(rx-7,py); cx.lineTo(rx+7,py); cx.moveTo(rx-7,py+L); cx.lineTo(rx+7,py+L); cx.stroke();
+  cx.fillStyle=C.ink; cx.font='700 16px "BIZ UDPGothic",sans-serif'; cx.textAlign='right';
+  cx.fillText(Math.round(lenCm)+'cm', rx-10, py+L/2);
+}
+function draw(){
+  cx.clearRect(0,0,W,H);
+  if(S.mode==='cmp'){
+    const T=FR.period(S.len);
+    const ang = S.amp*Math.cos(2*Math.PI*S.t/T);
+    drawPendulum(S.len, ang, S.w, 100, {amp:S.amp, wlabel:true});
+    if(S.run || S.t>0){
+      const n=Math.min(10,Math.floor(S.t/T+1e-9));
+      cx.fillStyle=C.ink; cx.textAlign='left'; cx.textBaseline='bottom'; cx.font='700 22px "BIZ UDPGothic",sans-serif';
+      cx.fillText(n+' / 10 往復', 14, H-12);
+      cx.font='700 28px "BIZ UDPGothic",sans-serif'; cx.textAlign='right';
+      cx.fillText(S.t.toFixed(2)+' 秒', W-14, H-12);
+    }
+  } else {
+    // 手で もった ひもと おもり
+    if(S.piv && S.bob){
+      const k=pxm(), px=S.piv.x*k, py=S.piv.y*k, bx=S.bob.x*k, by=S.bob.y*k, L=S.alen/100*k, r=16;
+      const a=Math.atan2(bx-px, by-py);
+      cx.setLineDash([6,8]); cx.lineWidth=2; cx.strokeStyle=C.mute2;
+      cx.beginPath(); cx.moveTo(px,py); cx.lineTo(px,py+L); cx.stroke(); cx.setLineDash([]);
+      const tx=bx-Math.sin(a)*r*1.5, ty=by-Math.cos(a)*r*1.5;
+      cx.lineWidth=2.5; cx.strokeStyle=C.ink; cx.lineCap='round'; cx.beginPath(); cx.moveTo(px,py); cx.lineTo(tx,ty); cx.stroke();
+      if(!reDraw('bob', bx, by, r/24, 'center', -a)){ cx.fillStyle=C.accent; cx.lineWidth=3; cx.beginPath(); cx.arc(bx,by,r,0,Math.PI*2); cx.fill(); cx.stroke(); }
+      // ささえ（とめてある）
+      cx.lineWidth=3; cx.strokeStyle=C.ink; cx.fillStyle=C.accent;
+      cx.beginPath(); cx.roundRect(px-92,py-18,184,12,6); cx.fill(); cx.stroke();
+      cx.fillStyle=C.bg; cx.beginPath(); cx.arc(px,py,4,0,Math.PI*2); cx.fill(); cx.stroke();
+      // 手（つまんで いる時は ぬりつぶし）
+      if(S.hand && S.src==='cam'){ if(S.hand.pinch){ cx.fillStyle=C.accent2; cx.beginPath(); cx.arc(S.hand.x*W,S.hand.y*H,9,0,Math.PI*2); cx.fill(); } }
+      else if(S.hand){ const hx=S.hand.x*W, hy=S.hand.y*H;
+        cx.lineWidth=4; cx.strokeStyle=C.accent2; cx.fillStyle=S.hand.pinch?C.accent2:C.veil;
+        cx.beginPath(); cx.arc(hx,hy,S.hand.pinch?9:16,0,Math.PI*2); cx.fill(); cx.stroke();
+        cx.fillStyle=C.ink; cx.font='700 15px "BIZ UDPGothic",sans-serif'; cx.textAlign='center'; cx.textBaseline='top'; cx.fillText(S.hand.pinch?'つまむ':'手',hx,hy+22); }
+    }
+  }
+}
+let lastNow=performance.now();
+function tick(now){
+  requestAnimationFrame(tick);
+  const dt=Math.min(0.1,(now-lastNow)/1000); lastNow=now;
+  S.armTime=now/1000;
+  advance(dt); if(S.mode==='arm') step(dt); draw();
+}
+fit(); renderRec(); setMode('arm'); requestAnimationFrame(tick);
+window.fr.draw=draw; window.fr.fit=fit; window.fr.setMode=setMode;
+
+/* ----- ゆびで（カメラ なし）：おもりを ゆびや マウスで おさえて 引いて、はなす ----- */
+function startTouch(){ S.src='mouse'; $('reStart').hidden=true; setMode('arm'); }
+$('reTap').onclick=startTouch; window.fr.startTouch=startTouch;
+{ let down=false; const st=$('reStage');
+  const mv=e=>{ if(S.mode!=='arm'||S.src!=='mouse') return; if(e.pointerType!=='mouse'&&!down) return; const r=st.getBoundingClientRect();
+    onHand({x:(e.clientX-r.left)/r.width, y:(e.clientY-r.top)/r.height}, performance.now()/1000, down); };
+  st.addEventListener('pointerdown', e=>{ down=true; mv(e); });
+  for(const ev of ['pointerup','pointercancel']) st.addEventListener(ev, e=>{ down=false; mv(e); if(e.pointerType!=='mouse') onHand(null); });
+  st.addEventListener('pointermove', mv); }
+// ためし用（?test のとき［カメラで］も ゆびと 同じ）
+if(/[?&]test/.test(location.search)){ $('reGo').onclick=startTouch; }
+// カメラの 手（画面 ぜんたいの しるし＝RsTe）を ステージの 位置に
+window.fr.camHand=(c, tSec, pinch)=>{ if(S.mode!=='arm') return; if(!c){ onHand(null,tSec); return; }
+  const r=$('reStage').getBoundingClientRect(); onHand({x:(c.x-r.left)/r.width, y:(c.y-r.top)/r.height}, tSec, pinch); };
+</script>
+
+<script type="module">
+/* ===== カメラと 手の トラッキング（手首を 読む） ===== */
+const $ = id => document.getElementById(id);
+const VER = '0.10.14';
+const video = $('reVideo');
+let lm=null, lastT=-1, modelP=null, pinch=false;
+async function loadModel(){
+  const vision = await import(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}`);
+  const fs = await vision.FilesetResolver.forVisionTasks(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}/wasm`);
+  const opts = d => ({ baseOptions:{ modelAssetPath:'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task', delegate:d },
+    runningMode:'VIDEO', numHands:1, minHandDetectionConfidence:0.5, minHandPresenceConfidence:0.5, minTrackingConfidence:0.5 });
+  try{ return await vision.HandLandmarker.createFromOptions(fs, opts('GPU')); }
+  catch(e){ return await vision.HandLandmarker.createFromOptions(fs, opts('CPU')); }
+}
+if(!/[?&]test/.test(location.search)){
+  modelP = loadModel().catch(e=>{ modelP=null; throw e; }); modelP.catch(()=>{});
+  $('reGo').onclick = start;
+}
+async function start(){
+  const err=$('reErr'); err.hidden=true;
+  $('reGo').disabled=true; $('reGo').textContent='じゅんびちゅう…';
+  try{
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ const e=new Error('nocam'); e.name='NoCamPage'; throw e; }
+    const stream = await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280},height:{ideal:720},facingMode:'user'},audio:false});
+    video.srcObject=stream; await video.play();
+    lm = await (modelP || (modelP = loadModel()));
+    window.fr.S.src='cam'; window.fr.setMode('arm');
+    loop();
+  }catch(e){
+    $('reGo').disabled=false; $('reGo').textContent='もう いちど';
+    err.hidden=false;
+    err.textContent = (e && e.name==='NoCamPage') ? 'この ひらきかたでは カメラが つかえません。Chrome で ひらいてね。'
+      : (e && (e.name==='NotFoundError'||e.name==='NotReadableError')) ? 'カメラが みつかりません。ほかの アプリで つかっていないか みてね。'
+      : (e && e.name==='NotAllowedError') ? 'カメラが つかえません。先生に カメラを ゆるして もらってね。'
+      : 'じゅんびが できませんでした（'+(e && (e.name||e.message)||'')+'）。インターネットに つながっているか みてね。';
+  }
+}
+function loop(){
+  requestAnimationFrame(loop);
+  const now=performance.now();
+  if(!lm || video.readyState<2 || video.currentTime===lastT) return;
+  lastT=video.currentTime;
+  const res = lm.detectForVideo(video, now);
+  const L = (res.landmarks||[])[0];
+  if(!L){ if(window.RsTe) RsTe.point(null); window.fr.camHand(null, now/1000); return; }
+  // しるしは 人さし指の 先（画面 ぜんたい。ボタンの 上で とめると おせる）。つまむ のは 親指(4)と 人さし指(8)の 間の きょり
+  const c = window.RsTe ? RsTe.point(1-L[8].x, L[8].y) : null;
+  const d=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y), q=d(L[4],L[8])/(d(L[0],L[5])||1);
+  pinch = pinch ? q<0.6 : q<0.4;
+  if(c) window.fr.camHand(c, now/1000, pinch);
+}
+</script>
+<!--rl-home--><script>
+/* 理科ラボ：どの へやにも 出す「もどる」ボタン（11-07）。決まりは ここ 1か所。
+   へやの 上の帯（.xx-top）の いちばん左に 44px の ⌂ を 足す。帯が ない へやは 左下に うかべる。
+   行き先：その へやが 入っている 部屋の ページ（理科ラボ/1_エネルギー.html など）。そこから ホームへも もどれる。
+   へやの 中の 字や クラス名には さわらない（クラス名は rlh- で はじめる）。 */
+(function(){
+  if(window.__rlHome) return; window.__rlHome=1;
+  // どの へやが どの 部屋に 入るか（mock/ の 下の 道 → 部屋の ページ）
+  var PAGE={energy:'1_エネルギー.html',ryushi:'2_粒子.html',seimei:'3_生命.html',chikyu:'4_地球.html'};
+  var EXTRA={teko:'energy','karada-mirror':'seimei',tentai:'chikyu','seiza-tsunagu':'chikyu'};
+  function room(p){
+    var m=/\/mock\/rika\/(energy|ryushi|seimei|chikyu)\//.exec(p); if(m) return m[1];
+    m=/\/mock\/([^\/]+)\//.exec(p); return m&&EXTRA[m[1]]||'';
+  }
+  function href(){
+    var p=decodeURIComponent(location.pathname), r=room(p), i=p.lastIndexOf('/mock/');
+    if(window.RL_HOME_URL) return window.RL_HOME_URL;          // 授業メイトの 中では 入れる側が 決める
+    if(!r||i<0) return '';
+    return 'file://'+encodeURI(p.slice(0,i)+'/理科ラボ/'+PAGE[r]);
+  }
+  function put(){
+    var to=href(); if(!to||document.querySelector('.rlh-home')) return;
+    var a=document.createElement('a'); a.className='rlh-home'; a.href=to; a.title='へやの 一らんに もどる';
+    a.setAttribute('aria-label','へやの 一らんに もどる');
+    a.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>';
+    var st=document.createElement('style');
+    st.textContent='.rlh-home{flex:0 0 44px;width:44px;height:44px;margin-right:8px;display:inline-flex;align-items:center;justify-content:center;border-radius:22px;background:var(--rl-bg,white);color:var(--rl-ink,black);border:1px solid currentColor;text-decoration:none;box-sizing:border-box}'+
+      '.rlh-home:hover{opacity:.8}.rlh-home:focus-visible{outline:3px solid currentColor;outline-offset:2px}'+
+      '.rlh-home.rlh-float{position:fixed;left:12px;bottom:12px;z-index:9999;margin:0}';
+    document.head.appendChild(st);
+    var bar=[].slice.call(document.querySelectorAll('[class$="-top"],[class*="-top "]')).filter(function(e){
+      var r=e.getBoundingClientRect(); return r.top<20&&r.height>=44&&getComputedStyle(e).display.indexOf('flex')>=0;})[0];
+    if(bar) bar.insertBefore(a,bar.firstChild); else { a.classList.add('rlh-float'); document.body.appendChild(a); }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',put); else put();
+})();
+</script><!--/rl-home-->
+</body>
+</html>

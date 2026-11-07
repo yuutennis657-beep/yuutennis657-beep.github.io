@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ja">
+<head><script>window.RL_HOME_URL="../../seimei.html";</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>メダカの たまごの 育ち</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* 理科ラボ 生命 見本 v0.1（2026-11-07）5年 魚の たんじょう。日にちを すすめると、たまごの 中が 変わる（タッチ） */
+:root{/* 生命の 部屋の 色（理科ラボで 名前を そろえる） */--rl-bg:#ffffff;--rl-ink:#1f2937;--rl-accent:#23784a;--rl-accent2:#a6d785;--rl-soft:#eaf6ec;
+  --rs-ink:var(--rl-ink);--rs-sub:#4b5563;--rs-line:#d1d5db;--rs-btn:var(--rl-soft);--rs-new:#be123c}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--rl-bg);color:var(--rs-ink);font-family:"BIZ UDPGothic",sans-serif;font-size:16px;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+.rs-app{display:grid;grid-template-rows:auto 1fr;gap:8px;height:100vh;height:100dvh;padding:8px 12px 12px}
+.rs-top{display:flex;align-items:center;gap:10px;min-height:48px}
+.rs-tebtn{min-height:44px;min-width:44px;padding:0 14px;border:1px solid var(--rs-line);background:#fff;border-radius:22px;font-size:16px;display:flex;align-items:center;gap:6px;white-space:nowrap;color:inherit}.rs-tebtn svg{width:22px;height:22px;flex:none}.rs-tebtn{margin-left:auto}
+.rs-top h1{margin:0;font-size:20px;white-space:nowrap}
+.rs-main{display:grid;grid-template-columns:1fr 270px;gap:10px;min-height:0}
+.rs-left{display:grid;grid-template-rows:1fr auto;gap:8px;min-width:0;min-height:0}
+.rs-stage{border-radius:12px;background:var(--rl-soft);border:1px solid var(--rs-line);min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.rs-stage svg{width:100%;height:100%}
+.rs-days{display:flex;gap:6px;align-items:center}
+.rs-days button{min-height:44px;min-width:44px;padding:0 8px;border:1px solid var(--rs-line);background:#fff;border-radius:12px;font-size:15px;white-space:nowrap;flex:1}
+.rs-days button[aria-current="true"]{border:3px solid var(--rl-accent);color:var(--rl-accent);font-weight:700;background:var(--rl-soft)}
+.rs-days .rs-step{flex:none;display:flex;align-items:center;justify-content:center;border:2px solid var(--rl-accent);color:var(--rl-accent)}
+.rs-days .rs-step svg{width:24px;height:24px}
+.rs-days .rs-step:disabled{opacity:.4;cursor:default}
+.rs-side{display:flex;flex-direction:column;gap:8px;min-height:0}
+.rs-card{border:1px solid var(--rs-line);border-radius:20px 6px 20px 6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;min-height:0;overflow:hidden}
+.rs-card h2{margin:0;font-size:24px}
+.rs-card p{margin:0;font-size:17px;line-height:1.65}
+.rs-new{font-size:15px;color:var(--rs-new);display:flex;align-items:center;gap:6px}
+.rs-new svg{width:20px;height:20px;flex:none}
+.rs-note{font-size:15px;color:var(--rs-sub);line-height:1.5}
+@keyframes rs-beat{50%{transform:scale(1.35)}}
+@keyframes rs-flow{to{stroke-dashoffset:-40}}
+@keyframes rs-wig{50%{transform:rotate(7deg)}}
+@keyframes rs-swim{50%{transform:translateY(-6px)}}
+.rs-heart{transform-box:fill-box;transform-origin:center;animation:rs-beat .7s infinite}
+.rs-blood{animation:rs-flow 1.2s linear infinite}
+.rs-tail{transform-box:view-box;animation:rs-wig 1.6s ease-in-out infinite}
+.rs-fish{animation:rs-swim 2s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.rs-heart,.rs-blood,.rs-tail,.rs-fish{animation:none}}
+@media (max-height:440px){.rs-main{grid-template-columns:1fr 240px}.rs-card{padding:6px 10px;gap:4px}.rs-card h2{font-size:20px}.rs-card p{font-size:15px;line-height:1.45}.rs-top{min-height:44px}.rs-note{line-height:1.3}.rs-days button{padding:0 4px;font-size:14px}}
+@media (max-width:900px){.rs-days .rs-step{display:none}}
+</style>
+</head>
+<body>
+<div class="rs-app">
+  <div class="rs-top"><h1>メダカの たまごの 育ち</h1><button class="rs-tebtn" id="rsTeBtn" type="button" aria-label="手で うごかす"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V11M11 10V4a1.5 1.5 0 0 1 3 0v6M14 10V5.5a1.5 1.5 0 0 1 3 0V13"/><path d="M8 12.5 6.6 11a1.6 1.6 0 0 0-2.4 2.1L8 18.5A6 6 0 0 0 13 21h0a5 5 0 0 0 5-5v-3"/></svg><span>手で</span></button></div>
+  <div class="rs-main">
+    <div class="rs-left">
+      <div class="rs-stage" id="rsStage"></div>
+      <div class="rs-days" id="rsDays"></div>
+    </div>
+    <div class="rs-side">
+      <div class="rs-card">
+        <h2 id="rsWhen"></h2>
+        <p id="rsText"></p>
+        <div class="rs-new" id="rsNew"></div>
+      </div>
+      <div class="rs-card"><div class="rs-note">水温が 25℃くらいの とき。日にちは めやす。</div></div>
+    </div>
+  </div>
+</div>
+
+<script src="../_parts/rs-te.js"></script>
+<script>
+/* ===== きまり（育ちの ようす）：ここ 1か所 =====
+   d：受精してからの 日にち。parts：その 日に 見える もの（新しく 見える ものは new） */
+const $=id=>document.getElementById(id);
+const STAGES=[
+  {d:0,  chip:'すぐ',  when:'受精して すぐ', text:'たまごの 中に、あわのような つぶが たくさん ある。', parts:['tsubu'], new:['tsubu']},
+  {d:1,  chip:'1日',   when:'1日後', text:'つぶが 少なくなり、体の もとが できてくる。', parts:['tsubu','moto'], new:['moto']},
+  {d:3,  chip:'3日',   when:'3日後', text:'体の 形が 見えてきて、目が できてくる。', parts:['tsubu','body','eye'], new:['eye']},
+  {d:4,  chip:'4日',   when:'4日後', text:'心ぞうが 動きはじめ、血液が 流れるのが 見える。', parts:['tsubu','body','eye','heart','blood'], new:['heart','blood']},
+  {d:8,  chip:'8日',   when:'8日後', text:'体が 大きくなり、目が 黒くなる。たまごの 中で ときどき 動く。', parts:['tsubu','body','eye','heart','blood','move'], new:['move']},
+  {d:11, chip:'11日',  when:'11日後', text:'たまごの まくを やぶって、子メダカが 出てくる（かえる）。', parts:['hatch','sac'], new:['sac']},
+  {d:13, chip:'13日', when:'かえって 2日後', text:'しばらくは えさを 食べず、はらの ふくろに ある 養分で 育つ。', parts:['fish','sac'], new:[]},
+];
+const NAME={tsubu:'あわのような つぶ', moto:'体の もと', eye:'目', heart:'心ぞう', blood:'血液の 流れ', move:'動く', sac:'はらの ふくろ（養分）'};
+const rs={i:0};
+window.rs=rs; window.rsSTAGES=STAGES;
+
+/* ===== たまごの 絵（viewBox 400×300・たまごの 中心 200,150） ===== */
+const C={x:200,y:152}, EGG=118, YOLK=84;
+const pol=(a,r)=>[C.x+Math.cos(a*Math.PI/180)*r, C.y+Math.sin(a*Math.PI/180)*r];
+function arcPath(a0,a1,r){ const [x0,y0]=pol(a0,r), [x1,y1]=pol(a1,r); return `M${x0.toFixed(1)} ${y0.toFixed(1)}A${r} ${r} 0 ${Math.abs(a1-a0)>180?1:0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`; }
+function label(text,x,y,tx,ty,isNew){   // (x,y)＝さす 所、(tx,ty)＝字の 所
+  const col=isNew?'#be123c':'#1f2937', w=text.length*19+18;
+  return `<g data-label="${text}"><path d="M${x} ${y}L${tx} ${ty}" stroke="${col}" stroke-width="2"/><circle cx="${x}" cy="${y}" r="3.5" fill="${col}"/>
+    <rect x="${tx-w/2}" y="${ty-15}" width="${w}" height="30" rx="15" fill="#fff" stroke="${col}" stroke-width="${isNew?3:2}"/>
+    <text x="${tx}" y="${ty+1}" text-anchor="middle" dominant-baseline="middle" font-size="19" font-weight="700" fill="${col}">${text}</text></g>`;
+}
+// あわのような つぶ（日が たつと 少なく 大きく）
+function tsubu(i){
+  const n=[22,12,7,6,5][i]||5, out=[];
+  for(let k=0;k<n;k++){ const a=k*137.5, r=Math.sqrt((k+0.5)/n)*YOLK*0.78, x=C.x+Math.cos(a*Math.PI/180)*r, y=C.y+12+Math.sin(a*Math.PI/180)*r*0.8;
+    const rr=[3.5,5,6.5,7,7][i]+((k*7)%3);
+    out.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${rr}" fill="#fffbe6" stroke="#a16207" stroke-width="1.5"/>`); }
+  return out.join('');
+}
+function embryo(st){
+  const span={3:[-150,-30],4:[-165,-10],8:[-200,25]}[st.d];
+  const [a0,a1]=span, r=YOLK+14, eye=st.parts.includes('eye');
+  const head=pol(a0,r+2), tail=a1, tailMid=a1-(a1-a0)*0.25;
+  let s=`<path d="${arcPath(a0,tailMid,r)}" fill="none" stroke="#1f2937" stroke-width="27" stroke-linecap="round"/>
+    <path d="${arcPath(a0,tailMid,r)}" fill="none" stroke="#fde7d7" stroke-width="22" stroke-linecap="round"/>`;
+  const tailG=`<path d="${arcPath(tailMid,tail,r)}" fill="none" stroke="#1f2937" stroke-width="14" stroke-linecap="round"/><path d="${arcPath(tailMid,tail,r)}" fill="none" stroke="#fde7d7" stroke-width="9" stroke-linecap="round"/>`;
+  const [tx,ty]=pol(tailMid,r);
+  s += st.parts.includes('move') ? `<g class="rs-tail" style="transform-origin:${tx}px ${ty}px">${tailG}</g>` : tailG;
+  s += `<circle cx="${head[0]}" cy="${head[1]}" r="${st.d>=8?24:20}" fill="#fde7d7" stroke="#1f2937" stroke-width="2.5"/>`;
+  if(eye){ const [ex,ey]=pol(a0,r+6), dark=st.d>=8?'#111827':st.d>=4?'#6b7280':'#fff';
+    s+=`<circle cx="${ex}" cy="${ey}" r="${st.d>=8?11:9}" fill="${dark}" stroke="#1f2937" stroke-width="2.5"/>`;
+    if(st.d>=8) s+=`<circle cx="${ex-3}" cy="${ey-3}" r="3" fill="#fff"/>`; }
+  if(st.parts.includes('blood')) s+=`<path class="rs-blood" d="${arcPath(a0+15,a1-20,YOLK-16)}" fill="none" stroke="#be123c" stroke-width="3.5" stroke-dasharray="10 10"/>
+    <path class="rs-blood" d="${arcPath(a0+40,a1-40,YOLK-40)}" fill="none" stroke="#be123c" stroke-width="3" stroke-dasharray="8 12"/>`;
+  if(st.parts.includes('heart')){ const [hx,hy]=pol(a0+16,r-24); s+=`<circle class="rs-heart" cx="${hx}" cy="${hy}" r="8" fill="#fecdd3" stroke="#be123c" stroke-width="3"/>`; }
+  return {svg:s, head, eye:pol(a0,r+6), heart:pol(a0+16,r-24), blood:pol((a0+a1)/2,YOLK-16), tail:pol(tail,r)};
+}
+function fishSvg(x,y,sc,sac){   // 子メダカ（よこ むき・頭が 左）
+  return `<g transform="translate(${x} ${y}) scale(${sc})"><g class="rs-fish">
+    <path d="M-60 0C-50-18-10-20 30-8L62-20V20L30 8C-10 20-50 18-60 0Z" fill="#fde7d7" stroke="#1f2937" stroke-width="3"/>
+    <circle cx="-40" cy="-4" r="9" fill="#111827"/><circle cx="-43" cy="-7" r="3" fill="#fff"/>
+    <path d="M-10-14c6 6 6 22 0 28" fill="none" stroke="#1f2937" stroke-width="2"/>
+    ${sac?`<ellipse cx="-14" cy="${14}" rx="${sac}" ry="${sac*0.62}" fill="#fef3c7" stroke="#a16207" stroke-width="2.5"/>`:''}</g></g>`;
+}
+/* ===== Codex で 作った 絵（img/m0〜m6.webp）。読めた ときは 絵の 上に 名前の ふだを のせる =====
+   pts：絵の 中の さす 所（0〜1）、at：ふだの 所（viewBox） */
+const IMGPTS=[
+  {tsubu:[0.6,0.66]},
+  {tsubu:[0.34,0.62], moto:[0.5,0.22]},
+  {tsubu:[0.28,0.56], eye:[0.27,0.29]},
+  {tsubu:[0.65,0.43], eye:[0.25,0.30], heart:[0.32,0.30], blood:[0.45,0.45]},
+  {tsubu:[0.31,0.59], eye:[0.27,0.36], heart:[0.35,0.36], blood:[0.5,0.52], move:[0.6,0.76]},
+  {maku:[0.2,0.48], sac:[0.71,0.52]},
+  {sac:[0.3,0.52]},
+];
+const AT={tsubu:[300,272], moto:[330,24], eye:[52,40], heart:[52,150], blood:[330,24], move:[88,272], maku:[100,30], sac:[282,262]};
+const LAB={...NAME, move:'しっぽが 動く', maku:'やぶれた まく'};
+const IMG=STAGES.map((x,i)=>{ const im=new Image(); const o={ok:false}; im.onload=()=>{ o.ok=true; if(rs.i===i) render(); }; im.src=`img/m${i}.webp`; return o; });
+rs.img=IMG;
+function imgStage(st){
+  const isNew=k=>st.new.includes(k), P=IMGPTS[rs.i], X=u=>50+u*300, Y=v=>v*300;
+  let s=`<image href="img/m${rs.i}.webp" x="50" y="0" width="300" height="300" style="mix-blend-mode:multiply"/>`;
+  if(P.heart) s+=`<circle class="rs-heart" cx="${X(P.heart[0])}" cy="${Y(P.heart[1])}" r="10" fill="none" stroke="#be123c" stroke-width="3"/>`;
+  const order=['blood','moto','tsubu','eye','heart','move','maku','sac'];
+  for(const k of order){ if(!P[k]) continue; const at = (k==='sac'&&rs.i===6) ? [282,200] : AT[k];
+    s+=label(LAB[k], X(P[k][0]), Y(P[k][1]), at[0], at[1], isNew(k)); }
+  return s;
+}
+function render(){
+  const st=STAGES[rs.i], isNew=k=>st.new.includes(k);
+  let s=`<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${st.when}の たまご">`;
+  if(IMG[rs.i].ok){ s+=imgStage(st); }
+  else if(st.d<=8){
+    // まくの 毛
+    for(let a=0;a<360;a+=24){ const [x0,y0]=pol(a,EGG), [x1,y1]=pol(a+6,EGG+12); s+=`<path d="M${x0} ${y0}Q${x1} ${y1} ${pol(a+14,EGG+8)[0]} ${pol(a+14,EGG+8)[1]}" fill="none" stroke="#9ca3af" stroke-width="1.5"/>`; }
+    s+=`<circle cx="${C.x}" cy="${C.y}" r="${EGG}" fill="rgba(255,255,255,.85)" stroke="#1f2937" stroke-width="3"/>`;
+    s+=`<circle cx="${C.x}" cy="${C.y+8}" r="${YOLK}" fill="#fef9c3" stroke="#ca8a04" stroke-width="2" stroke-dasharray="4 4"/>`;
+    s+=tsubu(rs.i);
+    const [px,py]=[C.x+20, C.y+38];
+    if(st.parts.includes('moto')) s+=`<path d="${arcPath(-130,-50,YOLK+10)}" fill="none" stroke="#1f2937" stroke-width="22" stroke-linecap="round"/><path d="${arcPath(-130,-50,YOLK+10)}" fill="none" stroke="#fde7d7" stroke-width="17" stroke-linecap="round"/>`;
+    let E=null; if(st.parts.includes('body')){ E=embryo(st); s+=E.svg; }
+    // 名前（右と 左に よせる）
+    s+=label(NAME.tsubu, px, py, 300, 270, isNew('tsubu'));
+    if(st.parts.includes('moto')) s+=label(NAME.moto, ...pol(-90,YOLK+10), 330, 24, isNew('moto'));
+    if(E){ s+=label(NAME.eye, E.eye[0], E.eye[1], 52, 40, isNew('eye'));
+      if(st.parts.includes('heart')) s+=label(NAME.heart, E.heart[0], E.heart[1], 52, 150, isNew('heart'));
+      if(st.parts.includes('blood')) s+=label(NAME.blood, E.blood[0], E.blood[1], 330, 24, isNew('blood'));
+      if(st.parts.includes('move')) s+=label('しっぽが 動く', E.tail[0], E.tail[1], 88, 270, isNew('move')); }
+  }else if(st.d===11){
+    // やぶれた まく
+    const ex=105, ey=160, er=66, pt=a=>[ex+Math.cos(a*Math.PI/180)*er, ey+Math.sin(a*Math.PI/180)*er];
+    const [ax,ay]=pt(35), [bx,by]=pt(-35);
+    s+=`<path d="M${ax} ${ay}A${er} ${er} 0 1 1 ${bx} ${by}l-10 14 12 10-8 12" fill="rgba(255,255,255,.85)" stroke="#1f2937" stroke-width="3" stroke-linejoin="round"/>`;
+    s+=fishSvg(275,140,1.25,22);
+    s+=label('やぶれた まく', ex-er+4, ey-20, 100, 40, false);
+    s+=label(NAME.sac, 257, 158, 282, 262, isNew('sac'));
+  }else{
+    s+=`<path d="M20 250C80 240 140 262 200 252S320 240 380 252" fill="none" stroke="#9ca3af" stroke-width="2"/>`;
+    s+=fishSvg(200,140,1.6,13);
+    s+=label(NAME.sac, 177, 162, 282, 262, false);
+  }
+  s+='</svg>';
+  $('rsStage').innerHTML=s;
+  $('rsWhen').textContent=st.when;
+  $('rsText').textContent=st.text;
+  $('rsNew').innerHTML = st.new.length ? `<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7" fill="#fff" stroke="#be123c" stroke-width="3"/></svg>新しく 見える：${st.new.map(k=>NAME[k]).join('・')}` : '';
+  $('rsDays').innerHTML = `<button type="button" class="rs-step" data-step="-1" aria-label="まえの 日" ${rs.i===0?'disabled':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>`
+    + STAGES.map((x,i)=>`<button type="button" data-i="${i}" aria-current="${i===rs.i}">${x.chip}</button>`).join('')
+    + `<button type="button" class="rs-step" data-step="1" aria-label="つぎの 日" ${rs.i===STAGES.length-1?'disabled':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>`;
+}
+function go(i){ rs.i=Math.max(0,Math.min(STAGES.length-1,i)); render(); }
+$('rsDays').onclick=e=>{ const b=e.target.closest('button'); if(!b||b.disabled) return; if(b.dataset.step) go(rs.i+ +b.dataset.step); else go(+b.dataset.i); };
+document.addEventListener('keydown',e=>{ if(e.key==='ArrowRight') go(rs.i+1); if(e.key==='ArrowLeft') go(rs.i-1); });
+render();
+window.rsGo=go;
+
+RsTe.bindButton(document.getElementById('rsTeBtn'));   // 手で：カードや ボタンの 上で 手を とめると おせる
+</script>
+<!--rl-home--><script>
+/* 理科ラボ：どの へやにも 出す「もどる」ボタン（11-07）。決まりは ここ 1か所。
+   へやの 上の帯（.xx-top）の いちばん左に 44px の ⌂ を 足す。帯が ない へやは 左下に うかべる。
+   行き先：その へやが 入っている 部屋の ページ（理科ラボ/1_エネルギー.html など）。そこから ホームへも もどれる。
+   へやの 中の 字や クラス名には さわらない（クラス名は rlh- で はじめる）。 */
+(function(){
+  if(window.__rlHome) return; window.__rlHome=1;
+  // どの へやが どの 部屋に 入るか（mock/ の 下の 道 → 部屋の ページ）
+  var PAGE={energy:'1_エネルギー.html',ryushi:'2_粒子.html',seimei:'3_生命.html',chikyu:'4_地球.html'};
+  var EXTRA={teko:'energy','karada-mirror':'seimei',tentai:'chikyu','seiza-tsunagu':'chikyu'};
+  function room(p){
+    var m=/\/mock\/rika\/(energy|ryushi|seimei|chikyu)\//.exec(p); if(m) return m[1];
+    m=/\/mock\/([^\/]+)\//.exec(p); return m&&EXTRA[m[1]]||'';
+  }
+  function href(){
+    var p=decodeURIComponent(location.pathname), r=room(p), i=p.lastIndexOf('/mock/');
+    if(window.RL_HOME_URL) return window.RL_HOME_URL;          // 授業メイトの 中では 入れる側が 決める
+    if(!r||i<0) return '';
+    return 'file://'+encodeURI(p.slice(0,i)+'/理科ラボ/'+PAGE[r]);
+  }
+  function put(){
+    var to=href(); if(!to||document.querySelector('.rlh-home')) return;
+    var a=document.createElement('a'); a.className='rlh-home'; a.href=to; a.title='へやの 一らんに もどる';
+    a.setAttribute('aria-label','へやの 一らんに もどる');
+    a.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>';
+    var st=document.createElement('style');
+    st.textContent='.rlh-home{flex:0 0 44px;width:44px;height:44px;margin-right:8px;display:inline-flex;align-items:center;justify-content:center;border-radius:22px;background:var(--rl-bg,white);color:var(--rl-ink,black);border:1px solid currentColor;text-decoration:none;box-sizing:border-box}'+
+      '.rlh-home:hover{opacity:.8}.rlh-home:focus-visible{outline:3px solid currentColor;outline-offset:2px}'+
+      '.rlh-home.rlh-float{position:fixed;left:12px;bottom:12px;z-index:9999;margin:0}';
+    document.head.appendChild(st);
+    var bar=[].slice.call(document.querySelectorAll('[class$="-top"],[class*="-top "]')).filter(function(e){
+      var r=e.getBoundingClientRect(); return r.top<20&&r.height>=44&&getComputedStyle(e).display.indexOf('flex')>=0;})[0];
+    if(bar) bar.insertBefore(a,bar.firstChild); else { a.classList.add('rlh-float'); document.body.appendChild(a); }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',put); else put();
+})();
+</script><!--/rl-home-->
+</body>
+</html>

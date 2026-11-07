@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="ja">
+<head><script>window.RL_HOME_URL="../../ryushi.html";</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>もののあたたまり方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* 見本 v0.1（2026-11-07）理科ラボ／粒子／4年 もののあたたまり方。タッチ：おさえている 所を 熱する */
+:root{
+  /* 理科ラボ 粒子の 部屋の 色（4つの 部屋で 同じ 名前）。色は ここだけに 書く */
+  --rl-bg:#ffffff; --rl-ink:#1f2937; --rl-accent:#2ba3d9; --rl-accent2:#7fd1ee; --rl-soft:#e6f6fc;
+  /* この 部屋の 意味の 色 */
+  --rp-sub:#4b5563; --rp-mute:#6b7280; --rp-line:#d1d5db; --rp-btn:#f3f4f6; --rp-deep:#0b6e99;
+  --rp-ok:#1b7f3b; --rp-warn:#b45309; --rp-warn2:#d97706; --rp-hot:#c2410c; --rp-hot2:#fb923c; --rp-cold:#1d4ed8;
+  --rp-red:#dc2626; --rp-err:#b91c1c; --rp-flame:#fde68a; --rp-clay:#e7d3b0; --rp-brown:#78350f; --rp-alum:#7c3aed;
+  --rp-t2:#93c5fd; --rp-t4:#f97316;
+  --rp-jion-ao:#4a7fdc; --rp-jion-pink:#e6609f;   /* 示温インク（東京書籍 4年）：約40℃で 青→ピンク */
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--rl-bg);color:var(--rl-ink);
+  font-family:"BIZ UDPGothic",sans-serif;font-size:16px;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+.rp-app{display:grid;grid-template-rows:auto 1fr;gap:8px;height:100vh;height:100dvh;padding:8px 12px 12px}
+.rp-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:52px}
+.rp-tabs{display:flex;border:1px solid var(--rp-line);border-radius:12px;overflow:hidden}
+.rp-tabs button{min-height:44px;min-width:44px;padding:0 14px;border:0;background:var(--rl-bg);font-size:16px;display:flex;align-items:center;gap:6px}
+.rp-tabs button+button{border-left:1px solid var(--rp-line)}
+.rp-tabs button[aria-pressed="true"]{background:var(--rl-accent);color:var(--rl-ink);font-weight:700}
+.rp-tabs svg,.rp-b svg{width:22px;height:22px;flex:none}
+.rp-b{min-height:44px;min-width:44px;padding:0 14px;border:1px solid var(--rp-line);background:var(--rp-btn);border-radius:12px;
+  font-size:16px;display:flex;align-items:center;justify-content:center;gap:6px}
+.rp-sp{flex:1}
+.rp-main{display:grid;grid-template-columns:1fr 210px;gap:10px;min-height:0}
+.rp-stage{position:relative;border-radius:12px;overflow:hidden;background:var(--rl-soft);min-height:0;touch-action:none;cursor:pointer}
+.rp-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.rp-msg{position:absolute;left:50%;top:10px;transform:translateX(-50%);padding:6px 16px;border-radius:20px;
+  background:color-mix(in srgb, var(--rl-bg) 94%, transparent);font-size:18px;font-weight:700;white-space:nowrap;pointer-events:none}
+.rp-msg:empty{display:none}
+.rp-side{display:flex;flex-direction:column;gap:8px;min-height:0}
+.rp-probe{border:1px solid var(--rp-line);border-radius:12px;padding:6px 10px}
+.rp-probe h2{margin:0 0 2px;font-size:16px;display:flex;align-items:center;gap:6px}
+.rp-probe h2 svg{width:20px;height:20px}
+.rp-probe div{display:flex;justify-content:space-between;align-items:baseline;font-size:16px;min-height:30px}
+.rp-probe b{font-size:24px;font-variant-numeric:tabular-nums}
+.rp-probe[hidden]{display:none!important}
+.rp-key{border:1px solid var(--rp-line);border-radius:12px;padding:6px 10px;font-size:14px;color:var(--rp-sub)}
+.rp-key i{display:block;height:14px;border-radius:7px;margin:4px 0;background:linear-gradient(90deg,var(--rp-jion-ao) 0 45%,var(--rp-jion-pink) 55% 100%)}
+.rp-key>span{display:flex;flex-direction:column}
+.rp-say{word-break:keep-all;min-height:52px;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:12px;
+  font-size:17px;font-weight:700;padding:4px 6px;border:2px solid var(--rp-line);flex:1;max-height:110px}
+@media (max-width:860px){
+  .rp-main{grid-template-columns:1fr 180px}
+  .rp-tabs button{padding:0 10px}
+  .rp-probe b{font-size:20px}
+  .rp-probe div{min-height:24px}
+  .rp-say{font-size:15px}
+  .rp-side{gap:6px}
+}
+html #rsTeBtn[aria-pressed="true"]{background:var(--rl-accent);color:var(--rl-ink);border-color:var(--rl-ink)}   /* 手で：おしている ときも 字は こい色 */
+</style>
+</head>
+<body>
+<div class="rp-app">
+  <div class="rp-top">
+    <div class="rp-tabs" role="group" aria-label="あたためる もの" id="rpMode">
+      <button type="button" data-v="metal" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="1"/><circle cx="8" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="16" cy="12" r="1.5"/></svg>金ぞく</button>
+      <button type="button" data-v="water" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M5 4v16h14V4"/><path d="M5 10h14"/></svg>水</button>
+      <button type="button" data-v="air" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 9h11a3 3 0 1 0-3-3M3 15h15a3 3 0 1 1-3 3"/></svg>空気</button>
+    </div>
+    <span class="rp-sp"></span>
+    <button class="rp-b" type="button" id="rsTeBtn" aria-label="手で うごかす"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V11M11 10V4a1.5 1.5 0 0 1 3 0v6M14 10V5.5a1.5 1.5 0 0 1 3 0V13"/><path d="M8 12.5 6.6 11a1.6 1.6 0 0 0-2.4 2.1L8 18.5A6 6 0 0 0 13 21h0a5 5 0 0 0 5-5v-3"/></svg>手で</button>
+    <button class="rp-b" type="button" id="rpReset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.3-5.7"/><path d="M4 4v4h4"/></svg>さいしょから</button>
+  </div>
+  <div class="rp-main">
+    <div class="rp-stage" id="rpStage">
+      <canvas id="rpCanvas"></canvas>
+      <div class="rp-msg" id="rpMsg"></div>
+    </div>
+    <div class="rp-side">
+      <div class="rp-probe" id="rpProbe">
+        <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10 4a2 2 0 0 1 4 0v10a4 4 0 1 1-4 0z"/></svg>温度</h2>
+        <div><span>上</span><b id="rpTop">20℃</b></div>
+        <div><span>下</span><b id="rpBot">20℃</b></div>
+      </div>
+      <div class="rp-key" aria-hidden="true"><i></i><span><span>青：40℃より ひくい</span><span>ピンク：40℃より 高い</span></span></div>
+      <div class="rp-say" id="rpSay">おさえた 所を 熱するよ</div>
+    </div>
+  </div>
+</div>
+
+<script>/* 手で おす（生命の 部屋の 部品 seimei/_parts/rs-te.js を tools_parts.py で 中に 入れる） */
+/*RS-TE*/
+/* ===== 手で おす（生命の 部屋で 共通） =====
+   カメラの 手を 画面 ぜんたいの「しるし（わ）」に うつす。ボタンの 上で 手を とめると、わが みちて おせる。
+   星ざ・社会地図の「とめて おす」と 同じ 考え。タップや マウスは そのまま つかえる（どっちでも できる）。
+   つかい方：
+     RsTe.point(nx,ny,box)  … カメラの 中の 位置（0〜1・かがみの むき）。null で しるしを けす
+     RsTe.startHand({onPoint, onLost}) … カメラと 手の トラッキングを はじめる（人さし指の 先＝しるし）
+     RsTe.stop()            … 手を やめる
+     RsTe.cur               … いまの しるしの 位置（画面の px）
+*/
+(function(){
+  const DWELL=1100;                 // とめて おすまでの 時間（ミリ秒）
+  const BOX=[0.1,0.1,0.9,0.9];      // カメラの この はんいを 画面 ぜんたいに 広げる（はしまで とどくように）
+  const SM=0.5;
+  const cv=document.createElement('canvas'); cv.className='rs-te'; cv.setAttribute('aria-hidden','true');
+  cv.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:60';
+  const tip=document.createElement('div'); tip.className='rs-te-tip'; tip.hidden=true;
+  tip.style.cssText='position:fixed;left:50%;top:8px;transform:translateX(-50%);z-index:61;pointer-events:none;background:#fff;border:2px solid var(--rl-ink,#1f2937);border-radius:22px;padding:8px 16px;font-size:16px;font-weight:700;color:var(--rl-ink,#1f2937);white-space:nowrap';
+  const st=document.createElement('style');
+  st.textContent='.rs-te-near{box-shadow:inset 0 0 0 4px var(--rl-accent,#23784a)!important}#rsTeBtn[aria-pressed="true"]{background:var(--rl-accent,#23784a);color:#fff;border-color:var(--rl-accent,#23784a)}';
+  const g=cv.getContext('2d');
+  function size(){ const d=window.devicePixelRatio||1; cv.width=innerWidth*d; cv.height=innerHeight*d; g.setTransform(d,0,0,d,0,0); }
+  function mount(){ document.head.appendChild(st); document.body.appendChild(cv); document.body.appendChild(tip); size(); }
+  if(document.body) mount(); else document.addEventListener('DOMContentLoaded',mount);
+  addEventListener('resize',size);
+  const T={cur:null, el:null, t0:0, done:false, on:false, dwell:DWELL, clicks:0};
+  const cl=v=>Math.max(0,Math.min(1,v));
+  T.point=function(nx,ny,box){
+    if(nx==null){ T.cur=null; return null; }
+    const b=box||BOX, x=cl((nx-b[0])/(b[2]-b[0]))*innerWidth, y=cl((ny-b[1])/(b[3]-b[1]))*innerHeight;
+    if(!T.cur) T.cur={x,y}; else { T.cur.x+=(x-T.cur.x)*SM; T.cur.y+=(y-T.cur.y)*SM; }
+    return T.cur;
+  };
+  T.say=function(t){ tip.hidden=!t; if(t && tip.textContent!==t) tip.textContent=t; };
+  function target(){
+    const c=T.cur; if(!c) return null;
+    const e=document.elementFromPoint(c.x,c.y), b=e&&e.closest&&e.closest('button');
+    return b && !b.disabled && b.offsetParent && !b.closest('[hidden]') ? b : null;
+  }
+  function frame(now){
+    requestAnimationFrame(frame);
+    g.clearRect(0,0,innerWidth,innerHeight);
+    const c=T.cur, el=target();
+    if(el!==T.el){ if(T.el) T.el.classList.remove('rs-te-near'); T.el=el; T.t0=now; T.done=false; if(el) el.classList.add('rs-te-near'); }
+    let prog=0;
+    if(el && !T.done){ prog=Math.min(1,(now-T.t0)/T.dwell); if(prog>=1){ T.done=true; T.clicks++; el.click(); } }
+    if(!c) return;
+    const R=Math.max(20,Math.min(innerWidth,innerHeight)*0.035);
+    const ink=getComputedStyle(document.documentElement).getPropertyValue('--rl-ink').trim()||'#1f2937';
+    const acc=getComputedStyle(document.documentElement).getPropertyValue('--rl-accent').trim()||'#23784a';
+    g.lineWidth=7; g.strokeStyle='#fff'; g.beginPath(); g.arc(c.x,c.y,R,0,7); g.stroke();
+    g.lineWidth=3; g.strokeStyle=ink; g.beginPath(); g.arc(c.x,c.y,R,0,7); g.stroke();
+    g.fillStyle=ink; g.beginPath(); g.arc(c.x,c.y,4,0,7); g.fill();
+    // みちる わ：こい ふちの 上に 部屋の 色（黄など うすい 色でも 白地で 見える）
+    if(prog>0 && !T.done){ g.lineCap='round'; const a1=-Math.PI/2+prog*Math.PI*2;
+      g.lineWidth=11; g.strokeStyle=ink; g.beginPath(); g.arc(c.x,c.y,R+8,-Math.PI/2,a1); g.stroke();
+      g.lineWidth=6; g.strokeStyle=acc; g.beginPath(); g.arc(c.x,c.y,R+8,-Math.PI/2,a1); g.stroke(); }
+  }
+  requestAnimationFrame(frame);
+
+  /* ---- 手の トラッキング（人さし指の 先） ---- */
+  const VER='0.10.14';
+  let hands=null, video=null, stream=null, lastT=-1, onPoint=null, onLost=null, seen=0;
+  async function load(){
+    const vision=await import(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}`);
+    const fs=await vision.FilesetResolver.forVisionTasks(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}/wasm`);
+    const o=d=>({baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task',delegate:d},runningMode:'VIDEO',numHands:1});
+    try{ return await vision.HandLandmarker.createFromOptions(fs,o('GPU')); }
+    catch(e){ return await vision.HandLandmarker.createFromOptions(fs,o('CPU')); }
+  }
+  T.errText=function(e){
+    return e&&e.name==='NoCamPage' ? 'この ひらきかたでは カメラが つかえません。Chrome で ひらいてね。'
+      : e&&(e.name==='NotFoundError'||e.name==='NotReadableError') ? 'カメラが みつかりません。ほかの アプリで つかっていないか みてね。'
+      : e&&e.name==='NotAllowedError' ? 'カメラが つかえません。先生に カメラを ゆるして もらってね。'
+      : 'じゅんびが できませんでした。インターネットに つながっているか みてね。';
+  };
+  T.startHand=async function(opt){
+    opt=opt||{}; onPoint=opt.onPoint||null; onLost=opt.onLost||null; opt_hint=opt.hint!=null?opt.hint:'人さし指を カメラに 見せてね';
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ const e=new Error(); e.name='NoCamPage'; throw e; }
+    if(!video){ video=document.createElement('video'); video.playsInline=true; video.muted=true; video.setAttribute('playsinline','');
+      video.style.cssText='position:fixed;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none'; document.body.appendChild(video); }
+    stream=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:960},height:{ideal:540},facingMode:'user'},audio:false});
+    video.srcObject=stream; await video.play();
+    hands=hands||await load();
+    T.on=true; T.video=video; seen=performance.now(); requestAnimationFrame(track);
+    return video;
+  };
+  function track(){
+    if(!T.on) return;
+    requestAnimationFrame(track);
+    if(!hands||video.readyState<2||video.currentTime===lastT) return;
+    lastT=video.currentTime;
+    const now=performance.now(), r=hands.detectForVideo(video,now), L=(r.landmarks||[])[0];
+    if(L){ seen=now; const c=T.point(1-L[8].x, L[8].y); T.say(''); if(onPoint) onPoint(c); }
+    else { T.point(null); if(onPoint) onPoint(null); if(now-seen>1200 && opt_hint) T.say(opt_hint); if(onLost) onLost(); }
+  }
+  let opt_hint='人さし指を カメラに 見せてね';
+  T.stop=function(){ T.on=false; T.point(null); T.say(''); if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; } if(onPoint) onPoint(null); };
+  // 「手で」ボタン：おすと カメラの 手が はじまる。もう いちど おすと やめる
+  T.bindButton=function(btn,opt){
+    btn.setAttribute('aria-pressed','false');
+    btn.addEventListener('click',async()=>{
+      if(T.on){ T.stop(); btn.setAttribute('aria-pressed','false'); return; }
+      btn.disabled=true; T.say('じゅんびちゅう…');
+      try{ await T.startHand(opt); btn.setAttribute('aria-pressed','true'); T.say(''); }
+      catch(e){ T.say(T.errText(e)); setTimeout(()=>T.say(''),5000); }
+      finally{ btn.disabled=false; }
+    });
+  };
+  window.RsTe=T;
+})();
+/*RS-TE-END*/
+</script>
+<script>
+/* 色は :root から 読む（K＝そのまま、KA＝すきとおらせる） */
+const RL_CS=getComputedStyle(document.documentElement), RL_C={};
+const K=n=>RL_C[n]||(RL_C[n]=RL_CS.getPropertyValue('--'+n).trim());
+const KA=(n,a)=>{ const h=K(n).replace('#',''); return `rgba(${parseInt(h.slice(0,2),16)},${parseInt(h.slice(2,4),16)},${parseInt(h.slice(4,6),16)},${a})`; };
+/*RP-PARTS*/
+const RP_PARTS={beaker:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjQwIiB2aWV3Qm94PSIwIDAgMjAwIDI0MCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImJlYWtlci13YWxsIiB4MT0iMCIgeDI9IjEiPgogICAgICA8c3RvcCBzdG9wLWNvbG9yPSIjZmZmZmZmIiBzdG9wLW9wYWNpdHk9IjAuNyIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjAuNDUiIHN0b3AtY29sb3I9IiNlNmY2ZmMiIHN0b3Atb3BhY2l0eT0iMC4yNSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM3ZmQxZWUiIHN0b3Atb3BhY2l0eT0iMC4zIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8ZyBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogICAgPHBhdGggZD0iTTIwIDIwSDE4MFYyMTVRMTgwIDIzMCAxNjUgMjMwSDM1UTIwIDIzMCAyMCAyMTVaIiBmaWxsPSIjZTZmNmZjIiBmaWxsLW9wYWNpdHk9IjAuMTgiLz4KICAgIDxwYXRoIGQ9Ik0xNCAyMEwzIDlRMiA3IDYgN0gzMEwzNiAxNEgxODRRMTkwIDE0IDE5MSAxMEwxOTQgMTFRMTk0IDIwIDE4NiAyMFYyMTZRMTg2IDIzNyAxNjUgMjM3SDM1UTE0IDIzNyAxNCAyMTZaIE0yMCAyMFYyMTVRMjAgMjMwIDM1IDIzMEgxNjVRMTgwIDIzMCAxODAgMjE1VjIwWiIgZmlsbD0idXJsKCNiZWFrZXItd2FsbCkiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPgogICAgPHBhdGggZD0iTTE0IDIwTDMgOVEyIDcgNiA3SDMwTDM2IDE0SDE4NFExOTAgMTQgMTkxIDEwTDE5NCAxMVExOTQgMjAgMTg2IDIwVjIxNlExODYgMjM3IDE2NSAyMzdIMzVRMTQgMjM3IDE0IDIxNloiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFmMjkzNyIgc3Ryb2tlLW9wYWNpdHk9IjAuODUiIHN0cm9rZS13aWR0aD0iMiIvPgogICAgPHBhdGggZD0iTTIwIDIwTDkgMTBNMjAgMjBWMjE1UTIwIDIzMCAzNSAyMzBIMTY1UTE4MCAyMzAgMTgwIDIxNVYyME0zNiAyMEgxODAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFmMjkzNyIgc3Ryb2tlLW9wYWNpdHk9IjAuNzgiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgICA8cGF0aCBkPSJNMTcgMzRWMjA3IiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS1vcGFjaXR5PSIwLjc1IiBzdHJva2Utd2lkdGg9IjIuNSIvPgogICAgPHBhdGggZD0iTTE4MyAzMFYyMTRRMTgzIDIzMyAxNjUgMjMzIiBmaWxsPSJub25lIiBzdHJva2U9IiMyYmEzZDkiIHN0cm9rZS1vcGFjaXR5PSIwLjEzIiBzdHJva2Utd2lkdGg9IjMiLz4KICAgIDxwYXRoIGQ9Ik0zNCAyMzNIMTUxIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS1vcGFjaXR5PSIwLjciIHN0cm9rZS13aWR0aD0iMiIvPgogIDwvZz4KPC9zdmc+'};
+/*RP-PARTS-END*/
+/* Codex で 作った 部品の 絵（parts/*.svg を tools_parts.py で 中に 入れる）。読めない ときは 前の 線の 絵 */
+const PIMG={}; for(const k in RP_PARTS){ if(k==='start') continue; const im=new Image(); im.onload=()=>{ try{ draw(); }catch(e){} }; im.src=RP_PARTS[k]; PIMG[k]=im; }
+const ok=k=>!!(PIMG[k] && PIMG[k].complete && PIMG[k].naturalWidth>0);
+if(RP_PARTS.start){ const sv=document.querySelector('.rp-start svg'); if(sv){ const im=new Image(); im.src=RP_PARTS.start; im.alt=''; im.className='rp-startimg'; sv.replaceWith(im); } }
+
+/* ===== きまり（1か所） ===== */
+// 金ぞく：熱した 所から 近い 順に つたわる（動かない）。水・空気：あたためられた 所が 上へ 動き、ぐるっと まわって 全体が あたたまる。
+const RP = {
+  NX:32, NY:32,
+  ROOM:20, MAX:95,
+  MELT:40,                  // ろうが とける 温度（見本の 目安）
+  P:{ metal:{D:7, flow:0, heat:220, loss:0.02},
+      water:{D:0.6, flow:7, heat:45, loss:0.004},
+      air:{D:0.6, flow:9, heat:45, loss:0.004} },
+};
+window.RP = RP;
+const $ = id => document.getElementById(id);
+const rp = { mode:'metal', T:null, src:null, flow:0, flowAt:null, dots:[] };
+window.rp = rp;
+function reset(){
+  rp.T=new Float32Array(RP.NX*RP.NY).fill(RP.ROOM); rp.flow=0; rp.flowAt=null;
+  rp.dots=[]; for(let i=0;i<70;i++) rp.dots.push({x:Math.random()*RP.NX, y:Math.random()*RP.NY, tr:[]});
+}
+reset();
+const at=(T,x,y)=>{ x=Math.max(0,Math.min(RP.NX-1.001,x-0.5)); y=Math.max(0,Math.min(RP.NY-1.001,y-0.5));
+  const i=Math.floor(x), j=Math.floor(y), fx=x-i, fy=y-j, N=RP.NX;
+  return (T[j*N+i]*(1-fx)+T[j*N+i+1]*fx)*(1-fy)+(T[(j+1)*N+i]*(1-fx)+T[(j+1)*N+i+1]*fx)*fy; };
+
+// ながれ：熱している 所の 上に 2つの うず（まん中は 上へ、かべぞいは 下へ）。熱する 所より 下は 動かない
+function vel(x,y){
+  if(!rp.flowAt || rp.flow<0.01) return [0,0];
+  const [xs,ys]=rp.flowAt; if(y>ys || ys<1) return [0,0];
+  const Wl=Math.max(1,xs), Wr=Math.max(1,RP.NX-xs), k=Math.PI/(ys*1.35);   // 熱する 所でも 上へ 動くように 少し 下まで
+  const A=rp.flow*RP.P[rp.mode].flow/Math.max(k, Math.PI/Math.min(Wl,Wr));   // いちばん 速い 所が flow に なる
+  let g,dg;
+  if(x>=xs){ g=Math.sin(Math.PI*(x-xs)/Wr); dg=Math.PI/Wr*Math.cos(Math.PI*(x-xs)/Wr); }
+  else { g=-Math.sin(Math.PI*(xs-x)/Wl); dg=Math.PI/Wl*Math.cos(Math.PI*(xs-x)/Wl); }
+  return [A*k*Math.cos(k*y)*g, -A*Math.sin(k*y)*dg];
+}
+function step(dt){
+  const p=RP.P[rp.mode], N=RP.NX, M=RP.NY, T=rp.T;
+  // ながれの 強さ：熱して いる 間は 強く、やめると ゆっくり 止まる
+  if(rp.src){ rp.flowAt=rp.src.slice(); rp.flow=Math.min(1, rp.flow+dt*1.5); } else rp.flow=Math.max(0, rp.flow-dt*0.4);
+  let A=T;
+  if(p.flow && rp.flow>0.01){ A=new Float32Array(N*M);
+    for(let j=0;j<M;j++) for(let i=0;i<N;i++){ const x=i+0.5,y=j+0.5,[vx,vy]=vel(x,y); A[j*N+i]=at(T,x-vx*dt,y-vy*dt); } }
+  const B=new Float32Array(N*M), sub=Math.ceil(p.D*dt/0.2), dd=p.D*dt/sub;
+  let C=A;
+  for(let s=0;s<sub;s++){
+    for(let j=0;j<M;j++) for(let i=0;i<N;i++){ const k=j*N+i, c=C[k];
+      const l=i?C[k-1]:c, r=i<N-1?C[k+1]:c, u=j?C[k-N]:c, d=j<M-1?C[k+N]:c;
+      B[k]=c+dd*(l+r+u+d-4*c); }
+    C=B.slice(); }
+  // 熱する・まわりへ にげる
+  for(let k=0;k<N*M;k++) C[k]-= (C[k]-RP.ROOM)*p.loss*dt;
+  if(rp.src){ const [sx,sy]=rp.src;
+    for(let j=Math.max(0,Math.floor(sy-2));j<Math.min(M,sy+2);j++) for(let i=Math.max(0,Math.floor(sx-2));i<Math.min(N,sx+2);i++){
+      const d=Math.hypot(i+0.5-sx,j+0.5-sy); if(d<1.6){ const k=j*N+i; C[k]=Math.min(RP.MAX, C[k]+p.heat*dt*(1-d/1.6*0.5)); } } }
+  rp.T=C;
+  // うごく つぶ（おがくず・けむり）
+  if(p.flow) rp.dots.forEach(d=>{ const [vx,vy]=vel(d.x,d.y); d.x=Math.max(0.3,Math.min(RP.NX-0.3,d.x+vx*dt)); d.y=Math.max(0.3,Math.min(RP.NY-0.3,d.y+vy*dt));
+    if(rp.flowAt && rp.flow>0.2 && d.y>rp.flowAt[1]-1 && Math.abs(d.x-rp.flowAt[0])<3){ d.y=rp.flowAt[1]-1.5; d.x=rp.flowAt[0]+(Math.random()-.5); d.tr=[]; }   // 火の そばまで 来たら 上へ
+    d.tr.push([d.x,d.y]); if(d.tr.length>14) d.tr.shift(); });
+}
+// 上・下の 温度（はばの 平均）
+function band(y0,y1){ let s=0,n=0; for(let j=Math.floor(y0*RP.NY);j<Math.ceil(y1*RP.NY);j++) for(let i=0;i<RP.NX;i++){ s+=rp.T[j*RP.NX+i]; n++; } return s/n; }
+// 温度計の 場所（右の かべの 近く、上と 下）
+const PROBE={top:[0.82,0.08], bot:[0.82,0.92]};
+function probe(k){ const [u,v]=PROBE[k]; return at(rp.T, u*RP.NX, v*RP.NY); }
+window.rpBand=band; window.rpProbe=probe;
+
+/* ===== えがく ===== */
+const cv=$('rpCanvas'), cx=cv.getContext('2d');
+let W=0,H=0;
+function fit(){ const r=$('rpStage').getBoundingClientRect(), d=window.devicePixelRatio||1;
+  W=r.width; H=r.height; cv.width=Math.round(W*d); cv.height=Math.round(H*d); cx.setTransform(d,0,0,d,0,0); }
+window.addEventListener('resize', ()=>{ fit(); draw(); });
+function geo(){
+  if(rp.mode==='metal'){ const s=Math.min(W*0.8,H*0.8); return {x:(W-s)/2, y:(H-s)/2+8, w:s, h:s}; }
+  if(rp.mode==='water'){   // ビーカーの 絵（中の場所 x20〜180・y20〜230）の 中の 上 1わりは 水の 上の すき間
+    let h=H*0.76, w=h*1.1/210*160; if(w>W*0.7){ w=W*0.7; h=w/160*210/1.1; } return {x:(W-w)/2, y:(H-h)/2+H*0.06, w, h}; }
+  const h=H*0.82, w=Math.min(W*0.7, h*1.2); return {x:(W-w)/2, y:(H-h)/2+10, w, h};
+}
+window.rpGeo=geo;
+let STOPS=null;   // 温度と 色（色は :root の 変数）
+const hex3=n=>{ const h=K(n).replace('#',''); return [0,2,4].map(i=>parseInt(h.slice(i,i+2),16)); };
+// 示温インクの 色（東京書籍 4年）：約40℃より 下は 青、上は ピンク（35〜45℃で うつりかわる）
+function col(t){ STOPS=STOPS||[[35,'rp-jion-ao'],[45,'rp-jion-pink']].map(([v,n])=>[v,hex3(n)]); for(let i=1;i<STOPS.length;i++){ if(t<=STOPS[i][0]||i===STOPS.length-1){ const [a,ca]=STOPS[i-1],[b,cb]=STOPS[i], f=Math.max(0,Math.min(1,(t-a)/(b-a)));
+  return ca.map((v,k)=>Math.round(v+(cb[k]-v)*f)); } } }
+window.rpCol=col;
+const off=document.createElement('canvas'); off.width=RP.NX; off.height=RP.NY; const ox=off.getContext('2d'); const img=ox.createImageData(RP.NX,RP.NY);
+function draw(){
+  cx.clearRect(0,0,W,H);
+  const g=geo(), N=RP.NX, alpha=rp.mode==='air'?150:225;
+  for(let k=0;k<N*RP.NY;k++){ const c=col(rp.T[k]); img.data[k*4]=c[0]; img.data[k*4+1]=c[1]; img.data[k*4+2]=c[2]; img.data[k*4+3]=alpha; }
+  ox.putImageData(img,0,0);
+  cx.save(); if(rp.mode==='water'){ const r=g.h*1.1/210*14; cx.beginPath(); cx.roundRect(g.x,g.y,g.w,g.h,[0,0,r,r]); cx.clip(); }   // ビーカーの 底の 丸みに 合わせる
+  cx.imageSmoothingEnabled=true; cx.drawImage(off, g.x, g.y, g.w, g.h); cx.restore();
+  const sx=g.w/N, sy=g.h/RP.NY;
+  if(rp.mode==='metal'){
+    // ろう：とけると 中が ぬけて 点線の 輪に なる
+    const r=Math.max(4,sx*0.9);
+    for(let j=2;j<RP.NY;j+=4) for(let i=2;i<N;i+=4){ const x=g.x+(i)*sx, y=g.y+(j)*sy, melt=rp.T[j*N+i]>=RP.MELT;
+      cx.lineWidth=2; cx.strokeStyle=K('rl-ink');
+      if(melt){ cx.setLineDash([3,3]); cx.beginPath(); cx.arc(x,y,r,0,6.28); cx.stroke(); cx.setLineDash([]); }
+      else { cx.fillStyle=K('rl-bg'); cx.beginPath(); cx.arc(x,y,r,0,6.28); cx.fill(); cx.stroke(); } }
+    cx.strokeStyle=K('rp-sub'); cx.lineWidth=4; cx.strokeRect(g.x,g.y,g.w,g.h);
+  }else{
+    // おがくず（水）・けむり（空気）
+    cx.lineCap='round';
+    rp.dots.forEach(d=>{ const x=g.x+d.x*sx, y=g.y+d.y*sy;
+      if(rp.mode==='air'){ if(d.tr.length>1){ cx.strokeStyle=KA('rp-sub',.55); cx.lineWidth=3; cx.beginPath(); d.tr.forEach(([a,b],i)=>{ const X=g.x+a*sx,Y=g.y+b*sy; i?cx.lineTo(X,Y):cx.moveTo(X,Y); }); cx.stroke(); } }
+      else { cx.fillStyle=K('rp-brown'); cx.beginPath(); cx.arc(x,y,3.2,0,6.28); cx.fill(); } });
+    // 入れもの
+    cx.strokeStyle=K('rl-ink'); cx.lineWidth=5; cx.lineJoin='round';
+    if(rp.mode==='water' && ok('beaker')){ const sc=g.h*1.1/210; cx.drawImage(PIMG.beaker, g.x-20*sc, g.y-g.h*0.1-20*sc, 200*sc, 240*sc);
+      cx.strokeStyle=K('rp-deep'); cx.lineWidth=2; cx.beginPath(); cx.moveTo(g.x,g.y); cx.lineTo(g.x+g.w,g.y); cx.stroke(); }
+    else if(rp.mode==='water'){ cx.beginPath(); cx.moveTo(g.x-8,g.y-10); cx.lineTo(g.x,g.y-2); cx.lineTo(g.x,g.y+g.h); cx.lineTo(g.x+g.w,g.y+g.h); cx.lineTo(g.x+g.w,g.y-10); cx.stroke();
+      cx.strokeStyle=K('rp-deep'); cx.lineWidth=2; cx.beginPath(); cx.moveTo(g.x,g.y); cx.lineTo(g.x+g.w,g.y); cx.stroke(); }
+    else cx.strokeRect(g.x,g.y,g.w,g.h);
+    // 温度計（上と 下）
+    [['top','上'],['bot','下']].forEach(([k,t])=>{ const [u,v]=PROBE[k], x=g.x+u*g.w, y=g.y+v*g.h;
+      cx.fillStyle=K('rl-bg'); cx.strokeStyle=K('rl-ink'); cx.lineWidth=2.5; cx.beginPath(); cx.arc(x,y,13,0,6.28); cx.fill(); cx.stroke();
+      cx.fillStyle=K('rl-ink'); cx.font='700 15px "BIZ UDPGothic",sans-serif'; cx.textAlign='center'; cx.textBaseline='middle'; cx.fillText(t,x,y+1); });
+    // 動く むき（熱している 間）
+    if(rp.flow>0.2 && rp.flowAt){ const [xs,ys]=rp.flowAt; cx.strokeStyle=KA('rl-ink',.8); cx.fillStyle=KA('rl-ink',.8); cx.lineWidth=3;
+      const ax=g.x+xs*sx, top=g.y+Math.max(1,ys*0.25)*sy, bot=g.y+Math.max(2,ys*0.75)*sy;
+      if(bot-top>20){ cx.beginPath(); cx.moveTo(ax,bot); cx.lineTo(ax,top); cx.stroke(); cx.beginPath(); cx.moveTo(ax,top-10); cx.lineTo(ax-8,top+4); cx.lineTo(ax+8,top+4); cx.closePath(); cx.fill(); } }
+  }
+  // 火（おさえている 所）
+  if(rp.src){ const x=g.x+rp.src[0]*sx, y=g.y+rp.src[1]*sy, R=16;
+    cx.strokeStyle=K('rp-hot'); cx.fillStyle=KA('rl-bg',.9); cx.lineWidth=4;
+    cx.beginPath(); cx.moveTo(x,y-R); cx.bezierCurveTo(x+R*1.1,y-R*0.1,x+R*0.8,y+R,x,y+R); cx.bezierCurveTo(x-R*0.8,y+R,x-R*1.1,y-R*0.1,x,y-R); cx.fill(); cx.stroke(); }
+  show();
+}
+function show(){
+  const air=rp.mode!=='metal';
+  $('rpProbe').hidden=!air;
+  const top=Math.round(probe('top')), bot=Math.round(probe('bot'));
+  $('rpTop').textContent=top+'℃'; $('rpBot').textContent=bot+'℃';
+  let t;
+  if(rp.mode==='metal') t = rp.src ? '熱した 所から 近い 順に あたたまる' : 'おさえた 所を 熱するよ';
+  else if(rp.src) t = (rp.mode==='water'?'あたためられた 水が 上へ 動く':'あたためられた 空気が 上へ 動く');
+  else if(top-bot>=5) t='上の ほうが あたたかい';
+  else t='おさえた 所を 熱するよ';
+  if($('rpSay').textContent!==t) $('rpSay').textContent=t;
+}
+
+/* ===== タッチ ===== */
+const st=$('rpStage'); let pid=null;
+function toGrid(e){ const r=st.getBoundingClientRect(), g=geo(), x=(e.clientX-r.left-g.x)/g.w*RP.NX, y=(e.clientY-r.top-g.y)/g.h*RP.NY;
+  return (x>=0&&x<=RP.NX&&y>=0&&y<=RP.NY) ? [x,y] : null; }
+st.addEventListener('pointerdown', e=>{ const q=toGrid(e); if(!q) return; pid=e.pointerId; st.setPointerCapture?.(pid); rp.src=q; });
+st.addEventListener('pointermove', e=>{ if(e.pointerId!==pid) return; const q=toGrid(e); rp.src=q; });
+const up=e=>{ if(e.pointerId!==pid) return; pid=null; rp.src=null; };
+st.addEventListener('pointerup', up); st.addEventListener('pointercancel', up);
+
+document.querySelectorAll('#rpMode button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#rpMode button').forEach(x=>x.setAttribute('aria-pressed', x===b?'true':'false'));
+  rp.mode=b.dataset.v; rp.src=null; reset(); draw(); });
+$('rpReset').onclick=()=>{ reset(); draw(); };
+
+let prev=0;
+function loop(now){ requestAnimationFrame(loop); const dt=Math.min(0.05,(now-(prev||now))/1000); prev=now; if(!rp.pause) step(dt); draw(); }
+fit(); draw(); requestAnimationFrame(loop);
+// 手で：ボタンの 上で とめると おせる。あたためる ものの 上に 手を おくと、そこを 熱する
+RsTe.bindButton($('rsTeBtn'));
+let teSrc=false;
+(function teLoop(){ requestAnimationFrame(teLoop);
+  if(pid!=null) return;
+  const c=RsTe.on && RsTe.cur, q=c ? toGrid({clientX:c.x, clientY:c.y}) : null;
+  if(q){ rp.src=q; teSrc=true; } else if(teSrc){ rp.src=null; teSrc=false; } })();
+window.rpStep=(sec)=>{ for(let t=0;t<sec;t+=1/30) step(1/30); draw(); };
+window.rpDraw=draw;
+</script>
+<!--rl-home--><script>
+/* 理科ラボ：どの へやにも 出す「もどる」ボタン（11-07）。決まりは ここ 1か所。
+   へやの 上の帯（.xx-top）の いちばん左に 44px の ⌂ を 足す。帯が ない へやは 左下に うかべる。
+   行き先：その へやが 入っている 部屋の ページ（理科ラボ/1_エネルギー.html など）。そこから ホームへも もどれる。
+   へやの 中の 字や クラス名には さわらない（クラス名は rlh- で はじめる）。 */
+(function(){
+  if(window.__rlHome) return; window.__rlHome=1;
+  // どの へやが どの 部屋に 入るか（mock/ の 下の 道 → 部屋の ページ）
+  var PAGE={energy:'1_エネルギー.html',ryushi:'2_粒子.html',seimei:'3_生命.html',chikyu:'4_地球.html'};
+  var EXTRA={teko:'energy','karada-mirror':'seimei',tentai:'chikyu','seiza-tsunagu':'chikyu'};
+  function room(p){
+    var m=/\/mock\/rika\/(energy|ryushi|seimei|chikyu)\//.exec(p); if(m) return m[1];
+    m=/\/mock\/([^\/]+)\//.exec(p); return m&&EXTRA[m[1]]||'';
+  }
+  function href(){
+    var p=decodeURIComponent(location.pathname), r=room(p), i=p.lastIndexOf('/mock/');
+    if(window.RL_HOME_URL) return window.RL_HOME_URL;          // 授業メイトの 中では 入れる側が 決める
+    if(!r||i<0) return '';
+    return 'file://'+encodeURI(p.slice(0,i)+'/理科ラボ/'+PAGE[r]);
+  }
+  function put(){
+    var to=href(); if(!to||document.querySelector('.rlh-home')) return;
+    var a=document.createElement('a'); a.className='rlh-home'; a.href=to; a.title='へやの 一らんに もどる';
+    a.setAttribute('aria-label','へやの 一らんに もどる');
+    a.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>';
+    var st=document.createElement('style');
+    st.textContent='.rlh-home{flex:0 0 44px;width:44px;height:44px;margin-right:8px;display:inline-flex;align-items:center;justify-content:center;border-radius:22px;background:var(--rl-bg,white);color:var(--rl-ink,black);border:1px solid currentColor;text-decoration:none;box-sizing:border-box}'+
+      '.rlh-home:hover{opacity:.8}.rlh-home:focus-visible{outline:3px solid currentColor;outline-offset:2px}'+
+      '.rlh-home.rlh-float{position:fixed;left:12px;bottom:12px;z-index:9999;margin:0}';
+    document.head.appendChild(st);
+    var bar=[].slice.call(document.querySelectorAll('[class$="-top"],[class*="-top "]')).filter(function(e){
+      var r=e.getBoundingClientRect(); return r.top<20&&r.height>=44&&getComputedStyle(e).display.indexOf('flex')>=0;})[0];
+    if(bar) bar.insertBefore(a,bar.firstChild); else { a.classList.add('rlh-float'); document.body.appendChild(a); }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',put); else put();
+})();
+</script><!--/rl-home-->
+</body>
+</html>

@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="ja">
+<head><script>window.RL_HOME_URL="../../seimei.html";</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>呼吸</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* 理科ラボ 生命 見本 v0.1（2026-11-07）6年 呼吸。かたの 上がり下がりに あわせて 肺が ふくらむ・しぼむ */
+:root{/* 生命の 部屋の 色（理科ラボで 名前を そろえる） */--rl-bg:#ffffff;--rl-ink:#1f2937;--rl-accent:#23784a;--rl-accent2:#a6d785;--rl-soft:#eaf6ec;
+  --rs-ink:var(--rl-ink);--rs-sub:#4b5563;--rs-line:#d1d5db;--rs-btn:var(--rl-soft);--rs-o2:#1d4ed8;--rs-co2:#4b5563;--rs-in:#1d4ed8;--rs-out:#b45309}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--rl-bg);color:var(--rs-ink);font-family:"BIZ UDPGothic",sans-serif;font-size:16px;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+.rs-app{display:grid;grid-template-rows:auto 1fr;gap:8px;height:100vh;height:100dvh;padding:8px 12px 12px}
+.rs-top{display:flex;align-items:center;gap:10px;min-height:48px}
+.rs-top h1{margin:0;font-size:20px;white-space:nowrap}
+.rs-top p{margin:0;font-size:16px;color:var(--rs-sub)}
+.rs-main{display:grid;grid-template-columns:1fr 300px;gap:10px;min-height:0}
+.rs-left{display:flex;align-items:center;justify-content:center;min-width:0;min-height:0}
+.rs-stage{position:relative;border-radius:12px;overflow:hidden;background:var(--rl-soft);width:400px;height:300px}
+.rs-stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.rs-veil{position:absolute;inset:0;background:rgba(255,255,255,.3)}
+.rs-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.rs-msg{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);padding:6px 16px;border-radius:20px;background:rgba(255,255,255,.94);border:1px solid var(--rs-line);font-size:16px;white-space:nowrap;pointer-events:none}
+.rs-msg:empty{display:none}
+.rs-start{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#fff;padding:12px;text-align:center}
+.rs-start>svg{width:min(200px,36%);height:auto}
+.rs-start p{margin:0;font-size:18px;line-height:1.7}
+.rs-big{min-height:60px;padding:0 36px;font-size:22px;font-weight:700;border-radius:30px;border:2px solid var(--rl-accent);background:var(--rl-accent);color:#fff}
+.rs-big:disabled{opacity:.6}
+.rs-hold{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:rgba(255,255,255,.94);border:2px solid var(--rl-ink);border-radius:20px;padding:6px 14px;font-size:16px;font-weight:700;white-space:nowrap;pointer-events:none}.rs-hold[hidden]{display:none}
+.rs-stage{touch-action:none;user-select:none;-webkit-user-select:none}
+.rs-gos{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}.rs-big{display:inline-flex;align-items:center;gap:8px}.rs-big svg{width:28px;height:28px;flex:none}.rs-big.rs-sub{background:#fff;color:var(--rl-accent)}
+.rs-err{color:#b91c1c;max-width:86%;font-size:16px}
+.rs-start[hidden],.rs-err[hidden]{display:none!important}
+.rs-side{display:flex;flex-direction:column;gap:8px;min-height:0}
+.rs-card{border:1px solid var(--rs-line);border-radius:20px 6px 20px 6px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;min-height:0;overflow:hidden}
+.rs-now{display:flex;align-items:center;gap:10px;font-size:24px;font-weight:700;min-height:44px}
+.rs-now svg{width:36px;height:36px;flex:none}
+.rs-now[data-p="in"]{color:var(--rs-in)}
+.rs-now[data-p="out"]{color:var(--rs-out)}
+.rs-cmp{display:grid;grid-template-columns:auto 1fr 1fr;gap:0;font-size:15px}
+.rs-cmp>div{padding:4px 6px;display:flex;flex-direction:column;justify-content:center;gap:3px;border-bottom:1px solid var(--rs-line);line-height:1.3}
+.rs-cmp .rs-k{flex-direction:row;align-items:center;justify-content:flex-start;gap:4px;white-space:nowrap}
+.rs-cmp .rs-col{font-weight:700;border-bottom:2px solid var(--rs-line)}
+.rs-cmp [data-on="1"]{background:#f3f4f6;font-weight:700;box-shadow:inset 3px 0 0 var(--rs-ink),inset -3px 0 0 var(--rs-ink)}
+.rs-cmp svg{width:18px;height:18px;flex:none}
+.rs-bar{height:8px;border-radius:4px;background:#e5e7eb;position:relative;overflow:hidden}
+.rs-bar i{position:absolute;left:0;top:0;bottom:0;border-radius:4px}
+.rs-note{margin:0;font-size:15px;line-height:1.55;color:var(--rs-ink)}
+.rs-key{display:flex;gap:12px;flex-wrap:wrap;font-size:15px}
+.rs-key span{display:flex;align-items:center;gap:4px}
+.rs-key svg{width:18px;height:18px}
+@media (max-height:440px){.rs-main{grid-template-columns:1fr 280px}.rs-card{padding:6px 10px;gap:4px}.rs-now{font-size:20px}.rs-now svg{width:28px;height:28px}.rs-top{min-height:44px}.rs-top p{display:none}.rs-col{gap:2px}.rs-note{line-height:1.35}}
+</style>
+</head>
+<body>
+<div class="rs-app">
+  <div class="rs-top">
+    <h1>呼吸</h1>
+    <p>かたを 上げて 吸う、下げて はく</p>
+  </div>
+  <div class="rs-main">
+    <div class="rs-left" id="rsLeft">
+      <div class="rs-stage" id="rsStage">
+        <video id="rsVideo" playsinline muted></video>
+        <div class="rs-veil"></div>
+        <canvas id="rsCanvas"></canvas>
+        <div class="rs-msg" id="rsMsg"></div>
+        <div class="rs-hold" id="rsHold" hidden>おしている あいだ 吸う・はなすと はく</div>
+        <div class="rs-start" id="rsStart">
+          <svg viewBox="0 0 120 110" fill="none" stroke="#1f2937" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M60 6v34M60 40 46 50M60 40l14 10"/>
+            <path d="M54 34C40 30 22 46 20 76c-1 16 8 26 22 24 10-2 12-10 12-22z" fill="#fde2e4"/>
+            <path d="M66 34c14-4 32 12 34 42 1 16-8 26-22 24-10-2-12-10-12-22z" fill="#fde2e4"/>
+          </svg>
+          <p>カメラの まえで、かたまで うつろう。<br>ゆっくり 吸って、ゆっくり はこう。</p>
+          <div class="rs-gos"><button class="rs-big" id="rsGo" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h4l2-3h6l2 3h4v11H3z"/><circle cx="12" cy="13" r="3.5"/></svg>カメラで</button><button class="rs-big rs-sub" id="rsTap" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 12V5.5a1.8 1.8 0 0 1 3.6 0V12l3.6.8a2 2 0 0 1 1.5 2.3L18 21h-8l-3.3-4.6a1.6 1.6 0 0 1 2.4-2.1L10 15"/><path d="M6.5 6.5a5.5 5.5 0 0 1 10.5-1"/></svg>ゆびで</button></div>
+          <div class="rs-err" id="rsErr" hidden></div>
+        </div>
+      </div>
+    </div>
+    <div class="rs-side">
+      <div class="rs-card">
+        <div class="rs-now" id="rsNow" data-p=""></div>
+        <div class="rs-key">
+          <span><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7" fill="#fff" stroke="#1d4ed8" stroke-width="3"/></svg>酸素</span>
+          <span><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="3" width="14" height="14" rx="2" fill="#4b5563"/></svg>二酸化炭素</span>
+        </div>
+      </div>
+      <div class="rs-card">
+        <div class="rs-cmp" id="rsCmp"></div>
+        <p class="rs-note">肺で、空気中の 酸素の 一部が 血液に とり入れられ、血液から 二酸化炭素が 出される。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../_parts/rs-te.js"></script>
+<script>
+/* ===== きまり：空気の 中みの わりあい（体積で およそ）。ここ 1か所 ===== */
+const $=id=>document.getElementById(id);
+const AIR={
+  in: {name:'吸う空気', o2:21, co2:0.04, o2t:'約21％', co2t:'約0.04％'},
+  out:{name:'はく空気', o2:17, co2:4,    o2t:'約17％', co2t:'約4％'},
+};
+const ARROW={
+  in:'<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 3v22M10 17l8 8 8-8"/><path d="M6 32h24"/></svg>',
+  out:'<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 31V9M10 17l8-8 8 8"/><path d="M6 4h24"/></svg>',
+};
+const rs={src:'', L:null, level:0.5, show:0.5, phase:'', hist:[], parts:[], lastT:0};
+window.rs=rs;
+const ICO2='<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7" fill="#fff" stroke="#1d4ed8" stroke-width="3"/></svg>';
+const ICCO2='<svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="3" width="14" height="14" rx="2" fill="#4b5563"/></svg>';
+function renderCmp(){
+  const cell=(k,html)=>`<div data-k="${k}" data-on="${rs.phase===k?1:0}">${html}</div>`;
+  const bar=(v,max,col)=>`<div class="rs-bar"><i style="width:${Math.max(3,v/max*100)}%;background:${col}"></i></div>`;
+  $('rsCmp').innerHTML = '<div></div>'+['in','out'].map(k=>`<div class="rs-col" data-k="${k}" data-on="0">${AIR[k].name}</div>`).join('')
+    + `<div class="rs-k">${ICO2}酸素</div>` + ['in','out'].map(k=>cell(k, AIR[k].o2t+bar(AIR[k].o2,21,'#1d4ed8'))).join('')
+    + `<div class="rs-k">${ICCO2}二酸化炭素</div>` + ['in','out'].map(k=>cell(k, AIR[k].co2t+bar(AIR[k].co2,4,'#4b5563'))).join('');
+}
+function setPhase(p){
+  if(rs.phase===p) return; rs.phase=p;
+  const el=$('rsNow'); el.dataset.p=p;
+  el.innerHTML = p==='in' ? ARROW.in+'吸う' : p==='out' ? ARROW.out+'はく' : 'かたを 動かしてみよう';
+  document.querySelectorAll('#rsCmp [data-k]').forEach(c=>c.dataset.on = c.dataset.k===p ? '1':'0');
+}
+
+/* ===== 大きさ ===== */
+const cv=$('rsCanvas'), g=cv.getContext('2d');
+let W=0,H=0, AR=4/3;
+function fit(){
+  const r=$('rsLeft').getBoundingClientRect();
+  let w=r.width, h=w/AR; if(h>r.height){ h=r.height; w=h*AR; }
+  const st=$('rsStage'); st.style.width=Math.floor(w)+'px'; st.style.height=Math.floor(h)+'px';
+  W=Math.floor(w); H=Math.floor(h); const d=window.devicePixelRatio||1;
+  cv.width=Math.round(W*d); cv.height=Math.round(H*d); g.setTransform(d,0,0,d,0,0);
+}
+window.addEventListener('resize',fit);
+window.rsSetAR=a=>{ AR=a; fit(); };
+
+/* ===== からだの 点 ===== */
+const SM=0.45;
+function feed(L,now=performance.now()){
+  if(!L){ rs.L=null; return; }
+  if(!rs.L) rs.L=L.map(p=>({...p}));
+  else L.forEach((p,i)=>{ const o=rs.L[i]; o.x+=(p.x-o.x)*SM; o.y+=(p.y-o.y)*SM; o.visibility=p.visibility; });
+  breathe(now);
+}
+const P=i=>{ const p=rs.L&&rs.L[i]; return p&&p.visibility>0.5 ? {x:p.x*W, y:p.y*H} : null; };
+const mid=(a,b)=>({x:(a.x+b.x)/2,y:(a.y+b.y)/2});
+const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+const lerp=(a,b,k)=>({x:a.x+(b.x-a.x)*k, y:a.y+(b.y-a.y)*k});
+
+/* ===== 吸う・はくを 見分ける：耳と かたの 間の 長さ（かたはばで わる）が 短く なったら かたが 上がった ===== */
+const WIN=8000, MINR=0.035;
+function breathe(now){
+  const e7=P(7), e8=P(8), l=P(11), r=P(12); if(!e7||!e8||!l||!r) return;
+  const w=dist(l,r); if(w<10) return;
+  const v=(mid(l,r).y-mid(e7,e8).y)/w;
+  rs.hist.push([now,v]); while(rs.hist.length && rs.hist[0][0]<now-WIN) rs.hist.shift();
+  let lo=Infinity, hi=-Infinity; for(const [,x] of rs.hist){ lo=Math.min(lo,x); hi=Math.max(hi,x); }
+  const c=(lo+hi)/2, half=Math.max(MINR,hi-lo)/2;
+  rs.level=Math.max(0,Math.min(1, 0.5+(c-v)/(2*half)));   // 1＝かたが いちばん 上（吸いきった）
+  // 0.3びょう前と くらべて 上がって いれば 吸う、下がって いれば はく
+  const old=rs.hist.find(([t])=>t>=now-300);
+  if(old){ const d=old[1]-v; if(d>MINR*0.25) setPhase('in'); else if(d<-MINR*0.25) setPhase('out'); }
+}
+
+/* ===== えがく ===== */
+const INK=getComputedStyle(document.documentElement).getPropertyValue('--rl-ink').trim()||'#1f2937';
+function lungPath(c,wd,ht,s,notch){   // s：画面の 右（+1）か 左（-1）。内がわ（体の まん中）は まっすぐ ぎみ
+  const x=c.x, y=c.y, o=s*wd/2, i=-s*wd/2;
+  g.beginPath();
+  g.moveTo(x+i*0.55, y-ht*0.42);
+  g.bezierCurveTo(x+i*0.1, y-ht*0.62, x+o*0.9, y-ht*0.45, x+o, y+ht*0.05);
+  g.bezierCurveTo(x+o*1.05, y+ht*0.4, x+o*0.6, y+ht*0.52, x, y+ht*0.48);
+  g.bezierCurveTo(x+i*0.6, y+ht*0.45, x+i*1.05, y+ht*0.42, x+i, y+ht*0.25);
+  if(notch) g.bezierCurveTo(x+i*0.45, y+ht*0.12, x+i*0.4, y-ht*0.05, x+i*0.85, y-ht*0.12);   // 心ぞうの ための へこみ
+  g.bezierCurveTo(x+i*0.9, y-ht*0.25, x+i*0.9, y-ht*0.35, x+i*0.55, y-ht*0.42);
+  g.closePath();
+}
+function frame(){
+  const l=P(11), r=P(12); if(!l||!r) return null;
+  const S=mid(l,r), w=dist(l,r); if(w<10) return null;
+  const e7=P(7), e8=P(8), n=P(0), m9=P(9), m10=P(10);
+  const Hd= e7&&e8 ? mid(e7,e8) : (n||{x:S.x,y:S.y-w*0.6});
+  const M = m9&&m10 ? mid(m9,m10) : {x:Hd.x, y:Hd.y+w*0.18};
+  const right = l.x<r.x ? 1 : -1;   // 本人の 左むね（心ぞうの がわ）は 画面の どちら
+  return {S,w,Hd,M, heartSide: l.x>r.x ? 1 : -1, right};
+}
+/* Codex で 作った 肺の 絵（img/hai.webp・正面から 見た 図。気管の 上が 0.525,0.05） */
+const HAI={im:new Image(), ok:false}; HAI.im.onload=()=>HAI.ok=true; HAI.im.src='img/hai.webp'; rs.hai=HAI;
+function paths(F,sc){
+  const neck={x:F.S.x, y:F.M.y+(F.S.y-F.M.y)*0.45};
+  let fork={x:F.S.x, y:F.S.y+F.w*0.22}, img=null;
+  let lungs=[-1,1].map(s=>({s, c:{x:F.S.x+s*F.w*0.27, y:F.S.y+F.w*0.62}, wd:F.w*0.42*sc, ht:F.w*0.9*sc}));
+  if(HAI.ok){
+    const iw=F.w*1.0*sc, ih=iw*HAI.im.height/HAI.im.width, ix=neck.x-0.525*iw, iy=neck.y-0.05*ih;
+    img={x:ix,y:iy,w:iw,h:ih}; fork={x:neck.x, y:iy+0.40*ih};
+    lungs=[-1,1].map(s=>({s, c:{x:neck.x+s*0.25*iw, y:iy+0.66*ih}, wd:0.4*iw, ht:0.6*ih}));
+  }
+  const route=s=>{ const L=lungs.find(q=>q.s===s); const out={x:F.M.x+(s)*F.w*0.05, y:F.M.y-F.w*0.02}; const front={x:F.M.x+s*F.w*0.62, y:F.M.y+F.w*0.04};
+    return [front, F.M, neck, fork, {x:L.c.x-s*F.w*0.06, y:L.c.y-L.ht*0.15}, {x:L.c.x+s*F.w*0.04, y:L.c.y+L.ht*0.15}]; };
+  return {neck,fork,lungs,route,img};
+}
+function along(R,k){   // 道の とちゅうの 点（k＝0〜1）
+  const seg=[]; let tot=0; for(let i=1;i<R.length;i++){ const d=dist(R[i-1],R[i]); seg.push(d); tot+=d; }
+  let want=k*tot; for(let i=0;i<seg.length;i++){ if(want<=seg[i]) return lerp(R[i],R[i+1],seg[i]?want/seg[i]:0); want-=seg[i]; }
+  return R[R.length-1];
+}
+function draw(now){
+  const dt=Math.min(0.1,(now-(rs.lastT||now))/1000); rs.lastT=now;
+  g.clearRect(0,0,W,H);
+  if(rs.src==='mouse') drawPuppet();
+  const F=frame();
+  if(!F){ setMsg(rs.src?'かたまで うつるように してね':''); return; }
+  setMsg('');
+  rs.show+=(rs.level-rs.show)*Math.min(1,dt*6);
+  const sc=0.82+0.3*rs.show; rs.sc=sc;
+  const PA=paths(F,sc);
+  if(PA.img){   // 絵の 肺（本人の 左むね＝心ぞうの がわが 画面の どちらかで 左右を かえる）
+    const I=PA.img; g.save(); if(F.heartSide<0){ g.translate(I.x*2+I.w,0); g.scale(-1,1); } g.drawImage(HAI.im,I.x,I.y,I.w,I.h); g.restore();
+  }else{
+  // 肺
+  for(const L of PA.lungs){
+    lungPath(L.c,L.wd,L.ht,L.s,L.s===F.heartSide);
+    g.fillStyle='rgba(253,205,211,.72)'; g.fill(); g.lineWidth=3; g.strokeStyle=INK; g.stroke();
+    // 肺の 中の 小さな ふくろ（はい ほう）を うすい 線で
+    g.save(); g.clip(); g.strokeStyle='rgba(190,24,93,.25)'; g.lineWidth=1.5;
+    for(let k=0;k<14;k++){ const a=k*2.4, rr=L.wd*(0.12+0.3*((k*37)%10)/10); g.beginPath(); g.arc(L.c.x+Math.cos(a)*rr, L.c.y+Math.sin(a)*rr*1.6, L.wd*0.07*sc,0,Math.PI*2); g.stroke(); }
+    g.restore();
+  }
+  // 気管・気管支
+  g.lineCap='round'; g.lineJoin='round';
+  const tube=pts=>{ for(const [lw,col] of [[F.w*0.09+4,INK],[F.w*0.09,'#fff']]){ g.strokeStyle=col; g.lineWidth=lw; g.beginPath(); pts.forEach((p,i)=>i?g.lineTo(p.x,p.y):g.moveTo(p.x,p.y)); g.stroke(); } };
+  tube([PA.neck,PA.fork]);
+  for(const L of PA.lungs) tube([PA.fork,{x:L.c.x-L.s*F.w*0.06, y:L.c.y-L.ht*0.15}]);
+  for(let k=0;k<5;k++){ const p=lerp(PA.neck,PA.fork,(k+0.5)/5); g.strokeStyle='rgba(31,41,55,.45)'; g.lineWidth=2; g.beginPath(); g.moveTo(p.x-F.w*0.04,p.y); g.lineTo(p.x+F.w*0.04,p.y); g.stroke(); }
+  }
+  // 空気の つぶ
+  const R={'-1':PA.route(-1), '1':PA.route(1)};
+  if(rs.phase==='in' && Math.random()<dt*9) rs.parts.push({k:0, s:Math.random()<0.5?-1:1, t:'o2'});
+  if(rs.phase==='out' && Math.random()<dt*9) rs.parts.push({k:1, s:Math.random()<0.5?-1:1, t:Math.random()<0.45?'co2':'o2'});
+  const sp=rs.phase==='in'?0.55:rs.phase==='out'?-0.55:0;
+  rs.parts=rs.parts.filter(q=>{ q.k+=sp*dt*(q.dir||1); return q.k>=0 && q.k<=1; }).slice(-60);
+  const pr=Math.max(7,F.w*0.035);
+  for(const q of rs.parts){ const p=along(R[q.s],q.k);
+    if(q.t==='o2'){ g.beginPath(); g.arc(p.x,p.y,pr,0,Math.PI*2); g.fillStyle='#fff'; g.fill(); g.lineWidth=3; g.strokeStyle='#1d4ed8'; g.stroke(); }
+    else { g.fillStyle='#4b5563'; g.strokeStyle='#fff'; g.lineWidth=2; g.beginPath(); g.roundRect(p.x-pr,p.y-pr,pr*2,pr*2,3); g.fill(); g.stroke(); } }
+  // 名前
+  tag('肺', PA.lungs[0].c.x-PA.lungs[0].wd*0.55, PA.lungs[0].c.y+PA.lungs[0].ht*0.62);
+  tag('気管', PA.neck.x+F.w*0.42, (PA.neck.y+PA.fork.y)/2);
+}
+function tag(text,x,y){
+  const fs=Math.max(15,Math.round(Math.min(W,H)*0.045));
+  g.font=`700 ${fs}px "BIZ UDPGothic",sans-serif`; g.textAlign='center'; g.textBaseline='middle';
+  const tw=g.measureText(text).width+fs*0.9, th=fs*1.5; x=Math.min(W-tw/2-4,Math.max(tw/2+4,x));
+  g.fillStyle='rgba(255,255,255,.94)'; g.strokeStyle=INK; g.lineWidth=2; g.beginPath(); g.roundRect(x-tw/2,y-th/2,tw,th,th/2); g.fill(); g.stroke();
+  g.fillStyle=INK; g.fillText(text,x,y+1);
+}
+function setMsg(t){ const el=$('rsMsg'); if(el.textContent!==t) el.textContent=t; }
+function loop(){ requestAnimationFrame(loop); draw(performance.now()); }
+
+/* ===== ためし用（?test：マウスを 上げると かたが 上がる） ===== */
+let mouse={x:0.5,y:0.5};
+function puppet(){
+  const L=[]; for(let i=0;i<33;i++) L.push({x:0.5,y:0.5,visibility:0});
+  const set=(i,x,y)=>{ L[i]={x,y,visibility:1}; };
+  if(rs.hold!=null) rs.holdV+=((rs.hold?1:-1)-rs.holdV)*0.06;   // ゆびで：おしている あいだ 吸う
+  const up=rs.hold!=null ? rs.holdV : Math.max(-1,Math.min(1,(0.5-mouse.y)*2.5));   // 1＝かたが 上
+  set(0,0.5,0.22); set(7,0.455,0.21); set(8,0.545,0.21); set(9,0.485,0.26); set(10,0.515,0.26);
+  const sy=0.40-up*0.03;
+  set(11,0.36,sy); set(12,0.64,sy); set(23,0.41,0.95); set(24,0.59,0.95);
+  return L;
+}
+function drawPuppet(){
+  const F=frame(); if(!F) return;
+  g.save(); g.fillStyle='rgba(255,255,255,.85)'; g.strokeStyle='rgba(75,85,99,.45)'; g.lineWidth=2;
+  g.beginPath(); g.ellipse(F.Hd.x,F.Hd.y+F.w*0.02,F.w*0.27,F.w*0.33,0,0,Math.PI*2); g.fill(); g.stroke();
+  const l=P(11), r=P(12);
+  g.beginPath(); g.moveTo(l.x-F.w*0.06,l.y+F.w*0.1); g.quadraticCurveTo(l.x,l.y-F.w*0.05,F.S.x-F.w*0.12,F.S.y-F.w*0.12); g.lineTo(F.S.x+F.w*0.12,F.S.y-F.w*0.12);
+  g.quadraticCurveTo(r.x,r.y-F.w*0.05,r.x+F.w*0.06,r.y+F.w*0.1); g.lineTo(r.x+F.w*0.02,H); g.lineTo(l.x-F.w*0.02,H); g.closePath(); g.fill(); g.stroke();
+  g.restore();
+}
+renderCmp(); setPhase(''); fit();
+window.rsFeed=feed; window.rsDraw=draw; window.rsFit=fit; window.rsSetPhase=setPhase; window.rsAIR=AIR;
+/* ===== ゆびで（カメラ なし）：画面を おしている あいだ 吸う、はなすと はく ===== */
+function startPuppet(){ $('rsStart').hidden=true; rs.src='mouse'; fit(); setInterval(()=>feed(puppet(),performance.now()),33); loop(); }
+function startTouch(){ rs.hold=false; rs.holdV=-1; startPuppet(); $('rsHold').hidden=false; }
+$('rsTap').onclick=startTouch;
+const st=$('rsStage');
+st.addEventListener('pointerdown',e=>{ if(rs.hold!=null){ rs.hold=true; e.preventDefault(); } });
+for(const ev of ['pointerup','pointercancel','pointerleave']) st.addEventListener(ev,()=>{ if(rs.hold!=null) rs.hold=false; });
+window.rsStartTouch=startTouch;
+if(/[?&]test/.test(location.search)){
+  $('rsGo').textContent='マウスで ためす';
+  $('rsGo').onclick=startPuppet;
+  st.addEventListener('pointermove',e=>{ if(rs.hold!=null) return; const r=st.getBoundingClientRect(); mouse={x:(e.clientX-r.left)/r.width, y:(e.clientY-r.top)/r.height}; });
+  window.rsMouse=(x,y)=>{ mouse={x,y}; };
+}
+window.rsLoop=loop;
+</script>
+
+<script type="module">
+/* ===== カメラと からだの トラッキング（からだミラーと 同じ 作り） ===== */
+const $=id=>document.getElementById(id);
+const VER='0.10.14', video=$('rsVideo');
+let pose=null, lastT=-1, modelP=null;
+async function loadModel(){
+  const vision=await import(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}`);
+  const fs=await vision.FilesetResolver.forVisionTasks(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}/wasm`);
+  const opts=d=>({baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task',delegate:d},runningMode:'VIDEO',numPoses:1});
+  try{ return await vision.PoseLandmarker.createFromOptions(fs,opts('GPU')); }
+  catch(e){ return await vision.PoseLandmarker.createFromOptions(fs,opts('CPU')); }
+}
+if(!/[?&]test/.test(location.search)){
+  modelP=loadModel().catch(e=>{ modelP=null; throw e; }); modelP.catch(()=>{});
+  $('rsGo').onclick=start;
+}
+async function start(){
+  const err=$('rsErr'); err.hidden=true; $('rsGo').disabled=true; $('rsGo').textContent='じゅんびちゅう…';
+  try{
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ const e=new Error(); e.name='NoCamPage'; throw e; }
+    const st=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:960},height:{ideal:720},aspectRatio:{ideal:4/3},facingMode:'user'},audio:false});
+    video.srcObject=st; await video.play();
+    window.rsSetAR((video.videoWidth||4)/(video.videoHeight||3));
+    pose=await (modelP||(modelP=loadModel()));
+    $('rsStart').hidden=true; window.rs.src='cam';
+    track(); window.rsLoop();
+  }catch(e){
+    $('rsGo').disabled=false; $('rsGo').textContent='もう いちど'; err.hidden=false;
+    err.textContent = e&&e.name==='NoCamPage' ? 'この ひらきかたでは カメラが つかえません。Chrome で ひらいてね。'
+      : e&&(e.name==='NotFoundError'||e.name==='NotReadableError') ? 'カメラが みつかりません。ほかの アプリで つかっていないか みてね。'
+      : e&&e.name==='NotAllowedError' ? 'カメラが つかえません。先生に カメラを ゆるして もらってね。'
+      : 'じゅんびが できませんでした（'+(e&&(e.name||e.message)||'')+'）。インターネットに つながっているか みてね。';
+  }
+}
+function track(){
+  requestAnimationFrame(track);
+  if(!pose||video.readyState<2||video.currentTime===lastT) return;
+  lastT=video.currentTime;
+  const now=performance.now(), r=pose.detectForVideo(video,now), L=(r.landmarks||[])[0];
+  window.rsFeed(L ? L.map(p=>({x:1-p.x, y:p.y, visibility:p.visibility==null?1:p.visibility})) : null, now);   // かがみの むきに あわせる
+}
+</script>
+<!--rl-home--><script>
+/* 理科ラボ：どの へやにも 出す「もどる」ボタン（11-07）。決まりは ここ 1か所。
+   へやの 上の帯（.xx-top）の いちばん左に 44px の ⌂ を 足す。帯が ない へやは 左下に うかべる。
+   行き先：その へやが 入っている 部屋の ページ（理科ラボ/1_エネルギー.html など）。そこから ホームへも もどれる。
+   へやの 中の 字や クラス名には さわらない（クラス名は rlh- で はじめる）。 */
+(function(){
+  if(window.__rlHome) return; window.__rlHome=1;
+  // どの へやが どの 部屋に 入るか（mock/ の 下の 道 → 部屋の ページ）
+  var PAGE={energy:'1_エネルギー.html',ryushi:'2_粒子.html',seimei:'3_生命.html',chikyu:'4_地球.html'};
+  var EXTRA={teko:'energy','karada-mirror':'seimei',tentai:'chikyu','seiza-tsunagu':'chikyu'};
+  function room(p){
+    var m=/\/mock\/rika\/(energy|ryushi|seimei|chikyu)\//.exec(p); if(m) return m[1];
+    m=/\/mock\/([^\/]+)\//.exec(p); return m&&EXTRA[m[1]]||'';
+  }
+  function href(){
+    var p=decodeURIComponent(location.pathname), r=room(p), i=p.lastIndexOf('/mock/');
+    if(window.RL_HOME_URL) return window.RL_HOME_URL;          // 授業メイトの 中では 入れる側が 決める
+    if(!r||i<0) return '';
+    return 'file://'+encodeURI(p.slice(0,i)+'/理科ラボ/'+PAGE[r]);
+  }
+  function put(){
+    var to=href(); if(!to||document.querySelector('.rlh-home')) return;
+    var a=document.createElement('a'); a.className='rlh-home'; a.href=to; a.title='へやの 一らんに もどる';
+    a.setAttribute('aria-label','へやの 一らんに もどる');
+    a.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>';
+    var st=document.createElement('style');
+    st.textContent='.rlh-home{flex:0 0 44px;width:44px;height:44px;margin-right:8px;display:inline-flex;align-items:center;justify-content:center;border-radius:22px;background:var(--rl-bg,white);color:var(--rl-ink,black);border:1px solid currentColor;text-decoration:none;box-sizing:border-box}'+
+      '.rlh-home:hover{opacity:.8}.rlh-home:focus-visible{outline:3px solid currentColor;outline-offset:2px}'+
+      '.rlh-home.rlh-float{position:fixed;left:12px;bottom:12px;z-index:9999;margin:0}';
+    document.head.appendChild(st);
+    var bar=[].slice.call(document.querySelectorAll('[class$="-top"],[class*="-top "]')).filter(function(e){
+      var r=e.getBoundingClientRect(); return r.top<20&&r.height>=44&&getComputedStyle(e).display.indexOf('flex')>=0;})[0];
+    if(bar) bar.insertBefore(a,bar.firstChild); else { a.classList.add('rlh-float'); document.body.appendChild(a); }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',put); else put();
+})();
+</script><!--/rl-home-->
+</body>
+</html>

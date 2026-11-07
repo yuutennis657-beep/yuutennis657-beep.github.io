@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ja">
+<head><script>window.RL_HOME_URL="../../seimei.html";</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>食べ物の つながり</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* 理科ラボ 生命 見本 v0.1（2026-11-07）6年 生物と かんきょう。食べる・食べられるを 矢印で つなぐ（タッチ） */
+:root{/* 生命の 部屋の 色（理科ラボで 名前を そろえる） */--rl-bg:#ffffff;--rl-ink:#1f2937;--rl-accent:#23784a;--rl-accent2:#a6d785;--rl-soft:#eaf6ec;
+  --rs-ink:var(--rl-ink);--rs-sub:#4b5563;--rs-line:#d1d5db;--rs-btn:var(--rl-soft);--rs-ok:var(--rl-accent);--rs-ng:#b45309;--rs-sel:#1d4ed8}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--rl-bg);color:var(--rs-ink);font-family:"BIZ UDPGothic",sans-serif;font-size:16px;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+rt{font-size:10px}
+.rs-app{display:grid;grid-template-rows:auto 1fr;gap:8px;height:100vh;height:100dvh;padding:8px 12px 12px}
+.rs-top{display:flex;align-items:center;gap:8px;min-height:48px}
+.rs-tebtn{min-height:44px;min-width:44px;padding:0 14px;border:1px solid var(--rs-line);background:#fff;border-radius:22px;font-size:16px;display:flex;align-items:center;gap:6px;white-space:nowrap;color:inherit}.rs-tebtn svg{width:22px;height:22px;flex:none}
+.rs-top h1{margin:0 6px 0 0;font-size:20px;white-space:nowrap}
+.rs-seg{display:flex;gap:6px}
+.rs-seg button,.rs-clear{min-height:44px;min-width:44px;padding:0 14px;border:1px solid var(--rs-line);background:#fff;border-radius:22px;font-size:16px;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.rs-seg button svg,.rs-clear svg{width:22px;height:22px;flex:none}
+.rs-seg button[aria-pressed="true"]{border:2px solid var(--rl-accent);color:var(--rl-accent);font-weight:700;background:var(--rl-soft)}
+.rs-clear{margin-left:auto}.rs-tebtn{margin-left:auto}.rs-tebtn+.rs-clear{margin-left:0}
+.rs-main{display:grid;grid-template-columns:1fr 260px;gap:10px;min-height:0}
+.rs-stage{position:relative;border-radius:12px;background:var(--rl-soft);border:1px solid var(--rs-line);min-height:0;overflow:hidden}
+.rs-stage svg.rs-arrows{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.rs-cardbtn{position:absolute;transform:translate(-50%,-50%);width:clamp(100px,14vw,150px);min-height:44px;padding:6px 4px 8px;border:2px solid var(--rs-line);border-radius:16px;background:#fff;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:17px;font-weight:700;line-height:1.2}
+.rs-cardbtn svg{width:clamp(48px,7vw,72px);height:clamp(40px,6vw,60px)}
+.rs-cardbtn svg[hidden]{display:none}
+.rs-cardbtn img{width:clamp(56px,9vw,104px);height:clamp(48px,13vh,96px);object-fit:contain;pointer-events:none}
+.rs-cardbtn small{font-size:14px;font-weight:400;color:var(--rs-ok)}
+.rs-cardbtn[data-sel="1"]{border:4px solid var(--rl-accent);padding:4px 2px 6px;box-shadow:0 0 0 4px var(--rl-accent2)}
+.rs-cardbtn[data-shake="1"]{animation:rs-shake .35s}
+@keyframes rs-shake{25%{transform:translate(-54%,-50%)}75%{transform:translate(-46%,-50%)}}
+.rs-side{display:flex;flex-direction:column;gap:8px;min-height:0}
+.rs-card{border:1px solid var(--rs-line);border-radius:20px 6px 20px 6px;padding:8px 12px;display:flex;flex-direction:column;gap:6px;min-height:0;overflow:hidden}
+.rs-how{display:flex;align-items:center;gap:6px;font-size:16px;line-height:1.4;flex-wrap:wrap}
+.rs-how b{font-size:17px}
+.rs-how svg{width:40px;height:18px;flex:none}
+.rs-say{font-size:16px;line-height:1.55;min-height:3.1em}
+.rs-say[data-k="ok"]{color:var(--rs-ok)}
+.rs-say[data-k="ng"]{color:var(--rs-ng)}
+.rs-done{font-size:16px;line-height:1.6}
+.rs-done b{color:var(--rs-ok);font-size:18px}
+.rs-done[hidden]{display:none!important}
+@media (max-height:440px){.rs-main{grid-template-columns:1fr 230px}.rs-card{padding:6px 10px;gap:4px}.rs-top{min-height:44px}.rs-top h1{font-size:18px}.rs-cardbtn{width:92px;font-size:15px;padding:4px 2px 6px}.rs-cardbtn svg{width:46px;height:34px}.rs-cardbtn img{width:64px;height:48px}.rs-say{min-height:0;line-height:1.4;font-size:15px}.rs-done{line-height:1.4;font-size:15px}.rs-how{font-size:15px}}
+@media (max-width:900px){.rs-clear span{display:none}}
+</style>
+</head>
+<body>
+<div class="rs-app">
+  <div class="rs-top">
+    <h1>食べ物の つながり</h1>
+    <div class="rs-seg" id="rsSeg">
+      <button type="button" data-s="riku" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 20h20M5 20c1-5 3-8 5-8s3 3 4 8M13 20c1-6 3-10 6-10"/></svg>陸</button>
+      <button type="button" data-s="mizu" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9c3-2 5-2 7 0s4 2 6 0 5-2 7 0M2 15c3-2 5-2 7 0s4 2 6 0 5-2 7 0"/></svg>水の中</button>
+    </div>
+    <button class="rs-tebtn" id="rsTeBtn" type="button" aria-label="手で うごかす"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V11M11 10V4a1.5 1.5 0 0 1 3 0v6M14 10V5.5a1.5 1.5 0 0 1 3 0V13"/><path d="M8 12.5 6.6 11a1.6 1.6 0 0 0-2.4 2.1L8 18.5A6 6 0 0 0 13 21h0a5 5 0 0 0 5-5v-3"/></svg><span>手で</span></button><button class="rs-clear" id="rsClear" type="button" aria-label="矢印を けす"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 3-6.2"/><path d="M4 4v5h5"/></svg><span>矢印を けす</span></button>
+  </div>
+  <div class="rs-main">
+    <div class="rs-stage" id="rsStage">
+      <svg class="rs-arrows" id="rsArrows" aria-hidden="true"><defs><marker id="rsHead" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1f2937"/></marker></defs><g id="rsLines"></g></svg>
+      <div id="rsCards"></div>
+    </div>
+    <div class="rs-side">
+      <div class="rs-card">
+        <div class="rs-how"><b>食べられる もの</b><svg viewBox="0 0 40 18" aria-hidden="true"><path d="M2 9h30" stroke="#1f2937" stroke-width="3"/><path d="M30 3l9 6-9 6z" fill="#1f2937"/></svg><b>食べる もの</b></div>
+        <div class="rs-how">の じゅんに 2つ タッチ</div>
+      </div>
+      <div class="rs-card">
+        <div class="rs-say" id="rsSay"></div>
+        <div class="rs-done" id="rsDone" hidden></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../_parts/rs-te.js"></script>
+<script>
+/* ===== きまり（生きものと 食べる・食べられる）：ここ 1か所 =====
+   eat：[食べられる, 食べる]。矢印は 食べられる ものから 食べる ものへ */
+const $=id=>document.getElementById(id);
+const ICON={
+  kusa:'<path d="M10 54h60"/><path d="M22 54c0-14-6-24-12-30M30 54c0-18 2-30 8-38M40 54c0-14 6-24 14-28M50 54c2-10 8-18 16-20"/><path d="M38 16c-6 2-8 8-6 12 5-2 7-7 6-12z"/>',
+  batta:'<ellipse cx="38" cy="34" rx="20" ry="8"/><circle cx="60" cy="30" r="6"/><circle cx="62" cy="29" r="1.6" fill="currentColor"/><path d="M63 25c4-8 8-12 12-14"/><path d="M30 30l-8-14 18 10M24 16l-6 26"/><path d="M44 41l-2 10M52 40l2 10"/>',
+  kaeru:'<path d="M14 44c0-14 12-22 26-22s26 8 26 22c0 6-10 10-26 10S14 50 14 44z"/><circle cx="28" cy="22" r="7"/><circle cx="52" cy="22" r="7"/><circle cx="28" cy="22" r="2.4" fill="currentColor"/><circle cx="52" cy="22" r="2.4" fill="currentColor"/><path d="M30 38c6 4 14 4 20 0"/><path d="M16 50l-6 6M64 50l6 6"/>',
+  hebi:'<path d="M8 50c10 8 22 4 24-6s10-16 22-10 8 18 18 14"/><ellipse cx="68" cy="24" rx="8" ry="6"/><circle cx="70" cy="22" r="1.6" fill="currentColor"/><path d="M60 28c-4 4-6 10-4 18"/>',
+  taka:'<path d="M40 30c-8-10-20-14-34-12 8 4 14 10 18 16M40 30c8-10 20-14 34-12-8 4-14 10-18 16"/><path d="M30 34c2 10 6 16 10 18 4-2 8-8 10-18-6-4-14-4-20 0z"/><circle cx="40" cy="28" r="6"/><path d="M40 33l-2 4 3-1"/><path d="M36 52l4 6 4-6"/>',
+  mikazuki:'<path d="M12 40c10 14 46 14 56 0-12 8-44 8-56 0z"/><path d="M12 40c4-2 8-2 10 0M68 40c-4-2-8-2-10 0"/><circle cx="30" cy="44" r="2" fill="currentColor"/><circle cx="40" cy="45" r="2" fill="currentColor"/><circle cx="50" cy="44" r="2" fill="currentColor"/>',
+  mijinko:'<ellipse cx="44" cy="38" rx="16" ry="14"/><circle cx="34" cy="30" r="3" fill="currentColor"/><path d="M30 26c-6-8-14-10-20-8M30 26c-8-2-16 2-18 8"/><path d="M60 42c4 4 6 8 6 12"/><circle cx="46" cy="40" r="5"/>',
+  medaka:'<path d="M10 34c10-10 30-12 44-4l12-8v24l-12-8c-14 8-34 6-44-4z"/><circle cx="20" cy="32" r="3.2"/><circle cx="20" cy="32" r="1.2" fill="currentColor"/><path d="M34 30c2 3 2 6 0 8"/>',
+  sagi:'<path d="M42 30c-10-2-18 4-18 10s8 10 18 8c6-2 8-6 6-10"/><path d="M48 38c2-10 0-20-4-26"/><circle cx="44" cy="12" r="5"/><path d="M48 12l16 3-16 1"/><path d="M36 48l-2 12M42 48l2 12"/>',
+};
+const SETS={
+  riku:{name:'陸', top:'taka', plant:'kusa',
+    cards:[{id:'kusa',name:'草',plant:true,x:0.84,y:0.74},{id:'batta',name:'バッタ',x:0.5,y:0.78},{id:'kaeru',name:'カエル',x:0.16,y:0.6},{id:'hebi',name:'ヘビ',x:0.42,y:0.26},{id:'taka',name:'タカ',x:0.82,y:0.24}],
+    eat:[['kusa','batta'],['batta','kaeru'],['kaeru','hebi'],['hebi','taka'],['kaeru','taka']]},
+  mizu:{name:'水の中', top:'sagi', plant:'mikazuki',
+    cards:[{id:'mikazuki',name:'ミカヅキモ',plant:true,x:0.16,y:0.7},{id:'mijinko',name:'ミジンコ',x:0.5,y:0.78},{id:'medaka',name:'メダカ',x:0.84,y:0.6},{id:'sagi',name:'サギ',x:0.5,y:0.26}],
+    eat:[['mikazuki','mijinko'],['mijinko','medaka'],['medaka','sagi'],['mikazuki','medaka']]},
+};
+const rs={set:'riku', sel:null, links:[], done:false};
+window.rs=rs; window.rsSETS=SETS;
+const nm=id=>SETS[rs.set].cards.find(c=>c.id===id).name;
+const can=(a,b)=>SETS[rs.set].eat.some(([x,y])=>x===a&&y===b);
+
+function render(){
+  const S=SETS[rs.set];
+  [...$('rsSeg').children].forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.s===rs.set)));
+  $('rsCards').innerHTML=S.cards.map(c=>`<button type="button" class="rs-cardbtn" data-id="${c.id}" data-sel="0" style="left:${c.x*100}%;top:${c.y*100}%">
+    <img src="img/${c.id}.webp" alt="" draggable="false" onerror="this.nextElementSibling.hidden=false;this.remove()"><svg hidden viewBox="0 0 80 64" fill="${c.plant?'#dcfce7':'none'}" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[c.id]}</svg>${c.name}${c.plant?'<small>植物</small>':''}</button>`).join('');
+  say('','');
+  drawLinks();
+}
+function say(t,k){ const el=$('rsSay'); el.textContent=t||'まず、食べられる ものを タッチ'; el.dataset.k=k||''; }
+function setSel(id){ rs.sel=id; document.querySelectorAll('.rs-cardbtn').forEach(b=>b.dataset.sel=b.dataset.id===id?'1':'0'); }
+function shake(id){ const b=document.querySelector(`.rs-cardbtn[data-id="${id}"]`); b.dataset.shake='0'; void b.offsetWidth; b.dataset.shake='1'; }
+function tap(id){
+  if(!rs.sel){ setSel(id); say(`${nm(id)}を 食べるのは？`,''); return; }
+  const a=rs.sel; setSel(null);
+  if(a===id){ say('',''); return; }
+  if(rs.links.some(([x,y])=>x===a&&y===id)){ say(`${nm(a)} → ${nm(id)} は もう つないだよ`,''); return; }
+  if(can(a,id)){ rs.links.push([a,id]); say(`◯ ${nm(a)}は ${nm(id)}に 食べられる`,'ok'); drawLinks(); check(); return; }
+  if(can(id,a)){ shake(id); say(`× 矢印の むきが 反対。${nm(id)}が ${nm(a)}に 食べられる よ`,'ng'); return; }
+  shake(id); say(`× ${nm(id)}は ${nm(a)}を 食べない`,'ng');
+}
+// 植物から いちばん上の 生きものまで 矢印を たどれたら できあがり
+function check(){
+  const S=SETS[rs.set], seen=new Set([S.plant]), q=[S.plant];
+  while(q.length){ const a=q.shift(); for(const [x,y] of rs.links) if(x===a && !seen.has(y)){ seen.add(y); q.push(y); } }
+  rs.done=seen.has(S.top);
+  const el=$('rsDone'); el.hidden=!rs.done;
+  if(rs.done) el.innerHTML=`<b>つながった！</b><br>食べ物を たどると、もとは 植物。植物は 日光を 受けて 養分を つくる。この つながりを <ruby>食物連鎖<rt>しょくもつれんさ</rt></ruby> という。`;
+}
+function drawLinks(){
+  const st=$('rsStage').getBoundingClientRect();
+  const rect=id=>{ const b=document.querySelector(`.rs-cardbtn[data-id="${id}"]`); return b ? b.getBoundingClientRect() : null; };
+  const edge=(r,tx,ty)=>{ const cx=r.left+r.width/2-st.left, cy=r.top+r.height/2-st.top, dx=tx-cx, dy=ty-cy;
+    const k=Math.min((r.width/2+8)/Math.abs(dx||1e-6),(r.height/2+8)/Math.abs(dy||1e-6)); return [cx+dx*k, cy+dy*k]; };
+  $('rsLines').innerHTML=rs.links.map(([a,b])=>{ const ra=rect(a), rb=rect(b); if(!ra||!rb) return '';
+    const ca=[ra.left+ra.width/2-st.left, ra.top+ra.height/2-st.top], cb=[rb.left+rb.width/2-st.left, rb.top+rb.height/2-st.top];
+    const p=edge(ra,...cb), q=edge(rb,...ca);
+    return `<line x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}" stroke="#fff" stroke-width="10" stroke-linecap="round"/><line x1="${p[0]}" y1="${p[1]}" x2="${q[0]}" y2="${q[1]}" stroke="#1f2937" stroke-width="5" stroke-linecap="round" marker-end="url(#rsHead)" data-l="${a}-${b}"/>`; }).join('');
+}
+$('rsCards').onclick=e=>{ const b=e.target.closest('.rs-cardbtn'); if(b) tap(b.dataset.id); };
+$('rsSeg').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; rs.set=b.dataset.s; rs.sel=null; rs.links=[]; rs.done=false; $('rsDone').hidden=true; render(); };
+$('rsClear').onclick=()=>{ rs.links=[]; rs.sel=null; rs.done=false; $('rsDone').hidden=true; render(); };
+window.addEventListener('resize',drawLinks);
+render();
+window.rsTap=tap;
+
+RsTe.bindButton(document.getElementById('rsTeBtn'));   // 手で：カードや ボタンの 上で 手を とめると おせる
+</script>
+<!--rl-home--><script>
+/* 理科ラボ：どの へやにも 出す「もどる」ボタン（11-07）。決まりは ここ 1か所。
+   へやの 上の帯（.xx-top）の いちばん左に 44px の ⌂ を 足す。帯が ない へやは 左下に うかべる。
+   行き先：その へやが 入っている 部屋の ページ（理科ラボ/1_エネルギー.html など）。そこから ホームへも もどれる。
+   へやの 中の 字や クラス名には さわらない（クラス名は rlh- で はじめる）。 */
+(function(){
+  if(window.__rlHome) return; window.__rlHome=1;
+  // どの へやが どの 部屋に 入るか（mock/ の 下の 道 → 部屋の ページ）
+  var PAGE={energy:'1_エネルギー.html',ryushi:'2_粒子.html',seimei:'3_生命.html',chikyu:'4_地球.html'};
+  var EXTRA={teko:'energy','karada-mirror':'seimei',tentai:'chikyu','seiza-tsunagu':'chikyu'};
+  function room(p){
+    var m=/\/mock\/rika\/(energy|ryushi|seimei|chikyu)\//.exec(p); if(m) return m[1];
+    m=/\/mock\/([^\/]+)\//.exec(p); return m&&EXTRA[m[1]]||'';
+  }
+  function href(){
+    var p=decodeURIComponent(location.pathname), r=room(p), i=p.lastIndexOf('/mock/');
+    if(window.RL_HOME_URL) return window.RL_HOME_URL;          // 授業メイトの 中では 入れる側が 決める
+    if(!r||i<0) return '';
+    return 'file://'+encodeURI(p.slice(0,i)+'/理科ラボ/'+PAGE[r]);
+  }
+  function put(){
+    var to=href(); if(!to||document.querySelector('.rlh-home')) return;
+    var a=document.createElement('a'); a.className='rlh-home'; a.href=to; a.title='へやの 一らんに もどる';
+    a.setAttribute('aria-label','へやの 一らんに もどる');
+    a.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>';
+    var st=document.createElement('style');
+    st.textContent='.rlh-home{flex:0 0 44px;width:44px;height:44px;margin-right:8px;display:inline-flex;align-items:center;justify-content:center;border-radius:22px;background:var(--rl-bg,white);color:var(--rl-ink,black);border:1px solid currentColor;text-decoration:none;box-sizing:border-box}'+
+      '.rlh-home:hover{opacity:.8}.rlh-home:focus-visible{outline:3px solid currentColor;outline-offset:2px}'+
+      '.rlh-home.rlh-float{position:fixed;left:12px;bottom:12px;z-index:9999;margin:0}';
+    document.head.appendChild(st);
+    var bar=[].slice.call(document.querySelectorAll('[class$="-top"],[class*="-top "]')).filter(function(e){
+      var r=e.getBoundingClientRect(); return r.top<20&&r.height>=44&&getComputedStyle(e).display.indexOf('flex')>=0;})[0];
+    if(bar) bar.insertBefore(a,bar.firstChild); else { a.classList.add('rlh-float'); document.body.appendChild(a); }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',put); else put();
+})();
+</script><!--/rl-home-->
+</body>
+</html>

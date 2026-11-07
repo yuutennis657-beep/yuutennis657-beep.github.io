@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="ja">
+<head><script>window.RL_HOME_URL="../../energy.html";</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>手回し 発電</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* 見本 v0.1（2026-11-07）6年 理科 電気の 利用（理科ラボ エネルギー）
+   手を くるくる 回すと 手回し発電機が 回る。回す 速さ・向きで 豆電球・発光ダイオード・モーター・電子ブザーが どう 変わるか。
+   ［ためて 使う］コンデンサーに 50回 回して ためて、つないだ ものが どれだけ 使えるかを くらべる
+   v0.2（2026-11-07）2人用：画面の 左と 右に 1人ずつ。同じ 器具を つないで 発電の ちがいを くらべる。ためるは 2人 同時に 10秒 */
+:root{
+  /* エネルギーの 部屋：ポップ・黄と 赤（4つの 部屋で 名前を そろえる 5つ） */
+  --rl-bg:#ffffff; --rl-ink:#1f2937; --rl-accent:#f5b700; --rl-accent2:#e0442b; --rl-soft:#fff6d6;
+  --rl-blue:#1d4ed8; --rl-err:#b91c1c; --rl-gray:#e5e7eb; --rl-line:#e2cf8e; --rl-mute:#9ca3af; --rl-off:#c7cbd1; --rl-okpale:#86c79a; --rl-ray:#d97706; --rl-rule:#f3e8c4; --rl-stage:#fffbeb; --rl-sub:#4b5563; --rl-veil:rgba(255,255,255,.92); --rl-veil2:rgba(255,255,255,.6); --rl-led:#f87171;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--rl-bg);color:var(--rl-ink);
+  font-family:"BIZ UDPGothic",sans-serif;font-size:16px;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+.re-app{display:grid;grid-template-rows:auto 1fr;gap:8px;height:100vh;height:100dvh;padding:8px 12px 12px}
+.re-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:52px}
+.re-tabs{display:flex;border:1px solid var(--rl-line);border-radius:12px;overflow:hidden}
+.re-tabs button{min-height:44px;padding:0 16px;border:0;background:var(--rl-bg);font-size:16px;display:flex;align-items:center;gap:6px}
+.re-tabs button+button{border-left:1px solid var(--rl-line)}
+.re-tabs button[aria-pressed="true"]{background:var(--rl-accent);color:var(--rl-ink);box-shadow:inset 0 0 0 2px var(--rl-ink);font-weight:700}
+.re-tabs svg,.re-b svg{width:22px;height:22px;flex:none}
+.re-b{min-height:44px;min-width:44px;padding:0 14px;border:1px solid var(--rl-line);background:var(--rl-soft);border-radius:12px;
+  font-size:16px;display:flex;align-items:center;justify-content:center;gap:6px}
+.re-b[hidden]{display:none!important}
+.re-sp{flex:1}
+.re-main{display:grid;grid-template-columns:1fr 290px;gap:10px;min-height:0}
+.re-stage{position:relative;border-radius:12px;overflow:hidden;background:var(--rl-stage);min-height:0;touch-action:none}
+.re-stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.re-veil{position:absolute;inset:0;background:var(--rl-veil2)}
+.re-veil[hidden],.re-stage video[hidden]{display:none!important}
+.re-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.re-msg{position:absolute;left:50%;top:46px;transform:translateX(-50%);padding:6px 16px;border-radius:20px;
+  background:var(--rl-veil);font-size:18px;font-weight:700;white-space:nowrap;pointer-events:none;max-width:94%;overflow:hidden;text-overflow:ellipsis}
+.re-msg:empty{display:none}
+.re-start{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:var(--rl-bg);padding:16px;text-align:center}
+.re-start[hidden]{display:none!important}
+.re-start p{margin:0;font-size:18px;line-height:1.7}
+.re-start svg{width:min(200px,36%);height:auto}
+.re-big{min-height:56px;padding:0 36px;font-size:22px;font-weight:700;border-radius:28px;border:0;background:var(--rl-accent);color:var(--rl-ink);box-shadow:inset 0 0 0 2px var(--rl-ink)}
+.re-big:disabled{opacity:.6}
+.re-gos{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.re-gos .re-big{display:inline-flex;align-items:center;gap:8px}
+.re-start .re-gos svg{width:26px;height:26px}
+.re-sub{background:var(--rl-bg)}
+.re-start .re-tenote{font-size:15px;color:var(--rl-sub);line-height:1.4}
+@media (max-height:420px){ .re-start .re-tenote{display:none} }
+.re-err{color:var(--rl-err);font-size:16px;max-width:90%}
+.re-err[hidden]{display:none!important}
+.re-side{display:flex;flex-direction:column;gap:8px;border:1px solid var(--rl-line);border-radius:12px;padding:8px;min-height:0;background:var(--rl-bg)}
+.re-devs{flex:none;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.re-devs button{min-height:44px;border:1px solid var(--rl-line);border-radius:10px;background:var(--rl-bg);font-size:15px;white-space:nowrap;letter-spacing:-.02em;
+  display:flex;align-items:center;gap:4px;padding:0 6px;line-height:1.15;text-align:left}
+.re-devs button svg{width:20px;height:20px;flex:none}
+.re-devs button[aria-pressed="true"]{border:2px solid var(--rl-ink);background:var(--rl-accent);font-weight:700}
+.re-store{display:flex;flex-direction:column;gap:8px;min-height:0;flex:1}
+.re-store>.re-lab{flex:none}
+.re-store[hidden]{display:none!important}
+.re-seg{flex:none;display:flex;border:1px solid var(--rl-line);border-radius:10px;overflow:hidden}
+.re-seg button{flex:1;min-height:44px;border:0;background:var(--rl-bg);font-size:16px;display:flex;align-items:center;justify-content:center;gap:4px}
+.re-seg button+button{border-left:1px solid var(--rl-line)}
+.re-seg button[aria-pressed="true"]{background:var(--rl-accent);color:var(--rl-ink);box-shadow:inset 0 0 0 2px var(--rl-ink);font-weight:700}
+.re-seg svg{width:20px;height:20px}
+.re-bar{flex:none;position:relative;height:28px;border:2px solid var(--rl-ink);border-radius:8px;overflow:hidden;background:var(--rl-bg)}
+.re-bar i{position:absolute;left:0;top:0;bottom:0;background:var(--rl-okpale);width:0}
+.re-bar span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700}
+.re-lab{font-size:15px;color:var(--rl-sub)}
+.re-rec{display:flex;flex-direction:column;min-height:0;flex:1;border-top:1px solid var(--rl-line)}
+.re-rec ol{list-style:none;margin:0;padding:0;overflow:auto;flex:1;min-height:0}
+.re-rec li{display:flex;justify-content:space-between;padding:5px 2px;border-top:1px solid var(--rl-rule);font-size:15px}
+.re-none{color:var(--rl-sub);font-size:14px;padding:6px 2px}
+.re-none[hidden]{display:none!important}
+.re-speed{position:absolute;left:10px;bottom:10px;width:min(220px,calc(50% - 20px));display:flex;flex-direction:column;gap:4px;pointer-events:none}
+.re-speed .re-bar{background:var(--rl-veil)}
+.re-speed[hidden]{display:none!important}
+.re-dir{background:var(--rl-veil);border-radius:8px;padding:0 4px;align-self:flex-start;font-size:16px;font-weight:700;display:flex;align-items:center;gap:6px;min-height:28px}
+.re-dir svg{width:26px;height:26px}
+.re-dir:empty{display:none}
+.re-speed-r{left:calc(50% + 10px)}
+.re-fast{border:2px solid var(--rl-ink);background:var(--rl-accent);border-radius:8px;padding:0 6px;font-size:15px;line-height:22px}
+.re-gosto{flex:none;min-height:52px;font-size:18px;font-weight:700;background:var(--rl-accent);border:0;box-shadow:inset 0 0 0 2px var(--rl-ink)}
+.re-gosto:disabled{background:var(--rl-soft);box-shadow:inset 0 0 0 2px var(--rl-line)}
+.re-ch{flex:none;display:flex;align-items:center;gap:6px}
+.re-ch>span{font-size:15px;font-weight:700;width:20px}
+.re-ch .re-bar{flex:1}
+.re-rec-h{display:flex;gap:4px;padding:6px 2px 2px;font-size:14px;color:var(--rl-sub)}
+.re-rec-h span{flex:1}
+.re-rec-h b,.re-rec li b{width:62px;text-align:right;font-weight:700}
+.re-rec li span{flex:1}
+.re-rec li{gap:4px}
+.re-rec li b.re-long{border:2px solid var(--rl-ink);border-radius:6px;padding:0 4px;text-decoration:underline}
+@media (max-height:420px){ .re-store{gap:4px} .re-gosto{min-height:44px;font-size:16px} .re-store>.re-lab{display:none} .re-bar{height:24px} .re-rec-h{padding-top:2px} .re-rec li{padding:2px} }
+@media (max-width:900px){ .re-main{grid-template-columns:1fr 250px} .re-devs button{font-size:14px;letter-spacing:-.04em;padding:0 4px} }
+</style>
+</head>
+<body>
+<div class="re-app">
+  <div class="re-top">
+    <div class="re-tabs" role="group" aria-label="あそびかた">
+      <button type="button" id="reDirTab" aria-pressed="true">
+        <svg data-ic="direct"></svg>じかに つなぐ</button>
+      <button type="button" id="reStoTab" aria-pressed="false">
+        <svg data-ic="store"></svg>ためて 使う</button>
+    </div>
+    <span class="re-sp"></span>
+  </div>
+  <div class="re-main">
+    <div class="re-stage" id="reStage">
+      <video id="reVideo" playsinline muted hidden></video>
+      <div class="re-veil" id="reVeil" hidden></div>
+      <canvas id="reCanvas"></canvas>
+      <div class="re-msg" id="reMsg"></div>
+      <div class="re-speed" aria-label="左の 人の 回す 速さ">
+        <div class="re-dir" id="reDir0"></div>
+        <div class="re-bar"><i id="reSpBar0"></i><span id="reSpTxt0">0 回／秒</span></div>
+      </div>
+      <div class="re-speed re-speed-r" aria-label="右の 人の 回す 速さ">
+        <div class="re-dir" id="reDir1"></div>
+        <div class="re-bar"><i id="reSpBar1"></i><span id="reSpTxt1">0 回／秒</span></div>
+      </div>
+      <div class="re-start" id="reStart">
+        <svg viewBox="0 0 200 140" fill="none" stroke-width="4" stroke-linecap="round" aria-hidden="true" style="stroke:var(--rl-ink)">
+          <rect x="30" y="40" width="80" height="60" rx="10" style="fill:var(--rl-bg)"/><path d="M110 70h24"/><circle cx="134" cy="70" r="3" style="fill:var(--rl-ink)"/>
+          <path d="M134 70l26-26"/><circle cx="160" cy="44" r="7" style="fill:var(--rl-bg)"/>
+          <path d="M150 104a42 42 0 0 0 26-58" style="stroke:var(--rl-blue)"/><path d="M168 42l9 3-2 9" style="stroke:var(--rl-blue)"/>
+        </svg>
+        <p>2人で ならんで、カメラの 前で<br>手を 大きく くるくる 回してみよう。<br>左の 人は 左、右の 人は 右の 発電機。</p>
+        <div class="re-gos"><button class="re-big" id="reGo" type="button"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h4l2-3h6l2 3h4v11H3z"/><circle cx="12" cy="13" r="3.5"/></svg><span>カメラで</span></button><button class="re-big re-sub" id="reTap" type="button"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 12V5.5a1.8 1.8 0 0 1 3.6 0V12l3.6.8a2 2 0 0 1 1.5 2.3L18 21h-8l-3.3-4.6a1.6 1.6 0 0 1 2.4-2.1L10 15"/><path d="M6.5 6.5a5.5 5.5 0 0 1 10.5-1"/></svg><span>ゆびで</span></button></div>
+        <p class="re-tenote">ボタンは 手を 上に あげて、しるしを とめると おせるよ</p>
+        <div class="re-err" id="reErr" hidden></div>
+      </div>
+    </div>
+    <section class="re-side" aria-label="つなぐ もの">
+      <div class="re-devs" id="reDevs"></div>
+      <div class="re-store" id="reStore" hidden>
+        <button class="re-b re-gosto" type="button" id="reGoSto"></button>
+        <span class="re-lab">コンデンサーに たまった 電気</span>
+        <div class="re-ch"><span>左</span><div class="re-bar"><i id="reChBar0"></i><span id="reChTxt0">0 回</span></div></div>
+        <div class="re-ch"><span>右</span><div class="re-bar"><i id="reChBar1"></i><span id="reChTxt1">0 回</span></div></div>
+        <div class="re-rec">
+          <div class="re-rec-h"><span>使えた 秒</span><b>左</b><b>右</b></div>
+          <div class="re-none" id="reNone">まだ ありません</div>
+          <ol id="reRec"></ol>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script src="../../seimei/_parts/rs-te.js"></script>
+<!--RE_PARTS--><script>
+/* 部品（mock/rika/energy/_parts から inline.py で 入れた もの。ここは 手で 直さない） */
+const RE_ICONS={"bulb": "<path d=\"M8 15a7 7 0 1 1 8 0v3H8zM9 21h6M10 10l2 2 2-2M12 12v6\"/>", "buzz": "<circle cx=\"9\" cy=\"12\" r=\"6\"/><circle cx=\"9\" cy=\"12\" r=\"2\"/><path d=\"M17 8a6 6 0 0 1 0 8M20 5a10 10 0 0 1 0 14\"/>", "ccw": "<path d=\"M4 10a8 8 0 1 1 0 5M4 4v6h6\"/>", "charge": "<path d=\"M12 3v12M7 10l5 5 5-5M5 18v3h14v-3\"/>", "cw": "<path d=\"M20 10a8 8 0 1 0 0 5M20 4v6h-6\"/>", "direct": "<path d=\"M3 12h4M17 12h4M9 5v4M15 5v4M7 9h10v3a5 5 0 0 1-10 0zM12 17v4\"/>", "led": "<path d=\"M8 14V8a4 4 0 0 1 8 0v6M6 14h12M10 14v8M14 14v5M19 5l2-2M19 9h3\"/>", "motor": "<rect x=\"3\" y=\"7\" width=\"11\" height=\"12\" rx=\"3\"/><path d=\"M14 13h4M18 6v14M18 6l3-2M18 20l3 1M6 10v6\"/>", "store": "<path d=\"M3 12h6M9 5v14M15 5v14M15 12h6\"/>", "timer": "<circle cx=\"12\" cy=\"14\" r=\"7\"/><path d=\"M10 2h4M12 2v5M18 6l2 2M12 10v4l2 1\"/>", "use": "<path d=\"M13 2 5 13h7l-1 9 8-12h-7z\"/>"};
+const RE_ART={"generator":{"w":180,"h":140,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"180\" height=\"140\" viewBox=\"0 0 180 140\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"22\" y=\"28\" width=\"126\" height=\"88\" rx=\"16\" fill=\"{accent}\"/><rect x=\"14\" y=\"111\" width=\"140\" height=\"12\" rx=\"6\" fill=\"{soft}\"/><rect x=\"5\" y=\"51\" width=\"19\" height=\"42\" rx=\"6\" fill=\"{soft}\"/><circle cx=\"79\" cy=\"70\" r=\"27\" fill=\"{bg}\"/><circle cx=\"79\" cy=\"70\" r=\"7\" fill=\"{gray}\"/><path d=\"M117 53v34M127 53v34\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><rect x=\"148\" y=\"45\" width=\"20\" height=\"14\" rx=\"4\" fill=\"{accent2}\"/><rect x=\"148\" y=\"86\" width=\"20\" height=\"14\" rx=\"4\" fill=\"{bg}\"/><circle cx=\"164\" cy=\"52\" r=\"3\" fill=\"{bg}\"/><circle cx=\"164\" cy=\"93\" r=\"3\" fill=\"{bg}\"/></g></svg>","pts":{"terminalA":[164,52],"terminalB":[164,93],"pivot":[79,70]}},"crank":{"w":144,"h":144,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"144\" height=\"144\" viewBox=\"0 0 144 144\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><g transform=\"translate(72 72)\"><path d=\"M0-6h47v12H0z\" fill=\"{gray}\" stroke=\"{ink}\" stroke-width=\"3\"/><rect x=\"40\" y=\"-15\" width=\"20\" height=\"30\" rx=\"8\" fill=\"{accent2}\"/><circle cx=\"0\" cy=\"0\" r=\"10\" fill=\"{soft}\"/><circle cx=\"0\" cy=\"0\" r=\"3\" fill=\"{ink}\"/></g></g></svg>","pts":{"pivot":[72,72],"grip":[122,72]}},"capacitor":{"w":120,"h":140,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"140\" viewBox=\"0 0 120 140\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M44 100v30M76 100v30\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><rect x=\"27\" y=\"27\" width=\"66\" height=\"77\" rx=\"10\" fill=\"{accent}\"/><ellipse cx=\"60\" cy=\"27\" rx=\"33\" ry=\"10\" fill=\"{soft}\"/><path d=\"M78 39v53\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><text x=\"43\" y=\"71\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"{ink}\" stroke=\"none\" stroke-width=\"2\" paint-order=\"stroke\" font-family=\"'BIZ UDPGothic',sans-serif\" font-weight=\"700\" font-size=\"18\">＋</text><text x=\"83\" y=\"71\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"{ink}\" stroke=\"none\" stroke-width=\"2\" paint-order=\"stroke\" font-family=\"'BIZ UDPGothic',sans-serif\" font-weight=\"700\" font-size=\"16\">−</text></g></svg>","pts":{"plus":[44,130],"minus":[76,130]}},"bulbOff":{"w":120,"h":132,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"132\" viewBox=\"0 0 120 132\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M42 78C42 69 29 64 29 47a31 31 0 0 1 62 0c0 17-13 22-13 31z\" fill=\"{bg}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M50 78V58l-5-10 10 5 10-5 5 10v20\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><rect x=\"42\" y=\"78\" width=\"36\" height=\"25\" rx=\"3\" fill=\"{gray}\"/><path d=\"m43 84 34-4M43 92l34-4M43 100l34-4\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><rect x=\"51\" y=\"104\" width=\"18\" height=\"7\" rx=\"2\" fill=\"{bg}\"/></g></svg>","pts":{"shell":[78,91],"tip":[60,111]}},"bulbOn":{"w":120,"h":132,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"132\" viewBox=\"0 0 120 132\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M99.00 47.00L104.00 47.00\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M21.00 47.00L16.00 47.00\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M32.42 19.42L28.89 15.89\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M60.00 8.00L60.00 3.00\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M87.58 19.42L91.11 15.89\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M42 78C42 69 29 64 29 47a31 31 0 0 1 62 0c0 17-13 22-13 31z\" fill=\"{accent}\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M50 78V58l-5-10 10 5 10-5 5 10v20\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><rect x=\"42\" y=\"78\" width=\"36\" height=\"25\" rx=\"3\" fill=\"{gray}\"/><path d=\"m43 84 34-4M43 92l34-4M43 100l34-4\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><rect x=\"51\" y=\"104\" width=\"18\" height=\"7\" rx=\"2\" fill=\"{bg}\"/></g></svg>","pts":{"shell":[78,91],"tip":[60,111]}},"ledOff":{"w":120,"h":146,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"146\" viewBox=\"0 0 120 146\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M49 82v53M71 82v37\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M37 78V46a23 23 0 0 1 46 0v32z\" fill=\"{bg}\" stroke=\"{ink}\" stroke-width=\"3\"/><rect x=\"32\" y=\"78\" width=\"56\" height=\"7\" rx=\"2\" fill=\"{soft}\"/><path d=\"M49 77V59h8M71 77V54H60l-3 5\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><text x=\"30\" y=\"118\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"{ink}\" stroke=\"none\" stroke-width=\"2\" paint-order=\"stroke\" font-family=\"'BIZ UDPGothic',sans-serif\" font-weight=\"700\" font-size=\"18\">＋</text><text x=\"90\" y=\"113\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"{ink}\" stroke=\"none\" stroke-width=\"2\" paint-order=\"stroke\" font-family=\"'BIZ UDPGothic',sans-serif\" font-weight=\"700\" font-size=\"18\">−</text></g></svg>","pts":{"plus":[49,135],"minus":[71,119]}},"ledOn":{"w":120,"h":146,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"146\" viewBox=\"0 0 120 146\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M94.00 45.00L101.00 45.00\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M26.00 45.00L19.00 45.00\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M35.96 20.96L31.01 16.01\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M60.00 11.00L60.00 4.00\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M84.04 20.96L88.99 16.01\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M49 82v53M71 82v37\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><path d=\"M37 78V46a23 23 0 0 1 46 0v32z\" fill=\"{accent}\" stroke=\"{ink}\" stroke-width=\"3\"/><rect x=\"32\" y=\"78\" width=\"56\" height=\"7\" rx=\"2\" fill=\"{soft}\"/><path d=\"M49 77V59h8M71 77V54H60l-3 5\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><text x=\"30\" y=\"118\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"{ink}\" stroke=\"none\" stroke-width=\"2\" paint-order=\"stroke\" font-family=\"'BIZ UDPGothic',sans-serif\" font-weight=\"700\" font-size=\"18\">＋</text><text x=\"90\" y=\"113\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"{ink}\" stroke=\"none\" stroke-width=\"2\" paint-order=\"stroke\" font-family=\"'BIZ UDPGothic',sans-serif\" font-weight=\"700\" font-size=\"18\">−</text></g></svg>","pts":{"plus":[49,135],"minus":[71,119]}},"motorBody":{"w":160,"h":120,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"160\" height=\"120\" viewBox=\"0 0 160 120\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"29\" y=\"28\" width=\"81\" height=\"64\" rx=\"14\" fill=\"{gray}\"/><rect x=\"20\" y=\"38\" width=\"18\" height=\"44\" rx=\"6\" fill=\"{soft}\"/><rect x=\"105\" y=\"38\" width=\"15\" height=\"44\" rx=\"6\" fill=\"{bg}\"/><path d=\"M120 60h26M49 42h13M49 52h13M49 68h13M49 78h13M22 47H9M22 74H9\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><circle cx=\"146\" cy=\"60\" r=\"4\" fill=\"{ink}\"/></g></svg>","pts":{"terminalA":[9,47],"terminalB":[9,74],"shaft":[146,60]}},"motorFan":{"w":128,"h":128,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"128\" height=\"128\" viewBox=\"0 0 128 128\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><g transform=\"translate(64 64)\"><g transform=\"rotate(0)\"><path d=\"M-7-6C-34-30-21-59-3-54 16-49 14-22 7-6z\" fill=\"{accent}\" stroke=\"{ink}\" stroke-width=\"3\"/></g><g transform=\"rotate(120)\"><path d=\"M-7-6C-34-30-21-59-3-54 16-49 14-22 7-6z\" fill=\"{accent}\" stroke=\"{ink}\" stroke-width=\"3\"/></g><g transform=\"rotate(240)\"><path d=\"M-7-6C-34-30-21-59-3-54 16-49 14-22 7-6z\" fill=\"{accent}\" stroke=\"{ink}\" stroke-width=\"3\"/></g><circle cx=\"0\" cy=\"0\" r=\"12\" fill=\"{accent2}\"/><circle cx=\"0\" cy=\"0\" r=\"3\" fill=\"{ink}\"/></g></g></svg>","pts":{"pivot":[64,64]}},"buzzer":{"w":120,"h":136,"svg":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"136\" viewBox=\"0 0 120 136\"><g stroke=\"{ink}\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M40 99v28M80 99v28\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><rect x=\"22\" y=\"35\" width=\"76\" height=\"66\" rx=\"12\" fill=\"{gray}\"/><ellipse cx=\"60\" cy=\"35\" rx=\"38\" ry=\"24\" fill=\"{accent}\"/><ellipse cx=\"60\" cy=\"35\" rx=\"10\" ry=\"7\" fill=\"{ink}\"/><path d=\"M31 58v25M89 58v25\" fill=\"none\" stroke=\"{ink}\" stroke-width=\"3\"/><text x=\"34\" y=\"110\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"{ink}\" stroke=\"none\" stroke-width=\"2\" paint-order=\"stroke\" font-family=\"'BIZ UDPGothic',sans-serif\" font-weight=\"700\" font-size=\"14\">＋</text><text x=\"88\" y=\"110\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"{ink}\" stroke=\"none\" stroke-width=\"2\" paint-order=\"stroke\" font-family=\"'BIZ UDPGothic',sans-serif\" font-weight=\"700\" font-size=\"14\">−</text></g></svg>","pts":{"plus":[40,127],"minus":[80,127]}}};
+function reIc(n){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(RE_ICONS[n]||'')+'</svg>'; }
+document.querySelectorAll('svg[data-ic]').forEach(e=>{ e.outerHTML=reIc(e.dataset.ic); });
+const reImg={};
+function reArt(n){ if(reImg[n]) return reImg[n]; const a=RE_ART[n], im=new Image();
+  im.onload=()=>{ if(typeof draw==='function' && typeof cx!=='undefined') try{ draw(); }catch(e){} };   // 絵が 来たら 描き直す
+  im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(a.svg.replace(/\{(\w+)\}/g,(m,k)=>C[k])); return reImg[n]=im; }
+document.addEventListener('DOMContentLoaded',()=>Object.keys(RE_ART).forEach(n=>{ try{ reArt(n); }catch(e){} }));   // 先に 読んで おく（C が できてから）
+// 絵 n の 点 at（名前・[x,y]・なしは まん中）が (x,y) に 来るように s 倍で 描く。ang で 回す
+function reDraw(n,x,y,s,at,ang){ const a=RE_ART[n], im=reArt(n); if(!im.complete||!im.naturalWidth) return false;
+  const p=at?(Array.isArray(at)?at:a.pts[at]):[a.w/2,a.h/2];
+  cx.save(); cx.translate(x,y); if(ang) cx.rotate(ang); cx.scale(s,s); cx.drawImage(im,-p[0],-p[1],a.w,a.h); cx.restore(); return true; }
+// 上と 同じ 置き方の ときの 点 k の 場所
+function rePt(n,x,y,s,at,k){ const a=RE_ART[n], p=at?(Array.isArray(at)?at:a.pts[at]):[a.w/2,a.h/2], q=a.pts[k]; return [x+(q[0]-p[0])*s, y+(q[1]-p[1])*s]; }
+</script><!--/RE_PARTS-->
+<script>
+/* 色は :root の --rl- から 読む（ここに 色を 書かない） */
+const C = new Proxy({}, {get:(o,k)=>o[k]||(o[k]=getComputedStyle(document.documentElement).getPropertyValue('--rl-'+k).trim())});
+
+/* ===== 発電の きまり（ここ 1か所） ===== */
+const HG = {
+  FULL:20,               // 20回 回すと コンデンサーが いっぱい
+  MAXRPS:2,              // 1秒に 2回で いちばん 強い
+  CHARGE_SEC:10,         // ［ためて 使う］で 2人が 回す 時間
+  // つなぐ もの。pol＝向きが 反対だと 動かない もの。use＝コンデンサーの 電気を 1秒に 使う わりあい
+  DEVS:[
+    {k:'bulb', name:'豆電球', pol:false, use:1/10},
+    {k:'led',  name:'発光ダイオード', pol:true, use:1/40},
+    {k:'motor',name:'モーター', pol:false, use:1/15},
+    {k:'buzz', name:'電子ブザー', pol:true, use:1/25},
+  ],
+  dev(k){ return HG.DEVS.find(d=>d.k===k); },
+  // じかに つないだ ときの 強さ（0〜1）と 回る 向き（モーター）。rps は 1秒に 回す 回数（＋は 時計回り）
+  out(k, rps){
+    const d=HG.dev(k), lv=Math.min(1,Math.abs(rps)/HG.MAXRPS);
+    if(lv<0.05) return {lv:0, dir:0};
+    if(d.pol && rps<0) return {lv:0, dir:0};
+    return {lv, dir: rps>0?1:-1};
+  },
+  // どちらが 速いか（はっきり ちがう ときだけ）。0＝左・1＝右・-1＝同じくらい
+  faster(a,b){ const x=Math.abs(a), y=Math.abs(b); if(Math.max(x,y)<0.1 || Math.abs(x-y)<0.15) return -1; return x>y?0:1; },
+  // 手の 回りを 読む：x,y（0〜1）と 時こく（びょう）で、1秒に 何回（＋は 時計回り）
+  Crank(aspect){
+    const hist=[], turns=[]; let prevA=null;
+    return {
+      feed(x,y,t){
+        x*=aspect||1;
+        hist.push([t,x,y]); while(hist.length && hist[0][0]<t-1.2) hist.shift();
+        if(hist.length<6){ prevA=null; return {rps:0, still:true}; }
+        let mx=0,my=0; for(const h of hist){ mx+=h[1]; my+=h[2]; } mx/=hist.length; my/=hist.length;
+        let rr=0; for(const h of hist) rr+=Math.hypot(h[1]-mx,h[2]-my); rr/=hist.length;
+        if(rr<0.03){ prevA=null; turns.length=0; return {rps:0, still:true}; }
+        const a=Math.atan2(y-my, x-mx);
+        if(prevA!==null){ let d=a-prevA; while(d>Math.PI) d-=2*Math.PI; while(d<-Math.PI) d+=2*Math.PI; turns.push([t,d]); }
+        prevA=a;
+        while(turns.length && turns[0][0]<t-0.6) turns.shift();
+        if(turns.length<3) return {rps:0, still:false};
+        const span=Math.max(0.2, t-turns[0][0]); let s=0; for(const [,d] of turns) s+=d;
+        return {rps:s/(2*Math.PI)/span, still:false};
+      },
+      reset(){ hist.length=0; turns.length=0; prevA=null; }
+    };
+  }
+};
+window.HG=HG;
+
+/* ===== 画面 ===== */
+const $ = id => document.getElementById(id);
+const cv=$('reCanvas'), cx=cv.getContext('2d');
+let W=0,H=0;
+const NAMES=['左の 人','右の 人'];
+const P=()=>({rps:0, ang:0, flow:0, mot:0, hand:null, crank:null, lastHand:0, seen:0, turns:0, useT:0, using:false, rev:false});
+const S = { mode:'direct', dev:'bulb', src:'', P:[P(),P()], phase:'ready', left:0, rec:[] };
+window.hg={S};
+$('reDevs').innerHTML=HG.DEVS.map(d=>`<button type="button" data-k="${d.k}" aria-pressed="${d.k===S.dev}">${reIc(d.k)}${d.name}</button>`).join('');
+$('reDevs').onclick=e=>{ const b=e.target.closest('button'); if(!b||S.phase==='charge'||S.phase==='use') return; setDev(b.dataset.k); };
+function setDev(k){ S.dev=k; [...$('reDevs').children].forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.k===k))); }
+
+function fit(){
+  const r=$('reStage').getBoundingClientRect(), d=window.devicePixelRatio||1;
+  W=r.width; H=r.height; cv.width=Math.round(W*d); cv.height=Math.round(H*d); cx.setTransform(d,0,0,d,0,0);
+  S.P.forEach(p=>p.crank=HG.Crank(W/H||1));
+}
+window.addEventListener('resize', fit);
+function setMsg(t){ const el=$('reMsg'); if(el.textContent!==t) el.textContent=t; }
+function setTxt(id,t){ const el=$(id); if(el.textContent!==t) el.textContent=t; }
+
+function setMode(m){
+  S.mode=m;
+  $('reDirTab').setAttribute('aria-pressed',String(m==='direct')); $('reStoTab').setAttribute('aria-pressed',String(m==='store'));
+  $('reStore').hidden = m!=='store';
+  resetStore(); setMsg('');
+}
+$('reDirTab').onclick=()=>setMode('direct');
+$('reStoTab').onclick=()=>setMode('store');
+
+/* ----- ためて 使う（2人 いっしょに） ----- */
+function resetStore(){ S.phase='ready'; S.left=0; S.P.forEach(p=>{ p.turns=0; p.useT=0; p.using=false; }); lockDevs(false); renderGo(); }
+function lockDevs(on){ $('reDevs').querySelectorAll('button').forEach(b=>b.disabled=on); $('reDirTab').disabled=on; $('reStoTab').disabled=on; }
+function renderGo(){
+  const b=$('reGoSto'), t= S.phase==='ready' ? ['charge', HG.CHARGE_SEC+'秒 ためる'] : S.phase==='charge' ? ['timer','あと '+Math.ceil(S.left)+' 秒'] : S.phase==='charged' ? ['use','いっしょに 使う'] : ['use','使っています'];
+  if(b.dataset.k!==t.join()){ b.dataset.k=t.join(); b.innerHTML=reIc(t[0])+'<span>'+t[1]+'</span>'; }
+  b.disabled = S.phase==='charge'||S.phase==='use';
+}
+function storeGo(){
+  if(S.phase==='ready'){ S.P.forEach(p=>{ p.turns=0; p.useT=0; }); S.phase='charge'; S.left=HG.CHARGE_SEC; lockDevs(true); setMsg('2人で 回して ためよう'); }
+  else if(S.phase==='charged'){ S.phase='use'; S.P.forEach(p=>{ p.using=p.turns>0; p.useT=0; }); setMsg(''); }
+  renderGo();
+}
+$('reGoSto').onclick=storeGo;
+function renderRec(){
+  $('reNone').hidden=S.rec.length>0;
+  $('reRec').innerHTML=S.rec.map(r=>{ const f=HG.faster(r.sec[0],r.sec[1]);
+    return `<li><span>${HG.dev(r.k).name}</span>`+r.sec.map((s,i)=>`<b${f===i?' class="re-long" title="長い"':''}>${s.toFixed(1)}</b>`).join('')+'</li>'; }).join('');
+  const ol=$('reRec'); ol.scrollTop=ol.scrollHeight;
+}
+function charge(p){ return Math.min(1, p.turns/HG.FULL); }
+// いま その人の つないだ ものが どれだけ 動くか
+function now(i){
+  const p=S.P[i];
+  if(S.mode==='direct') return HG.out(S.dev, p.rps);
+  if(S.phase==='use' && p.using){ const c=charge(p); return c>0 ? {lv:0.25+0.75*c, dir:1} : {lv:0,dir:0}; }
+  return {lv:0, dir:0};
+}
+// 時間を すすめる
+function advance(dt){
+  if(S.mode==='store' && S.phase==='charge'){
+    S.left-=dt;
+    S.P.forEach(p=>{ if(p.rps>0.05 && p.turns<HG.FULL) p.turns=Math.min(HG.FULL, p.turns+p.rps*dt); p.rev=p.rps<-0.05; });
+    if(S.left<=0){ S.left=0; S.phase='charged'; S.P.forEach(p=>p.rev=false); setMsg('せーので 使ってみよう'); }
+  }
+  if(S.mode==='store' && S.phase==='use'){
+    S.P.forEach(p=>{ if(!p.using) return; p.useT+=dt; p.turns=Math.max(0, p.turns-HG.dev(S.dev).use*HG.FULL*dt); if(p.turns<=0) p.using=false; });
+    if(S.P.every(p=>!p.using)){
+      S.rec.push({k:S.dev, sec:S.P.map(p=>p.useT)}); renderRec();
+      S.phase='ready'; lockDevs(false);
+      const f=HG.faster(S.P[0].useT,S.P[1].useT);
+      setMsg(f<0 ? '同じくらい 使えた' : NAMES[f]+'の ほうが 長く 使えた');
+    }
+  }
+  if(S.mode==='store') renderGo();
+  S.P.forEach((p,i)=>{
+    p.ang += p.rps*2*Math.PI*dt;
+    const o=now(i); p.flow += o.dir*o.lv*dt*1.2; if(S.dev==='motor') p.mot += o.dir*o.lv*dt*14;
+  });
+  // 速さの 帯（2人ぶん）
+  const f=S.mode==='direct' ? HG.faster(S.P[0].rps,S.P[1].rps) : -1;
+  S.P.forEach((p,i)=>{
+    const sp=Math.abs(p.rps);
+    $('reSpBar'+i).style.width=Math.min(100,sp/HG.MAXRPS*100)+'%';
+    setTxt('reSpTxt'+i, sp.toFixed(1)+' 回／秒');
+    const dk = (p.rps>0.05?'cw':p.rps<-0.05?'ccw':'')+(f===i?'+f':''), el=$('reDir'+i);
+    if(el.dataset.k!==dk){ el.dataset.k=dk; const d=dk.replace('+f','');
+      el.innerHTML = (d ? reIc(d)+(d==='cw'?'時計回り':'反対回り') : '') + (f===i ? '<span class="re-fast">速い</span>' : ''); }
+    $('reChBar'+i).style.width=(charge(p)*100)+'%';
+    setTxt('reChTxt'+i, S.phase==='use'||S.phase==='charged' ? Math.round(charge(p)*100)+'％' : Math.floor(p.turns)+' 回');
+  });
+}
+window.hg.advance=advance; window.hg.now=now; window.hg.setDev=setDev; window.hg.setMode=setMode; window.hg.storeGo=storeGo; window.hg.resetStore=resetStore;
+
+/* ----- 手（i＝0 左の 人・1 右の 人） ----- */
+function onHand(i, p, t){
+  const q=S.P[i]; q.hand = p ? {x:p.x,y:p.y} : null;
+  if(!p){ q.rps*=0.8; if(Math.abs(q.rps)<0.05) q.rps=0; return; }
+  q.seen=t;
+  const r=q.crank.feed(p.x,p.y,t);
+  q.rps = q.rps*0.6 + r.rps*0.4;
+  if(Math.abs(q.rps)<0.03) q.rps=0;
+}
+window.hg.onHand=onHand;
+
+/* ----- 音（電子ブザー：左の 人は 左から、右の 人は 右から） ----- */
+let AC=null, VO=[];
+function sound(){
+  if(!AC) return;
+  S.P.forEach((p,i)=>{ const o=now(i), v=VO[i], on=S.dev==='buzz'&&o.lv>0;
+    v.g.gain.setTargetAtTime(on?0.04+0.1*o.lv:0, AC.currentTime, 0.03);
+    v.o.frequency.setTargetAtTime(1500+900*o.lv, AC.currentTime, 0.03); });
+}
+function startSound(){
+  try{ AC=new (window.AudioContext||window.webkitAudioContext)();
+    VO=[-0.8,0.8].map(pan=>{ const o=AC.createOscillator(), g=AC.createGain(), pn=AC.createStereoPanner();
+      o.type='square'; g.gain.value=0; pn.pan.value=pan; o.connect(g); g.connect(pn); pn.connect(AC.destination); o.start(); return {o,g}; });
+  }catch(e){ AC=null; }
+}
+window.hg.startSound=startSound;
+
+/* ----- 絵 ----- */
+const alpha=(h,a)=>{ const n=parseInt(h.slice(1),16); return `rgba(${n>>16},${(n>>8)&255},${n&255},${a})`; };
+// i 人目の 半分の 中の 置き場所
+function geo(i){
+  const hw=W/2, ox=i*hw;
+  if(S.mode==='direct'){ const s=Math.min(hw*0.42/180, H*0.34/140), sd=Math.min(hw*0.3/120, H*0.32/146);
+    return { gx:ox+hw*0.25, gy:H*0.4, sg:s, dx:ox+hw*0.76, dy:H*0.37, sd }; }
+  const s=Math.min(hw*0.34/180, H*0.3/140), sd=Math.min(hw*0.24/120, H*0.27/146);
+  return { gx:ox+hw*0.22, gy:H*0.38, sg:s, cx:ox+hw*0.5, cy:H*0.38, dx:ox+hw*0.8, dy:H*0.36, sd };
+}
+// 線（col：＋は 赤、－は 黒）。電気が 流れて いる ときは 矢じるしが 動く
+function wire(pts, on, dir, lv, col, flow){
+  cx.lineWidth=4; cx.lineJoin='round'; cx.strokeStyle= on?(col||C.ink):C.off; cx.setLineDash(on?[]:[8,8]);
+  cx.beginPath(); pts.forEach((q,i)=>i?cx.lineTo(q[0],q[1]):cx.moveTo(q[0],q[1])); cx.stroke(); cx.setLineDash([]);
+  if(!on || !lv) return;
+  let tot=0; const seg=[]; for(let i=1;i<pts.length;i++){ const d=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]); seg.push(d); tot+=d; }
+  const gap=40, off=((flow*120)%gap+gap)%gap;
+  cx.fillStyle=C.blue;
+  for(let s=off; s<tot; s+=gap){
+    let k=0, acc=0; while(k<seg.length-1 && acc+seg[k]<s){ acc+=seg[k]; k++; }
+    if(!seg[k]) continue;
+    const r=(s-acc)/seg[k], a=pts[k], b=pts[k+1], x=a[0]+(b[0]-a[0])*r, y=a[1]+(b[1]-a[1])*r;
+    const an=Math.atan2(b[1]-a[1],b[0]-a[0])+(dir<0?Math.PI:0);
+    cx.save(); cx.translate(x,y); cx.rotate(an); cx.beginPath(); cx.moveTo(7,0); cx.lineTo(-5,-5); cx.lineTo(-5,5); cx.closePath(); cx.fill(); cx.restore();
+  }
+}
+function route(P,Pside,Q,Qside,lane,off){
+  const a = Pside==='r' ? [[P[0]+10+off,P[1]],[P[0]+10+off,lane]] : [[P[0],lane]];
+  const b = Qside==='l' ? [[Q[0]-10-off,lane],[Q[0]-10-off,Q[1]]] : [[Q[0],lane]];
+  return [P,...a,...b,Q];
+}
+let LABELS=[];
+function label(t,x,y,big,left){ LABELS.push([t,x,y,big,left]); }
+function flushLabels(){
+  cx.textAlign='center'; cx.textBaseline='top';
+  for(let [t,x,y,big,left] of LABELS){ cx.font=(big?'700 17px':'700 15px')+' "BIZ UDPGothic",sans-serif';
+    const w=cx.measureText(t).width+12; if(left) x+=w/2; const h=big?24:22; cx.fillStyle=C.veil; cx.beginPath(); cx.roundRect(x-w/2,y-3,w,h,8); cx.fill(); cx.fillStyle=C.ink; cx.fillText(t,x,y); }
+  LABELS=[];
+}
+function drawGen(g,p){
+  const n='generator';
+  reDraw(n, g.gx, g.gy, g.sg);
+  const pv=rePt(n,g.gx,g.gy,g.sg,null,'pivot');
+  reDraw('crank', pv[0], pv[1], g.sg, 'pivot', p.ang);
+  return {top:rePt(n,g.gx,g.gy,g.sg,null,'terminalA'), bot:rePt(n,g.gx,g.gy,g.sg,null,'terminalB'), side:'r'};
+}
+const DEVART={bulb:['bulbOff','bulbOn','tip','shell'], led:['ledOff','ledOn','plus','minus'], motor:['motorBody','motorBody','terminalA','terminalB'], buzz:['buzzer','buzzer','plus','minus']};
+function drawDev(g,o,p){
+  const x=g.dx, y=g.dy, s=g.sd, lv=o.lv, [off,on,kp,km]=DEVART[S.dev], n= lv>0?on:off, A=RE_ART[n];
+  if(S.dev==='bulb'||S.dev==='led'){
+    if(lv>0){ // 光の すじ（明るさで 長く・多く なる。色だけで なく 形でも）
+      const cy0=y-A.h*s*0.22, R=A.w*s*0.42, k=5+Math.round(lv*6);
+      cx.strokeStyle=C.ray; cx.lineWidth=4; cx.lineCap='round';
+      for(let i=0;i<k;i++){ const a=-Math.PI+(i+0.5)/k*Math.PI; const r0=R*1.05, r1=R*(1.15+0.8*lv);
+        cx.beginPath(); cx.moveTo(x+Math.cos(a)*r0,cy0+Math.sin(a)*r0); cx.lineTo(x+Math.cos(a)*r1,cy0+Math.sin(a)*r1); cx.stroke(); }
+    }
+    cx.save(); cx.globalAlpha = lv>0 ? 0.55+0.45*lv : 1; reDraw(n,x,y,s); cx.restore();
+  } else if(S.dev==='motor'){
+    reDraw(n,x,y,s);
+    const sh=rePt(n,x,y,s,null,'shaft');
+    reDraw('motorFan', sh[0], sh[1], s*0.8, 'pivot', p.mot);
+    if(lv>0){
+      cx.strokeStyle=C.blue; cx.lineWidth=4; const r=RE_ART.motorFan.w*s*0.5, a0=-Math.PI*0.35, a1=Math.PI*0.35, px=sh[0], py=sh[1];
+      cx.beginPath(); cx.arc(px,py,r,a0,a1); cx.stroke();
+      const e = o.dir>0 ? a1 : a0, ex=px+Math.cos(e)*r, ey=py+Math.sin(e)*r, tg=e+(o.dir>0?Math.PI/2:-Math.PI/2);
+      cx.fillStyle=C.blue; cx.save(); cx.translate(ex,ey); cx.rotate(tg); cx.beginPath(); cx.moveTo(10,0); cx.lineTo(-6,-8); cx.lineTo(-6,8); cx.closePath(); cx.fill(); cx.restore();
+    }
+  } else {
+    reDraw(n,x,y,s);
+    if(lv>0){ cx.strokeStyle=C.ray; cx.lineWidth=4; const k=1+Math.round(lv*2), cy0=y-A.h*s*0.18;
+      for(let i=0;i<k;i++){ const r=A.w*s*(0.48+i*0.14); cx.beginPath(); cx.arc(x,cy0,r,-0.6,0.6); cx.stroke(); cx.beginPath(); cx.arc(x,cy0,r,Math.PI-0.6,Math.PI+0.6); cx.stroke(); } }
+  }
+  return {top:rePt(n,x,y,s,null,kp), bot:rePt(n,x,y,s,null,km), side: S.dev==='motor'?'l':'b'};
+}
+function drawCap(g, c){
+  const n='capacitor', A=RE_ART[n], s=g.sd*0.85, x=g.cx, y=g.cy;
+  reDraw(n,x,y,s);
+  const bw=A.w*s*0.9, bx=x-bw/2, by=y-A.h*s/2-18;
+  cx.fillStyle=C.bg; cx.strokeStyle=C.ink; cx.lineWidth=2; cx.beginPath(); cx.roundRect(bx,by,bw,12,6); cx.fill(); cx.stroke();
+  cx.fillStyle=C.okpale; cx.beginPath(); cx.roundRect(bx+2,by+2,Math.max(0,(bw-4)*c),8,4); cx.fill();
+  return {plus:rePt(n,x,y,s,null,'plus'), minus:rePt(n,x,y,s,null,'minus')};
+}
+function drawSide(i){
+  const p=S.P[i], g=geo(i), o=now(i);
+  const gt=drawGen(g,p), dv=drawDev(g,o,p);
+  const low=Math.max(gt.bot[1], dv.top[1], dv.bot[1])+10, RED=C.accent2;
+  if(S.mode==='direct'){
+    const lv=o.lv>0?o.lv:0;
+    wire(route(gt.top,'r',dv.top,dv.side,low,10), true, o.dir, lv, RED, p.flow);
+    wire(route(gt.bot,'r',dv.bot,dv.side,low+10,0), true, -o.dir, lv, null, p.flow);
+  } else {
+    const cp=drawCap(g, charge(p)), ch=S.phase!=='use';
+    const lw=Math.max(low, cp.plus[1]+10);
+    const gl = S.phase==='charge' && p.rps>0.05 && p.turns<HG.FULL ? Math.min(1,p.rps/HG.MAXRPS) : 0;
+    wire(route(gt.top,'r',cp.plus,'b',lw,10), ch, 1, gl, RED, p.ang/6);
+    wire(route(gt.bot,'r',cp.minus,'b',lw+10,0), ch, -1, gl, null, p.ang/6);
+    wire(route(cp.plus,'b',dv.top,dv.side,lw+30,10), !ch, 1, o.lv, RED, p.flow);
+    wire(route(cp.minus,'b',dv.bot,dv.side,lw+20,0), !ch, -1, o.lv, null, p.flow);
+    if(p.rev) label('向きが 反対', g.gx, g.gy+RE_ART.generator.h*g.sg/2+8);
+  }
+  label(NAMES[i], i*W/2+10, 12, true, true);
+  if(S.src==='cam' && !p.hand) label('手を 見せてね', i*W/2+W/4, H*0.62);
+}
+function draw(){
+  cx.clearRect(0,0,W,H); LABELS=[];
+  // まん中の 線（2人の さかい目）
+  cx.strokeStyle=C.mute; cx.lineWidth=2; cx.setLineDash([8,8]); cx.beginPath(); cx.moveTo(W/2,0); cx.lineTo(W/2,H); cx.stroke(); cx.setLineDash([]);
+  drawSide(0); drawSide(1);
+  flushLabels();
+  S.P.forEach(p=>{ if(!p.hand) return;
+    const hx=p.hand.x*W, hy=p.hand.y*H;
+    cx.lineWidth=5; cx.strokeStyle=C.accent2; cx.fillStyle=C.veil;
+    cx.beginPath(); cx.arc(hx,hy,16,0,Math.PI*2); cx.fill(); cx.stroke();
+    cx.fillStyle=C.ink; cx.font='700 15px "BIZ UDPGothic",sans-serif'; cx.textAlign='center'; cx.textBaseline='middle'; cx.fillText('手',hx,hy+1);
+  });
+}
+let last=performance.now();
+function tick(t){ requestAnimationFrame(tick); const dt=Math.min(0.1,(t-last)/1000); last=t;
+  if(S.src==='mouse') S.P.forEach(p=>{ if(t-p.lastHand>150){ p.rps*=0.85; if(Math.abs(p.rps)<0.03) p.rps=0; } });
+  advance(dt); sound(); draw(); }
+fit(); renderRec(); setMode('direct'); requestAnimationFrame(tick);
+window.hg.draw=draw; window.hg.fit=fit; window.hg.renderRec=renderRec;
+
+
+/* ----- 手で ボタンを おす（生命の 部屋の 部品 RsTe）：人さし指を 上に あげた 手だけを しるしに する。
+   その 手は 部屋の 操作には 使わない（回す・かがみを もつ 手と ぶつからない） ----- */
+const RE_UP=0.3, RE_BOX=[0.1,0.02,0.9,RE_UP+0.02];
+function reHandPick(list){
+  let up=null; for(const L of (list||[])) if(L[8].y<RE_UP && (!up||L[8].y<up[8].y)) up=L;
+  if(window.RsTe) up ? RsTe.point(1-up[8].x, up[8].y, RE_BOX) : RsTe.point(null);
+  return (list||[]).filter(L=>L!==up);
+}
+window.reHandPick=reHandPick;
+// ためし用（?test のとき マウスで 手の かわり。左半分＝左の 人・右半分＝右の 人）
+// ゆびで（カメラ なし）：左半分を くるくる＝左の 人・右半分＝右の 人。指 2本で 同時にも
+function reTapGo(){ S.src='mouse'; $('reStart').hidden=true; startSound(); }
+$('reTap').onclick=reTapGo;
+{
+  if(/[?&]test/.test(location.search)) $('reGo').onclick=reTapGo;
+  $('reStage').addEventListener('pointermove', e=>{
+    if(!S.src) return;   // カメラの ときも 指で 回せる
+    const r=$('reStage').getBoundingClientRect(), x=(e.clientX-r.left)/r.width, i=x<0.5?0:1;
+    S.P[i].lastHand=performance.now();
+    onHand(i, {x, y:(e.clientY-r.top)/r.height}, performance.now()/1000);
+  });
+}
+</script>
+
+<script type="module">
+/* ===== カメラと 手の トラッキング（2人ぶんの 手の まん中を 読む） ===== */
+const $ = id => document.getElementById(id);
+const VER = '0.10.14';
+const video = $('reVideo');
+let lm=null, lastT=-1, modelP=null;
+async function loadModel(){
+  const vision = await import(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}`);
+  const fs = await vision.FilesetResolver.forVisionTasks(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}/wasm`);
+  const opts = d => ({ baseOptions:{ modelAssetPath:'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task', delegate:d },
+    runningMode:'VIDEO', numHands:2, minHandDetectionConfidence:0.5, minHandPresenceConfidence:0.5, minTrackingConfidence:0.5 });
+  try{ return await vision.HandLandmarker.createFromOptions(fs, opts('GPU')); }
+  catch(e){ return await vision.HandLandmarker.createFromOptions(fs, opts('CPU')); }
+}
+if(!/[?&]test/.test(location.search)){
+  modelP = loadModel().catch(e=>{ modelP=null; throw e; }); modelP.catch(()=>{});
+  $('reGo').onclick = start;
+}
+async function start(){
+  const err=$('reErr'); err.hidden=true;
+  $('reGo').disabled=true; $('reGo').lastElementChild.textContent='じゅんびちゅう…';
+  try{
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ const e=new Error('nocam'); e.name='NoCamPage'; throw e; }
+    const stream = await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280},height:{ideal:720},facingMode:'user'},audio:false});
+    video.srcObject=stream; await video.play();
+    lm = await (modelP || (modelP = loadModel()));
+    window.hg.startSound(); window.hg.S.src='cam'; $('reStart').hidden=true; video.hidden=false; $('reVeil').hidden=false;
+    loop();
+  }catch(e){
+    $('reGo').disabled=false; $('reGo').lastElementChild.textContent='もう いちど';
+    err.hidden=false;
+    err.textContent = (window.RsTe ? RsTe.errText(e) : 'カメラが つかえません。')+' ［ゆびで］でも できるよ。';
+  }
+}
+function loop(){
+  requestAnimationFrame(loop);
+  const now=performance.now();
+  if(!lm || video.readyState<2 || video.currentTime===lastT) return;
+  lastT=video.currentTime;
+  const res = lm.detectForVideo(video, now);
+  const hands = window.reHandPick(res.landmarks);
+  // 手の まん中(9)。かがみの むきで、切りとられた 映像に 合わせる。左半分＝左の 人・右半分＝右の 人
+  const r=video.getBoundingClientRect(), vw=video.videoWidth||1280, vh=video.videoHeight||720;
+  const sc=Math.max(r.width/vw, r.height/vh), dw=vw*sc, dh=vh*sc, got=[null,null];
+  for(const L of hands){
+    const x=((1-L[9].x)*dw-(dw-r.width)/2)/r.width, y=(L[9].y*dh-(dh-r.height)/2)/r.height, i=x<0.5?0:1;
+    if(!got[i]) got[i]={x,y};
+  }
+  got.forEach((p,i)=>{ if(!p && now-(window.hg.S.P[i].lastHand||0)<400) return; window.hg.onHand(i, p, now/1000); });   // 指で 回して いる 方は カメラで けさない
+}
+</script>
+<!--rl-home--><script>
+/* 理科ラボ：どの へやにも 出す「もどる」ボタン（11-07）。決まりは ここ 1か所。
+   へやの 上の帯（.xx-top）の いちばん左に 44px の ⌂ を 足す。帯が ない へやは 左下に うかべる。
+   行き先：その へやが 入っている 部屋の ページ（理科ラボ/1_エネルギー.html など）。そこから ホームへも もどれる。
+   へやの 中の 字や クラス名には さわらない（クラス名は rlh- で はじめる）。 */
+(function(){
+  if(window.__rlHome) return; window.__rlHome=1;
+  // どの へやが どの 部屋に 入るか（mock/ の 下の 道 → 部屋の ページ）
+  var PAGE={energy:'1_エネルギー.html',ryushi:'2_粒子.html',seimei:'3_生命.html',chikyu:'4_地球.html'};
+  var EXTRA={teko:'energy','karada-mirror':'seimei',tentai:'chikyu','seiza-tsunagu':'chikyu'};
+  function room(p){
+    var m=/\/mock\/rika\/(energy|ryushi|seimei|chikyu)\//.exec(p); if(m) return m[1];
+    m=/\/mock\/([^\/]+)\//.exec(p); return m&&EXTRA[m[1]]||'';
+  }
+  function href(){
+    var p=decodeURIComponent(location.pathname), r=room(p), i=p.lastIndexOf('/mock/');
+    if(window.RL_HOME_URL) return window.RL_HOME_URL;          // 授業メイトの 中では 入れる側が 決める
+    if(!r||i<0) return '';
+    return 'file://'+encodeURI(p.slice(0,i)+'/理科ラボ/'+PAGE[r]);
+  }
+  function put(){
+    var to=href(); if(!to||document.querySelector('.rlh-home')) return;
+    var a=document.createElement('a'); a.className='rlh-home'; a.href=to; a.title='へやの 一らんに もどる';
+    a.setAttribute('aria-label','へやの 一らんに もどる');
+    a.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>';
+    var st=document.createElement('style');
+    st.textContent='.rlh-home{flex:0 0 44px;width:44px;height:44px;margin-right:8px;display:inline-flex;align-items:center;justify-content:center;border-radius:22px;background:var(--rl-bg,white);color:var(--rl-ink,black);border:1px solid currentColor;text-decoration:none;box-sizing:border-box}'+
+      '.rlh-home:hover{opacity:.8}.rlh-home:focus-visible{outline:3px solid currentColor;outline-offset:2px}'+
+      '.rlh-home.rlh-float{position:fixed;left:12px;bottom:12px;z-index:9999;margin:0}';
+    document.head.appendChild(st);
+    var bar=[].slice.call(document.querySelectorAll('[class$="-top"],[class*="-top "]')).filter(function(e){
+      var r=e.getBoundingClientRect(); return r.top<20&&r.height>=44&&getComputedStyle(e).display.indexOf('flex')>=0;})[0];
+    if(bar) bar.insertBefore(a,bar.firstChild); else { a.classList.add('rlh-float'); document.body.appendChild(a); }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',put); else put();
+})();
+</script><!--/rl-home-->
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="ja">
+<head><script>window.RL_HOME_URL="../../seimei.html";</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>花粉を はこぼう</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* 理科ラボ 生命 見本 v0.1（2026-11-07）5年 花から実へ。指を はちにして、ヘチマの お花から め花へ 花粉を はこぶ */
+:root{/* 生命の 部屋の 色（理科ラボで 名前を そろえる） */--rl-bg:#ffffff;--rl-ink:#1f2937;--rl-accent:#23784a;--rl-accent2:#a6d785;--rl-soft:#eaf6ec;
+  --rs-ink:var(--rl-ink);--rs-sub:#4b5563;--rs-line:#d1d5db;--rs-btn:var(--rl-soft);--rs-ok:var(--rl-accent);--rs-ng:#b45309}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--rl-bg);color:var(--rs-ink);font-family:"BIZ UDPGothic",sans-serif;font-size:16px;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+.rs-app{display:grid;grid-template-rows:auto 1fr;gap:8px;height:100vh;height:100dvh;padding:8px 12px 12px}
+.rs-top{display:flex;align-items:center;gap:10px;min-height:48px}
+.rs-top h1{margin:0;font-size:20px;white-space:nowrap}
+.rs-day{font-size:18px;font-weight:700;padding:0 12px;min-height:40px;display:flex;align-items:center;border:1px solid var(--rs-line);border-radius:20px;white-space:nowrap}
+.rs-ops{display:flex;gap:6px;margin-left:auto}
+.rs-ops button{min-height:44px;min-width:44px;padding:0 14px;border:1px solid var(--rs-line);background:#fff;border-radius:22px;font-size:16px;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.rs-ops button svg{width:22px;height:22px;flex:none}
+.rs-ops .rs-next{border:2px solid var(--rl-accent);color:var(--rl-accent);font-weight:700}
+.rs-ops button:disabled{opacity:.45;cursor:default}
+.rs-main{display:grid;grid-template-columns:1fr 250px;gap:10px;min-height:0}
+.rs-left{display:flex;align-items:center;justify-content:center;min-width:0;min-height:0}
+.rs-stage{position:relative;border-radius:12px;overflow:hidden;background:var(--rl-soft);width:400px;height:300px}
+.rs-stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.rs-veil{position:absolute;inset:0;background:rgba(255,255,255,.55)}
+.rs-stage{touch-action:none;user-select:none;-webkit-user-select:none}
+.rs-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.rs-msg{position:absolute;left:50%;top:10px;transform:translateX(-50%);padding:6px 16px;border-radius:20px;background:rgba(255,255,255,.95);border:1px solid var(--rs-line);font-size:17px;font-weight:700;white-space:nowrap;pointer-events:none}
+.rs-msg:empty{display:none}
+.rs-start{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#fff;padding:12px;text-align:center}
+.rs-hero{display:flex;align-items:flex-end;gap:10px;height:min(130px,26vh)}
+.rs-hero img{height:100%;width:auto}
+.rs-hero .rs-hero-bee{height:50%;align-self:center}
+.rs-start p{margin:0;font-size:18px;line-height:1.7}
+.rs-big{min-height:60px;padding:0 36px;font-size:22px;font-weight:700;border-radius:30px;border:2px solid var(--rl-accent);background:var(--rl-accent);color:#fff}
+.rs-big:disabled{opacity:.6}
+.rs-gos{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}.rs-big{display:inline-flex;align-items:center;gap:8px}.rs-big svg{width:28px;height:28px;flex:none}.rs-big.rs-sub{background:#fff;color:var(--rl-accent)}
+.rs-err{color:#b91c1c;max-width:86%;font-size:16px}
+.rs-start[hidden],.rs-err[hidden],.rs-res[hidden]{display:none!important}
+.rs-side{display:flex;flex-direction:column;gap:8px;min-height:0}
+.rs-card{border:1px solid var(--rs-line);border-radius:20px 6px 20px 6px;padding:8px 12px;display:flex;flex-direction:column;gap:6px;min-height:0;overflow:hidden}
+.rs-key{display:grid;grid-template-columns:44px 1fr;gap:4px 8px;align-items:center;font-size:15px;line-height:1.4}
+.rs-key img{width:44px;height:52px;object-fit:contain}
+.rs-key b{font-size:17px;display:block}
+.rs-res{font-size:15px;line-height:1.5;display:flex;flex-direction:column;gap:4px}
+.rs-res div{display:flex;gap:6px;align-items:flex-start}
+.rs-res b{font-size:16px}
+.rs-res .rs-y{color:var(--rs-ok)}
+.rs-res .rs-n{color:var(--rs-ng)}
+@media (max-height:440px){.rs-main{grid-template-columns:1fr 230px}.rs-card{padding:6px 10px;gap:4px}.rs-key img{width:34px;height:40px}.rs-key{grid-template-columns:34px 1fr;font-size:14px;line-height:1.3}.rs-key b{font-size:15px}.rs-top{min-height:44px}.rs-top h1{font-size:18px}.rs-res{font-size:14px;line-height:1.35}}
+@media (max-width:900px){.rs-ops button span{display:none}}
+</style>
+</head>
+<body>
+<div class="rs-app">
+  <div class="rs-top">
+    <h1>花粉を はこぼう</h1>
+    <div class="rs-day" id="rsDay">花が さいた日</div>
+    <div class="rs-ops">
+      <button class="rs-next" id="rsNext" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="14" height="15" rx="2"/><path d="M3 10h14M7 3v4M13 3v4M19 12h3M20 9l2 3-2 3"/></svg>つぎの日へ</button>
+      <button id="rsReset" type="button" aria-label="さいしょから"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 3-6.2"/><path d="M4 4v5h5"/></svg><span>さいしょから</span></button>
+    </div>
+  </div>
+  <div class="rs-main">
+    <div class="rs-left" id="rsLeft">
+      <div class="rs-stage" id="rsStage">
+        <video id="rsVideo" playsinline muted></video>
+        <div class="rs-veil"></div>
+        <canvas id="rsCanvas"></canvas>
+        <div class="rs-msg" id="rsMsg"></div>
+        <div class="rs-start" id="rsStart">
+          <div class="rs-hero"><img src="img/ohana.webp" alt=""><img class="rs-hero-bee" src="img/hachi.webp" alt=""><img src="img/mebana.webp" alt=""></div>
+          <p>人さし指が はちに なるよ。<br>お花の 花粉を、め花の めしべに はこぼう。</p>
+          <div class="rs-gos"><button class="rs-big" id="rsGo" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h4l2-3h6l2 3h4v11H3z"/><circle cx="12" cy="13" r="3.5"/></svg>カメラで</button><button class="rs-big rs-sub" id="rsTap" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 12V5.5a1.8 1.8 0 0 1 3.6 0V12l3.6.8a2 2 0 0 1 1.5 2.3L18 21h-8l-3.3-4.6a1.6 1.6 0 0 1 2.4-2.1L10 15"/><path d="M6.5 6.5a5.5 5.5 0 0 1 10.5-1"/></svg>ゆびで</button></div>
+          <div class="rs-err" id="rsErr" hidden></div>
+        </div>
+      </div>
+    </div>
+    <div class="rs-side">
+      <div class="rs-card">
+        <div class="rs-key">
+          <img src="img/ohana.webp" alt="">
+          <div><b>お花</b>おしべが あり、花粉が できる</div>
+          <img src="img/mebana.webp" alt="">
+          <div><b>め花</b>めしべが あり、もとが ふくらんでいる</div>
+        </div>
+      </div>
+      <div class="rs-card">
+        <div class="rs-res" id="rsHint">お花に とまって、花粉を つけよう。</div>
+        <div class="rs-res" id="rsRes" hidden></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../_parts/rs-te.js"></script>
+<script>
+/* ===== きまり（花と 日にち）：ここ 1か所 ===== */
+const $=id=>document.getElementById(id);
+const DAYS=['花が さいた日','1日後','2日後','3日後'];
+const FL0=[   // x・y は 画面の 0〜1
+  {id:'m1', sex:'m', x:0.14, y:0.32}, {id:'m2', sex:'m', x:0.3, y:0.64},
+  {id:'f1', sex:'f', x:0.54, y:0.3},  {id:'f2', sex:'f', x:0.7, y:0.6},  {id:'f3', sex:'f', x:0.88, y:0.3, bag:true},
+];
+const rs={src:'', day:0, fl:[], bee:null, pollen:false, msg:'', msgT:0, lastT:0, trail:[]};
+window.rs=rs;
+function reset(){
+  rs.day=0; rs.pollen=false; rs.fl=FL0.map(f=>({...f, pol:false})); rs.trail=[];
+  renderSide(); say('');
+}
+function nextDay(){ if(rs.day>=DAYS.length-1) return; rs.day++; renderSide(); }
+function renderSide(){
+  $('rsDay').textContent=DAYS[rs.day];
+  $('rsNext').disabled = rs.day>=DAYS.length-1;
+  const fem=rs.fl.filter(f=>f.sex==='f');
+  $('rsHint').hidden = rs.day>=2;
+  $('rsHint').textContent = rs.day===0 ? 'お花に とまって 花粉を つけ、め花の めしべへ。つけたら「つぎの日へ」。' : 'め花は どう なるかな。もう 1日 すすめてみよう。';
+  const res=$('rsRes'); res.hidden = rs.day<2;
+  if(rs.day>=2){
+    const y=fem.filter(f=>f.pol).length, n=fem.length-y;
+    res.innerHTML =
+      `<div class="rs-y"><b>◯</b><span>めしべに 花粉が ついた め花 → <b>実が できた</b></span></div>`+
+      `<div class="rs-n"><b>×</b><span>花粉が つかなかった め花 → 実が できず、かれて 落ちた</span></div>`+
+      `<div><span>めしべの 先に 花粉が つくことを <b>受粉</b> という。</span></div>`;
+    res.dataset.y=y; res.dataset.n=n;
+  }
+}
+function say(t){ rs.msg=t; rs.msgT=performance.now(); const el=$('rsMsg'); if(el.textContent!==t) el.textContent=t; }
+$('rsNext').onclick=nextDay; $('rsReset').onclick=reset;
+
+/* ===== 大きさ ===== */
+const cv=$('rsCanvas'), g=cv.getContext('2d');
+let W=0,H=0, AR=16/9;
+function fit(){
+  const r=$('rsLeft').getBoundingClientRect();
+  let w=r.width, h=w/AR; if(h>r.height){ h=r.height; w=h*AR; }
+  const st=$('rsStage'); st.style.width=Math.floor(w)+'px'; st.style.height=Math.floor(h)+'px';
+  W=Math.floor(w); H=Math.floor(h); const d=window.devicePixelRatio||1;
+  cv.width=Math.round(W*d); cv.height=Math.round(H*d); g.setTransform(d,0,0,d,0,0);
+}
+window.addEventListener('resize',fit);
+window.rsSetAR=a=>{ AR=a; fit(); };
+const RR=()=>Math.min(W,H)*0.11;
+const fpos=f=>({x:f.x*W, y:f.y*H});
+
+/* ===== はち（指先）が 来たとき ===== */
+function feed(pt){
+  if(!pt){ rs.bee=null; return; }
+  const n={x:pt.x*W, y:pt.y*H};
+  const o=rs.bee; rs.bee = o ? {x:o.x+(n.x-o.x)*0.5, y:o.y+(n.y-o.y)*0.5, dir:(n.x<o.x-1?-1:n.x>o.x+1?1:o.dir)} : {...n, dir:1};
+  rs.trail.push({x:rs.bee.x,y:rs.bee.y}); if(rs.trail.length>18) rs.trail.shift();
+  if(rs.day>0) return;   // 花が さいた日だけ はこべる
+  const R=RR();
+  for(const f of rs.fl){
+    const c=fpos(f), d=Math.hypot(rs.bee.x-c.x, rs.bee.y-c.y);
+    if(d>R*0.55) continue;
+    if(f.sex==='m'){ if(!rs.pollen){ rs.pollen=true; say('花粉が ついた！ め花へ はこぼう'); } }
+    else if(f.bag){ if(rs.msg!=='ふくろが かかっていて 入れない') say('ふくろが かかっていて 入れない'); }
+    else if(!f.pol){ if(rs.pollen){ f.pol=true; say('めしべの 先に 花粉が ついた！'); } else if(rs.msg!=='まず お花で 花粉を つけよう') say('まず お花で 花粉を つけよう'); }
+  }
+}
+
+/* ===== えがく ===== */
+const INK=getComputedStyle(document.documentElement).getPropertyValue('--rl-ink').trim()||'#1f2937';
+function petals(c,R,k){   // k：0＝さいている 1＝しぼんだ
+  const n=5, r=R*(1-0.55*k);
+  for(let i=0;i<n;i++){ const a=-Math.PI/2+i*Math.PI*2/n;
+    g.beginPath(); g.ellipse(c.x+Math.cos(a)*r*0.52, c.y+Math.sin(a)*r*0.52, r*0.5, r*0.4, a, 0, Math.PI*2);
+    g.fillStyle=k>0.5?'#e7d8a8':'#fde68a'; g.fill(); g.lineWidth=2; g.strokeStyle=INK; g.stroke(); }
+  g.beginPath(); g.arc(c.x,c.y,r*0.26,0,Math.PI*2); g.fillStyle=k>0.5?'#d6c48a':'#fbbf24'; g.fill(); g.stroke();
+}
+function tag(text,x,y,col){
+  const fs=Math.max(15,Math.round(Math.min(W,H)*0.042));
+  g.font=`700 ${fs}px "BIZ UDPGothic",sans-serif`; g.textAlign='center'; g.textBaseline='middle';
+  const tw=g.measureText(text).width+fs*0.8, th=fs*1.45; x=Math.min(W-tw/2-4,Math.max(tw/2+4,x)); y=Math.min(H-th/2-4,Math.max(th/2+4,y));
+  g.fillStyle='rgba(255,255,255,.95)'; g.strokeStyle=col||INK; g.lineWidth=2; g.beginPath(); g.roundRect(x-tw/2,y-th/2,tw,th,th/2); g.fill(); g.stroke();
+  g.fillStyle=col||INK; g.fillText(text,x,y+1);
+}
+function drawVine(){
+  if(SP.tsuru&&SP.tsuru.ok){ const im=SP.tsuru.im, th=W*im.height/im.width; g.drawImage(im,0,H*0.9-0.45*th,W,th); return; }
+  g.lineCap='round'; g.lineJoin='round';
+  g.strokeStyle='#4d7c0f'; g.lineWidth=Math.max(4,H*0.012);
+  g.beginPath(); g.moveTo(0,H*0.93); g.bezierCurveTo(W*0.3,H*0.82,W*0.6,H*1.0,W,H*0.88); g.stroke();
+  // 葉
+  for(const [x,y,s] of [[0.07,0.84,1],[0.42,0.88,-1],[0.62,0.9,1],[0.95,0.84,-1]]){
+    const c={x:x*W,y:y*H}, r=RR()*0.75; g.beginPath();
+    for(let i=0;i<=5;i++){ const a=-Math.PI*0.5+(i-2.5)*0.55; const rr=i%2?r:r*0.75; const px=c.x+Math.cos(a)*rr*s*0.2+Math.sin(a)*rr, py=c.y-Math.cos(a)*rr; i?g.lineTo(px,py):g.moveTo(px,py); }
+    g.closePath(); g.fillStyle='rgba(134,239,172,.75)'; g.fill(); g.lineWidth=2; g.strokeStyle='#3f6212'; g.stroke(); }
+}
+/* ===== Codex で 作った 絵（img/*.webp）。読めない ときは 線の 絵 ===== */
+const SP={}; for(const n of ['ohana','mebana','mi','kareta','hachi','tsuru','kuki','fukuro2']){ const im=new Image(); SP[n]={im,ok:false}; im.onload=()=>SP[n].ok=true; im.src=`img/${n}.webp`; }
+rs.sp=SP;
+// 絵を おく：(ax,ay)＝絵の 中の 0〜1 の 点を 画面の (x,y) に。h＝高さ
+function sprite(n,x,y,h,ax,ay,rot=0,alpha=1,flip=1){
+  const o=SP[n]; if(!o||!o.ok) return false;
+  const w=h*o.im.width/o.im.height;
+  g.save(); g.globalAlpha=alpha; g.translate(x,y); g.rotate(rot); g.scale(flip,1); g.drawImage(o.im,-ax*w,-ay*h,w,h); g.restore(); return true;
+}
+function pollenDots(c,R){ for(const [dx,dy] of [[-0.08,-0.04],[0.09,-0.03],[0,-0.1],[0.02,0.05]]){ g.beginPath(); g.arc(c.x+dx*R,c.y+dy*R,R*0.055,0,Math.PI*2); g.fillStyle='#f59e0b'; g.fill(); g.lineWidth=1.5; g.strokeStyle=INK; g.stroke(); } }
+function drawFlowerImg(f){
+  if(!['ohana','mebana','mi','kareta'].every(n=>SP[n].ok)) return false;
+  const c=fpos(f), R=RR(), d=rs.day, groundY=H*0.9;
+  const stem=(y0)=>{ const A={x:c.x,y:y0}, B={x:c.x+R*0.2,y:groundY};
+    if(SP.kuki.ok){ const L=Math.hypot(B.x-A.x,B.y-A.y), w=Math.max(10,R*0.3); g.save(); g.translate(A.x,A.y); g.rotate(Math.atan2(B.y-A.y,B.x-A.x)-Math.PI/2); g.drawImage(SP.kuki.im,-w/2,0,w,L); g.restore(); return; }
+    g.strokeStyle='#4d7c0f'; g.lineWidth=Math.max(3,R*0.08); g.beginPath(); g.moveTo(A.x,A.y); g.lineTo(B.x,B.y); g.stroke(); };
+  if(f.sex==='m'){
+    const h=R*2.9; stem(c.y+h*0.5);
+    sprite('ohana',c.x,c.y,h*(d>=1?0.8:1),0.48,0.38,0,d>=1?0.55:1);
+    tag('お花', c.x, c.y-R*1.25); return true;
+  }
+  const h=R*3.3;
+  if(d===0){ stem(c.y+h*0.66); sprite('mebana',c.x,c.y,h,0.48,0.29); if(f.pol) pollenDots(c,R); tag('め花', c.x, c.y-R*1.25); }
+  else if(f.pol){ const fh=R*(d===1?2.6:3.6); stem(c.y-R*0.2+fh*0.86); sprite('mi',c.x,c.y-R*0.2,fh,0.53,0.91,Math.PI,1); if(d>=2) tag('実', c.x+R*0.7, c.y+fh*0.45, '#166534'); else tag('め花', c.x, c.y-R*1.25); }
+  else if(d===1){ stem(c.y+h*0.6); sprite('mebana',c.x,c.y,h*0.8,0.48,0.29,0,0.5); tag('め花', c.x, c.y-R*1.25); }
+  else { const gy=groundY-R*0.25; sprite('kareta',c.x+R*0.4,gy,R*0.8,0.5,0.5); tag('かれて 落ちた', c.x+R*0.3, gy-R*0.75, '#92400e'); }
+  if(f.bag) drawBag(c,R);
+  return true;
+}
+function drawBag(c,R){
+  if(SP.fukuro2.ok){ const h=R*3.7, im=SP.fukuro2.im, w=h*im.width/im.height, top=c.y-R*1.3;
+    g.save(); g.globalAlpha=0.92; g.drawImage(im,c.x-w/2,top,w,h); g.restore(); tag('ふくろ', c.x, top-R*0.1); return; }
+  const d=rs.day, top=c.y-R*1.15, bot=c.y+R*2.1, wd=R*1.25;
+  g.beginPath(); g.moveTo(c.x-wd,top+R*0.2); g.quadraticCurveTo(c.x-wd,top,c.x-wd*0.7,top); g.lineTo(c.x+wd*0.7,top); g.quadraticCurveTo(c.x+wd,top,c.x+wd,top+R*0.2);
+  g.lineTo(c.x+wd*0.9,bot-R*0.2); g.lineTo(c.x+R*0.12,bot); g.lineTo(c.x-R*0.12,bot); g.lineTo(c.x-wd*0.9,bot-R*0.2); g.closePath();
+  g.fillStyle='rgba(255,255,255,.72)'; g.fill(); g.setLineDash([6,5]); g.lineWidth=2.5; g.strokeStyle='#6b7280'; g.stroke(); g.setLineDash([]);
+  g.beginPath(); g.moveTo(c.x-R*0.3,bot-R*0.05); g.lineTo(c.x+R*0.3,bot-R*0.05); g.lineWidth=3; g.strokeStyle=INK; g.stroke();
+  tag('ふくろ', c.x, top-R*0.1);
+}
+function drawFlower(f){
+  if(drawFlowerImg(f)) return;
+  const c=fpos(f), R=RR(), d=rs.day, base=f.sex==='f'?{x:c.x,y:c.y+R*1.25}:c;
+  // くき
+  g.strokeStyle='#4d7c0f'; g.lineWidth=Math.max(3,R*0.08);
+  const groundY=H*0.9;
+  if(!(f.sex==='f' && !f.pol && d>=2)){ g.beginPath(); g.moveTo(c.x, f.sex==='f'?base.y+R*0.45:c.y+R*0.3); g.lineTo(c.x+R*0.2, groundY); g.stroke(); }
+  if(f.sex==='m'){
+    const k=Math.min(1,d*0.5); petals(c,R,k);
+    if(d<2){ for(const dx of [-0.13,0,0.13]){ g.lineWidth=2; g.strokeStyle=INK; g.beginPath(); g.moveTo(c.x+dx*R,c.y+R*0.08); g.lineTo(c.x+dx*R,c.y-R*0.16); g.stroke();
+      g.beginPath(); g.arc(c.x+dx*R,c.y-R*0.2,R*0.07,0,Math.PI*2); g.fillStyle='#f59e0b'; g.fill(); g.stroke(); } }
+    tag('お花', c.x, c.y-R*1.05);
+    return;
+  }
+  // め花
+  if(f.pol || d<2){
+    const grow = f.pol ? [1,1.9,3.0,3.6][d] : [1,0.9,0.8,0.8][d];
+    const len=R*0.42*grow, wid=R*0.2*(f.pol?Math.min(1.8,0.9+d*0.35):1);
+    const fc={x:c.x, y:c.y+R*0.95+len};
+    g.beginPath(); g.ellipse(fc.x,fc.y,wid,len,0,0,Math.PI*2);
+    g.fillStyle = f.pol ? '#86efac' : (d>0?'#d9e7b0':'#bbf7d0'); g.fill(); g.lineWidth=2; g.strokeStyle=INK; g.stroke();
+    if(f.pol && d>0){ for(const dx of [-0.45,0,0.45]){ g.beginPath(); g.moveTo(fc.x+dx*wid,fc.y-len*0.8); g.lineTo(fc.x+dx*wid,fc.y+len*0.8); g.strokeStyle='rgba(22,101,52,.6)'; g.stroke(); } }
+    if(d===0 || !f.pol || d===1) petals(c,R, d===0?0:1);
+    if(d===0){ g.lineWidth=2.5; g.strokeStyle=INK; g.beginPath(); g.moveTo(c.x,c.y+R*0.06); g.lineTo(c.x,c.y-R*0.18); g.stroke();
+      for(const a of [-0.6,0,0.6]){ g.beginPath(); g.arc(c.x+Math.sin(a)*R*0.1,c.y-R*0.2-Math.cos(a)*R*0.05,R*0.06,0,Math.PI*2); g.fillStyle='#bbf7d0'; g.fill(); g.stroke(); }
+      if(f.pol) for(const [dx,dy] of [[-0.08,-0.28],[0.09,-0.27],[0,-0.31]]){ g.beginPath(); g.arc(c.x+dx*R,c.y+dy*R,R*0.045,0,Math.PI*2); g.fillStyle='#f59e0b'; g.fill(); g.lineWidth=1.5; g.stroke(); } }
+    if(d>=2 && f.pol) tag('実', fc.x+wid+R*0.45, fc.y, '#166534');
+    else tag('め花', c.x, c.y-R*1.05);
+  }else{
+    // 花粉が つかなかった：かれて 落ちた
+    const gy=H*0.9-R*0.15;
+    g.save(); g.translate(c.x+R*0.5, gy); g.rotate(1.3);
+    g.beginPath(); g.ellipse(0,0,R*0.14,R*0.3,0,0,Math.PI*2); g.fillStyle='#d6c48a'; g.fill(); g.lineWidth=2; g.strokeStyle=INK; g.stroke();
+    g.restore();
+    tag('かれて 落ちた', c.x+R*0.3, gy-R*0.75, '#92400e');
+  }
+  if(f.bag){
+    const top=c.y-R*1.15, bot=c.y+R*2.1, wd=R*1.25;
+    g.beginPath(); g.moveTo(c.x-wd,top+R*0.2); g.quadraticCurveTo(c.x-wd,top,c.x-wd*0.7,top); g.lineTo(c.x+wd*0.7,top); g.quadraticCurveTo(c.x+wd,top,c.x+wd,top+R*0.2);
+    g.lineTo(c.x+wd*0.9,bot-R*0.2); g.lineTo(c.x+R*0.12,bot); g.lineTo(c.x-R*0.12,bot); g.lineTo(c.x-wd*0.9,bot-R*0.2); g.closePath();
+    g.fillStyle='rgba(255,255,255,.72)'; g.fill(); g.setLineDash([6,5]); g.lineWidth=2.5; g.strokeStyle='#6b7280'; g.stroke(); g.setLineDash([]);
+    g.beginPath(); g.moveTo(c.x-R*0.3,bot-R*0.05); g.lineTo(c.x+R*0.3,bot-R*0.05); g.lineWidth=3; g.strokeStyle=INK; g.stroke();
+    tag('ふくろ', c.x, top-R*0.1+ (d>=2 && !f.pol ? 0:0));
+  }
+}
+function drawBee(){
+  const b=rs.bee; if(!b) return;
+  const s=RR()*0.42, dir=b.dir||1, t=performance.now()/60;
+  // 通った あと
+  g.setLineDash([4,8]); g.lineWidth=2; g.strokeStyle='rgba(31,41,55,.35)'; g.beginPath(); rs.trail.forEach((p,i)=>i?g.lineTo(p.x,p.y):g.moveTo(p.x,p.y)); g.stroke(); g.setLineDash([]);
+  if(SP.hachi.ok){ const bh=s*3.6, wob=Math.sin(t*0.5)*s*0.06;
+    sprite('hachi',b.x,b.y+wob,bh,0.45,0.5,0,1,dir);
+    if(rs.pollen && rs.day===0) for(const [x,y] of [[-0.3,0.55],[0.1,0.6],[-0.1,0.7]]){ g.beginPath(); g.arc(b.x+x*s*dir,b.y+y*s,s*0.16,0,Math.PI*2); g.fillStyle='#f59e0b'; g.fill(); g.lineWidth=1.5; g.strokeStyle=INK; g.stroke(); }
+    return; }
+  g.save(); g.translate(b.x,b.y); g.scale(dir,1);
+  for(const k of [-1,1]){ g.beginPath(); g.ellipse(-s*0.1+k*s*0.15, -s*0.55, s*0.38, s*(0.24+0.06*Math.sin(t+k)), -0.6*k, 0, Math.PI*2); g.fillStyle='rgba(255,255,255,.9)'; g.fill(); g.lineWidth=2; g.strokeStyle=INK; g.stroke(); }
+  g.beginPath(); g.ellipse(0,0,s*0.75,s*0.5,0,0,Math.PI*2); g.fillStyle='#fde68a'; g.fill(); g.lineWidth=2.5; g.strokeStyle=INK; g.stroke();
+  g.save(); g.clip(); g.fillStyle='rgba(31,41,55,.75)'; for(const x of [-0.25,0.1]) g.fillRect(x*s,-s,s*0.16,s*2); g.restore();
+  g.beginPath(); g.arc(s*0.8,-s*0.05,s*0.3,0,Math.PI*2); g.fillStyle='#fff'; g.fill(); g.stroke();
+  g.beginPath(); g.arc(s*0.9,-s*0.12,s*0.07,0,Math.PI*2); g.fillStyle=INK; g.fill();
+  if(rs.pollen && rs.day===0) for(const [x,y] of [[-0.3,0.45],[0.15,0.5],[-0.05,0.55],[0.4,0.4]]){ g.beginPath(); g.arc(x*s,y*s,s*0.13,0,Math.PI*2); g.fillStyle='#f59e0b'; g.fill(); g.lineWidth=1.5; g.strokeStyle=INK; g.stroke(); }
+  g.restore();
+}
+function draw(now){
+  g.clearRect(0,0,W,H);
+  drawVine();
+  rs.fl.forEach(drawFlower);
+  drawBee();
+  if(rs.msg && now-rs.msgT>2600) say('');
+  const want = rs.msg || (!rs.bee && rs.src && rs.day===0 && !(rs.src==='cam'&&RsTe.cur) ? (rs.src==='cam'?'人さし指を カメラに 見せてね':'ゆびで なぞって、はちを うごかそう') : ''), el=$('rsMsg');
+  if(el.textContent!==want) el.textContent=want;
+}
+function loop(){ requestAnimationFrame(loop); draw(performance.now()); }
+
+reset(); fit();
+window.rsFeed=feed; window.rsDraw=draw; window.rsFit=fit; window.rsNextDay=nextDay; window.rsReset=reset; window.rsFpos=f=>{ const p=fpos(f); return {x:p.x/W,y:p.y/H}; };
+/* ===== ゆびで（カメラ なし）：ゆびで なぞると はちが うごく。カメラの ときも ゆびで できる ===== */
+function startTouch(){ $('rsStart').hidden=true; rs.src='mouse'; fit(); loop(); }
+$('rsTap').onclick=startTouch;
+const stXY=e=>{ const r=$('rsStage').getBoundingClientRect(); return {x:(e.clientX-r.left)/r.width, y:(e.clientY-r.top)/r.height}; };
+$('rsStage').addEventListener('pointermove',e=>{ if(!rs.src) return; if(e.pointerType==='mouse'&&rs.src==='cam') return; if(e.pointerType!=='mouse'&&!e.buttons) return; rs.touchNow=e.pointerType!=='mouse'; feed(stXY(e)); });
+$('rsStage').addEventListener('pointerdown',e=>{ if(!rs.src) return; rs.touchNow=e.pointerType!=='mouse'; feed(stXY(e)); });
+for(const ev of ['pointerup','pointercancel']) $('rsStage').addEventListener(ev,()=>{ rs.touchNow=false; });
+window.rsStartTouch=startTouch;
+if(/[?&]test/.test(location.search)){
+  $('rsGo').textContent='マウスで ためす';
+  $('rsGo').onclick=startTouch;
+}
+window.rsLoop=loop;
+</script>
+
+<script>
+/* ===== カメラの 手（人さし指の 先）：画面 ぜんたいの しるしに なる。花の 上なら はち、ボタンの 上で とめると おせる ===== */
+function stageXY(c){ if(!c) return null; const r=$('rsStage').getBoundingClientRect();
+  return c.x>=r.left&&c.x<=r.right&&c.y>=r.top&&c.y<=r.bottom ? {x:(c.x-r.left)/r.width, y:(c.y-r.top)/r.height} : null; }
+window.rsStageXY=stageXY;
+async function startCam(){
+  const err=$('rsErr'); err.hidden=true; $('rsGo').disabled=true; $('rsGo').textContent='じゅんびちゅう…';
+  try{
+    await RsTe.startHand({hint:'', onPoint:c=>{ if(!rs.touchNow) feed(stageXY(c)); }});
+    $('rsStart').hidden=true; rs.src='cam'; fit(); loop();
+  }catch(e){ $('rsGo').disabled=false; $('rsGo').textContent='もう いちど'; err.hidden=false; err.textContent=RsTe.errText(e); }
+}
+if(!/[?&]test/.test(location.search)) $('rsGo').onclick=startCam;
+</script>
+<!--rl-home--><script>
+/* 理科ラボ：どの へやにも 出す「もどる」ボタン（11-07）。決まりは ここ 1か所。
+   へやの 上の帯（.xx-top）の いちばん左に 44px の ⌂ を 足す。帯が ない へやは 左下に うかべる。
+   行き先：その へやが 入っている 部屋の ページ（理科ラボ/1_エネルギー.html など）。そこから ホームへも もどれる。
+   へやの 中の 字や クラス名には さわらない（クラス名は rlh- で はじめる）。 */
+(function(){
+  if(window.__rlHome) return; window.__rlHome=1;
+  // どの へやが どの 部屋に 入るか（mock/ の 下の 道 → 部屋の ページ）
+  var PAGE={energy:'1_エネルギー.html',ryushi:'2_粒子.html',seimei:'3_生命.html',chikyu:'4_地球.html'};
+  var EXTRA={teko:'energy','karada-mirror':'seimei',tentai:'chikyu','seiza-tsunagu':'chikyu'};
+  function room(p){
+    var m=/\/mock\/rika\/(energy|ryushi|seimei|chikyu)\//.exec(p); if(m) return m[1];
+    m=/\/mock\/([^\/]+)\//.exec(p); return m&&EXTRA[m[1]]||'';
+  }
+  function href(){
+    var p=decodeURIComponent(location.pathname), r=room(p), i=p.lastIndexOf('/mock/');
+    if(window.RL_HOME_URL) return window.RL_HOME_URL;          // 授業メイトの 中では 入れる側が 決める
+    if(!r||i<0) return '';
+    return 'file://'+encodeURI(p.slice(0,i)+'/理科ラボ/'+PAGE[r]);
+  }
+  function put(){
+    var to=href(); if(!to||document.querySelector('.rlh-home')) return;
+    var a=document.createElement('a'); a.className='rlh-home'; a.href=to; a.title='へやの 一らんに もどる';
+    a.setAttribute('aria-label','へやの 一らんに もどる');
+    a.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>';
+    var st=document.createElement('style');
+    st.textContent='.rlh-home{flex:0 0 44px;width:44px;height:44px;margin-right:8px;display:inline-flex;align-items:center;justify-content:center;border-radius:22px;background:var(--rl-bg,white);color:var(--rl-ink,black);border:1px solid currentColor;text-decoration:none;box-sizing:border-box}'+
+      '.rlh-home:hover{opacity:.8}.rlh-home:focus-visible{outline:3px solid currentColor;outline-offset:2px}'+
+      '.rlh-home.rlh-float{position:fixed;left:12px;bottom:12px;z-index:9999;margin:0}';
+    document.head.appendChild(st);
+    var bar=[].slice.call(document.querySelectorAll('[class$="-top"],[class*="-top "]')).filter(function(e){
+      var r=e.getBoundingClientRect(); return r.top<20&&r.height>=44&&getComputedStyle(e).display.indexOf('flex')>=0;})[0];
+    if(bar) bar.insertBefore(a,bar.firstChild); else { a.classList.add('rlh-float'); document.body.appendChild(a); }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',put); else put();
+})();
+</script><!--/rl-home-->
+</body>
+</html>
