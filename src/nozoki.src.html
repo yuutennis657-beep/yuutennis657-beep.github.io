@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>のぞける立体</title>
+<style>
+:root{
+  --bg:#0f1420; --panel:#ffffff; --ink:#1d2433; --sub:#5b6478; --line:#d9dee8;
+  --accent:#e0452b; --ok:#1f8a4c; --ng:#b3261e; --btn:#f2f4f8;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+  font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif;overflow:hidden}
+#stage{position:fixed;inset:0}
+#stage canvas{display:block;width:100%;height:100%}
+/* 上の帯 */
+#top{position:fixed;left:12px;right:12px;top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;pointer-events:none}
+#top>*{pointer-events:auto}
+.chip{background:rgba(255,255,255,.92);border-radius:999px;padding:8px 14px;font-size:14px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+#title{font-size:16px}
+#mode{color:var(--sub)}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--btn);color:var(--ink);
+  border-radius:10px;padding:10px 14px;font-weight:700;min-height:44px}
+button:focus-visible{outline:3px solid #2b6be0;outline-offset:2px}
+button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+/* 下の問題パネル */
+#panel{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);width:min(720px,calc(100% - 24px));
+  background:var(--panel);border-radius:16px;padding:14px 16px;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+#shapeRow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+#shapeRow button{padding:6px 12px;min-height:38px;font-size:14px}
+#shapeRow button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+#q{font-size:18px;font-weight:700;line-height:1.5;margin:0 0 4px}
+#hint{font-size:14px;color:var(--sub);margin:0 0 10px}
+#choices{display:flex;gap:8px;flex-wrap:wrap}
+#choices button{min-width:64px;font-size:18px}
+#choices button.ok{background:var(--ok);color:#fff;border-color:var(--ok)}
+#choices button.ng{background:#fde7e5;color:var(--ng);border-color:var(--ng)}
+#result{min-height:1.6em;margin:8px 0 0;font-weight:700}
+#tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center;font-size:14px}
+#tools label{display:flex;gap:6px;align-items:center}
+/* カメラの小窓 */
+#cam{position:fixed;right:12px;top:64px;width:120px;border-radius:10px;transform:scaleX(-1);
+  border:2px solid rgba(255,255,255,.6);display:none}
+/* 安全装置 */
+#booting,#noJs,#err{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:24px;font-size:20px;font-weight:700;z-index:50}
+#booting{background:var(--bg);color:#fff}
+#noJs{background:#fff;color:var(--ng);border:8px solid var(--ng);opacity:0;animation:noJsIn 0s linear 15s forwards;z-index:51}
+@keyframes noJsIn{to{opacity:1}}
+#err{background:#fff;color:var(--ng);display:none;flex-direction:column;gap:12px;z-index:52}
+#err pre{font-size:13px;color:var(--ink);white-space:pre-wrap;max-width:90vw}
+@media (max-width:600px){
+  #q{font-size:16px} #cam{width:84px}
+}
+</style>
+</head>
+<body>
+<div id="booting">⏳ よみこみ中…</div>
+<div id="noJs">うまく 動いていません。<br>ファイルを ダウンロードしてから 開いてください。</div>
+<div id="err"><div>エラーで 止まりました。先生に 見せてください。</div><pre id="errMsg"></pre></div>
+
+<div id="stage"></div>
+<video id="cam" playsinline muted></video>
+
+<div id="top">
+  <span class="chip" id="title">のぞける立体</span>
+  <span class="chip" id="mode">🖱 マウス（指）で のぞく</span>
+  <button class="primary" id="camBtn">📷 顔で のぞく</button>
+  <button id="centerBtn" hidden>まん中に もどす</button>
+</div>
+
+<div id="panel">
+  <div id="shapeRow" role="group" aria-label="立体をえらぶ"></div>
+  <p id="q"></p>
+  <p id="hint"></p>
+  <div id="choices"></div>
+  <p id="result" aria-live="polite"></p>
+  <div id="tools">
+    <label><input type="checkbox" id="dash" checked> 見えない辺を 点線で</label>
+    <button id="turnBtn">↻ 90°まわす</button>
+    <label>うごきの大きさ <input type="range" id="gain" min="0.5" max="2" step="0.1" value="1"></label>
+  </div>
+</div>
+
+<!-- 部品（オフラインで動くよう、ぜんぶ この中に 入れてある） -->
+<script type="text/plain" id="b64-three">@@THREE@@</script>
+<script type="text/plain" id="b64-vision">@@VISION@@</script>
+<script type="text/plain" id="b64-wasmjs">@@WASMJS@@</script>
+<script type="text/plain" id="b64-wasm">@@WASM@@</script>
+<script type="text/plain" id="b64-model">@@MODEL@@</script>
+<script type="module">
+function b64bytes(id){
+  const s = document.getElementById(id).textContent.trim();
+  const bin = atob(s), u = new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) u[i] = bin.charCodeAt(i);
+  return u;
+}
+function b64url(id, type){ return URL.createObjectURL(new Blob([b64bytes(id)], {type})); }
+const $ = s => document.querySelector(s);
+function fatal(e){
+  $('#booting').style.display='none'; $('#noJs').style.display='none';
+  $('#err').style.display='flex'; $('#errMsg').textContent = String(e && e.stack || e);
+}
+window.addEventListener('error', ev => fatal(ev.error || ev.message));
+
+let THREE;
+try { THREE = await import(b64url('b64-three','text/javascript')); } catch(e){ fatal('3Dの部品が 読みこめませんでした。\n' + e); throw e; }
+
+try {
+/* ---------- 3D の 箱（画面＝窓） ---------- */
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+$('#stage').appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0f1420);
+const camera = new THREE.PerspectiveCamera();
+camera.matrixAutoUpdate = true;
+
+const DEPTH = 3;           // 窓の おくゆき
+let HW = 1, HH = 1;        // 窓（画面）の 半分の 幅・高さ
+const room = new THREE.Group(); scene.add(room);
+
+function buildRoom(){
+  room.clear();
+  const mat = new THREE.LineBasicMaterial({color:0x3d5a8a});
+  const pts = [];
+  const N = 8;
+  for(let i=0;i<=N;i++){
+    const z = -DEPTH*i/N;
+    // 奥へ向かう 四角の わく
+    pts.push(-HW,-HH,z, HW,-HH,z,  HW,-HH,z, HW,HH,z,  HW,HH,z, -HW,HH,z,  -HW,HH,z, -HW,-HH,z);
+  }
+  for(let i=0;i<=N;i++){
+    const x = -HW + 2*HW*i/N, y = -HH + 2*HH*i/N;
+    pts.push(x,-HH,0, x,-HH,-DEPTH,  x,HH,0, x,HH,-DEPTH,  -HW,y,0, -HW,y,-DEPTH,  HW,y,0, HW,y,-DEPTH);
+    pts.push(x,-HH,-DEPTH, x,HH,-DEPTH,  -HW,y,-DEPTH, HW,y,-DEPTH);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pts,3));
+  room.add(new THREE.LineSegments(g, mat));
+  // 床の かげ
+  const shadow = new THREE.Mesh(new THREE.CircleGeometry(0.6,40),
+    new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:.35}));
+  shadow.rotation.x = -Math.PI/2; shadow.position.set(0,-HH+0.001,-1.1);
+  room.add(shadow);
+}
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+const sun = new THREE.DirectionalLight(0xffffff, 0.9); sun.position.set(2,3,4); scene.add(sun);
+
+/* ---------- 立体と 問題 ---------- */
+const SHAPES = [
+  { name:'立方体', geo:()=>new THREE.BoxGeometry(0.9,0.9,0.9), color:0xf2b84b,
+    q:'頭を 右上に ずらして のぞこう。点線（見えない辺）は 何本？',
+    hint:'見取り図と 同じ 向きに なると、うしろの 辺が 点線になるよ。', choices:[2,3,4,6], ans:3,
+    why:'右上から 見ると、左・下・うしろの 角に 集まる 3本が かくれます。' },
+  { name:'直方体', geo:()=>new THREE.BoxGeometry(1.3,0.75,0.75), color:0x7cc4f2,
+    q:'直方体の 面は ぜんぶで いくつ？',
+    hint:'右から・左から・下から のぞいて、見えない 面も 数えよう。', choices:[4,5,6,8], ans:6,
+    why:'向かいあう 面が 3組 あるので 6つです。' },
+  { name:'三角柱', geo:()=>new THREE.CylinderGeometry(0.6,0.6,1.1,3), color:0x9be08a,
+    q:'三角柱の 辺は 何本？',
+    hint:'しゃがむように 頭を 下げると、下の 三角形も 見えるよ。', choices:[6,8,9,12], ans:9,
+    why:'上の 三角形3本＋下の 三角形3本＋たての 辺3本＝9本です。' },
+  { name:'六角柱', geo:()=>new THREE.CylinderGeometry(0.55,0.55,1.0,6), color:0xe8a0d8,
+    q:'六角柱の 頂点は いくつ？',
+    hint:'上の 六角形と 下の 六角形の 角を 数えよう。', choices:[6,12,14,18], ans:12,
+    why:'上に 6こ、下に 6こ で 12こです。' },
+  { name:'四角すい', geo:()=>{const g=new THREE.ConeGeometry(0.75,1.0,4); g.rotateY(Math.PI/4); return g;}, color:0xf28b6b,
+    q:'四角すいの 面は いくつ？',
+    hint:'下から のぞくと、底の 面が 見えるよ。', choices:[4,5,6,8], ans:5,
+    why:'三角形の 横の 面が 4つ＋底の 四角形 1つ＝5つです。' },
+];
+
+const holder = new THREE.Group(); holder.position.set(0,0.1,-1.1); scene.add(holder);
+let solid, edgesSolid, edgesHidden, cur = 0, turnTo = 0;
+
+function setShape(i){
+  cur = i; holder.clear(); holder.rotation.y = 0; turnTo = 0;
+  const s = SHAPES[i], g = s.geo();
+  solid = new THREE.Mesh(g, new THREE.MeshLambertMaterial({color:s.color,
+    polygonOffset:true, polygonOffsetFactor:1, polygonOffsetUnits:1}));
+  solid.renderOrder = 1;
+  const eg = new THREE.EdgesGeometry(g);
+  edgesSolid = new THREE.LineSegments(eg, new THREE.LineBasicMaterial({color:0x1d2433}));
+  edgesSolid.renderOrder = 2;
+  edgesHidden = new THREE.LineSegments(eg, new THREE.LineDashedMaterial({color:0xffffff,
+    dashSize:0.06, gapSize:0.05, depthFunc:THREE.GreaterDepth, depthWrite:false}));
+  edgesHidden.computeLineDistances();
+  edgesHidden.renderOrder = 3;
+  edgesHidden.visible = $('#dash').checked;
+  holder.add(solid, edgesSolid, edgesHidden);
+
+  document.querySelectorAll('#shapeRow button').forEach((b,j)=>b.setAttribute('aria-pressed', j===i));
+  $('#q').textContent = s.q; $('#hint').textContent = s.hint; $('#result').textContent = '';
+  const box = $('#choices'); box.innerHTML = '';
+  s.choices.forEach(c=>{
+    const b = document.createElement('button'); b.textContent = c;
+    b.onclick = ()=>{
+      if(c===s.ans){ b.classList.add('ok'); $('#result').style.color='var(--ok)';
+        $('#result').textContent = '⭕ せいかい！ ' + s.why; }
+      else { b.classList.add('ng'); $('#result').style.color='var(--ng)';
+        $('#result').textContent = '✕ もう一度。いろいろな 方向から のぞいてみよう。'; }
+    };
+    box.appendChild(b);
+  });
+}
+SHAPES.forEach((s,i)=>{
+  const b = document.createElement('button'); b.textContent = s.name; b.onclick = ()=>setShape(i);
+  $('#shapeRow').appendChild(b);
+});
+$('#dash').onchange = e => { if(edgesHidden) edgesHidden.visible = e.target.checked; };
+$('#turnBtn').onclick = ()=>{ turnTo += Math.PI/2; };
+
+/* ---------- 頭の 位置（＝カメラの 位置） ---------- */
+const head = {x:0,y:0.6,z:5}, target = {x:0,y:0.6,z:5};
+window.__nozoki = {head};   // 動作確認用
+let source = 'mouse';
+
+function onPointer(x,y){
+  if(source!=='mouse') return;
+  const g = +$('#gain').value;
+  target.x = (x/innerWidth - 0.5) * 5 * g;
+  target.y = -(y/innerHeight - 0.5) * 4 * g + 0.3;
+  target.z = 5;
+}
+addEventListener('pointermove', e => { if(e.target.closest('#panel,#top')) return; onPointer(e.clientX,e.clientY); });
+
+/* 窓の ゆがんだ 視野（off-axis）＝これが「のぞける」の しくみ */
+function updateCamera(){
+  const n = 0.05, f = 50;
+  camera.position.set(head.x, head.y, head.z);
+  camera.quaternion.identity();
+  camera.updateMatrixWorld();
+  const k = n / head.z;
+  camera.projectionMatrix.makePerspective(
+    (-HW - head.x)*k, (HW - head.x)*k, (HH - head.y)*k, (-HH - head.y)*k, n, f);
+  camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
+}
+
+function resize(){
+  renderer.setSize(innerWidth, innerHeight, false);
+  HH = 1; HW = innerWidth/innerHeight;
+  buildRoom();
+}
+addEventListener('resize', resize); resize();
+
+/* ---------- 顔で のぞく（映像は この端末の中だけで 使う） ---------- */
+let detector = null, video = $('#cam'), ref = null, lastFace = null, lastTs = -1;
+$('#camBtn').onclick = async ()=>{
+  const btn = $('#camBtn'); btn.disabled = true; btn.textContent = '準備中…';
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({video:{width:320,height:240,facingMode:'user'}});
+    video.srcObject = stream; await video.play(); video.style.display = 'block';
+    const {FaceDetector} = await import(b64url('b64-vision','text/javascript'));
+    const fs = { wasmLoaderPath: b64url('b64-wasmjs','text/javascript'),
+                 wasmBinaryPath: b64url('b64-wasm','application/wasm') };
+    const model = b64bytes('b64-model');
+    const make = delegate => FaceDetector.createFromOptions(fs, {
+      baseOptions:{ modelAssetBuffer: model, delegate },
+      runningMode:'VIDEO', minDetectionConfidence:0.5 });
+    // 顔さがしの モデルは 小さいので CPUで 十分 速い。GPUは 端末によって 何も 見つけないことがあるので 使わない
+    detector = await make('CPU');
+    source = 'face'; ref = null;
+    $('#mode').textContent = '📷 顔で のぞいています（映像は 送信・保存しません）';
+    btn.hidden = true; $('#centerBtn').hidden = false;
+  }catch(e){
+    console.warn(e);
+    btn.disabled = false; btn.textContent = '📷 顔で のぞく';
+    const inFrame = (window.top !== window.self);
+    $('#mode').textContent = inFrame
+      ? '📷 ここでは カメラが 使えません。ファイルを ダウンロードして 開いてください'
+      : '📷 カメラが 使えませんでした（許可を たしかめてね）→ 🖱 マウス（指）で のぞく';
+  }
+};
+$('#centerBtn').onclick = ()=>{ if(lastFace) ref = {...lastFace}; };
+
+function trackFace(){
+  if(!detector || video.readyState < 2) return;
+  const ts = performance.now(); if(ts <= lastTs) return; lastTs = ts;
+  const r = detector.detectForVideo(video, ts);
+  window.__nozoki.n = (r.detections||[]).length;
+  const d = r.detections && r.detections[0]; if(!d) return;
+  const [e1, e2] = d.keypoints;                // 右目・左目（0〜1）
+  const cx = (e1.x+e2.x)/2, cy = (e1.y+e2.y)/2, dist = Math.hypot(e1.x-e2.x, e1.y-e2.y);
+  lastFace = {cx, cy, dist};
+  if(!ref) ref = {...lastFace};
+  const g = +$('#gain').value;
+  target.z = Math.min(9, Math.max(2.5, 5 * ref.dist / dist));
+  // 人が 右へ動く → 映像の中の顔は 左へ → カメラは 右へ
+  target.x = (ref.cx - cx) * 9 * g * (target.z/5);
+  target.y = (ref.cy - cy) * 7 * g * (target.z/5) + 0.3;
+  target.x = Math.max(-4, Math.min(4, target.x));
+  target.y = Math.max(-2.5, Math.min(3, target.y));
+}
+
+/* ---------- まわす ---------- */
+function loop(){
+  trackFace();
+  const a = source==='face' ? 0.35 : 0.15;
+  head.x += (target.x-head.x)*a; head.y += (target.y-head.y)*a; head.z += (target.z-head.z)*a;
+  holder.rotation.y += (turnTo - holder.rotation.y)*0.12;
+  updateCamera();
+  renderer.render(scene, camera);
+  requestAnimationFrame(loop);
+}
+
+setShape(0);
+loop();
+$('#booting').style.display='none'; $('#noJs').style.display='none';
+} catch(e){ fatal(e); }
+</script>
+</body>
+</html>
